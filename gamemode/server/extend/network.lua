@@ -1,4 +1,5 @@
-util.AddNetworkString( "Open_Menu" )
+util.AddNetworkString( "Open_Ach_Menu" )
+util.AddNetworkString( "Staff_Join" )
 util.AddNetworkString( "Greetings_new_player" )
 util.AddNetworkString( "Create_Data" )
 util.AddNetworkString( "Open_F4_Menu" )

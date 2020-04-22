@@ -93,5 +93,5 @@ function PopUp(ply, idTitle, idMsg, idImg)
 		surface.PlaySound("hl2_campaign/ach_unlock.wav")
 end
 
-net.Receive("Open_Menu", AchievementMenu)
+net.Receive("Open_Ach_Menu", AchievementMenu)
 net.Receive("Achievement_Earned", PopUp)

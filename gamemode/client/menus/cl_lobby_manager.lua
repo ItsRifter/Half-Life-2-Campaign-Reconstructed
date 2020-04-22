@@ -46,7 +46,7 @@ function LobbyMenu()
 	
 	local LabelTabTwo = vgui.Create( "DLabel", PanelTabTwo )
 	LabelTabTwo:SetPos(150, 200)
-	LabelTabTwo:SetText("Half-Life 2: Campaign - Revisited is a cooperative gamemode based from Leiftigers but with modern updates")
+	LabelTabTwo:SetText("Half-Life 2: Campaign - Revisited is a cooperative gamemode based from Leiftigers gamemode but with modern updates")
 	LabelTabTwo:SizeToContents()
 	LabelTabTwo:SetDark( 1 )
 	

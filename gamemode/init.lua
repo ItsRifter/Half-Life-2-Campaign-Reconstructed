@@ -3,29 +3,26 @@ include("shared.lua")
 AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 
-AddCSLuaFile("lobby_manager/cl_lobby_manager.lua")
+AddCSLuaFile("client/menus/cl_lobby_manager.lua")
 
 AddCSLuaFile("client/achievements/cl_ach_base.lua")
 AddCSLuaFile("client/menus/f4_menu.lua")
 AddCSLuaFile("client/menus/cl_lobby_manager.lua")
+AddCSLuaFile("client/menus/cl_scoreboard.lua")
 
-AddCSLuaFile("client/commands/commands_list.lua")
+include("server/commands/sv_commands_list.lua")
 
 include("server/stats/sv_player_levels.lua")
 
-include("lobby_manager/sv_lobby_manager.lua")
-
 include("server/saving_modules/sv_data_flatfile.lua")
 
-include("server/lobby_map_selector/sv_switch_map_from_lobby.lua")
+include("server/sv_change_map.lua")
 
 include("server/extend/network.lua")
 
 include("server/config/achievements/sv_ach.lua")
 
---include("shared/sh_init.lua")
 include("shared/ach/sh_ach_lobby.lua")
---include("shared/ach/sh_ach_list.lua")
 
 CreateConVar("hl2c_allowsuicide", "0", FCVAR_NONE, "Disable kill command", 0, 1) 
 
@@ -40,8 +37,51 @@ function GM:ShowSpare2(ply)
 	net.Send(ply)
 end
 
-hook.Add("PlayerSpawn", "LobbyWeapons", function(ply)
+coolDown = 0
+canPlayOne = true
+canPlayTwo = true
 
+hook.Add("Think", "SoundCooldown", function()
+	
+
+	if CurTime() < coolDown then return
+	else
+		canPlayOne = true
+		canPlayTwo = true
+	end
+	coolDown = CurTime() + 86400
+end)
+
+function StaffJoin(ply)
+	
+	id = ply:SteamID()
+	
+	if id == "STEAM_0:0:6009886" and canPlayOne then
+		for k, v in pairs(player.GetAll()) do
+			v:ChatPrint("The Creator 'SuperSponer' has joined the server!")
+		end
+		net.Start("Staff_Join")
+			net.WriteString("SuperSponer")
+		net.Broadcast()
+		canPlayOne = false
+		print("trigger")
+		print(canPlayOne)
+	end
+	
+	if id == "STEAM_0:0:22379160" and canPlayTwo then
+		for k, v in pairs(player.GetAll()) do
+			v:ChatPrint("A developer 'D3' has joined the server!")
+		end
+		net.Start("Staff_Join")
+			net.WriteString("D3")
+		net.Broadcast()
+		canPlayTwo = false
+	end
+	
+end
+
+hook.Add("PlayerSpawn", "LobbyWeapons", function(ply)
+	
 	if (game.GetMap() == "hl2c_lobby_remake") then
 		ply:Give("weapon_crowbar")
 		ply:Give("weapon_physcannon")

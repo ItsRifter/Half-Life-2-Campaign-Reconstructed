@@ -80,6 +80,9 @@ hook.Add("PlayerInitialSpawn", "NewPlayerCheck", function(ply)
 		net.Start("Greetings_new_player")
 		net.Send(ply)
 	end
+	
+	--Check if a staff joined
+	StaffJoin(ply)
 end)
 
 hook.Add("PostPlayerDeath", "AddDeathCount", function(ply)
