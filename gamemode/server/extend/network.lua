@@ -1,0 +1,7 @@
+util.AddNetworkString( "Open_Menu" )
+util.AddNetworkString( "Greetings_new_player" )
+util.AddNetworkString( "Create_Data" )
+util.AddNetworkString( "Open_F4_Menu" )
+util.AddNetworkString("Achievement_Earned")
+util.AddNetworkString("Achievement")
+util.AddNetworkString("Update_Model")

@@ -1,0 +1,20 @@
+"Gamemode"
+{
+	"base" 			"base"
+	"title" 		"Half-Life 2: Campaign - Revisited"
+	"maps" 			"^d1_|^d2_|^d3_|^ep1_|^ep2_"
+	"menusystem" 	"1"
+		
+	"settings"
+	{
+		1
+		{
+			"name"		"sv_password"
+			"text"		"Server Password"
+			"help"		"Set the server password for your server."
+			"type"		"Text"
+			"default"	""
+		}
+	}
+	
+}
