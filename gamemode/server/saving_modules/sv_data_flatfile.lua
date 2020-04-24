@@ -14,6 +14,9 @@ function CreateData(ply)
 	ply.hl2cPersistent.Coins = 0
 	ply.hl2cPersistent.Model = ply:GetModel()
 	ply.hl2cPersistent.Achievements = {}
+
+	-- Init some networked variables
+	ply:SetNWInt("Level", ply.hl2cPersistent.Level)
 	
 	-- Get all fields that should be stored
 	local fields = {}

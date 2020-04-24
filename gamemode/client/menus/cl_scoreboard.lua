@@ -57,7 +57,7 @@ function ToggleBoard(toggle)
 			
 			local playerName = v:Nick()
 			local playerPing = v:Ping()
-			local playerLevel = "D3 help me"
+			local playerLevel = v:GetNWInt("Level", 0)
 			
 			local playerNamePanel = vgui.Create("DPanel", Board)
 			playerNamePanel:SetPos(0, yPos)

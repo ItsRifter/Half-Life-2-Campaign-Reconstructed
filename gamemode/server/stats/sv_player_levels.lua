@@ -6,6 +6,7 @@ function AddXP(ply, amt)
 	if (ply.hl2cPersistent.XP >= maxXP) then
 		maxXP = maxXP * 3.5
 		ply.hl2cPersistent.Level = ply.hl2cPersistent.Level + 1
+		ply:SetNWInt("Level", ply.hl2cPersistent.Level)
 		ply.hl2cPersistent.XP = 0
 		print("Max xp is now " .. maxXP)
 		print(ply.hl2cPersistent.Level)
@@ -40,6 +41,7 @@ end
 
 function SetLevel(ply, lvl)
 	ply.hl2cPersistent.Level = lvl
+	ply:SetNWInt("Level", ply.hl2cPersistent.Level)
 end
 
 net.Receive("GiveXP", function(len, ply)
