@@ -26,9 +26,8 @@ function ToggleBoard(toggle)
 		Board:ShowCloseButton(false)
 		Board:SetPos(ScrW() / 2 * .5, ScrH() / 2 * 0.1)
 		Board:SetVisible(true)
-		Board:MakePopup()
 		Board.Paint = function(self, w, h)
-			surface.SetDrawColor(255, 200, 0, 75)
+			surface.SetDrawColor(205, 150, 45, 175)
 			surface.DrawRect(0,0, w, h)
 			draw.SimpleText("Half-Life 2: Campaign - Revisited", "Scoreboard_Title_font", 0, 15, Color(255, 255, 255, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_LEFT)
 		end
@@ -37,11 +36,19 @@ function ToggleBoard(toggle)
 		
 		local BoardNameLabel = vgui.Create("DLabel", Board)
 		BoardNameLabel:SetText("Username")
-		BoardNameLabel:SetPos(ScrW() * .033, 50)
+		if (ScrW() == 3840 and ScrH() == 2160) then
+			BoardNameLabel:SetPos(ScrW() / 6 - 510, 100)
+		else
+			BoardNameLabel:SetPos(ScrW() / 2 - 835, 50)
+		end
 		
 		local BoardPingLabel = vgui.Create("DLabel", Board)
 		BoardPingLabel:SetText("Ping")
-		BoardPingLabel:SetPos(ScrW() * .0887, 50)
+		if (ScrW() == 3840 and ScrH() == 2160) then
+			BoardPingLabel:SetPos(Board:GetWide() / 5 - 55, 100)
+		else
+			BoardPingLabel:SetPos(Board:GetWide() / 2 - 165, 50)
+		end
 		
 		for k, v in pairs( player.GetAll() ) do
 			

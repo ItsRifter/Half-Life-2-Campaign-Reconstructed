@@ -1,3 +1,17 @@
+Lobby_Ach_List_Name = {
+	[1] = "Rise and Shine",
+	[2] = "Shitter",
+}
+
+Lobby_Ach_List_Desc = {
+	[1] = "Play the gamemode for the first time",
+	[2] = "How did you find this?",
+}
+
+Lobby_Ach_List_Icon = {
+	[1] = "vgui/achievements/hl2_beat_cemetery.png",
+	[2] = "vgui/achievements/hl2_kill_enemy_withtoilet.png",
+}
 function AchievementMenu()
 
 	local achFrame = vgui.Create("DFrame")
@@ -9,13 +23,35 @@ function AchievementMenu()
 	achFrame:MakePopup()
 	
 	local TabAchSheet = vgui.Create( "DPropertySheet", achFrame )
-	TabAchSheet:Dock( FILL ) 
+	TabAchSheet:Dock( FILL )
 	
 	local PanelLobbyAch = vgui.Create( "DPanel", achFrame )
 	PanelLobbyAch:SetSize(800, 850)
 	PanelLobbyAch:SetPos(0, 400)
 	PanelLobbyAch.Paint = function(s, w, h)
 		draw.RoundedBox(0,0,0, w, h, Color(170, 170, 170, 255))
+	end
+		
+	local yPosition = PanelLobbyAch:GetWide() * .02
+	
+	for i = 1, 2 do
+		local achName = vgui.Create("DLabel", PanelLobbyAch)
+		achName:SetPos(85, yPosition)
+		achName:SetText(Lobby_Ach_List_Name[i])
+		achName:SizeToContents()
+		
+		local achDesc = vgui.Create("DLabel", PanelLobbyAch)
+		achDesc:SetPos(85, yPosition + 35)
+		achDesc:SetText(Lobby_Ach_List_Desc[i])
+		achDesc:SizeToContents()
+		
+		local achIcon = vgui.Create("DImage", PanelLobbyAch)
+		achIcon:SetPos(15, yPosition)
+		achIcon:SetSize(64, 64)
+		achIcon:SetImage(Lobby_Ach_List_Icon[i])
+		
+		
+		yPosition = yPosition + 75 * i
 	end
 	
 	TabAchSheet:AddSheet("Lobby", PanelLobbyAch, nil)

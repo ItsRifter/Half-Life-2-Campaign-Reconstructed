@@ -68,7 +68,7 @@ function LobbyMenu()
 	startButton.DoClick = function() 
 		
 		net.Start("Achievement")
-			net.WriteString("Rise and Shine")
+			net.WriteString("First_Time")
 		net.SendToServer()
 		frame:Close()
 	end

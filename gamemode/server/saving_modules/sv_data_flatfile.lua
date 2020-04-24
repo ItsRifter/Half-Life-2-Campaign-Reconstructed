@@ -3,13 +3,17 @@ function CreateData(ply)
 	
 	-- Set default model
 	ply:SetModel("models/player/Group01/male_07.mdl")
-
+	
 	-- Set some default settings. Also create its own field for all persistent data
 	ply.hl2cPersistent = {}
 	ply.hl2cPersistent.Name = ply:Nick()
 	ply.hl2cPersistent.Level = 1
 	ply.hl2cPersistent.DeathCount = 0
+	ply.hl2cPersistent.KillCount = 0
+	ply.hl2cPersistent.XP = 0
+	ply.hl2cPersistent.Coins = 0
 	ply.hl2cPersistent.Model = ply:GetModel()
+	
 	-- Get all fields that should be stored
 	local fields = {}
 	for k, v in pairs(ply.hl2cPersistent) do
@@ -46,6 +50,7 @@ local function SaveData(ply)
 	-- Fetch some data, that wouldn't be updated otherwise
 	ply.hl2cPersistent.Name = ply:Nick()
 	ply.hl2cPersistent.Model = ply:GetModel()
+	ply.hl2cPersistent.KillCount = ply.hl2cPersistent.KillCount + ply:Frags()
 
 	-- Get all fields that should be stored
 	local fields = {}
@@ -57,6 +62,10 @@ local function SaveData(ply)
 	
 	print("Save committed")
 end
+
+hook.Add("OnNPCKilled", "UpdateKills", function(npc, attacker, inflictor)
+	attacker.hl2cPersistent.KillCount = attacker.hl2cPersistent.KillCount + 1
+end)
 
 hook.Add("Initialize", "CreateDataFolder", function()
 	if not file.IsDir( "hl2c_data", "DATA") then
@@ -80,14 +89,10 @@ hook.Add("PlayerInitialSpawn", "NewPlayerCheck", function(ply)
 		net.Start("Greetings_new_player")
 		net.Send(ply)
 	end
-	
-	--Check if a staff joined
-	StaffJoin(ply)
 end)
 
 hook.Add("PostPlayerDeath", "AddDeathCount", function(ply)
 	ply.hl2cPersistent.DeathCount = ply.hl2cPersistent.DeathCount + 1
-	print(ply:Nick() .. " has died about " .. ply.hl2cPersistent.DeathCount .. " times")
 end)
 
 net.Receive("Update_Model", function(len, ply) 

@@ -11,17 +11,20 @@ AddCSLuaFile("server/commands/sv_commands_list.lua")
 
 include("client/menus/cl_scoreboard.lua")
 
-
-net.Receive("Staff_Join", function()
-	
-	local name = net.ReadString()
-	
-	if name == "SuperSponer" then
-		surface.PlaySound("ambient/levels/gman/gman_sgnature_shrt.wav")
-	end
-	
-	if name == "D3" then
-		surface.PlaySound("vo/eli_lab/eli_handle_b.wav")
-	end
+net.Receive("Failed_Command", function()
+	surface.PlaySound("friends/friend_join.wav")
 end)
 
+concommand.Add("hl2c_givexp", function(ply, cmd, args)
+	local int = tonumber(args[1])
+	print(int)
+	
+	if int then
+		net.Start("GiveXP")
+			net.WriteInt(int, 16)
+		net.SendToServer(ply)
+	elseif not int then
+		print("Invalid Value")
+	end
+end)
+	

@@ -16,6 +16,8 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 			end
 		else
 		ply:ChatPrint("You do not have access to this command!")
+		net.Start("Failed_Command")
+		net.Send(ply)
 		end
 		return ""
 	end
