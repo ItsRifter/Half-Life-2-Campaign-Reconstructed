@@ -15,9 +15,6 @@ function CreateData(ply)
 	ply.hl2cPersistent.Model = ply:GetModel()
 	ply.hl2cPersistent.Achievements = {}
 
-	-- Init some networked variables
-	ply:SetNWInt("Level", ply.hl2cPersistent.Level)
-	
 	-- Get all fields that should be stored
 	local fields = {}
 	for k, v in pairs(ply.hl2cPersistent) do
@@ -41,6 +38,9 @@ local function LoadData(ply)
 		key, val = line:match('^([^:]+): (.*)')
 		ply.hl2cPersistent[key] = val
 	end
+
+	-- Init some networked variables
+	ply:SetNWInt("Level", ply.hl2cPersistent.Level)
 
 	-- Init player model and other stuff
 	ply:SetModel(ply.hl2cPersistent.Model)
