@@ -57,6 +57,14 @@ local eliteModels = {
 	["models/player/combine_super_soldier.mdl"] = {},
 }
 
+local hevModels = {
+	["models/player/SGG/hev_helmet.mdl"] = {},
+}
+
+local adminModels = {
+	["models/Inaki/Characters/gordon_freeman.mdl"] = {},
+}
+
 function OpenMenu(ply)
 	
 	local getModel = net.ReadString()
@@ -108,15 +116,23 @@ function OpenMenu(ply)
 	end
 	
 	if getLevel >= 20 then
-		selectModel:SetModelList(cpModels, "", false, true)
+		selectModel:SetModelList(cpModels, "", true, true)
 	end
 	
 	if getLevel >= 35 then
-		selectModel:SetModelList(soldierModels, "", false, true)
+		selectModel:SetModelList(soldierModels, "", true, true)
 	end
 	
 	if getLevel >= 55 then
-		selectModel:SetModelList(eliteModels, "", false, true)
+		selectModel:SetModelList(eliteModels, "", true, true)
+	end
+	
+	if getLevel >= 100 then
+		selectModel:SetModelList(hevModels, "", true, true)
+	end
+	
+	if LocalPlayer():IsAdmin() then
+		selectModel:SetModelList(adminModels, "", true, true)
 	end
 	
 	selectModel:SetSize(275, 150)

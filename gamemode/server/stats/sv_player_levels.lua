@@ -34,7 +34,20 @@ function AddXP(ply, amt)
 	end
 end
 
+function GetLevel(ply)
+	return ply.hl2cPersistent.Level
+end
+
+function SetLevel(ply, lvl)
+	ply.hl2cPersistent.Level = lvl
+end
+
 net.Receive("GiveXP", function(len, ply)
 	local amount = net.ReadInt(16)
 	AddXP(ply, amount)
+end)
+
+net.Receive("SetLevel", function(len, ply)
+	local level = net.ReadInt(16)
+	SetLevel(ply, level)
 end)

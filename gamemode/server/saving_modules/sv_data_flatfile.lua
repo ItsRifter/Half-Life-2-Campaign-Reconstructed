@@ -13,6 +13,7 @@ function CreateData(ply)
 	ply.hl2cPersistent.XP = 0
 	ply.hl2cPersistent.Coins = 0
 	ply.hl2cPersistent.Model = ply:GetModel()
+	ply.hl2cPersistent.Achievements = {}
 	
 	-- Get all fields that should be stored
 	local fields = {}
@@ -51,6 +52,9 @@ local function SaveData(ply)
 	ply.hl2cPersistent.Name = ply:Nick()
 	ply.hl2cPersistent.Model = ply:GetModel()
 	ply.hl2cPersistent.KillCount = ply.hl2cPersistent.KillCount + ply:Frags()
+	if newAchievement then
+		table.Add(ply.hl2cPersistent.Achievements, newAchievement)
+	end
 
 	-- Get all fields that should be stored
 	local fields = {}
@@ -61,6 +65,10 @@ local function SaveData(ply)
 	file.Write("hl2c_data/" .. PlayerID .. ".txt", table.concat(fields, "\n"))
 	
 	print("Save committed")
+end
+
+function UpdateAchievements(ply)
+	print("Success")
 end
 
 hook.Add("OnNPCKilled", "UpdateKills", function(npc, attacker, inflictor)
@@ -74,7 +82,10 @@ hook.Add("Initialize", "CreateDataFolder", function()
 	end
 end)
 
-hook.Add("PlayerDisconnected", "SavePlayerDataDisconnect", SaveData)
+hook.Add("PlayerDisconnected", "SavePlayerDataDisconnect", function(ply) 
+	SaveData(ply)
+end)
+
 
 hook.Add( "ShutDown", "ChangeMapSave", function() 
 	for _, ply in ipairs( player.GetAll() ) do

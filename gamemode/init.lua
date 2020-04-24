@@ -3,32 +3,36 @@ include("shared.lua")
 AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 
-AddCSLuaFile("client/menus/cl_lobby_manager.lua")
-
 AddCSLuaFile("client/achievements/cl_ach_base.lua")
+AddCSLuaFile("client/menus/cl_lobby_manager.lua")
 AddCSLuaFile("client/menus/f4_menu.lua")
 AddCSLuaFile("client/menus/cl_lobby_manager.lua")
 AddCSLuaFile("client/menus/cl_scoreboard.lua")
+AddCSLuaFile("client/menus/difficulty_vote.lua")
+AddCSLuaFile("client/commands/cl_commands_list.lua")
 
-
+include("server/modules/checkpoint.lua")
 include("server/commands/sv_commands_list.lua")
-
 include("server/stats/sv_player_levels.lua")
-
 include("server/saving_modules/sv_data_flatfile.lua")
-
 include("server/sv_change_map.lua")
-
 include("server/extend/network.lua")
-
 include("server/config/achievements/sv_ach.lua")
 
+include("shared/maps/init_checkpoints.lua")
+
 include("shared/ach/sh_ach_lobby.lua")
+
 
 CreateConVar("hl2c_allowsuicide", "0", FCVAR_NONE, "Disable kill command", 0, 1) 
 
 function GM:Initialize()
-	difficulty = 2
+	--Difficulty, voting and survival mode
+	difficulty = 1
+	survivalMode = false
+	totalVotes = 0
+	requiredVotes = 0
+	hasVoted = false
 end
 
 function GM:ShowHelp(ply)
@@ -36,13 +40,22 @@ function GM:ShowHelp(ply)
 	net.Send(ply)
 end
 
+hook.Add("ScoreboardHide", "CloseHL2CScoreBoard", function()
+	ToggleBoard(false)
+end)
+
 function GM:ShowSpare2(ply)
 	net.Start("Open_F4_Menu")
 		net.WriteString(ply:GetModel())
 		net.WriteString(tostring(ply.hl2cPersistent.DeathCount))
 		net.WriteString(tostring(ply.hl2cPersistent.KillCount))
-		net.WriteInt(ply.hl2cPersistent.Level, 32)
 	net.Send(ply)
+end
+
+function GM:ScoreboardShow(ply)
+	net.Start("Scoreboard")
+		net.WriteInt(ply.hl2cPersistent.Level, 16)
+	net.Send()
 end
 
 hook.Add("PlayerSpawn", "LobbyWeapons", function(ply)
@@ -86,14 +99,6 @@ function GM:EntityKeyValue(ent, key, value)
 	end
 end
 
-function GM:ShouldCollide(entA, entB)
-	if entA and entB and ((entA:IsPlayer() and (entB:IsPlayer() or table.HasValue(INVUL_NPCS, entB:GetClass()) or table.HasValue(FRIENDLY_NPCS, entB:GetClass()))) or (entB:IsPlayer() and (entA:IsPlayer() or table.HasValue(INVUL_NPCS, entA:GetClass()) or table.HasValue(FRIENDLY_NPCS, entA:GetClass())))) then
-		return false
-	else
-		return true
-	end
-end
-
 FRIENDLY_NPCS = {
 	"npc_citizen"
 }
@@ -112,13 +117,9 @@ INVUL_NPCS = {
 	"npc_vortigaunt",
 }
 
---function GM:PlayerShouldTakeDamage(ply, attacker)
 --	if ply:Team() != TEAM_ALIVE or !ply.vulnerable or (attacker:IsPlayer() and attacker != ply) or (attacker:IsVehicle() and attacker:GetDriver():IsPlayer()) or table.HasValue(GODLIKE_NPCS, attacker:GetClass()) or table.HasValue(FRIENDLY_NPCS, attacker:GetClass()) then
---		return false
---	else
---		return true
---	end
---end
+
+
 
 
 function GM:PlayerShouldTakeDamage(ply, attacker)
@@ -127,29 +128,79 @@ function GM:PlayerShouldTakeDamage(ply, attacker)
 	else
 		return true
 	end
+	
+	if hitGroup == HITGROUP_HEAD then
+		hitGroupScale = 2
+	else
+		hitGroupScale = 1
+	end
+	
+	dmgInfo:ScaleDamage(hitGroupScale * difficulty)
 end
 
+function GM:EntityTakeDamage( ent, dmgInfo )
+	if table.HasValue(INVUL_NPCS, ent:GetClass()) or table.HasValue(FRIENDLY_NPCS, ent:GetClass()) then
+		dmgInfo:SetDamage(0)
+	return
+	end
+end
 function GM:ScaleNPCDamage(npc, hitGroup, dmgInfo)
 	
+	local inflictor = dmgInfo:GetDamageType()
 	local attacker = dmgInfo:GetAttacker()
-	
-	if table.HasValue(INVUL_NPCS, npc:GetClass()) or (attacker:IsPlayer() and table.HasValue(FRIENDLY_NPCS, npc:GetClass())) then
+ 	
+	if table.HasValue(INVUL_NPCS, npc:GetClass()) and attacker:IsPlayer() or table.HasValue(FRIENDLY_NPCS, npc:GetClass()) then
 		dmgInfo:SetDamage(0)
-		return
+	return
 	end
 	
-	if attacker and attacker:IsValid() and attacker:IsPlayer() then
-		if attacker:InVehicle() and attacker:GetVehicle() and attacker:GetVehicle():GetClass() == "prop_vehicle_airboat" then
-			dmgInfo:SetDamage(1)
-		elseif SUPER_GRAVITY_GUN and attacker:GetActiveWeapon() and attacker:GetActiveWeapon():GetClass() == "weapon_physcannon" then
-			dmgInfo:SetDamage(100)
-		end
+	if hitGroup == HITGROUP_HEAD then
+		hitGroupScale = 2
+	else
+		hitGroupScale = 1
 	end
+	
+	dmgInfo:ScaleDamage(hitGroupScale / difficulty)
 end
 
-hook.Add("OnNPCKilled","UpdateXP", function(npc, attacker, inflictor)
+hook.Add("Think", "CooldownTimer", function()
+	
+	local cooldown = 0
+	
+	if hasVoted == true then
+		cooldown = 600
+	end
+	
+	cooldown = CurTime() + cooldown
+	if cooldown >= CurTime() then
+		hasVoted = false
+	end
+end)
+
+hook.Add("OnNPCKilled", "UpdateXP", function(npc, attacker, inflictor)
 	local giveXP = math.random(1, (10 * difficulty))
 	attacker.hl2cPersistent.XP = attacker.hl2cPersistent.XP + giveXP
 end)
+
+hook.Add("PostPlayerDeath", "SurvivalModePost", function(ply)
+	
+end)
+
+--[[
+hook.Add("PlayerDeathThink", "SurvivalModeCheck", function()
+	if survivalMode then
+		return false
+	else
+		return true
+	end
+end)
+
+hook.Add("PlayerSpawn", "SurvivalSpawn", function(ply)
+	if survivalMode then
+		GAMEMODE:PlayerSpawnAsSpectator(t)
+	end
+end)
+
+--]]
 
 print("Files loaded")

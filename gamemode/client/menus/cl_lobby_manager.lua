@@ -69,6 +69,7 @@ function LobbyMenu()
 		
 		net.Start("Achievement")
 			net.WriteString("First_Time")
+			net.WriteString("Lobby_Ach_List")
 		net.SendToServer()
 		frame:Close()
 	end

@@ -87,7 +87,6 @@ surface.CreateFont( "DermaDefault_18px", {
 
 function PopUp(ply, idTitle, idMsg, idImg)
 	
-	local achiever = net.ReadString()
 	local achTitle = net.ReadString()
 	local achMessage = idMsg
 	local unlocked = "Achievement Unlocked!"
