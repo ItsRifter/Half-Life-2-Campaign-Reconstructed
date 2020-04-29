@@ -11,10 +11,11 @@ function CreateData(ply)
 	ply.hl2cPersistent.DeathCount = 0
 	ply.hl2cPersistent.KillCount = 0
 	ply.hl2cPersistent.XP = 0
+	ply.hl2cPersistent.MaxXP = 250
 	ply.hl2cPersistent.Coins = 0
 	ply.hl2cPersistent.Model = ply:GetModel()
-	ply.hl2cPersistent.Achievements = {}
-	
+	--ply.hl2cPersistent.Achievements = {}
+
 	-- Get all fields that should be stored
 	local fields = {}
 	for k, v in pairs(ply.hl2cPersistent) do
@@ -39,6 +40,10 @@ local function LoadData(ply)
 		ply.hl2cPersistent[key] = val
 	end
 
+	-- Init some networked variables
+	ply:SetNWInt("Level", ply.hl2cPersistent.Level)
+	ply:SetNWInt("Coins", ply.hl2cPersistent.Coins)
+
 	-- Init player model and other stuff
 	ply:SetModel(ply.hl2cPersistent.Model)
 
@@ -52,9 +57,9 @@ local function SaveData(ply)
 	ply.hl2cPersistent.Name = ply:Nick()
 	ply.hl2cPersistent.Model = ply:GetModel()
 	ply.hl2cPersistent.KillCount = ply.hl2cPersistent.KillCount + ply:Frags()
-	if newAchievement then
-		table.Add(ply.hl2cPersistent.Achievements, newAchievement)
-	end
+	--if newAchievement then
+	--	table.Add(ply.hl2cPersistent.Achievements, newAchievement)
+	--end
 
 	-- Get all fields that should be stored
 	local fields = {}
@@ -67,13 +72,9 @@ local function SaveData(ply)
 	print("Save committed")
 end
 
-function UpdateAchievements(ply)
-	print("Success")
-end
-
-hook.Add("OnNPCKilled", "UpdateKills", function(npc, attacker, inflictor)
-	attacker.hl2cPersistent.KillCount = attacker.hl2cPersistent.KillCount + 1
-end)
+--function UpdateAchievements(ply)
+--	print("Success")
+--end
 
 hook.Add("Initialize", "CreateDataFolder", function()
 	if not file.IsDir( "hl2c_data", "DATA") then

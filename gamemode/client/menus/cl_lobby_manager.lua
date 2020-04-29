@@ -1,3 +1,13 @@
+surface.CreateFont("Intro_Tab1_Title_Font", {
+	font = "Arial",
+	size = 36,
+})
+
+surface.CreateFont("Intro_Tab1_Font", {
+	font = "Arial",
+	size = 28,
+})
+
 function LobbyMenu()
 
 	--The Frame
@@ -7,7 +17,7 @@ function LobbyMenu()
 	frame:Center()
 	frame:SetVisible(true)
 	frame:SetDraggable(false)
-	frame:ShowCloseButton(false)
+	frame:ShowCloseButton(true)
 	frame:SetTitle("")
 	frame.Paint = function(s, w, h)
 		draw.RoundedBox(0,0,0, w, h, Color(140, 140, 140, 255))
@@ -27,11 +37,19 @@ function LobbyMenu()
 		draw.RoundedBox(0,0,0, w, h, Color(170, 170, 170, 255))
 	end
 	
-	local LabelTabOne = vgui.Create( "DLabel", PanelTabOne )
-	LabelTabOne:SetPos(350, 400)
-	LabelTabOne:SetText("Combine Logic")
-	LabelTabOne:SizeToContents()
-	LabelTabOne:SetDark( 1 )
+	local LabelTitle = vgui.Create( "DLabel", PanelTabOne )
+	LabelTitle:SetPos(125, 100)
+	LabelTitle:SetFont("Intro_Tab1_Title_Font")
+	LabelTitle:SizeToContents()
+	LabelTitle:SetText("Welcome to Half-Life 2: Campaign - Revisited")
+	LabelTitle:SizeToContents()
+	LabelTitle:SetDark( 1 )
+	
+	LabelDescText = vgui.Create( "DLabel", PanelTabOne )
+	LabelDescText:SetPos(125, 175)
+	LabelDescText:SetFont("Intro_Tab1_Font")
+	LabelDescText:SetText("Test")
+	
 	
 	TabSheet:AddSheet("Intro", PanelTabOne, nil)
 	

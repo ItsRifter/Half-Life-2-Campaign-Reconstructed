@@ -1,12 +1,17 @@
 concommand.Add("hl2c_givexp", function(ply, cmd, args)
 	local int = tonumber(args[1])
 	
-	if int then
-		net.Start("GiveXP")
-			net.WriteInt(int, 16)
-		net.SendToServer(ply)
-	elseif not int then
-		print("Invalid Value")
+	if ply:IsAdmin() then
+		if int then
+			net.Start("GiveXP")
+				net.WriteInt(int, 16)
+			net.SendToServer()
+			print(int)
+		elseif not int then
+			print("Invalid Value")
+		end
+	else
+		print("You do not have access to this command")
 	end
 end)
 
@@ -38,7 +43,22 @@ concommand.Add("hl2c_setlevel", function(ply, cmd, args)
 			net.Start("SetLevel")
 				net.WriteInt(level, 16)
 			net.SendToServer(ply)
-		elseif not level then
+		else
+			print("Invalid Value")
+		end
+	else
+		print("You do not have access to this command")
+	end
+end)
+
+concommand.Add("hl2c_addcoins", function(ply, cmd, args)
+	local coins = tonumber(args[1])
+	if ply:IsAdmin() then
+		if coins then
+			net.Start("AddCoins")
+				net.WriteInt(coins, 16)
+			net.SendToServer(ply)
+		else
 			print("Invalid Value")
 		end
 	else

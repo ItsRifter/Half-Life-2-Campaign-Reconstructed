@@ -7,7 +7,7 @@ Lobby_Ach_List_Desc = {
 	[1] = "Play the gamemode for the first time",
 	[2] = "How did you find this?",
 }
-
+--vgui/hud/icon_locked 
 Lobby_Ach_List_Icon = {
 	[1] = "vgui/achievements/hl2_beat_cemetery.png",
 	[2] = "vgui/achievements/hl2_kill_enemy_withtoilet.png",
