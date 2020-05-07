@@ -165,7 +165,7 @@ hook.Add("HUDShouldDraw", "DisableHud", function(name)
 end)
 
 local shouldDrawTimer = false
-
+local shouldDrawRestartTimer = false
 net.Receive("DisplayMapTimer", function() shouldDrawTimer = true end)
 
 hook.Add("HUDPaint", "HUDPaint_DrawCPMarker", function()
@@ -189,9 +189,11 @@ hook.Add("HUDPaint", "HUDPaint_DrawCPMarker", function()
 	end
 end)
 
+net.Receive("SurvAllDead", function() shouldDrawRestartTimer = true end)
+
 hook.Add("HUDPaint", "HUDPaint_DrawTimer", function()
 
-	if shouldDrawTimer then
+	if shouldDrawTimer and not survivalMode then
 		if not timer.Exists("MapTimer") then
 			timer.Create("MapTimer", 20, 1, function()
 			
@@ -207,4 +209,107 @@ hook.Add("HUDPaint", "HUDPaint_DrawTimer", function()
 		end
 		draw.DrawText("Time Left: " .. math.Round(timer.TimeLeft("MapTimer"), 0), "Map_Font", ScrW() / 2, ScrH() - 350, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	end
+	
+	if shouldDrawRestartTimer then
+		if not timer.Exists("RestartTimer") then
+			timer.Create("RestartTimer", 15, 1, function()
+			
+			end)
+			surface.PlaySound("music/hl2_song23_suitsong3.mp3")
+		end
+			
+		surface.SetDrawColor(45, 45, 45, 150)
+		if ScrW() == 3840 and ScrH() == 2160 then
+			surface.DrawRect(0, ScrH() / 2 + 700, ScrW(), 175)
+		else
+			surface.DrawRect(0, ScrH() / 2 + 175, ScrW(), 175)
+		end
+		draw.DrawText("Restarting in " .. math.Round(timer.TimeLeft("RestartTimer"), 0), "Map_Font", ScrW() / 2, ScrH() - 350, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+	end
 end)
+
+net.Receive("DisplayRewards", function()
+	local xp = net.ReadInt(32)
+	local coins = net.ReadInt(32)
+	chat.AddText("BONUS FOR NOT DYING ONCE")
+	chat.AddText(Color(0, 150, 255), "XP: ", tostring(xp))
+	chat.AddText(Color(255, 150, 0), "Coins: λ", tostring(coins))
+	
+end)
+
+net.Receive("PlaySoundLevelUp", function()
+	local levels = net.ReadInt(16)
+	if not timer.Exists("EarRapeRemover") then
+		surface.PlaySound("hl1/fvox/bell.wav")
+		timer.Simple(0.7, function()
+			surface.PlaySound("items/battery_pickup.wav")
+		end)
+	end
+	timer.Create("EarRapeRemover", 2, 0, function()
+		timer.Remove("EarRapeRemover")
+	end)
+	chat.AddText(Color(255, 230, 0), "You are now at level ", tostring(levels))
+	if levels == 10 then
+		chat.AddText(Color(255, 190, 0), "You have unlocked pets, type !pet")
+	end
+end)
+
+net.Receive("NewSuit", function()
+	local level = net.ReadInt(16)
+
+	if level == 5 then
+		chat.AddText(Color(255, 230, 0), "You've been hired by the resistance, they grant you ", Color(132, 255, 0), "rebellion suits!")
+	elseif level == 15 then
+		chat.AddText(Color(255, 230, 0), "Your help to the resistance has granted you ", Color(255, 0, 0), "medic suits!")
+	elseif level == 25 then
+		chat.AddText(Color(255, 230, 0), "You found a ", Color(0, 106, 255), "Civil Protection Suit", Color(255, 230, 0), ", luckily it's unbonded")
+	elseif level == 40 then
+		chat.AddText(Color(255, 230, 0), "You found a ", Color(60, 140, 255), "Combine Soldier Suit", Color(255, 230, 0), ", thankfully it won't hurt to put it on")
+	elseif level == 60 then
+		chat.AddText(Color(255, 230, 0), "You found a ", Color(230, 230, 230), "Combine Elite Solder Suit", Color(255, 230, 0), ", yet again it's unbonded")
+	elseif level == 90 then
+		chat.AddText(Color(255, 230, 0), "Dr.Kleiner has offered you the ", Color(255, 160, 0), "Mark 5 H.E.V Suit ", Color(255, 230, 0), "for your fantastic support to the resistance!")
+	end
+end)
+local kickAmount = 0
+net.Receive("WarningPetKill", function(len, ply)
+	kickAmount = kickAmount + net.ReadInt(8)
+	if kickAmount >= 3 then
+		net.Start("KickUser")
+			net.WriteInt(3600, 32)
+			net.WriteString("Pet Killing")
+		net.SendToServer(ply)
+	end
+	chat.AddText(Color(255, 0, 0), "DON'T KILL OTHER PLAYERS PETS")
+end)
+
+surface.CreateFont("Pet_Font", {
+	font = "Arial",
+	size = 32,
+})
+
+local meta = FindMetaTable( "Entity" )
+if not meta then return end
+
+function meta:IsPet()
+	if self:IsValid() and self:IsNPC() and self:GetNWBool("PetActive") then
+		return true
+	else
+		return false
+	end
+end
+
+hook.Add("HUDPaint", "HUDPaint_DrawPetName", function()
+	for k, ent in pairs(ents.FindByClass("npc_*")) do
+		if ent:IsValid() and ent:IsPet() then
+			local dist = LocalPlayer():GetPos():Distance(ent:GetPos())
+			local pos = ent:GetPos()
+			pos.z = pos.z + 15 + (dist * 0.0325)
+			local ScrPos = pos:ToScreen()
+			if ent:GetOwner() and LocalPlayer():GetPos():Distance(ent:GetPos()) <= 1000 then
+				draw.SimpleText(tostring(ent:GetOwner():Nick()) .. "'s Pet", "Pet_Font", ScrPos.x, ScrPos.y, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+			end
+		end
+	end
+end)
+

@@ -1,19 +1,128 @@
+local neededVotes = #player.GetAll()
+local lobbyVotes = 0
+local hasVotedLobby = false
+BringPet = true
+
 hook.Add("PlayerSay", "Commands", function(ply, text)
 	if (string.lower(text) == "!ach" or string.lower(text) == "!achievement" ) then
 		net.Start("Open_Ach_Menu")
+			net.WriteTable(ply.hl2cPersistent)
 		net.Send(ply)
 		return ""
 	end
 	
-	
-	if (string.lower(text) == "!petsummon" or string.lower(text) == "!spawnpet" ) then
-		ply:ChatPrint("Pets aren't in this yet... beg for sponer to add them next")
+	if (string.lower(text) == "!petpanic" or string.lower(text) == "!panicpet") then
+		net.Start("PetPanic")
+		net.Send(ply)
 		return ""
 	end
+	
+	if (string.lower(text) == "!petsummon" or string.lower(text) == "!spawnpet" ) then
+		if tonumber(ply.hl2cPersistent.Level) >= 10 then
+			if not ply.petAlive then
+				spawnPet(ply)
+				ply:SetNWString("PetOwnerName", ply:Nick())
+			elseif ply.petAlive then
+				ply:ChatPrint("Your pet has already been summoned!")
+			end
+		else
+			ply:ChatPrint("You don't have access to pets")
+		end
+		return ""
+	end
+	
 	
 	if (string.lower(text) == "!diff" or string.lower(text) == "!difficulty" ) then
 		net.Start("Open_Diff_Menu")
+			net.WriteInt(GetConVar("hl2c_difficulty"):GetInt(), 8)
+			net.WriteInt(GetConVar("hl2c_survivalmode"):GetInt(), 8)
 		net.Send(ply)
+		return ""
+	end
+	
+	if (string.lower(text) == "!bringpet" or string.lower(text) == "!petbring") then
+		if ply.pet:IsValid() and not duelProgress then
+			if BringPet then
+				ply.pet:SetPos(ply:GetPos())
+				BringPet = false
+				timer.Create("BringCooldown", 7, 0, function()
+					BringPet = true
+				end)
+			else
+				ply:ChatPrint("You need to wait " .. math.Round(timer.TimeLeft("BringCooldown")) .. " seconds \nbefore bringing your pet again")
+			end
+		elseif duelProgress then
+			ply:ChatPrint("You can't bring your pet while in a duel!")
+		else
+			ply:ChatPrint("Your pet doesn't exist!")
+		end
+		return ""
+	end
+	if (string.lower(text) == "!removepet" or string.lower(text) == "!petremove") then
+		if ply.pet:IsValid() and not duelProgress then
+			if ply.pet:Health() == ply.pet:GetMaxHealth() then
+				ply.pet:Remove()
+				ply.petAlive = false
+				net.Start("ClosePets")
+				net.Send(ply)
+			else
+				ply:ChatPrint("Your pet needs to be at full health to be removed")
+			end
+		elseif duelProgress then
+			ply:ChatPrint("You can't remove your pet in a duel!")
+		else	
+			ply:ChatPrint("Your pet doesn't exist!")
+		end
+		return ""
+	end
+	
+	if (string.lower(text) == "!declineduel") then
+		if duel then
+			for k, v in pairs(player.GetAll()) do
+				if challengerName == v:Nick() then
+					v:ChatPrint(targetName .. " has declined your pet challenge")
+					duel = false
+				elseif targetName == v:Nick() then
+					v:ChatPrint("You have declined " .. challengerName .. "'s challenge")
+				end
+			end
+		else
+			ply:ChatPrint("Nobody has challenged you")
+		end
+		return ""
+	end
+	
+	if (string.lower(text) == "!acceptduel") then
+		if duel then
+			PetDuelBegin(ply, opposPly, ply.pet, opposPet, bet)
+			ply:ChatPrint("Duel accepted")
+			duel = false
+			duelProgress = true
+		else
+			ply:ChatPrint("You aren't being challenged")
+		end
+		return ""
+	end
+	
+	if (string.lower(text) == "!petduel" or string.lower(text) == "!duelpet") then
+		net.Start("PetDuel")
+			net.WriteEntity(ply.pet)
+		net.Send(ply)
+		return ""
+	end
+
+	if (string.lower(text) == "!pet") then
+			if tonumber(ply.hl2cPersistent.Level) >= 10 then
+				if game.GetMap() == "d1_trainstation_01" or game.GetMap() == "d1_trainstation_02" or game.GetMap() == "d1_trainstation_03" or  game.GetMap() == "d1_trainstation_04" or game.GetMap() == "d1_trainstation_05" then
+					ply:ChatPrint("Pets are disabled on this map")
+				else
+					net.Start("Open_Pet_Menu")
+					net.WriteInt(ply:GetNWInt("PetSkills"), 16)
+					net.Send(ply)
+				end
+			else
+				ply:ChatPrint("You need to be at a certain level\nto unlock pets")
+			end
 		return ""
 	end
 	
@@ -29,102 +138,50 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 		end)
 		return ""
 	end
-end)
-
-local difficulty = 1
-local survivalMode = false
-
-net.Receive("Diff_Change", function(len, ply)
-	
-	
-	local diffValue = net.ReadInt(16)
-	local startSurvival = false
-	local currentPlayers = #player.GetAll()
-	
-	local requiredVotes = currentPlayers / 0.95
-	local requiredVotesSurv = currentPlayers
-	local votes = net.ReadInt(16)
-	
-	if not diffValue then return end
-	
-	if diffValue == 1 and difficulty != 1 then
-		
-		for k, v in pairs(player.GetAll()) do
-			v:ChatPrint(ply:Nick() .. " has voted for 'Easy' difficulty: " .. votes .. "/" .. math.Round(requiredVotes, 0))
+	if (string.lower(text) == "!lobby") then
+		if game.GetMap() != "hl2c_lobby_remake" then
+			if not hasVotedLobby then
+				lobbyVotes = lobbyVotes + 1
+				hasVotedLobby = true
+				if lobbyVotes == neededVotes then
+					RunConsoleCommand("changelevel", "hl2c_lobby_remake")
+				end
+			else
+				ply:ChatPrint("You already voted to return to the lobby!")
+			end
+		else
+			ply:ChatPrint("You are currently in the lobby!")
 		end
-		
-	elseif diffValue == 2 and difficulty != 2 then
-		
-		for k, v in pairs(player.GetAll()) do
-			v:ChatPrint(ply:Nick() .. " has voted for 'Medium' difficulty: " .. votes .. "/" .. math.Round(requiredVotes, 0))
-		end
-		
-	elseif diffValue == 3 and difficulty != 3 then
-		
-		for k, v in pairs(player.GetAll()) do
-			v:ChatPrint(ply:Nick() .. " has voted for 'Hard' difficulty: " .. votes .. "/" .. math.Round(requiredVotes, 0))
-		end
-		
-	elseif diffValue == 4 and not survivalMode then
-		
-		for k, v in pairs(player.GetAll()) do
-			v:ChatPrint(ply:Nick() .. " has voted to enable 'Survival' difficulty: " .. votes .. "/" .. requiredVotesSurv)
-		end
-
-		if survVotes >= requiredVotesSurv then
-			startSurvival = true
-		end
-	elseif diffValue == 4 and survivalMode then
-		
-		for k, v in pairs(player.GetAll()) do
-			v:ChatPrint(ply:Nick() .. " has voted to disable 'Survival' difficulty: " .. votes .. "/" .. requiredVotesSurv)
-		end
-		
-		if survVotes >= requiredVotesSurv then
-			startSurvival = false
-		end
-	
-	elseif difficulty == diffValue then
-		ply:ChatPrint("You are currently playing on that difficulty!")
-		net.Start("RefreshVote")
-		net.Send(ply)
+	return ""
 	end
 	
-	if votes >= math.Round(requiredVotes, 0) and diffValue == 1 then
-		difficulty = 1
-		ply:ChatPrint("Difficulty has changed to 'Easy' difficulty")
-		
-		net.Start("RefreshVote")
-			net.WriteString("Easy")
-		net.Send(ply)
-		GetConVar("hl2c_difficulty"):SetInt(1)
-			
-	elseif votes >= math.Round(requiredVotes, 0) and diffValue == 2 then
-		difficulty = 2
-		ply:ChatPrint("Difficulty has changed to 'Medium' difficulty: " )
-		
-		net.Start("RefreshVote")
-			net.WriteString("Medium")
-		net.Send(ply)
-		GetConVar("hl2c_difficulty"):SetInt(2)
-		
-	elseif votes >= math.Round(requiredVotes, 0) and diffValue == 3 then		
-		difficulty = 3	
-		ply:ChatPrint("Difficulty has changed to 'Hard' difficulty")
-		
-		net.Start("RefreshVote")
-			net.WriteString("Hard")
-		net.Send(ply)
-		GetConVar("hl2c_difficulty"):SetInt(3)
-		
-	elseif votes >= math.Round(requiredVotesSurv, 0) and diffValue == 4 and not survivalMode then	
-		survivalMode = true
-		ply:ChatPrint("Survival mode has been enabled")
-		
-	elseif votes >= math.Round(requiredVotesSurv, 0) and diffValue == 4 and survivalMode then
-		survivalMode = false
-		ply:ChatPrint("Survival mode has been disabled")
-
+	if (string.lower(text) == "!seats") then
+		if ply:InVehicle() and not hasSeat then
+			ply.hasSeat = true
+			local vehicle = ply:GetVehicle()
+			local seat = ents.Create("prop_vehicle_prisoner_pod")
+			if vehicle == "prop_vehicle_jeep" then
+				seat:SetPos(vehicle:LocalToWorld( Vector( 21, -32, 18 ) ))
+				seat:SetModel("models/nova/jeep_seat.mdl")
+				seat:SetAngles(vehicle:LocalToWorldAngles(Angle(0,-3.5, 0) ))
+				seat:Spawn()
+				seat:SetOwner(nil)
+				seat:SetKeyValue("limitview", "1")
+				seat:SetMoveType( MOVETYPE_NONE )
+				seat:SetParent( vehicle, -1 );
+				seat:SetNoDraw( false )
+				vehicle:SetKeyValue("EnablePassengerSeat", 1)
+				ply.seat = seat
+				ply:ChatPrint("Passenger seat added")
+			elseif vehicle:GetVehicle() == "prop_vehicle_airboat" then
+				ply:ChatPrint("You can't have a passenger seat on an airboat!")
+			end
+		elseif ply.hasSeat then
+			ply:ChatPrint("You already have a passenger seat!")
+		else
+			ply:ChatPrint("You can't use this command while not in a vehicle!")
+		end
+	return ""
 	end
 end)
 
@@ -132,8 +189,18 @@ net.Receive("SetSuicide", function()
 	GetConVar("hl2c_allowsuicide"):SetInt(net.ReadInt(16))
 end)
 
+function AddCoins(ply, amount)
+	ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins + amount
+	ply:SetNWInt("Coins", math.Round(ply.hl2cPersistent.Coins))
+end
+
 net.Receive("AddCoins", function(len, ply, coin)
-	local coins = net.ReadInt(16)
-	ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins + coins
+	local coins = net.ReadInt(32)
+	AddCoins(ply, coins)
+end)
+
+net.Receive("SurvMode", function(len, ply, survInt)
+	local surv = net.ReadInt(8)
+	GetConVar("hl2c_survivalmode"):SetInt(surv)
 end)
 

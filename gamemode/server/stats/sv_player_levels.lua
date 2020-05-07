@@ -1,37 +1,53 @@
 function AddXP(ply, amt)
-	
 	ply.hl2cPersistent.XP = ply.hl2cPersistent.XP + amt 
-
-	if (ply.hl2cPersistent.XP >= tonumber(ply.hl2cPersistent.MaxXP)) then
-		ply.hl2cPersistent.MaxXP = (ply.hl2cPersistent.MaxXP / 1.5) * ply.hl2cPersistent.Level
+	ply:SetNWInt("XP", math.Round(ply.hl2cPersistent.XP))
+	
+	while tonumber(ply.hl2cPersistent.XP) >= tonumber(ply.hl2cPersistent.MaxXP) do
+		ply.hl2cPersistent.MaxXP = ply.hl2cPersistent.MaxXP + 250
 		math.ceil(ply.hl2cPersistent.MaxXP)
 		ply.hl2cPersistent.Level = ply.hl2cPersistent.Level + 1
-		ply.hl2cPersistent.XP = 0
+		ply.hl2cPersistent.XP = ply.hl2cPersistent.XP - ply.hl2cPersistent.MaxXP
 		ply:SetNWInt("Level", ply.hl2cPersistent.Level)
-		print(ply.hl2cPersistent.Level)
+		ply:SetNWInt("XP", math.Round(ply.hl2cPersistent.XP))
+		ply:SetNWInt("maxXP", math.Round(ply.hl2cPersistent.MaxXP))
 		net.Start("PlaySoundLevelUp")
+			net.WriteInt(ply.hl2cPersistent.Level, 16)
 		net.Send(ply)
-		for k, v in pairs(player.GetAll()) do
-			v:ChatPrint(ply:Nick() .. " has leveled up to " .. ply.hl2cPersistent.Level)
+
+		if tonumber(ply.hl2cPersistent.Level) >= tonumber(ply.hl2cPersistent.Milestone) then
+			local newHP = ply:GetMaxHealth() + 5
+			ply:SetMaxHealth(newHP)
+			ply:SetHealth(newHP)
+			ply.hl2cPersistent.Milestone = ply.hl2cPersistent.Milestone + 5
+			ply:ChatPrint("Your body becomes more bearable to pain, Max Health Increased!")
 		end
+		
 		if ply.hl2cPersistent.Level == 5 then
-			ply:ChatPrint("Your help to the resistance has granted you rebellion suits!")
+			net.Start("NewSuit")
+				net.WriteInt(ply.hl2cPersistent.Level, 16)
+			net.Send(ply)
 		elseif ply.hl2cPersistent.Level == 15 then
-			ply:ChatPrint("Your help to the resistance has granted you medic suits!")
+			net.Start("NewSuit")
+				net.WriteInt(ply.hl2cPersistent.Level, 16)
+			net.Send(ply)
 		elseif ply.hl2cPersistent.Level == 25 then
-			ply:ChatPrint("You have submitted to the combine, they grant you a Civil Protection Suit!")
+			net.Start("NewSuit")
+				net.WriteInt(ply.hl2cPersistent.Level, 16)
+			net.Send(ply)
 		elseif ply.hl2cPersistent.Level == 40 then
-			ply:ChatPrint("Your loyalty has been very appreciated by the combine, they grant you a soldier Suit!")
+			net.Start("NewSuit")
+				net.WriteInt(ply.hl2cPersistent.Level, 16)
+			net.Send(ply)
 		elseif ply.hl2cPersistent.Level == 60 then
-			ply:ChatPrint("Your great loyalty has been very appreciated by the combine, they grant you an elite Suit!")
-		elseif ply.hl2cPersistent.Level == 100 then
-			ply:ChatPrint("You resign and flee from the combine, upon doing so you have discovered an old HEV suit")
+			net.Start("NewSuit")
+				net.WriteInt(ply.hl2cPersistent.Level, 16)
+			net.Send(ply)
+		elseif ply.hl2cPersistent.Level == 90 then
+			net.Start("NewSuit")
+				net.WriteInt(ply.hl2cPersistent.Level, 16)
+			net.Send(ply)
 		end
 	end
-end
-
-function GetLevel(ply)
-	return ply.hl2cPersistent.Level
 end
 
 net.Receive("GiveXP", function(len, ply)
@@ -44,4 +60,10 @@ net.Receive("SetLevel", function(len, ply)
 	ply.hl2cPersistent.Level = level
 	ply.hl2cPersistent.XP = 0
 	ply:SetNWInt("Level", ply.hl2cPersistent.Level)
+end)
+
+net.Receive("SetMaxXP", function(len, ply)
+	local maxXP = net.ReadInt(16)
+	ply.hl2cPersistent.MaxXP = maxXP
+	ply:SetNWInt("maxXP", math.Round(ply.hl2cPersistent.MaxXP))
 end)

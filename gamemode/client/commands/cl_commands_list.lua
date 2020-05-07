@@ -36,6 +36,21 @@ concommand.Add("hl2c_allowsuicide", function(ply, cmd, args)
 	end
 end)
 
+concommand.Add("hl2c_setmaxxp", function(ply, cmd, args)
+	local maxXP = tonumber(args[1])
+	if ply:IsAdmin() then
+		if maxXP then
+			net.Start("SetMaxXP")
+				net.WriteInt(maxXP, 16)
+			net.SendToServer(ply)
+		else
+			print("Invalid Value")
+		end
+	else
+		print("You do not have access to this command")
+	end
+end)
+
 concommand.Add("hl2c_setlevel", function(ply, cmd, args)
 	local level = tonumber(args[1])
 	if ply:IsAdmin() then
@@ -56,12 +71,66 @@ concommand.Add("hl2c_addcoins", function(ply, cmd, args)
 	if ply:IsAdmin() then
 		if coins then
 			net.Start("AddCoins")
-				net.WriteInt(coins, 16)
+				net.WriteInt(coins, 32)
 			net.SendToServer(ply)
 		else
 			print("Invalid Value")
 		end
 	else
 		print("You do not have access to this command")
+	end
+end)
+
+concommand.Add("hl2c_difficulty", function(ply, cmd, args)
+	local diff = tonumber(args[1])
+	if ply:IsAdmin() then
+		if diff >= 1 and diff <= 3 then
+			net.Start("DiffMode")
+				net.WriteInt(diff, 8)
+			net.SendToServer()
+		else
+			print("Invalid Value")
+		end
+	else
+		print("You do not have access to this command")
+	end
+end)
+
+concommand.Add("hl2c_survival", function(ply, cmd, args)
+	local surv = tonumber(args[1])
+	if ply:IsAdmin() then
+		if surv == 0 or surv == 1 then
+			net.Start("SurvMode")
+				net.WriteInt(surv, 16)
+			net.SendToServer()
+		else
+			print("Invalid Value")
+		end
+	else
+		print("You do not have access to this command")
+	end
+end)
+
+concommand.Add("hl2c_setpetxp", function(ply, cmd, args)
+	local value = tonumber(args[1])
+	if ply:IsAdmin() then
+		if value > 0 and value < 1000 then
+			ply:SetNWInt("petsXP", value)
+		else
+			print("Invalid Value")
+		end
+	else
+		print("You do not have access to this command")
+	end
+end)
+
+concommand.Add("hl2c_petsummon", function(ply, cmd, args)
+	local level = ply:GetNWInt("Level")
+	local petEnt = ply:GetNWEntity("PetEntity")
+	if tonumber(level) >= 10 then
+		net.Start("SpawnPetConCommand")
+		net.SendToServer(ply)
+	elseif tonumber(level) < 10 then
+		LocalPlayer():ChatPrint("You don't have access to pets")
 	end
 end)

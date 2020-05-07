@@ -17,8 +17,19 @@ surface.CreateFont("Scoreboard_Board_font", {
 
 surface.CreateFont("Scoreboard_Stats_font", {
 	font = "Arial",
-	size = 18,
+	size = 24,
 })
+
+surface.CreateFont("Scoreboard_Stats_4K_XP_font", {
+	font = "Arial",
+	size = 36,
+})
+
+surface.CreateFont("Scoreboard_Stats_XP_font", {
+	font = "Arial",
+	size = 26,
+})
+
 
 
 function ToggleBoard(toggle)
@@ -88,7 +99,8 @@ function ToggleBoard(toggle)
 			local playerName = v:Nick()
 			local playerPing = v:Ping()
 			local playerLevel = v:GetNWInt("Level", 1)
-			local playerXP = v:GetNWInt("XP", 0)
+			local playerXP = LocalPlayer():GetNWInt("XP", 0)
+			local playerMaxXP = LocalPlayer():GetNWInt("MaxXP", 500)
 			local playerTeam = v:Team()
 			
 			local playerNamePanel = vgui.Create("DPanel", Board)
@@ -143,15 +155,21 @@ function ToggleBoard(toggle)
 			
 			yPos = yPos + playerStatusPanel:GetTall() * 1.2
 			
-			--local getXPFraction = playerXP / 1000 
-			
-			--local boardProgress = vgui.Create("DProgress", Board)
-			--boardProgress:SetPos(Board:GetWide() / 2 - 750, Board:GetTall() / 2 + 515)
-			--boardProgress:SetSize(1500, 50)
-			--boardProgress:SetFraction(getXPFraction)
-			
-	
-		end
+			local playerXPLabel = vgui.Create("DLabel", Board)
+				playerXPLabel:SetText("XP: " .. playerXP .. " / " .. playerMaxXP)
+				playerXPLabel:SetSize(185, 25)
+				if IsValid(v) then
+					if ScrW() == 3840 and ScrH() == 2160 then
+						playerXPLabel:SetPos(Board:GetWide() / 2 - 100, Board:GetTall() / 2 + 490)
+						playerXPLabel:SetFont("Scoreboard_Stats_4K_XP_font")
+					else
+						playerXPLabel:SetPos(Board:GetWide() / 2 - 100, Board:GetTall() / 4 + 390)
+						playerXPLabel:SetFont("Scoreboard_Stats_XP_font")
+					end
+					playerXPLabel:SizeToContents()
+				end
+			end
+		
 		
 	else
 		Board:SetVisible(false)

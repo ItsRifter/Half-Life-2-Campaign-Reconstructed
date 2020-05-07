@@ -1,9 +1,19 @@
 surface.CreateFont("Intro_Tab1_Title_Font", {
-	font = "Arial",
+	font = "Trebuchet24",
 	size = 36,
 })
 
 surface.CreateFont("Intro_Tab1_Font", {
+	font = "Arial",
+	size = 28,
+})
+
+surface.CreateFont("Intro_Tab2_Title_Font", {
+	font = "Trebuchet24",
+	size = 38,
+})
+
+surface.CreateFont("Intro_Tab2_Font", {
 	font = "Arial",
 	size = 28,
 })
@@ -62,11 +72,19 @@ function LobbyMenu()
 		draw.RoundedBox(0,0,0, w, h, Color(170, 170, 170, 255))
 	end
 	
-	local LabelTabTwo = vgui.Create( "DLabel", PanelTabTwo )
-	LabelTabTwo:SetPos(150, 200)
-	LabelTabTwo:SetText("Half-Life 2: Campaign - Revisited is a cooperative gamemode based from Leiftigers gamemode but with modern updates")
-	LabelTabTwo:SizeToContents()
-	LabelTabTwo:SetDark( 1 )
+	local LabelTabTwoTitle = vgui.Create( "DLabel", PanelTabTwo )
+	LabelTabTwoTitle:SetPos(15, 75)
+	LabelTabTwoTitle:SetFont("Intro_Tab2_Title_Font")
+	LabelTabTwoTitle:SetText("Half-Life 2: Campaign - Revisited is a cooperative gamemode\nbased from Leiftigers gamemode but with modern updates")
+	LabelTabTwoTitle:SizeToContents()
+	LabelTabTwoTitle:SetDark(1)
+	
+	LabelTabTwoDesc = vgui.Create( "DLabel", PanelTabTwo )
+	LabelTabTwoDesc:SetPos(25, 250)
+	LabelTabTwoDesc:SetFont("Intro_Tab2_Font")
+	LabelTabTwoDesc:SetText("With this version, you can earn not only XP but also\nLambda Coins\narmour sets\nPets\nUpgrades\nAnd soo much more")
+	LabelTabTwoDesc:SizeToContents()
+	LabelTabTwoDesc:SetDark(1)
 	
 	TabSheet:AddSheet("What is this?", PanelTabTwo, nil)
 	
@@ -84,7 +102,6 @@ function LobbyMenu()
 	startButton:SetPos(350, 850)
 	startButton:SetText("Begin")
 	startButton.DoClick = function() 
-		
 		net.Start("Achievement")
 			net.WriteString("First_Time")
 			net.WriteString("Lobby_Ach_List")
