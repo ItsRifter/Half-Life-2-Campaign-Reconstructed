@@ -121,6 +121,18 @@ net.Receive("PetChallenge", function(len, ply)
 		return
 	end
 
+	-- Remove old duels, or stop if an active one is found
+	for k, duel in ipairs(duelRegistry) do
+		if (duel.challenger == ply or duel.challenger == ply) and (duel.challengee == challengee or duel.challengee == challengee) then
+			if duel.accepted then
+				ply:ChatPrint(string.format("There is already an active duel with %s", duel.challengee))
+				return
+			else
+				table.remove(duelRegistry, k)
+			end
+		end
+	end
+
 	local duel = {
 		challenger = ply,
 		challengee = challengee,

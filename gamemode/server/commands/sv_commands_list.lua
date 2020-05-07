@@ -118,6 +118,8 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 		AddCoins(duelUnaccepted.challenger, -duel.bet)
 		AddCoins(duelUnaccepted.challengee, -duel.bet)
 
+		duelUnaccepted.accepted = true
+
 		PetDuelBegin(duelUnaccepted.challenger, duelUnaccepted.challengee, bet)
 		return ""
 	end
