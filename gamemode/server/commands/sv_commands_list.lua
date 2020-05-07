@@ -39,68 +39,90 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 		net.Send(ply)
 		return ""
 	end
+
+	-- Find duel, if one is returned, ply is part of a running duel
+	local duel = GetDuelAccepted(ply)
 	
 	if (string.lower(text) == "!bringpet" or string.lower(text) == "!petbring") then
-		if ply.pet:IsValid() and not duelProgress then
-			if BringPet then
-				ply.pet:SetPos(ply:GetPos())
-				BringPet = false
-				timer.Create("BringCooldown", 7, 0, function()
-					BringPet = true
-				end)
-			else
-				ply:ChatPrint("You need to wait " .. math.Round(timer.TimeLeft("BringCooldown")) .. " seconds \nbefore bringing your pet again")
-			end
-		elseif duelProgress then
-			ply:ChatPrint("You can't bring your pet while in a duel!")
-		else
+		if not ply.pet:IsValid() then
 			ply:ChatPrint("Your pet doesn't exist!")
+			return ""
+		end
+		if duel then
+			ply:ChatPrint("You can't bring your pet while in a duel!")
+			return ""
+		end
+		
+		if BringPet then -- This is a global variable shared between all players, i doubt it does what it is supposed to do!
+			ply.pet:SetPos(ply:GetPos())
+			BringPet = false
+			timer.Create("BringCooldown", 7, 0, function()
+				BringPet = true
+			end)
+		else
+			ply:ChatPrint("You need to wait " .. math.Round(timer.TimeLeft("BringCooldown")) .. " seconds \nbefore bringing your pet again")
 		end
 		return ""
 	end
 	if (string.lower(text) == "!removepet" or string.lower(text) == "!petremove") then
-		if ply.pet:IsValid() and not duelProgress then
-			if ply.pet:Health() == ply.pet:GetMaxHealth() then
-				ply.pet:Remove()
-				ply.petAlive = false
-				net.Start("ClosePets")
-				net.Send(ply)
-			else
-				ply:ChatPrint("Your pet needs to be at full health to be removed")
-			end
-		elseif duelProgress then
-			ply:ChatPrint("You can't remove your pet in a duel!")
-		else	
+		if not ply.pet:IsValid() then
 			ply:ChatPrint("Your pet doesn't exist!")
+			return ""
+		end
+		if duel then
+			ply:ChatPrint("You can't remove your pet in a duel!")
+			return ""
+		end
+
+		if ply.pet:Health() == ply.pet:GetMaxHealth() then
+			ply.pet:Remove()
+			ply.petAlive = false
+			net.Start("ClosePets")
+			net.Send(ply)
+		else
+			ply:ChatPrint("Your pet needs to be at full health to be removed")
 		end
 		return ""
 	end
 	
 	if (string.lower(text) == "!declineduel") then
 		if duel then
-			for k, v in pairs(player.GetAll()) do
-				if challengerName == v:Nick() then
-					v:ChatPrint(targetName .. " has declined your pet challenge")
-					duel = false
-				elseif targetName == v:Nick() then
-					v:ChatPrint("You have declined " .. challengerName .. "'s challenge")
-				end
-			end
-		else
-			ply:ChatPrint("Nobody has challenged you")
+			ply:ChatPrint("You are already in a duel with %s!", duel.challenger)
+			return ""
 		end
+		-- Get unaccepted duel
+		local duelUnaccepted = GetDuelByChallengee(ply, false)
+		if not duelUnaccepted then
+			ply:ChatPrint("Nobody has challenged you")
+			return ""
+		end
+
+		duelUnaccepted.challenger:ChatPrint(string.format("%s has declined your pet challenge", duelUnaccepted.challengee:Nick()))
+		duelUnaccepted.challengee:ChatPrint(string.format("You have declined %s's challenge", duelUnaccepted.challenger:Nick()))
+		RemoveDuel(duelUnaccepted.challenger, duelUnaccepted.challengee)
 		return ""
 	end
-	
+
 	if (string.lower(text) == "!acceptduel") then
 		if duel then
-			PetDuelBegin(ply, opposPly, ply.pet, opposPet, bet)
-			ply:ChatPrint("Duel accepted")
-			duel = false
-			duelProgress = true
-		else
-			ply:ChatPrint("You aren't being challenged")
+			ply:ChatPrint("You are already in a duel with %s!", duel.challenger)
+			return ""
 		end
+		-- Get unaccepted duel
+		local duelUnaccepted = GetDuelByChallengee(ply, false)
+		if not duelUnaccepted then
+			ply:ChatPrint("Nobody has challenged you")
+			return ""
+		end
+
+		duelUnaccepted.challenger:ChatPrint(string.format("%s has accepted your duel", duelUnaccepted.challengee:Nick()))
+		duelUnaccepted.challengee:ChatPrint(string.format("You have declined %s's challenge", duelUnaccepted.challenger:Nick()))
+
+		-- TODO: Check if both players have enough money to bet
+		AddCoins(duelUnaccepted.challenger, -duel.bet)
+		AddCoins(duelUnaccepted.challengee, -duel.bet)
+
+		PetDuelBegin(duelUnaccepted.challenger, duelUnaccepted.challengee, bet)
 		return ""
 	end
 	

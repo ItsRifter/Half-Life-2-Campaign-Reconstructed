@@ -113,7 +113,6 @@ function GM:Initialize(ply)
 	startingWeapons = {}
 	airboatSpawnable = false
 	airboatGunSpawnable = false
-	duel = false
 end
 
 function GM:ShowHelp(ply)

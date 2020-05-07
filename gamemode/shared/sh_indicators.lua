@@ -4,22 +4,19 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 	local bonusXP = 0
 	local bonusCoins = 0
 	local givePetXP = 0
-	
-	if duelProgress then
-		if npc:IsPet() and opposPet:IsValid() then
-			AddCoins(npc.owner, -bet)
-			AddCoins(opposPly, bet * 2)
-			for k, v in pairs(player.GetAll()) do
-				v:ChatPrint(opposPly:Nick() .. " won the pet battle against " .. npc.owner:Nick())
+
+	if npc:IsPet() and attacker:IsPet() then
+		local npcOwner = npc.owner
+		local attackerOwner = attacker.owner
+		if npcOwner:IsValid() and attackerOwner:IsValid() then
+			local duel = GetDuelAccepted(npcOwner)
+			if duel then
+				AddCoins(attackerOwner, duel.bet * 2)
+				for k, v in pairs(player.GetAll()) do
+					v:ChatPrint(string.format("%s won the pet battle against %s", attackerOwner:Nick(), npcOwner:Nick()))
+				end
+				RemoveDuel(duel.challenger, duel.challengee)
 			end
-			duelProgress = false
-		elseif not opposPet:IsValid() then
-			AddCoins(npc.owner, bet * 2)
-			AddCoins(opposPly, -bet)
-			for k, v in pairs(player.GetAll()) do
-				v:ChatPrint(attacker.owner:Nick().. " won the pet battle against " .. npc.owner:Nick())
-			end
-			duelProgress = false
 		end
 	end
 	

@@ -94,37 +94,88 @@ function spawnPet(ply, pos)
 	end
 end
 
-targetName = ""
-challengerName = ""
-opposPet = nil
-opposPly = nil
-bet = 0
-duelProgress = false
+-- Registry of all duels, accepted or not
+duelRegistry = {}
 
 net.Receive("PetChallenge", function(len, ply)
-	targetName = net.ReadString()
-	challengerName = net.ReadString()
-	bet = net.ReadInt(32)
-	opposPet = net.ReadEntity()
-	opposPly = net.ReadEntity()
-	print(targetName)
-	print(challengerName)
+	local challengeeName = net.ReadString()
+	local bet = net.ReadInt(32)
+
+	local challengee
 	for k, v in pairs(player.GetAll()) do
-		if v:Nick() == targetName then
-			v:ChatPrint(challengerName .. " has challenged you for " .. math.Round(bet) .. " Lambda Coins")
-			v:ChatPrint("!acceptduel or !declineduel")
-		elseif v:Nick() != targetName or v:Nick() != challengerName then
-			ply:ChatPrint(challengerName .. " has challenged " .. targetName .. " for " .. bet .. " Lambda Coins" )
+		if v:Nick() == challengeeName then
+			challengee = v
+			break
 		end
 	end
-	duel = true
-	
+
+	-- Check if challengee exists
+	if not challengee.IsValid() then
+		ply:ChatPrint(string.format("%s not found, they must have left the game", challengeeName))
+		return
+	end
+
+	-- Check for negative
+	if bet < 0 then
+		ply:ChatPrint(string.format("LUL, don't do that please"))
+		return
+	end
+
+	local duel = {
+		challenger = ply,
+		challengee = challengee,
+		bet = bet,
+		accepted = false, -- If set to true, the bet is removed from the players
+	}
+
+	-- Add duel to registry
+	table.insert(duelRegistry, duel)
+
+	-- Ask challengee to accept or decline
+	duel.challengee:ChatPrint(string.format("%s has challenged you for %s Labda Coins", duel.challenger:Nick(), math.Round(duel.bet)))
+	duel.challengee:ChatPrint(string.format("!acceptduel or !declineduel"))
+
+	for k, v in pairs(player.GetAll()) do
+		if v ~= duel.challenger or v ~= duel.challengee then
+			ply:ChatPrint(string.format("%s has challenged %s for %s Labda Coins", duel.challenger:Nick(), duel.challengee:Nick(), math.Round(duel.bet)))
+		end
+	end
 end)
 
-function PetDuelBegin(ply1, ply2, pet1, pet2, bet)
-	if pet1:IsValid() and pet2:IsValid() and pet1:IsPet() and pet2:IsPet() then
-		pet1:AddEntityRelationship(pet2, D_HT, 99)
-		pet2:AddEntityRelationship(pet1, D_HT, 99)
+-- Searches the registry and returns a duel with the given challengee.
+function GetDuelByChallengee(ply, acceptedState)
+	for k, duel in ipairs(duelRegistry) do
+		if ply == duel.challengee and acceptedState == duel.accepted then
+			return duel
+		end
+	end
+end
+
+-- Searches the registry and returns a duel, if found.
+-- Only accepted. If this returns a duel, players are in a duel.
+function GetDuelAccepted(ply)
+	for k, duel in ipairs(duelRegistry) do
+		if (ply == duel.challengee or ply == duel.challenger) and duel.accepted then
+			return duel
+		end
+	end
+end
+
+-- Removes the entry from the registry, and returns it
+function RemoveDuel(challenger, challengee)
+	for k, duel in ipairs(duelRegistry) do
+		if duel.challenger == challenger and duel.challengee == challengee then
+			return table.remove(duelRegistry, k)
+		end
+	end
+end
+
+function PetDuelBegin(ply1, ply2, bet)
+	local ply1Pet = ply1.pet
+	local ply2Pet = ply2.pet
+	if ply1Pet:IsValid() and ply2Pet:IsValid() and ply1Pet:IsPet() and ply2Pet:IsPet() then
+		ply1Pet:AddEntityRelationship(ply2Pet, D_HT, 99)
+		ply2Pet:AddEntityRelationship(ply1Pet, D_HT, 99)
 	end
 end
 

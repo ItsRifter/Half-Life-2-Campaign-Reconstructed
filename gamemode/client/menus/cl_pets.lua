@@ -87,10 +87,10 @@ function petDuelMenu(enemyPet)
 			else
 				net.Start("PetChallenge")
 					net.WriteString(target)
-					net.WriteString(tostring(LocalPlayer():Nick()))
+					--net.WriteString(tostring(LocalPlayer():Nick()))
 					net.WriteInt(betAmt, 32)
-					net.WriteEntity(enemyPet)
-					net.WriteEntity(LocalPlayer())
+					--net.WriteEntity(enemyPet)
+					--net.WriteEntity(LocalPlayer())
 					print(enemyPet)
 				net.SendToServer()
 			
