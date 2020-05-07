@@ -86,10 +86,6 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 	end
 	
 	if (string.lower(text) == "!declineduel") then
-		if duel then
-			ply:ChatPrint("You are already in a duel with %s!", duel.challenger)
-			return ""
-		end
 		-- Get unaccepted duel
 		local duelUnaccepted = GetDuelByChallengee(ply, false)
 		if not duelUnaccepted then
@@ -116,7 +112,7 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 		end
 
 		duelUnaccepted.challenger:ChatPrint(string.format("%s has accepted your duel", duelUnaccepted.challengee:Nick()))
-		duelUnaccepted.challengee:ChatPrint(string.format("You have declined %s's challenge", duelUnaccepted.challenger:Nick()))
+		duelUnaccepted.challengee:ChatPrint(string.format("You have accepted %s's challenge", duelUnaccepted.challenger:Nick()))
 
 		-- TODO: Check if both players have enough money to bet
 		AddCoins(duelUnaccepted.challenger, -duel.bet)
