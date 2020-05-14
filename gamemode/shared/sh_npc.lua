@@ -24,7 +24,6 @@ hook.Add("EntityTakeDamage", "DisableExplosiveDMG", function(ent, dmgInfo)
 			net.WriteInt(-dmg, 32)
 		net.Send(ent.owner)
 	end
-
 	
 	if attacker:IsPet() then
 		ent:AddEntityRelationship(attacker, D_HT, 15)
@@ -49,18 +48,11 @@ hook.Add("ScaleNPCDamage", "DiffScaling", function(npc, hitGroup, dmgInfo)
 		dmgInfo:SetDamage(0)
 		return
 	else
-		dmgInfo:SetDamage(dmg)
-	end
-	
-	if hitGroup == HITGROUP_HEAD then
-		hitGroupScale = 2
-	else
-		hitGroupScale = 1
+		dmgInfo:ScaleDamage(1.65 / GetConVar("hl2c_difficulty"):GetInt())
 	end
 	
 	--if npc:GetClass() == "npc_combinegunship" then
 	--	attacker.sharedXP = attacker.sharedXP + dmg * GetConVar("hl2c_difficulty"):GetInt()
 	--end
 	
-	dmgInfo:ScaleDamage(hitGroupScale / GetConVar("hl2c_difficulty"):GetInt())
 end)

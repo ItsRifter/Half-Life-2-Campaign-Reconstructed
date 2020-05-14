@@ -231,14 +231,14 @@ end)
 net.Receive("DisplayRewards", function()
 	local xp = net.ReadInt(32)
 	local coins = net.ReadInt(32)
-	chat.AddText("BONUS FOR NOT DYING ONCE")
+	chat.AddText(Color(235, 150, 50),"BONUS FOR NOT DYING ONCE")
 	chat.AddText(Color(0, 150, 255), "XP: ", tostring(xp))
 	chat.AddText(Color(255, 150, 0), "Coins: λ", tostring(coins))
 	
 end)
 
 net.Receive("PlaySoundLevelUp", function()
-	local levels = net.ReadInt(16)
+	local levels = net.ReadInt(32)
 	if not timer.Exists("EarRapeRemover") then
 		surface.PlaySound("hl1/fvox/bell.wav")
 		timer.Simple(0.7, function()
@@ -248,27 +248,43 @@ net.Receive("PlaySoundLevelUp", function()
 	timer.Create("EarRapeRemover", 2, 0, function()
 		timer.Remove("EarRapeRemover")
 	end)
+	
 	chat.AddText(Color(255, 230, 0), "You are now at level ", tostring(levels))
-	if levels == 10 then
-		chat.AddText(Color(255, 190, 0), "You have unlocked pets, type !pet")
-	end
-end)
-
-net.Receive("NewSuit", function()
-	local level = net.ReadInt(16)
-
-	if level == 5 then
+	if levels == 5 then
+		chat.AddText(Color(235, 195, 50), "Your body becomes more bearable to pain: ", Color(235, 50, 50), "Max Health Increased!")
 		chat.AddText(Color(255, 230, 0), "You've been hired by the resistance, they grant you ", Color(132, 255, 0), "rebellion suits!")
-	elseif level == 15 then
+	elseif levels == 10 then
+		chat.AddText(Color(255, 190, 0), "You have unlocked pets, type !pet")
+		chat.AddText(Color(235, 195, 50), "Your body becomes more bearable to pain: ", Color(235, 50, 50), "Max Health Increased!")
+	elseif levels == 15 then
+		chat.AddText(Color(235, 195, 50), "Your body becomes more bearable to pain: ", Color(235, 50, 50), "Max Health Increased!")
 		chat.AddText(Color(255, 230, 0), "Your help to the resistance has granted you ", Color(255, 0, 0), "medic suits!")
-	elseif level == 25 then
+	elseif levels == 20 then
+		chat.AddText(Color(235, 195, 50), "Your body becomes more bearable to pain: ", Color(235, 50, 50), "Max Health Increased!")
 		chat.AddText(Color(255, 230, 0), "You found a ", Color(0, 106, 255), "Civil Protection Suit", Color(255, 230, 0), ", luckily it's unbonded")
-	elseif level == 40 then
-		chat.AddText(Color(255, 230, 0), "You found a ", Color(60, 140, 255), "Combine Soldier Suit", Color(255, 230, 0), ", thankfully it won't hurt to put it on")
-	elseif level == 60 then
-		chat.AddText(Color(255, 230, 0), "You found a ", Color(230, 230, 230), "Combine Elite Solder Suit", Color(255, 230, 0), ", yet again it's unbonded")
-	elseif level == 90 then
+	elseif levels == 25 then
+		chat.AddText(Color(235, 195, 50), "Your body becomes more bearable to pain: ", Color(235, 50, 50), "Max Health Increased!")
+	elseif levels == 30 then
+		chat.AddText(Color(235, 195, 50), "Your body becomes more bearable to pain: ", Color(235, 50, 50), "Max Health Increased!")
+	elseif levels == 35 then
+		chat.AddText(Color(235, 195, 50), "Your body becomes more bearable to pain: ", Color(235, 50, 50), "Max Health Increased!")
+		chat.AddText(Color(255, 230, 0), "You found a ", Color(60, 140, 255), "Combine Grunt Suit", Color(255, 230, 0), ", thankfully it won't hurt to put it on")
+	elseif levels == 35 then
+		chat.AddText(Color(235, 195, 50), "Your body becomes more bearable to pain: ", Color(235, 50, 50), "Max Health Increased!")
+	elseif levels == 40 then
+		chat.AddText(Color(235, 195, 50), "Your body becomes more bearable to pain: ", Color(235, 50, 50), "Max Health Increased!")
+	elseif levels == 45 then
+		chat.AddText(Color(235, 195, 50), "Your body becomes more bearable to pain: ", Color(235, 50, 50), "Max Health Increased!")
+	elseif levels == 50 then
+		chat.AddText(Color(235, 195, 50), "Your body becomes more bearable to pain: ", Color(235, 50, 50), "Max Health Increased!")
+		chat.AddText(Color(255, 230, 0), "You found a ", Color(60, 140, 255), "Combine Heavy Grunt Suit", Color(255, 230, 0), ", thankfully it won't hurt to put it on")
+	elseif levels == 65 then
+		chat.AddText(Color(255, 230, 0), "You found a ", Color(230, 230, 230), "Combine Suppressor Suit", Color(255, 230, 0), ", yet again it's unbonded")	
+	elseif levels == 80 then
+		chat.AddText(Color(255, 230, 0), "You found a ", Color(230, 230, 230), "Combine Captain Suit", Color(255, 230, 0), ", yet again it's unbonded")
+	elseif levels == 100 then
 		chat.AddText(Color(255, 230, 0), "Dr.Kleiner has offered you the ", Color(255, 160, 0), "Mark 5 H.E.V Suit ", Color(255, 230, 0), "for your fantastic support to the resistance!")
+		
 	end
 end)
 local kickAmount = 0
@@ -283,7 +299,12 @@ net.Receive("WarningPetKill", function(len, ply)
 	chat.AddText(Color(255, 0, 0), "DON'T KILL OTHER PLAYERS PETS")
 end)
 
-surface.CreateFont("Pet_Font", {
+surface.CreateFont("Pet_Font_User", {
+	font = "Arial",
+	size = 26,
+})
+
+surface.CreateFont("Pet_Font_Name", {
 	font = "Arial",
 	size = 32,
 })
@@ -307,7 +328,8 @@ hook.Add("HUDPaint", "HUDPaint_DrawPetName", function()
 			pos.z = pos.z + 15 + (dist * 0.0325)
 			local ScrPos = pos:ToScreen()
 			if ent:GetOwner() and LocalPlayer():GetPos():Distance(ent:GetPos()) <= 1000 then
-				draw.SimpleText(tostring(ent:GetOwner():Nick()) .. "'s Pet", "Pet_Font", ScrPos.x, ScrPos.y, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+				draw.SimpleText(ent:GetOwner():Nick() .. "'s Pet", "Pet_Font_User", ScrPos.x, ScrPos.y + 35, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+				draw.SimpleText(ent:GetOwner():GetNWString("PetName"), "Pet_Font_Name", ScrPos.x, ScrPos.y, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 			end
 		end
 	end

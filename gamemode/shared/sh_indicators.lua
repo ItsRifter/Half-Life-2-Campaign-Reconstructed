@@ -1,6 +1,6 @@
 hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
-	local giveXP
-	local giveCoins
+	local giveXP = 0
+	local giveCoins = 0
 	local bonusXP = 0
 	local bonusCoins = 0
 	local givePetXP = 0
@@ -27,8 +27,8 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 	
 	--Stop players from getting easy XP/Coins from birds
 	if npc:GetClass() != "npc_crow" and npc:GetClass() != "npc_pigeon" and npc:GetClass() != "npc_seagull" then
-		giveXP = math.Rand(1 + bonusXP, (35 + bonusXP) * GetConVar("hl2c_difficulty"):GetInt())
-		giveCoins = math.Rand(1 + bonusCoins, (20 + bonusCoins) * GetConVar("hl2c_difficulty"):GetInt())
+		giveXP = math.Rand(1 + bonusXP, (25 + bonusXP) * GetConVar("hl2c_difficulty"):GetInt())
+		giveCoins = math.Rand(1 + bonusCoins, (15 + bonusCoins) * GetConVar("hl2c_difficulty"):GetInt())
 	else
 		giveXP = 0
 		giveCoins = 0

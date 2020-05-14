@@ -25,7 +25,7 @@ HL2_Ach_List_Desc = {
 	[1] = "Bring the doll from \nthe playground to Dr.Kleiner",
 	[2] = "Acquire the crowbar",
 	[3] = "Acquire the gravity gun",
-	[4] = "Carry dog's ball through Ravenholm \n(Don't worry about water)",
+	[4] = "Carry DOG's ball \nthrough Ravenholm",
 	[5] = "Cross the antlion beach in d2_coast_11 without touching the sand",
 }
 
@@ -39,14 +39,17 @@ HL2_Ach_List_Mat = {
 
 Misc_Ach_List_Name = {
 	[1] = "A Predictable Failure",
+	[2] = "Blast that little...",
 }
 
 Misc_Ach_List_Desc = {
 	[1] = "Fail a map on survival with 4 or more players",
+	[2] = "Complete the Zombie evolution tree",
 }
 
 Misc_Ach_List_Mat = {
 	[1] = "vgui/achievements/hl2_find_allgmen.png",
+	[2] = "vgui/achievements/hl2_beat_toxictunnel.png",
 }
 
 function AchievementMenu(ply)
@@ -159,8 +162,60 @@ function AchievementMenu(ply)
 			achHL2Icon:SetImage("vgui/hud/icon_locked")
 		end
 	end
-		
+	
 	TabAchSheet:AddSheet("Half-Life 2", PanelHL2Ach, nil)
+	
+	local PanelMiscAch = vgui.Create( "DPanel", achFrame )
+	PanelMiscAch:SetSize(800, 850)
+	PanelMiscAch:SetPos(0, 400)
+	PanelMiscAch.Paint = function(s, w, h)
+		draw.RoundedBox(0,0,0, w, h, Color(170, 170, 170, 255))
+	end
+		
+	
+	local ScrollMiscAch = vgui.Create("DScrollPanel", PanelMiscAch)
+	ScrollMiscAch:Dock(FILL)
+	
+	for i = 1, 2 do
+	
+		local xPos = 240 * i
+		local yPos = 45
+		if xPos >= 960 then
+			xPos = xPos - 720 
+			yPos = 135
+		end
+		
+		local achMiscName = ScrollMiscAch:Add("DLabel")
+		achMiscName:SetPos(xPos - 165, yPos)
+		if string.find(name, Misc_Ach_List_Name[i], 1, true) then
+			achMiscName:SetText(Misc_Ach_List_Name[i])
+		else
+			achMiscName:SetText("LOCKED")
+		end
+		achMiscName:SizeToContents()
+		achMiscName:SetDark(1)
+		
+		local achMiscDesc = ScrollMiscAch:Add("DLabel")
+		achMiscDesc:SetPos(xPos - 165, yPos + 30)
+		if string.find(name, Misc_Ach_List_Name[i], 1, true) then
+			achMiscDesc:SetText(Misc_Ach_List_Desc[i])
+		else
+			achMiscDesc:SetText("???")
+		end
+		achMiscDesc:SizeToContents()
+		achMiscDesc:SetDark(1)
+		
+		local achMiscIcon = ScrollMiscAch:Add("DImage")
+		achMiscIcon:SetPos(xPos - 235, yPos)
+		achMiscIcon:SetSize(64, 64)
+		if string.find(name, Misc_Ach_List_Name[i], 1, true) then
+			achMiscIcon:SetImage(Misc_Ach_List_Mat[i])
+		else
+			achMiscIcon:SetImage("vgui/hud/icon_locked")
+		end
+	end
+		
+	TabAchSheet:AddSheet("Miscellaneous", PanelMiscAch, nil)
 	
 end
 
@@ -185,13 +240,11 @@ surface.CreateFont( "DermaDefault_18px", {
 function PopUp(ply, idTitle, idMsg, idImg)
 	
 	local achTitle = net.ReadString()
-	local achMessage = idMsg
 	local unlocked = "Achievement Unlocked!"
 	local achImage = net.ReadString()
-	
+	local isRare = net.ReadBool()
 	if not achTitle then achTitle = "Bug" end
 	if not achImage then achImage = "entities/npc_kleiner.png" end
-	if not achMessage then achMessage = "'bugged'" end
 	
 		local popUpNotify = vgui.Create("DNotify")
 		popUpNotify:SetSize(320, 80)
@@ -222,7 +275,11 @@ function PopUp(ply, idTitle, idMsg, idImg)
 				popUpNotify:MoveTo( ScrW(), - 280, ScrH(), 2, 0, -1, function() end)
 			end)
 		end)
-		surface.PlaySound("hl2_campaign/ach_unlock.wav")
+		if not isRare then
+			surface.PlaySound("hl2cr/ach_unlock.wav")
+		else
+			surface.PlaySound("hl2cr/rare_ach_unlock.wav")
+		end
 end
 
 net.Receive("Open_Ach_Menu", function(ply)

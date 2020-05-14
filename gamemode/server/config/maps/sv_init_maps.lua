@@ -1,27 +1,19 @@
-
-jeep = {
-	Name = "Jeep",
-	Class = "prop_vehicle_jeep_old",
-	Model = "models/buggy.mdl",
-	KeyValues = {
-		vehiclescript = "scripts/vehicles/jeep_test.txt",
-		EnableGun = 1,
-		EnablePassengerSeat = 0
-	}
-}
-
-list.Set( "Vehicles", "hl2cJeep", jeep )
-
---{Pos = Vector(-5035, 3781, 310), Ang = Angle(0,70,0), EnterRange = 280, ExitAng = Angle(0,-90,0), Model = "models/props_phx/carseat2.mdl",
-
 function SetupMap()
 	
 	CHECKPOINTS = CHECKPOINTS or {}
 	
+	--Create the lua entity
 	MapLua = ents.Create("lua_run")
 	MapLua:SetName("triggerhook")
 	MapLua:Spawn()
 	
+	if game.GetMap() == "hl2c_lobby_remake" then
+		for k, door in pairs(ents.FindByName("hl2_door")) do
+			door:Fire("Open")
+		end
+	end
+	
+	--Remove the old checkpoints and changelevels
 	for k, oldCheck in pairs(ents.FindByClass("trigger_checkpoint")) do
 		oldCheck:Remove()
 	end
@@ -29,9 +21,16 @@ function SetupMap()
 	local newChangeLevel = ents.Create("trigger_changelevel")
 	newChangeLevel:Spawn()
 
+	--Fixes the spawnpoints
+	if game.GetMap() == "d1_trainstation_02" then 
+		for k, reset1 in pairs(ents.FindByClass("info_player_start")) do
+			reset1:SetPos(Vector(-4315, -215, 0))
+		end
+	end
+	
 	if game.GetMap() == "d1_trainstation_06" then 
-		for k, reset in pairs(ents.FindByClass("info_player_start")) do
-			reset:SetPos(Vector(-9946, -3660, 384))
+		for k, reset2 in pairs(ents.FindByClass("info_player_start")) do
+			reset2:SetPos(Vector(-9946, -3660, 384))
 		end
 	end
 	
@@ -235,7 +234,7 @@ hook.Add("FailSand", "FailureSandAch", function()
 	if sandAchEarnable then 
 		for k, v in pairs(player.GetAll()) do
 			v:ChatPrint("Keep off the Sand! Failed")
-		end	
+		end
 	end
 	sandAchEarnable = false
 end)
@@ -244,7 +243,7 @@ end)
 hook.Add("GiveGravgun", "GrantGravgun", function()
 	for k, v in pairs(player.GetAll()) do
 		v:Give("weapon_physcannon")
-		Achievement(v, "Gravgun", "HL2_Ach_List", 500)
+		Achievement(v, "Gravgun", "HL2_Ach_List", 250)
 		v:ChatPrint("Gravity gun is now enabled")
 	end
 end)
@@ -335,7 +334,7 @@ hook.Add( "OnChangeLevel", "ChangeMap", function()
 			RunConsoleCommand("changelevel", "d1_town_02a")
 		elseif map == "d2_coast_07" and not file.Exists("hl2c_data/d2_coast_07.txt", "DATA") or not map == "d1_town_02" then
 			RunConsoleCommand("changelevel", "d2_coast_08")
-		elseif map == "d2_coast_07" and file.Exists("hl2c_data/d2_coast_07.txt", "DATA") or not map == "d1_town_02" then
+		elseif map == "d2_coast_08" and file.Exists("hl2c_data/d2_coast_07.txt", "DATA") or not map == "d1_town_02" then
 			RunConsoleCommand("changelevel", "d2_coast_07")
 		end
 	end
@@ -347,7 +346,7 @@ end)
 
 hook.Add("Think", "MapWeapons", function()
 	for _, p in pairs(player.GetAll()) do
-		if !p:Alive() || p:Team() != TEAM_ALIVE then
+		if not p:Alive() or p:Team() != TEAM_ALIVE then
 			return
 		end
 		
@@ -374,7 +373,7 @@ function SetCheckpointsStage()
 		Checkpoint1.Min = Vector(-9533, -2564, 22)
 		Checkpoint1.Max = Vector(-9343, -2405, 121)
 		Checkpoint1.Pos = Vector(-9343, -2405, 121) - ( ( Vector(-9343, -2405, 121) - Vector(-9533, -2564, 22)) / 2 )
-		Checkpoint1.Point1 = Vector(-4275, -524, 12)
+		Checkpoint1.Point1 = Vector( -8954, -2316, 50)
 		Checkpoint1:SetPos(Checkpoint1.Pos)
 		Checkpoint1:Spawn()
 		
@@ -390,7 +389,7 @@ function SetCheckpointsStage()
 		Checkpoint3.Min = Vector(-4170, -589, -13)
 		Checkpoint3.Max = Vector(-4320, -531, 99)
 		Checkpoint3.Pos = Vector(-4320, -531, 99) - ( ( Vector(-4320, -531, 99) - Vector(-4170, -589, -13)) / 2 )
-		Checkpoint3.Point3 = Vector(-4996, -4797, 576)
+		Checkpoint3.Point3 = Vector(-4208, -522, -10)
 		Checkpoint3:SetPos(Checkpoint3.Pos)
 		Checkpoint3:Spawn()
 		
@@ -398,7 +397,7 @@ function SetCheckpointsStage()
 		Checkpoint4.Min = Vector(-3476, -442, -25)
 		Checkpoint4.Max = Vector(-3601, -289, 76)
 		Checkpoint4.Pos = Vector(-3601, -289, 76) - ( ( Vector(-3601, -289, 76) - Vector(-3476, -442, -25)) / 2 )
-		Checkpoint4.Point4 = Vector(-3461, -278, 32)
+		Checkpoint4.Point4 = Vector(-3461, -278, -23)
 		Checkpoint4:SetPos(Checkpoint4.Pos)
 		Checkpoint4:Spawn()
 		
@@ -420,7 +419,7 @@ function SetCheckpointsStage()
 		Checkpoint1.Min = Vector(-5002, -4710, 522)
 		Checkpoint1.Max = Vector(-4899, -4821, 630)
 		Checkpoint1.Pos = Vector(-4899, -4821, 630) - ( ( Vector(-4899, -4821, 630) - Vector(-5002, -4710, 522)) / 2 )
-		Checkpoint1.Point1 = Vector(-4964, -4824, 576)
+		Checkpoint1.Point1 = Vector(-4964, -4824, 518)
 		Checkpoint1:SetPos(Checkpoint1.Pos)
 		Checkpoint1:Spawn()
 		
@@ -483,6 +482,17 @@ function SetCheckpointsStage()
 		Checkpoint1.Max = Vector(758, 2756, -0)
 		Checkpoint1.Pos = Vector(758, 2756, -0) - ( ( Vector(758, 2756, -0) - Vector(707, 2727, -87)) / 2 )
 		Checkpoint1.Point1 = Vector(512, 2882, -31)
+		Checkpoint1:SetPos(Checkpoint1.Pos)
+		Checkpoint1:Spawn()
+	elseif game.GetMap() == "d1_canals_03" then
+		TRIGGER_CHECKPOINT = {
+			 Vector(-2180, -885, -1028), Vector(-2108, -829, -1076),
+		}
+		local Checkpoint1 = ents.Create("trigger_checkpoint")
+		Checkpoint1.Min = Vector(-2180, -885, -1028)
+		Checkpoint1.Max = Vector(-2108, -829, -1076)
+		Checkpoint1.Pos = Vector(-2108, -829, -1076) - ( ( Vector(-2108, -829, -1076) - Vector(-2180, -885, -1028)) / 2 )
+		Checkpoint1.Point1 = Vector(-2073, -871, -1167)
 		Checkpoint1:SetPos(Checkpoint1.Pos)
 		Checkpoint1:Spawn()
 		
@@ -632,7 +642,7 @@ function SetCheckpointsStage()
 		Checkpoint2.Max = Vector(-1714, 10972, 1011)
 		Checkpoint2.Pos = Vector(-1714, 10972, 1011) - ( ( Vector(-1714, 10972, 1011) - Vector(1714, 10868, 910)) / 2 )
 		Checkpoint2.Point2 = Vector(-1699, 10887, 909)
-		Checkpoint2:SetPos(Checkpoint1.Pos)
+		Checkpoint2:SetPos(Checkpoint2.Pos)
 		Checkpoint2:Spawn()		
 		
 	elseif game.GetMap() == "d2_coast_11" then

@@ -4,9 +4,8 @@ AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 
 AddCSLuaFile("client/achievements/cl_ach_base.lua")
-AddCSLuaFile("client/menus/cl_lobby_manager.lua")
+AddCSLuaFile("client/menus/cl_new_player.lua")
 AddCSLuaFile("client/menus/cl_f4_menu.lua")
-AddCSLuaFile("client/menus/cl_lobby_manager.lua")
 AddCSLuaFile("client/menus/cl_scoreboard.lua")
 AddCSLuaFile("client/menus/cl_difficulty_vote.lua")
 AddCSLuaFile("client/commands/cl_commands_list.lua")
@@ -121,14 +120,14 @@ function GM:ShowHelp(ply)
 end
 
 function GM:ShowTeam(ply)
-	ply.petAlive = false
+	ply.hl2cPersistent.PetPoints = 99
+	ply:SetNWInt("PetSkillPoints", ply.hl2cPersistent.PetPoints)
 end
-
 
 net.Receive("KickUser", function(len, ply)
 	local banTime = net.ReadInt(32)
 	local reason = net.ReadString()
-	ply:Kick(reason)
+	RunConsoleCommand("ulx", "ban", ply:Nick(), banTime, reason)
 end)
 
 
@@ -224,9 +223,6 @@ function GM:CanPlayerEnterVehicle(ply)
 end
 function GM:ShowSpare2(ply)
 	net.Start("Open_F4_Menu")
-		net.WriteString(ply:GetModel())
-		net.WriteString(tostring(ply.hl2cPersistent.DeathCount))
-		net.WriteString(tostring(ply.hl2cPersistent.KillCount))
 	net.Send(ply)
 end
 

@@ -13,7 +13,7 @@ elseif game.GetMap() == "d1_trainstation_02" then
 	ENT.PointA = Vector(-5295, -4593, 1)
 	ENT.PointB = Vector(-5357, -4506, 125)
 elseif game.GetMap() == "d1_trainstation_03" then
-	ENT.PointA = Vector(-5179, -4855, 640)
+	ENT.PointA = Vector(-5179, -4855, 567)
 	ENT.PointB = Vector(-5256, -4810, 675)
 elseif game.GetMap() == "d1_trainstation_04" then
 	ENT.PointA = Vector(-8006, -4143, -242)
@@ -182,7 +182,7 @@ function ENT:StartTouch(ent)
 	if ent and ent:IsValid() and ent:IsPlayer() and ent:Team() == TEAM_ALIVE then
 		ent:SetTeam(TEAM_COMPLETED_MAP)
 		ent:Spectate(4)
-		if not hasDiedOnce and not (game.GetMap() == "d1_trainstation_01" or game.GetMap() == "d1_trainstation_02" or game.GetMap() == "d1_trainstation_03" or game.GetMap() == "d1_trainstation_04" or game.GetMap() == "d1_trainstation_05") then
+		if not ent.hasDiedOnce and not (game.GetMap() == "d1_trainstation_01" or game.GetMap() == "d1_trainstation_02" or game.GetMap() == "d1_trainstation_03" or game.GetMap() == "d1_trainstation_04" or game.GetMap() == "d1_trainstation_05") then
 			bonusCoins = 25 * GetConVar("hl2c_difficulty"):GetInt()
 			bonusXP = 50 * GetConVar("hl2c_difficulty"):GetInt()
 			AddXP(ent, bonusXP)

@@ -216,6 +216,10 @@ hook.Add("EntityTakeDamage", "PetHurtAndDamage", function(pet, dmgInfo)
 	elseif pet:IsPet() and attacker:IsPlayer() then
 		dmgInfo:SetDamage(0)
 	end
+	
+	if not pet:IsValid() then
+		pet.owner.petAlive = false
+	end
 end)
 
 net.Receive("SpawnPetConCommand", function(len, ply)
@@ -223,7 +227,7 @@ net.Receive("SpawnPetConCommand", function(len, ply)
 		spawnPet(ply)
 		ply:SetNWString("PetOwnerName", ply:Nick())
 	else
-		ply:ChatPrint("You can only summon your pet once per map!")
+		ply:ChatPrint("You can only summon your pet once every life!")
 	end
 end)
 
@@ -236,54 +240,59 @@ net.Receive("UpdateSkills", function(len, ply)
 		if skillUpdate == 1 then
 			ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP + 10
 			ply:SetNWInt("PetHP", ply.hl2cPersistent.PetHP)
-			ply:SetNWInt("PetSkill1", 1)
 			ply.hl2cPersistent.PetSkills1 = 1
+			ply:SetNWInt("PetSkill1", ply.hl2cPersistent.PetSkills1)
+			
 		elseif skillUpdate == 2 then
 			ply.hl2cPersistent.PetSkills2 = 1
 			ply.hl2cPersistent.PetRegen = ply.hl2cPersistent.PetRegen + 5
 			ply:SetNWInt("PetRegen", ply.hl2cPersistent.PetRegen)
-			ply:SetNWInt("PetSkill2", 1)
+			ply:SetNWInt("PetSkill2", ply.hl2cPersistent.PetSkills2)
+			
 		elseif skillUpdate == 3 then
 			ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 1
 			ply:SetNWInt("StrBoost", ply.hl2cPersistent.PetStr)
-			ply:SetNWInt("PetSkill3", 1)
 			ply.hl2cPersistent.PetSkills3 = 1
+			ply:SetNWInt("PetSkill3", ply.hl2cPersistent.PetSkills3)
+			
+			
 		elseif skillUpdate == 4 then
 			ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 1
 			ply:SetNWInt("StrBoost", ply.hl2cPersistent.PetStr)
 			ply:SetNWInt("PetSkill3", 1)
 			ply.hl2cPersistent.PetSkills4 = 1
-			ply:SetNWInt("PetSkill4", 1)
+			ply:SetNWInt("PetSkill4", ply.hl2cPersistent.PetSkills4)
+			
 		elseif skillUpdate == 5 then
 			ply.hl2cPersistent.PetSkills5 = 1
 			ply.hl2cPersistent.PetRegen = ply.hl2cPersistent.PetRegen + 5
 			ply:SetNWInt("PetRegen", ply.hl2cPersistent.PetRegen)
-			ply:SetNWInt("PetSkill5", 1)
+			ply:SetNWInt("PetSkill5", ply.hl2cPersistent.PetSkills5)
 		end
 	elseif ply:GetNWInt("PetStage") == 1 then
 			if skillUpdate == 1 then
 				ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP + 30
 				ply:SetNWInt("PetHP", ply.hl2cPersistent.PetHP)
-				ply.hl2cPersistent.PetSkills6 = 1
-				ply:SetNWInt("PetSkill1", 1)
+				ply.hl2cPersistent.PetSkills1 = 1
+				ply:SetNWInt("PetSkill1", ply.hl2cPersistent.PetSkills1)
 			elseif skillUpdate == 2 then
 				ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 1
 				ply:SetNWInt("PetStr", ply.hl2cPersistent.PetStr)
-				ply.hl2cPersistent.PetSkills7 = 1
-				ply:SetNWInt("PetSkill2", 1)
+				ply.hl2cPersistent.PetSkills2 = 1
+				ply:SetNWInt("PetSkill2", ply.hl2cPersistent.PetSkills2)
 			elseif skillUpdate == 3 then
 				ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 1
 				ply:SetNWInt("PetStr", ply.hl2cPersistent.PetStr)
-				ply.hl2cPersistent.PetSkills8 = 1
-				ply:SetNWInt("PetSkill3", 1)
+				ply.hl2cPersistent.PetSkills3 = 1
+				ply:SetNWInt("PetSkill3", ply.hl2cPersistent.PetSkills3)
 			elseif skillUpdate == 4 then
 				ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 2
 				ply:SetNWInt("PetStr", ply.hl2cPersistent.PetStr)
-				ply.hl2cPersistent.PetSkills9 = 1
-				ply:SetNWInt("PetSkill4", ply.hl2cPersistent.PetSkills9)
+				ply.hl2cPersistent.PetSkills4 = 1
+				ply:SetNWInt("PetSkill4", ply.hl2cPersistent.PetSkills4)
 			elseif skillUpdate == 5 then
 				ply.hl2cPersistent.PetSkills10 = 1
-				ply:SetNWInt("PetSkill5", 1)
+				ply:SetNWInt("PetSkill5", ply.hl2cPersistent.PetSkills5)
 		end
 	end
 	ply:SetNWInt("PetSkillPoints", removePoint)
@@ -312,22 +321,22 @@ net.Receive("Evolving", function(len, ply)
 	ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 1
 	ply.hl2cPersistent.PetRegen = 0
 	
-	ply:SetNWInt("PetSkill1", 0)
-	ply:SetNWInt("PetSkill2", 0)
-	ply:SetNWInt("PetSkill3", 0)
-	ply:SetNWInt("PetSkill4", 0)
-	ply:SetNWInt("PetSkill5", 0)
-	ply:SetNWInt("PetSkill6", 0)
-	ply:SetNWInt("PetSkill7", 0)
-	ply:SetNWInt("PetSkill8", 0)
-	ply:SetNWInt("PetSkill9", 0)
-	ply:SetNWInt("PetSkill10", 0)
+	ply:SetNWInt("PetSkill1", ply.hl2cPersistent.PetSkills1)
+	ply:SetNWInt("PetSkill2", ply.hl2cPersistent.PetSkills2)
+	ply:SetNWInt("PetSkill3", ply.hl2cPersistent.PetSkills3)
+	ply:SetNWInt("PetSkill4", ply.hl2cPersistent.PetSkills4)
+	ply:SetNWInt("PetSkill5", ply.hl2cPersistent.PetSkills5)
+	ply:SetNWInt("PetSkill6", ply.hl2cPersistent.PetSkills6)
+	ply:SetNWInt("PetSkill7", ply.hl2cPersistent.PetSkills7)
+	ply:SetNWInt("PetSkill8", ply.hl2cPersistent.PetSkills8)
+	ply:SetNWInt("PetSkill9", ply.hl2cPersistent.PetSkills9)
+	ply:SetNWInt("PetSkill10", ply.hl2cPersistent.PetSkills10)
 	
 	ply:SetNWInt("PetStr", ply.hl2cPersistent.PetStr)
 	ply:SetNWInt("PetHP", ply.hl2cPersistent.PetHP)
 	ply:SetNWInt("PetRegen", ply.hl2cPersistent.PetRegen)
 	
-	ply.hl2cPersistent.PetMaxXP = 200
+	ply.hl2cPersistent.PetMaxXP = 200 + (ply.hl2cPersistent.PetMaxXP + 100)
 	ply.hl2cPersistent.PetStage = ply.hl2cPersistent.PetStage + 1
 	ply:SetNWInt("PetStage", ply.hl2cPersistent.PetStage)
 	ply:SetNWInt("PetLevel", ply.hl2cPersistent.PetLevel)
@@ -338,9 +347,6 @@ net.Receive("Evolving", function(len, ply)
 	elseif tonumber(ply:GetNWInt("PetStage")) == 1 then
 		ply.hl2cPersistent.PetMaxLvl = 13
 	end
-	
-	
-	ply.petAlive = false
 	timer.Simple(5, function()
 		local oldPos = ply.pet:GetPos()
 		ply.pet:Remove()
@@ -389,8 +395,13 @@ function addPetXP(ply, amt)
 end
 
 hook.Add( "OnNPCKilled", "PetDeath", function(npc, attacker, inflictor)
-	if npc.owner then
+	if npc:IsPet() then
 		net.Start("PetDead")
 		net.Send(npc.owner)
+		npc.owner.petAlive = false
+	end
+	
+	if attacker:IsPlayer() and not npc.owner then
+		npc.owner:ChatPrint(attacker:Nick() .. " killed your pet!")
 	end
 end)

@@ -1,11 +1,11 @@
 Lobby_Ach_List_Name = {
 	["First_Time"] = "Rise and Shine",
-	["Test"] = "Shitter",
+	["Test"] = "Take your stupid achievement",
 }
 
 Lobby_Ach_List_Desc = {
 	["First_Time"] = "Play the gamemode for the first time",
-	["Test"] = "How did you find this?",
+	["Test"] = "You get this one, but with no xp!",
 }
 
 Lobby_Ach_List_Mat = {
@@ -16,6 +16,11 @@ Lobby_Ach_List_Mat = {
 Lobby_Ach_List = {
 	[1] = "First_Time",
 	[2] = "Test",
+}
+
+Lobby_Rare_Ach_List = {
+	["First_Time"] = false,
+	["Test"] = true,
 }
 
 HL2_Ach_List_Name = {
@@ -50,21 +55,37 @@ HL2_Ach_List = {
 	[5] = "Sand",
 }
 
+HL2_Rare_Ach_List = {
+	[1] = false,
+	[2] = false,
+	[3] = false,
+	[4] = false,
+	[5] = false,
+}
 
 Misc_Ach_List = {
 	[1] = "Survival_Lost",
+	[2] = "Pet_Zomb_Finish",
+}
+
+Misc_Rare_Ach_List = {
+	[1] = false,
+	[2] = false,
 }
 
 Misc_Ach_List_Name = {
 	["Survival_Lost"] = "A Predictable Failure",
+	["Pet_Zomb_Finish"] = "Blast that little...",
 }
 
 Misc_Ach_List_Desc = {
 	["Survival_Lost"] = "Fail a map on survival with 4 or more players",
+	["Pet_Zomb_Finish"] = "Complete the Zombie evolution tree",
 }
 
 Misc_Ach_List_Mat = {
 	["Survival_Lost"] = "vgui/achievements/hl2_find_allgmen.png",
+	["Pet_Zomb_Finish"] = "vgui/achievements/hl2_beat_toxictunnel.png",
 }
 
 function Achievement(ply, name, list, amt)
@@ -75,9 +96,14 @@ function Achievement(ply, name, list, amt)
 		net.Start("Achievement_Earned")
 			net.WriteString(Lobby_Ach_List_Name[name])
 			net.WriteString(Lobby_Ach_List_Mat[name])
+			net.WriteBool(Lobby_Rare_Ach_List[name])
 		net.Send(ply)
 		for k, v in pairs(player.GetAll()) do
-			v:ChatPrint(ply:Nick() ..  " has earned the achievement: " ..  Lobby_Ach_List_Name[name])
+			if not Lobby_Rare_Ach_List[name] then
+				v:ChatPrint(ply:Nick() ..  " has earned the achievement: " .. Lobby_Ach_List_Name[name])
+			else
+				v:ChatPrint("Congratulations to " .. ply:Nick() .. " as they earned a rare achievement!: " .. Lobby_Ach_List_Name[name])
+			end
 		end
 		AddXP(ply, amt)
 		ply:ChatPrint(amt .. "XP")
@@ -89,9 +115,14 @@ function Achievement(ply, name, list, amt)
 		net.Start("Achievement_Earned")
 			net.WriteString(HL2_Ach_List_Name[name])
 			net.WriteString(HL2_Ach_List_Mat[name])
+			net.WriteBool(HL2_Rare_Ach_List[name])
 		net.Send(ply)
 		for k, v in pairs(player.GetAll()) do
-			v:ChatPrint(ply:Nick() ..  " has earned the achievement: " .. HL2_Ach_List_Name[name])
+			if not HL2_Rare_Ach_List[name] then
+				v:ChatPrint(ply:Nick() ..  " has earned the achievement: " .. HL2_Ach_List_Name[name])
+			else
+				v:ChatPrint("Congratulations to " .. ply:Nick() .. " as they earned a rare achievement!: " .. HL2_Ach_List_Name[name])
+			end
 		end
 		AddXP(ply, amt)
 		ply:ChatPrint(amt .. "XP")
@@ -103,9 +134,14 @@ function Achievement(ply, name, list, amt)
 		net.Start("Achievement_Earned")
 			net.WriteString(Misc_Ach_List_Name[name])
 			net.WriteString(Misc_Ach_List_Mat[name])
+			net.WriteBool(Misc_Rare_Ach_List[name])
 		net.Send(ply)
 		for k, v in pairs(player.GetAll()) do
-			v:ChatPrint(ply:Nick() ..  " has earned the achievement: " .. Misc_Ach_List_Name[name])
+			if not Misc_Rare_Ach_List[name] then
+				v:ChatPrint(ply:Nick() ..  " has earned the achievement: " .. Misc_Ach_List_Name[name])
+			else
+				v:ChatPrint("Congratulations to " .. ply:Nick() .. " as they earned a rare achievement!: " .. Misc_Ach_List_Name[name])
+			end
 		end
 		AddXP(ply, amt)
 		ply:ChatPrint(amt .. "XP")
@@ -116,7 +152,8 @@ end
 net.Receive("Achievement", function(len, ply)
 	local name = net.ReadString()
 	local listName = net.ReadString()
-	Achievement(ply, name, listName)
+	local amt = 0
+	Achievement(ply, name, listName, amt)
 end)
 
 

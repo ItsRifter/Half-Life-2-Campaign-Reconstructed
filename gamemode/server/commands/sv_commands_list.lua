@@ -4,6 +4,12 @@ local hasVotedLobby = false
 BringPet = true
 
 hook.Add("PlayerSay", "Commands", function(ply, text)
+	
+	if (string.lower(text) == "!gimmeasecret") then
+		Achievement(ply, "Test", "Lobby_Ach_List", 0)
+		return ""
+	end
+	
 	if (string.lower(text) == "!ach" or string.lower(text) == "!achievement" ) then
 		net.Start("Open_Ach_Menu")
 			net.WriteTable(ply.hl2cPersistent)
@@ -19,10 +25,9 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 	
 	if (string.lower(text) == "!petsummon" or string.lower(text) == "!spawnpet" ) then
 		if tonumber(ply.hl2cPersistent.Level) >= 10 then
-			if not ply.petAlive then
+			if not ply:GetNWBool("PetActive") then
 				spawnPet(ply)
-				ply:SetNWString("PetOwnerName", ply:Nick())
-			elseif ply.petAlive then
+			else
 				ply:ChatPrint("Your pet has already been summoned!")
 			end
 		else
@@ -30,6 +35,14 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 		end
 		return ""
 	end
+	
+	if string.find(string.lower(text),"!petname ") then
+		ply:ChatPrint("You've change your pets name to" .. string.sub(text,9))
+		ply.hl2cPersistent.PetName = string.sub(text,9)
+		ply:SetNWString("PetName", ply.hl2cPersistent.PetName)
+		return ""
+	end
+
 	
 	
 	if (string.lower(text) == "!diff" or string.lower(text) == "!difficulty" ) then
@@ -67,18 +80,18 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 	if (string.lower(text) == "!removepet" or string.lower(text) == "!petremove") then
 		if not ply.pet:IsValid() then
 			ply:ChatPrint("Your pet doesn't exist!")
-			return ""
-		end
-		if duel then
+			return ""		
+		elseif duel then
 			ply:ChatPrint("You can't remove your pet in a duel!")
 			return ""
 		end
 
 		if ply.pet:Health() == ply.pet:GetMaxHealth() then
 			ply.pet:Remove()
-			ply.petAlive = false
 			net.Start("ClosePets")
 			net.Send(ply)
+			ply.petAlive = false
+			ply:SetNWBool("PetActive", false)
 		else
 			ply:ChatPrint("Your pet needs to be at full health to be removed")
 		end
@@ -115,8 +128,8 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 		duelUnaccepted.challengee:ChatPrint(string.format("You have accepted %s's challenge", duelUnaccepted.challenger:Nick()))
 
 		-- TODO: Check if both players have enough money to bet
-		AddCoins(duelUnaccepted.challenger, -duel.bet)
-		AddCoins(duelUnaccepted.challengee, -duel.bet)
+		AddCoins(duelUnaccepted.challenger, -duelUnaccepted.bet)
+		AddCoins(duelUnaccepted.challengee, -duelUnaccepted.bet)
 
 		duelUnaccepted.accepted = true
 
@@ -193,8 +206,6 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 				vehicle:SetKeyValue("EnablePassengerSeat", 1)
 				ply.seat = seat
 				ply:ChatPrint("Passenger seat added")
-			elseif vehicle:GetVehicle() == "prop_vehicle_airboat" then
-				ply:ChatPrint("You can't have a passenger seat on an airboat!")
 			end
 		elseif ply.hasSeat then
 			ply:ChatPrint("You already have a passenger seat!")

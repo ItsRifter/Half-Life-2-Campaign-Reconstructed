@@ -1,4 +1,4 @@
-concommand.Add("hl2c_givexp", function(ply, cmd, args)
+concommand.Add("hl2cr_givexp", function(ply, cmd, args)
 	local int = tonumber(args[1])
 	
 	if ply:IsAdmin() then
@@ -15,7 +15,7 @@ concommand.Add("hl2c_givexp", function(ply, cmd, args)
 	end
 end)
 
-concommand.Add("hl2c_allowsuicide", function(ply, cmd, args)
+concommand.Add("hl2cr_allowsuicide", function(ply, cmd, args)
 	local int = tonumber(args[1])
 	if ply:IsAdmin() then
 		if int == 1 then
@@ -36,7 +36,7 @@ concommand.Add("hl2c_allowsuicide", function(ply, cmd, args)
 	end
 end)
 
-concommand.Add("hl2c_setmaxxp", function(ply, cmd, args)
+concommand.Add("hl2cr_setmaxxp", function(ply, cmd, args)
 	local maxXP = tonumber(args[1])
 	if ply:IsAdmin() then
 		if maxXP then
@@ -51,7 +51,7 @@ concommand.Add("hl2c_setmaxxp", function(ply, cmd, args)
 	end
 end)
 
-concommand.Add("hl2c_setlevel", function(ply, cmd, args)
+concommand.Add("hl2cr_setlevel", function(ply, cmd, args)
 	local level = tonumber(args[1])
 	if ply:IsAdmin() then
 		if level then
@@ -66,7 +66,7 @@ concommand.Add("hl2c_setlevel", function(ply, cmd, args)
 	end
 end)
 
-concommand.Add("hl2c_addcoins", function(ply, cmd, args)
+concommand.Add("hl2cr_addcoins", function(ply, cmd, args)
 	local coins = tonumber(args[1])
 	if ply:IsAdmin() then
 		if coins then
@@ -81,7 +81,7 @@ concommand.Add("hl2c_addcoins", function(ply, cmd, args)
 	end
 end)
 
-concommand.Add("hl2c_difficulty", function(ply, cmd, args)
+concommand.Add("hl2cr_difficulty", function(ply, cmd, args)
 	local diff = tonumber(args[1])
 	if ply:IsAdmin() then
 		if diff >= 1 and diff <= 3 then
@@ -96,7 +96,7 @@ concommand.Add("hl2c_difficulty", function(ply, cmd, args)
 	end
 end)
 
-concommand.Add("hl2c_survival", function(ply, cmd, args)
+concommand.Add("hl2cr_survival", function(ply, cmd, args)
 	local surv = tonumber(args[1])
 	if ply:IsAdmin() then
 		if surv == 0 or surv == 1 then
@@ -111,20 +111,7 @@ concommand.Add("hl2c_survival", function(ply, cmd, args)
 	end
 end)
 
-concommand.Add("hl2c_setpetxp", function(ply, cmd, args)
-	local value = tonumber(args[1])
-	if ply:IsAdmin() then
-		if value > 0 and value < 1000 then
-			ply:SetNWInt("petsXP", value)
-		else
-			print("Invalid Value")
-		end
-	else
-		print("You do not have access to this command")
-	end
-end)
-
-concommand.Add("hl2c_petsummon", function(ply, cmd, args)
+concommand.Add("hl2cr_petsummon", function(ply, cmd, args)
 	local level = ply:GetNWInt("Level")
 	local petEnt = ply:GetNWEntity("PetEntity")
 	if tonumber(level) >= 10 then

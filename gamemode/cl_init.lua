@@ -1,6 +1,6 @@
 include("shared.lua")
 
-include("client/menus/cl_lobby_manager.lua")
+include("client/menus/cl_new_player.lua")
 
 include("client/achievements/cl_ach_base.lua")
 include("client/menus/cl_f4_menu.lua")

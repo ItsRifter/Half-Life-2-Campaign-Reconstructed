@@ -1,16 +1,24 @@
 startingWeapons = startingWeapons or {}
 hook.Add("PlayerInitialSpawn", "MiscSurv", function(ply)
 	
+	ply:SetNWInt("diffEasy", #player.GetAll())
+	ply:SetNWInt("diffMed", #player.GetAll())
+	ply:SetNWInt("diffHard", #player.GetAll())
+	ply:SetNWInt("SurvDiff", #player.GetAll())
+	
+	ply:ConCommand("cl_tfa_hud_crosshair_enable_custom", 0)
+	ply:ConCommand("hud_quickinfo", 1)
+	ply:ConCommand("cl_tfa_hud_enabled", 0) 
+	
 	if GetConVar("hl2c_survivalmode"):GetInt() == 1 and ply:Alive() and not isAliveSurv then
 		isAliveSurv = false
 	end
 	
-	hasDiedOnce = false
+	ply.hasDiedOnce = false
 end)
 
 
 hook.Add("PlayerSpawn", "Misc", function(ply)
-	ply.petAlive = false
 	ply.AllowSpawn = true
 	ply.hasSeat = false
 	if not isAliveSurv then
@@ -24,13 +32,6 @@ hook.Add("PlayerSpawn", "Misc", function(ply)
 		ply:SetHealth(maxHP)
 	end
 	
-	ply:GiveAmmo(15, "Pistol", false)
-	ply:GiveAmmo(6, "357", false)
-	ply:GiveAmmo(90, "SMG1", false)
-	ply:GiveAmmo(60, "AR2", false)
-	ply:GiveAmmo(15, "Buckshot", false)
-	ply:GiveAmmo(2, "Grenade", false)
-	
 	ply:SetTeam(TEAM_ALIVE)
 	ply:SetCustomCollisionCheck(true)
 	ply:SetupHands()
@@ -38,19 +39,24 @@ hook.Add("PlayerSpawn", "Misc", function(ply)
 	if game.GetMap() == "d1_trainstation_01" or game.GetMap() == "d1_trainstation_02" or game.GetMap() == "d1_trainstation_03" or
 	game.GetMap() == "d1_trainstation_04" then
 		ply:AllowFlashlight(false)
+		RunConsoleCommand("gmod_suit", 0)
 		ply:SetRunSpeed( 160 )
 		ply:SetWalkSpeed( 120 )
 	elseif game.GetMap() == "d1_trainstation_05" then
 		for p, hevFlash in pairs(ents.FindByClass("item_suit")) do
 			if hevFlash:IsValid() then
 				ply:AllowFlashlight(false)
-				ply:SetMaxSpeed( 160 )
-			else
+				RunConsoleCommand("gmod_suit", 0)
+				
+			elseif not hevFlash:IsValid() then 
 				ply:AllowFlashlight(true)
-				ply:SetMaxSpeed( 240 )
+				RunConsoleCommand("gmod_suit", 1)
+				ply:SetRunSpeed( 240 )
+				ply:SetWalkSpeed( 180 )
 			end
 		end
 	else
+		RunConsoleCommand("gmod_suit", 1)
 		ply:AllowFlashlight(true)
 	end
 end)
@@ -77,12 +83,20 @@ hook.Add("CanPlayerSuicide", "DefaultSuicide", function(ply)
 	end
 end)
 
+hook.Add("EntityTakeDamage", "DisableAR2DMG", function(ent, dmgInfo)
+	local attacker = dmgInfo:GetAttacker()
+	local dmg = dmgInfo:GetDamage()
+	if attacker and ent:IsPlayer() and ent:IsPet() then
+		dmgInfo:SetDamage(0)
+	elseif not ent:IsPlayer() then
+		dmgInfo:SetDamage(dmg)
+	end
+end)
 
 hook.Add("PlayerShouldTakeDamage", "DisablePVP", function(ply, attacker)
-	if ply:Team() != TEAM_ALIVE or (attacker:IsPlayer() and attacker != ply) then
+	if ply:Team() != TEAM_ALIVE or (attacker:IsPlayer() and attacker != ply) or attacker == "prop_combine_ball" then
 		return false
 	end
-
 	return true
 	
 end)
@@ -102,7 +116,7 @@ end
 
 hook.Add("PlayerLoadout", "StarterWeapons", function(ply)
 	if (game.GetMap() == "hl2c_lobby_remake") then
-		ply:Give("weapon_crowbar")
+		ply:Give("tfa_mmod_crowbar")
 		ply:Give("weapon_physcannon")
 		if ply:IsAdmin() then
 			ply:Give("weapon_physgun")
@@ -110,31 +124,31 @@ hook.Add("PlayerLoadout", "StarterWeapons", function(ply)
 	end
 	
 	if game.GetMap() == "d1_town_02" and file.Exists("hl2c_data/d1_town_02.txt", "DATA") then 
-		ply:Give("weapon_crowbar")
+		ply:Give("tfa_mmod_crowbar")
 		ply:Give("weapon_physcannon")
-		ply:Give("weapon_pistol")
-		ply:Give("weapon_357")
-		ply:Give("weapon_smg1")
-		ply:Give("weapon_shotgun")
-		ply:Give("weapon_frag")
+		ply:Give("tfa_mmod_pistol")
+		ply:Give("tfa_mmod_357")
+		ply:Give("tfa_mmod_smg")
+		ply:Give("tfa_mmod_shotgun")
+		ply:Give("tfa_mmod_grenade")
 	end
 	
 	if game.GetMap() == "d2_coast_08" then
-		ply:Give("weapon_crowbar")
+		ply:Give("tfa_mmod_crowbar")
 		ply:Give("weapon_physcannon")
-		ply:Give("weapon_pistol")
-		ply:Give("weapon_357")
-		ply:Give("weapon_smg1")
-		ply:Give("weapon_ar2")
-		ply:Give("weapon_shotgun")
-		ply:Give("weapon_crossbow")
-		ply:Give("weapon_rpg")
-		ply:Give("weapon_frag")
+		ply:Give("tfa_mmod_pistol")
+		ply:Give("tfa_mmod_357")
+		ply:Give("tfa_mmod_smg")
+		ply:Give("tfa_mmod_ar2")
+		ply:Give("tfa_mmod_shotgun")
+		ply:Give("tfa_mmod_crossbow")
+		ply:Give("tfa_mmod_rpg")
+		ply:Give("tfa_mmod_grenade")
 	end
 		
 	for k, curWep in pairs(ply:GetWeapons()) do
 		local wepClass = curWep:GetClass()
-		
+			
 		if ply[wepClass] then
 			ply:GiveAmmo(tonumber(ply.info.loadout[wepClass][1]), curWep:GetPrimaryAmmoType())
 			ply:GiveAmmo(tonumber(ply.info.loadout[wepClass][2]), curWep:GetSecondaryAmmoType())
@@ -148,9 +162,73 @@ hook.Add("PlayerLoadout", "StarterWeapons", function(ply)
 end)
 
 hook.Add("WeaponEquip", "WeaponPickedUp", function(weapon, ply)
-	if weapon and weapon:IsValid() and weapon:GetClass() and not table.HasValue(startingWeapons, weapon:GetClass()) then
-		table.insert(startingWeapons, weapon:GetClass())
-		ply:Give(weapon:GetClass())
+	if weapon and weapon:IsValid() and not table.HasValue(startingWeapons, weapon:GetClass()) then
+		if weapon:GetClass() == "weapon_crowbar" then
+			timer.Simple(0.1, function()
+				ply:StripWeapon("weapon_crowbar")
+			end)
+			ply:Give("tfa_mmod_crowbar")
+			table.insert(startingWeapons, "tfa_mmod_crowbar")
+		elseif weapon:GetClass() == "weapon_pistol" then
+			timer.Simple(0.01, function()
+				ply:StripWeapon("weapon_pistol")
+			end)
+			ply:GiveAmmo(math.random(1, 18), "Pistol", false)
+			ply:Give("tfa_mmod_pistol")
+			table.insert(startingWeapons, "tfa_mmod_pistol")
+		elseif weapon:GetClass() == "weapon_357" then
+			timer.Simple(0.01, function()
+				ply:StripWeapon("weapon_357")
+			end)
+			ply:GiveAmmo(6, "357", false)
+			ply:Give("tfa_mmod_357")
+			table.insert(startingWeapons, "tfa_mmod_357")
+		elseif weapon:GetClass() == "weapon_smg1" then
+			timer.Simple(0.01, function()
+				ply:StripWeapon("weapon_smg1")
+			end)
+			ply:GiveAmmo(math.random(5, 45), "SMG1", false)
+			ply:Give("tfa_mmod_smg")
+			table.insert(startingWeapons, "tfa_mmod_smg")
+		elseif weapon:GetClass() == "weapon_ar2" then
+			timer.Simple(0.01, function()
+				ply:StripWeapon("weapon_ar2")
+			end)
+			ply:GiveAmmo(math.random(1, 30), "AR2", false)
+			ply:Give("tfa_mmod_ar2")
+			table.insert(startingWeapons, "tfa_mmod_ar2")
+		elseif weapon:GetClass() == "weapon_crossbow" then
+			timer.Simple(0.01, function()
+				ply:StripWeapon("weapon_crossbow")
+			end)
+			ply:GiveAmmo(2, "XBoxBolt", false)
+			ply:Give("tfa_mmod_crossbow")
+			table.insert(startingWeapons, "tfa_mmod_crossbow")
+		elseif weapon:GetClass() == "weapon_shotgun" then
+			timer.Simple(0.01, function()
+				ply:StripWeapon("weapon_shotgun")
+			end)
+			ply:GiveAmmo(math.random(1, 6), "Buckshot", false)
+			ply:Give("tfa_mmod_shotgun")
+			table.insert(startingWeapons, "tfa_mmod_shotgun")
+		elseif weapon:GetClass() == "weapon_frag" then
+			timer.Simple(0.01, function()
+				ply:StripWeapon("weapon_frag")
+			end)
+			ply:Give("tfa_mmod_grenade")
+			table.insert(startingWeapons, "tfa_mmod_grenade")
+		elseif weapon:GetClass() == "weapon_rpg" then
+			timer.Simple(0.01, function()
+				ply:StripWeapon("weapon_rpg")
+			end)
+			ply:GiveAmmo(1, "RPG_Round", false)
+			ply:Give("tfa_mmod_rpg")
+			table.insert(startingWeapons, "tfa_mmod_rpg")	
+		elseif weapon:GetClass() == "weapon_physcannon" then
+			table.insert(startingWeapons, "weapon_physcannon")
+		elseif weapon:GetClass() == "hlashotty" then
+			table.remove(startingWeapons, "hlashotty")
+		end
 	end
 	if weapon:GetClass() == "weapon_crowbar" and game.GetMap() == "d1_trainstation_06" then
 		for k, v in pairs(player.GetAll()) do
@@ -160,16 +238,14 @@ hook.Add("WeaponEquip", "WeaponPickedUp", function(weapon, ply)
 end)
 
 function RespawnTimerActive(ply, deaths)
-	hasDiedOnce = true
+	ply.hasDiedOnce = true
 	
 	if GetConVar("hl2c_survivalmode"):GetInt() == 1 and game.GetMap() != "hl2c_lobby_remake" then
 		ply:Lock()
 		isAliveSurv = false
 		local playersAlive = #player.GetAll()
 		local playerDeaths = deaths
-
-		print(playersAlive)
-		print(playerDeaths)
+		
 		ply:ChatPrint("You have died, awaiting next checkpoint")
 		timer.Simple(5, function()
 			SpectateMode(ply)
@@ -284,47 +360,10 @@ end)
 
 local neededVotes = #player.GetAll()
 local lobbyVotes = 0
+
 net.Receive("ReturnLobby", function(ply)
 
 	for k, p in pairs(player.GetAll()) do
 		p:ChatPrint(ply:Nick() .. " has voted to return to the lobby: " .. lobbyVotes .. "/" .. neededVotes)
-	end
-end)
-
-AFK_WARN_TIME = 300
-
-AFK_TIME = 900
-
-hook.Add("PlayerInitialSpawn", "MakeAFKVar", function(ply)
-	ply.NextAFK = CurTime() + AFK_TIME
-end)
-
-hook.Add("Think", "HandleAFKPlayers", function()
-	for _, ply in pairs (player.GetAll()) do
-		if (ply:IsConnected() and ply:IsFullyAuthenticated() and not ply:IsAdmin()) then
-			if (!ply.NextAFK) then
-				ply.NextAFK = CurTime() + AFK_TIME
-			end
-		
-			local afktime = ply.NextAFK
-			if (CurTime() >= afktime - AFK_WARN_TIME) and (!ply.Warning) then
-				ply:ChatPrint("|WARNING| User Inactive")
-				ply:ChatPrint("You will be disconnected if you remain AFK")
-				
-				ply.Warning = true
-			elseif (CurTime() >= afktime) and (ply.Warning) then
-				ply.Warning = nil
-				ply.NextAFK = nil
-				ply:Kick("\nKicked for AFK since 15 minutes !")
-			end
-		end
-	end
-end)
-
-hook.Add("KeyPress", "PlayerActive", function(ply, key)
-	ply.NextAFK = CurTime() + AFK_TIME
-	if ply.Warning == true then
-		ply.Warning = false
-		ply:ChatPrint("You are no longer AFK !")
 	end
 end)

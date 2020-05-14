@@ -10,10 +10,11 @@ local mediumVotes = 0
 local hardVotes = 0
 local survVotes = 0
 
-local requiredVotesEasy = #player.GetAll() / 2
-local requiredVotesMedium = #player.GetAll() / 2
-local requiredVotesHard = #player.GetAll() / 2
-local requiredVotesSurv = #player.GetAll()
+local easyRequired = tonumber(LocalPlayer():GetNWInt("diffEasy"))
+local mediumRequired = tonumber(LocalPlayer():GetNWInt("diffMed"))
+local hardRequired = tonumber(LocalPlayer():GetNWInt("diffHard"))
+local survRequired = tonumber(LocalPlayer():GetNWInt("survDiff"))
+
 surface.CreateFont("Diff_Font", {
 	font = "Arial",
 	size = 22,
@@ -60,22 +61,19 @@ function OpenDiffMenu(ply, diff, surv)
 		if not hasUserVoted and Diff != 1 then
 			hasUserVoted = true
 			easyVotes = easyVotes + 1			
-			net.Start("Diff_Vote")
-				net.WriteString(tostring(LocalPlayer()))
-				net.WriteInt(1, 8)
-			net.SendToServer(LocalPlayer())
+			for k, v in pairs(player.GetAll()) do
+				v:ChatPrint(LocalPlayer():Nick() .. " has voted for 'Easy' difficulty")
+			end
+			if easyVotes >= math.Round(easyRequired) then
+				net.Start("Diff_Change")
+					net.WriteInt(1, 8)
+				net.SendToServer()
+			end
 			timer.Create("VoteTimer", 300, 1, function()
 				hasUserVoted = false
 				timer.Remove("VoteTimer")
 				LocalPlayer():ChatPrint("You can now vote for a difficulty")
 			end)
-			if easyVotes >= math.Round(requiredVotesEasy) then
-				LocalPlayer():ChatPrint("Difficulty has changed to 'Easy' difficulty")
-				net.Start("Diff_Change")
-					net.WriteInt(1, 8)
-				net.SendToServer()
-				easyVotes = 0
-			end
 		elseif hasUserVoted then
 			LocalPlayer():ChatPrint("You have already voted for a difficulty, please wait " .. math.ceil(timer.TimeLeft("VoteTimer")) .. " Seconds")
 		elseif diff == 1 then
@@ -95,24 +93,20 @@ function OpenDiffMenu(ply, diff, surv)
 	mediumButton.DoClick = function()
 		if not hasUserVoted and Diff != 2 then
 			hasUserVoted = true
-			mediumVotes = mediumVotes + 1
-			net.Start("Diff_Vote")
-				net.WriteString(tostring(LocalPlayer()))
-				net.WriteString("Medium")
-				net.WriteInt(mediumVotes, 8)
-			net.SendToServer()			
-			timer.Create("VoteTimer", 300, 1, function()
-				hasUserVoted = false
-				timer.Remove("VoteTimer")
-				LocalPlayer():ChatPrint("You can now vote for a difficulty")
-			end)
-			if mediumVotes >= math.Round(requiredVotesMedium)then
-				LocalPlayer():ChatPrint("Difficulty has changed to 'Medium' difficulty")
+			mediumVotes = mediumVotes + 1	
+			for k, v in pairs(player.GetAll()) do
+				v:ChatPrint(LocalPlayer():Nick() .. " has voted for 'Medium' difficulty")
+			end
+			if mediumVotes >= math.Round(mediumRequired) then
 				net.Start("Diff_Change")
 					net.WriteInt(2, 8)
 				net.SendToServer()
-				mediumVotes = 0
 			end
+			timer.Create("VoteTimer", 300, 1, function()
+					hasUserVoted = false
+					timer.Remove("VoteTimer")
+					LocalPlayer():ChatPrint("You can now vote for a difficulty")
+				end)
 		elseif diff == 2 then
 			LocalPlayer():ChatPrint("You are currently playing on that difficulty!")
 			hasUserVoted = false
@@ -132,24 +126,19 @@ function OpenDiffMenu(ply, diff, surv)
 		if not hasUserVoted and Diff != 3 then
 			hasUserVoted = true
 			hardVotes = hardVotes + 1
-			net.Start("Diff_Vote")
-				net.WriteString(tostring(LocalPlayer()))
-				net.WriteString("Hard")
-				net.WriteInt(hardVotes, 8)
-				net.WriteInt(3, 8)
-			net.SendToServer()
+			for k, v in pairs(player.GetAll()) do
+				v:ChatPrint(LocalPlayer():Nick() .. " has voted for 'Hard' difficulty")
+			end
+			if hardVotes >= math.Round(hardRequired) then
+				net.Start("Diff_Change")
+					net.WriteInt(3, 8)
+				net.SendToServer()
+			end
 			timer.Create("VoteTimer", 300, 1, function()
 				hasUserVoted = false
 				timer.Remove("VoteTimer")
 				LocalPlayer():ChatPrint("You can now vote for a difficulty")
 			end)
-			if hardVotes >= math.Round(requiredVotesHard)then		
-				LocalPlayer():ChatPrint("Difficulty has changed to 'Hard' difficulty")
-				net.Start("Diff_Change")
-					net.WriteInt(3, 8)
-				net.SendToServer()
-				hardVotes = 0
-			end
 		elseif diff == 3 then
 			LocalPlayer():ChatPrint("You are currently playing on that difficulty!")
 			hasUserVoted = false
@@ -180,40 +169,36 @@ function OpenDiffMenu(ply, diff, surv)
 		if not hasUserVoted then
 			hasUserVoted = true
 			survVotes = survVotes + 1
-			net.Start("Diff_Vote")
-				net.WriteString(tostring(LocalPlayer()))
-				net.WriteString("Survival")
-				net.WriteInt(survVotes, 8)
-			net.SendToServer()
 			if survivalMode then
-				d:ChatPrint(LocalPlayer():Nick() .. " has voted to enable 'Survival' mode")
+				for k, v in pairs(player.GetAll()) do
+					v:ChatPrint(LocalPlayer():Nick() .. " has voted to enable 'Survival' mode")
+				end
+				if survVotes >= math.Round(survRequired) then
+					net.Start("Diff_Change")
+						net.WriteInt(4, 8)
+					net.SendToServer()
+				end
 			else
-				d:ChatPrint(LocalPlayer():Nick() .. " has voted to disable 'Survival' mode")
+				for k, v in pairs(player.GetAll()) do
+					v:ChatPrint(LocalPlayer():Nick() .. " has voted to disable 'Survival' mode")
+				end
+				if survVotes >= math.Round(survRequired) then
+					net.Start("Diff_Change")
+						net.WriteInt(4, 8)
+					net.SendToServer()
+				end
 			end
-				if not timer.Exists("VoteTimer") then
-				timer.Create("VoteTimer", 300, 1, function()
-					hasUserVoted = false
-					timer.Remove("VoteTimer")
-					LocalPlayer():ChatPrint("You can now vote for a difficulty")
-				end)
-			end
-			if survVotes >= math.Round(requiredVotesSurv) and surv == 0 then	
-				survivalMode = true
-				net.Start("Survival")
-					net.WriteInt(1, 8)
-				net.SendToServer()
-				LocalPlayer():ChatPrint("Survival mode has been enabled")
-			elseif survVotes >= math.Round(requiredVotesSurv) and surv == 1 then
-				survivalMode = false
-				net.Start("Survival")
-					net.WriteInt(0, 8)
-				net.SendToServer()
-				LocalPlayer():ChatPrint("Survival mode has been disabled")
-			end
+			if not timer.Exists("VoteTimer") then
+			timer.Create("VoteTimer", 300, 1, function()
+				hasUserVoted = false
+				timer.Remove("VoteTimer")
+				LocalPlayer():ChatPrint("You can now vote for a difficulty")
+			end)
+		end
 		else
 			LocalPlayer():ChatPrint("You have already voted for a difficulty, please wait " .. math.ceil(timer.TimeLeft("VoteTimer")) .. " Seconds")
+			diffFrame:Close()
 		end
-		diffFrame:Close()
 	end
 end
 

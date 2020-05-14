@@ -3,23 +3,19 @@ function AddXP(ply, amt)
 	ply:SetNWInt("XP", math.Round(ply.hl2cPersistent.XP))
 	
 	while tonumber(ply.hl2cPersistent.XP) >= tonumber(ply.hl2cPersistent.MaxXP) do
-		ply.hl2cPersistent.MaxXP = ply.hl2cPersistent.MaxXP + 250
 		math.ceil(ply.hl2cPersistent.MaxXP)
 		ply.hl2cPersistent.Level = ply.hl2cPersistent.Level + 1
 		ply.hl2cPersistent.XP = ply.hl2cPersistent.XP - ply.hl2cPersistent.MaxXP
+		ply.hl2cPersistent.MaxXP = ply.hl2cPersistent.MaxXP + 250
 		ply:SetNWInt("Level", ply.hl2cPersistent.Level)
 		ply:SetNWInt("XP", math.Round(ply.hl2cPersistent.XP))
 		ply:SetNWInt("maxXP", math.Round(ply.hl2cPersistent.MaxXP))
 		net.Start("PlaySoundLevelUp")
-			net.WriteInt(ply.hl2cPersistent.Level, 16)
+			net.WriteInt(ply.hl2cPersistent.Level, 32)
 		net.Send(ply)
 
 		if tonumber(ply.hl2cPersistent.Level) >= tonumber(ply.hl2cPersistent.Milestone) then
-			local newHP = ply:GetMaxHealth() + 5
-			ply:SetMaxHealth(newHP)
-			ply:SetHealth(newHP)
 			ply.hl2cPersistent.Milestone = ply.hl2cPersistent.Milestone + 5
-			ply:ChatPrint("Your body becomes more bearable to pain, Max Health Increased!")
 		end
 		
 		if ply.hl2cPersistent.Level == 5 then

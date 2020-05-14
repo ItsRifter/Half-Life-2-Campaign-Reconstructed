@@ -27,10 +27,6 @@ function ENT:StartTouch(ent)
 		end
 	end
 	
-	if ent and ent:IsPlayer() and game.GetMap() == "d1_trainstation_01" then
-		ent:SetFOV(ent:GetFOV(), 0, ent)
-	end
-	
 	if ent and ent:IsValid() and ent:IsPlayer() and ent:Team() == TEAM_ALIVE and !self.triggered then
 		self.triggered = true
 		local ang = ent:GetAngles()
