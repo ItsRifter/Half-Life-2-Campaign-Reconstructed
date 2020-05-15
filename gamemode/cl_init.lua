@@ -20,5 +20,6 @@ AddCSLuaFile("server/maps/config/init_maps.lua")
 AddCSLuaFile("shared/sh_player.lua")
 AddCSLuaFile("shared/sh_npc.lua")
 AddCSLuaFile("shared/items/sh_items_hats.lua")
+AddCSLuaFile("shared/shop/sh_shop_items.lua")
 
 AddCSLuaFile("server/stats/sv_pets_levels.lua")

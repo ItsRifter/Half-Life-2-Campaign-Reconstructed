@@ -1,80 +1,3 @@
-local defaultModels = {
-	["models/player/Group01/female_01.mdl"] = {},
-	["models/player/Group01/female_02.mdl"] = {},
-	["models/player/Group01/female_03.mdl"] = {},
-	["models/player/Group01/female_04.mdl"] = {},
-	["models/player/Group01/female_05.mdl"] = {},
-	["models/player/Group01/female_06.mdl"] = {},
-	["models/player/Group01/male_01.mdl"] = {},
-	["models/player/Group01/male_02.mdl"] = {},
-	["models/player/Group01/male_03.mdl"] = {},
-	["models/player/Group01/male_04.mdl"] = {},
-	["models/player/Group01/male_05.mdl"] = {},
-	["models/player/Group01/male_06.mdl"] = {},
-	["models/player/Group01/male_07.mdl"] = {},
-	["models/player/Group01/male_08.mdl"] = {},
-	["models/player/Group01/male_09.mdl"] = {},
-}
-
-local rebelModels = {
-	["models/player/Group03/female_01.mdl"] = {},
-	["models/player/Group03/female_02.mdl"] = {},
-	["models/player/Group03/female_03.mdl"] = {},
-	["models/player/Group03/female_04.mdl"] = {},
-	["models/player/Group03/female_05.mdl"] = {},
-	["models/player/Group03/female_06.mdl"] = {},
-	["models/player/Group03/male_01.mdl"] = {},
-	["models/player/Group03/male_02.mdl"] = {},
-	["models/player/Group03/male_03.mdl"] = {},
-	["models/player/Group03/male_04.mdl"] = {},
-	["models/player/Group03/male_05.mdl"] = {},
-	["models/player/Group03/male_06.mdl"] = {},
-	["models/player/Group03/male_07.mdl"] = {},
-	["models/player/Group03/male_08.mdl"] = {},
-	["models/player/Group03/male_09.mdl"] = {},
-
-}
-
-local medicModels = {
-	["models/player/Group03m/female_01.mdl"] = {},
-	["models/player/Group03m/female_02.mdl"] = {},
-	["models/player/Group03m/female_03.mdl"] = {},
-	["models/player/Group03m/female_04.mdl"] = {},
-	["models/player/Group03m/female_05.mdl"] = {},
-	["models/player/Group03m/female_06.mdl"] = {},
-	["models/player/Group03m/male_01.mdl"] = {},
-	["models/player/Group03m/male_02.mdl"] = {},
-	["models/player/Group03m/male_03.mdl"] = {},
-	["models/player/Group03m/male_04.mdl"] = {},
-	["models/player/Group03m/male_05.mdl"] = {},
-	["models/player/Group03m/male_06.mdl"] = {},
-}
-
-local cpModels = {
-	["models/player/police.mdl"] = {},
-	["models/player/police_fem.mdl"] = {},
-}
-
-local soldierModels = {
-	["models/hlvr/characters/combine/grunt/combine_grunt_hlvr_player.mdl"] = {},
-}
-
-local heavSoldierModels = {
-	["models/hlvr/characters/combine/heavy/combine_heavy_hlvr_player.mdl"] = {},
-}
-
-local eliteModels = {
-	["models/hlvr/characters/combine/suppressor/combine_suppressor_hlvr_player.mdl"] = {},
-}
-
-local capModels = {
-	["models/hlvr/characters/combine_captain/combine_captain_hlvr_player.mdl"] = {},
-}
-
-local hevModels = {
-	["models/player/SGG/hev_helmet.mdl"] = {},
-}
-
 surface.CreateFont("F4_font", {
 	font = "Arial",
 	size = 24,
@@ -107,15 +30,15 @@ function OpenMenu()
 	COLOUR_MODEL_PANEL = Color(100, 100, 100)
 	XP_COLOUR_BAR_EMPTY = Color(0, 0, 0)
 	
-	local frame = vgui.Create("DFrame")
-	frame:SetSize(900, 700)
-	frame:MakePopup()
-	frame:Center()
+	local F4_Frame = vgui.Create("DFrame")
+	F4_Frame:SetSize(900, 700)
+	F4_Frame:MakePopup()
+	F4_Frame:Center()
 
-	local TabSheet = vgui.Create( "DPropertySheet", frame )
-	TabSheet:Dock( FILL )
+	local TabSheet = vgui.Create( "DPropertySheet", F4_Frame )
+	TabSheet:Dock(FILL)
 
-	local pmPanel = vgui.Create("DPanel", frame)
+	local pmPanel = vgui.Create("DPanel", F4_Frame)
 	pmPanel:SetSize(350, 600)
 	pmPanel:SetPos(25, 50)
 	pmPanel.Paint = function( self, w, h ) 
@@ -136,57 +59,135 @@ function OpenMenu()
 	local selectPMLabel = vgui.Create("DLabel", selectPMScrollPanel)
 	selectPMLabel:SetText("Select Model")
 	selectPMLabel:SetFont("F4_font")
-	selectPMLabel:SetPos(600, 450)
+	selectPMLabel:SetPos(565, 450)
 	selectPMLabel:SizeToContents()
 
 	local selectPMPanel = vgui.Create("DPanel", selectPMScrollPanel)
-	selectPMPanel:SetPos(595, 475)
-	selectPMPanel:SetSize(275, 150)
+	selectPMPanel:SetPos(525, 475)
+	selectPMPanel:SetSize(275, 900)
 
-	local selectModel = vgui.Create("DModelSelect", selectPMPanel)
-	selectModel:SetModelList(defaultModels, "", false, true)
+	local selectModelLayout = vgui.Create("DIconLayout", selectPMPanel)
+	selectModelLayout:Dock(FILL)
+	selectModelLayout:SetSpaceX(5)
+	selectModelLayout:SetSpaceY(5)
+	selectModelLayout:SetSize(80, 60)
+		
+	for k, citizen in pairs(GAMEMODE.citizens) do
+		local citizenModel = selectModelLayout:Add("SpawnIcon")
+		citizenModel:SetModel(citizen[1])
+		citizenModel.OnMousePressed = function()
+			net.Start("Update_Model")
+				net.WriteString(citizenModel:GetModelName())
+			net.SendToServer()
+			getModel = citizenModel:GetModelName()
+		end
+	end
 	
 	if tonumber(getLevel) >= 5 then
-		selectModel:SetModelList(rebelModels, "", false, true)
+		for k, rebel in pairs(GAMEMODE.rebels) do
+			local rebelModel = selectModelLayout:Add("SpawnIcon")
+			rebelModel:SetModel(rebel[1])
+			rebelModel.OnMousePressed = function()
+				net.Start("Update_Model")
+					net.WriteString(rebelModel:GetModelName())
+				net.SendToServer()
+				getModel = rebelModel:GetModelName()
+			end
+		end
 	end
 	
 	if tonumber(getLevel) >= 10 then
-		selectModel:SetModelList(medicModels, "", false, true)
+		for k, medics in pairs(GAMEMODE.medics) do
+			local medicsModel = selectModelLayout:Add("SpawnIcon")
+			medicsModel:SetModel(medics[1])
+			medicsModel.OnMousePressed = function()
+				net.Start("Update_Model")
+					net.WriteString(medicsModel:GetModelName())
+				net.SendToServer()
+				getModel = medicsModel:GetModelName()
+			end
+		end
 	end
 	
 	if tonumber(getLevel) >= 20 then
-		selectModel:SetModelList(cpModels, "", true, true)
+		for k, police in pairs(GAMEMODE.police) do
+			local policeModel = selectModelLayout:Add("SpawnIcon")
+			policeModel:SetModel(police[1])
+			policeModel.OnMousePressed = function()
+				net.Start("Update_Model")
+					net.WriteString(policeModel:GetModelName())
+				net.SendToServer()
+				getModel = policeModel:GetModelName()
+			end
+		end
 	end
 	
 	if tonumber(getLevel) >= 35 then
-		selectModel:SetModelList(soldierModels, "", true, true)
+		for k, soldier in pairs(GAMEMODE.soldier) do
+			local soldierModel = selectModelLayout:Add("SpawnIcon")
+			soldierModel:SetModel(soldier[1])
+			soldierModel.OnMousePressed = function()
+				net.Start("Update_Model")
+					net.WriteString(soldierModel:GetModelName())
+				net.SendToServer()
+				getModel = soldierModel:GetModelName()
+			end
+		end
 	end
 	
 	if tonumber(getLevel) >= 50 then
-		selectModel:SetModelList(heavSoldierModels, "", true, true)
+		for k, heavySoldier in pairs(GAMEMODE.heavySoldier) do
+			local heavyModel = selectModelLayout:Add("SpawnIcon")
+			heavyModel:SetModel(heavySoldier[1])
+			heavyModel.OnMousePressed = function()
+				net.Start("Update_Model")
+					net.WriteString(heavyModel:GetModelName())
+				net.SendToServer()
+				getModel = heavyModel:GetModelName()
+			end
+		end
 	end
 	
 	if tonumber(getLevel) >= 65 then
-		selectModel:SetModelList(eliteModels, "", true, true)
+		for k, eliteSoldier in pairs(GAMEMODE.eliteSoldier) do
+			local eliteModel = selectModelLayout:Add("SpawnIcon")
+			eliteModel:SetModel(eliteSoldier[1])
+			eliteModel.OnMousePressed = function()
+				net.Start("Update_Model")
+					net.WriteString(eliteModel:GetModelName())
+				net.SendToServer()
+				getModel = eliteModel:GetModelName()
+			end
+		end
 	end
 	
 	if tonumber(getLevel) >= 80 then
-		selectModel:SetModelList(capModels, "", true, true)
+		for k, capSoldier in pairs(GAMEMODE.captainSoldier) do
+			local captainModel = selectModelLayout:Add("SpawnIcon")
+			captainModel:SetModel(capSoldier[1])
+			captainModel.OnMousePressed = function()
+				net.Start("Update_Model")
+					net.WriteString(captainModel:GetModelName())
+				net.SendToServer()
+				getModel = captainModel:GetModelName()
+			end
+		end
 	end
 	
 	if tonumber(getLevel) >= 100 then
-		selectModel:SetModelList(hevModels, "", true, true)
-	end
-
-	selectModel:SetSize(275, 150)
-	selectModel.OnActivePanelChanged = function(ply, oldIcon, newIcon)
-		net.Start("Update_Model")
-			net.WriteString(newIcon:GetModelName())
-		net.SendToServer()
-		getModel = newIcon:GetModelName()
+		for k, hev in pairs(GAMEMODE.hev) do
+			local hevModel = selectModelLayout:Add("SpawnIcon")
+			hevModel:SetModel(hev[1])
+			hevModel.OnMousePressed = function()
+				net.Start("Update_Model")
+					net.WriteString(hevModel:GetModelName())
+				net.SendToServer()
+				getModel = hevModel:GetModelName()
+			end
+		end
 	end
 	
-	local invItemsName = LocalPlayer():GetNWString("Inventory")
+	local invName = string.Split(LocalPlayer():GetNWString("Inventory"), " ")
 	local invSpace = tonumber(LocalPlayer():GetNWInt("InvSpace"))
 	
 	local inventoryPanel = vgui.Create("DIconLayout", pmPanel)
@@ -197,12 +198,19 @@ function OpenMenu()
 	inventoryPanel:SetSpaceY(5)
 	
 	for i = 1, invSpace do
+		local ItemName = invName[i]
+		
 		local item = inventoryPanel:Add("DImage")
 		item:SetImage("hlmv/gray")
 		item:SetSize(75, 75)
 		local itemDesc = item:Add("DLabel")
-		itemDesc:SetText("")
-		itemDesc:SizeToContents()
+		
+		if ItemName then
+			itemDesc:SetText(ItemName)
+			itemDesc:SizeToContents()
+		else
+			itemDesc:SetText("")
+		end
 	end
 	
 	local helmetPanelReceiver = vgui.Create("DPanel", pmPanel)
@@ -226,46 +234,8 @@ function OpenMenu()
 		end
 	end
 	
-	local armourName = {
-		[1] = "Health\nEnhancer",
-		[2] = "Suit\nBattery\nPack",
-		[3] = "Mark\nVII\nSuit",
-	}
-	
-	local armourCost = {
-		[1] = 1000,
-		[2] = 2500,
-		[3] = 25000,
-	}
-	
-	local armourMats = {
-		[1] = "hlmv/gray",
-		[2] = "hl2cr/armour_parts/battery",
-		[3] = "hl2cr/armour_parts/suit",
-	}
-	
-	local weaponName = {
-		[1] = "Shotgun\nBarrel",
-		[2] = "SMG\nMuzzle",
-		[3] = "Crossbow\nScope",
-		[4] = "High\nExplosive\nRocket",
-	}
-	
-	local weaponCost = {
-		[1] = 500,
-		[2] = 250,
-		[3] = 750,
-		[4] = 5000,
-	}
-	
-	local weaponMats = {
-		[1] = "hl2cr/weapon_parts/barrel",
-		[2] = "hl2cr/weapon_parts/muzzle",
-		[3] = "hl2cr/weapon_parts/scope",
-		[4] = "hl2cr/weapon_parts/rocket",
-	}
 		
-	local shopPanel = vgui.Create("DPanel", frame)
+	local shopPanel = vgui.Create("DPanel", F4_Frame)
 	shopPanel.Paint = function( self, w, h ) 
 		draw.RoundedBox( 4, 0, 0, w, h, COLOUR_MODEL_PANEL ) 
 	end 
@@ -312,27 +282,27 @@ function OpenMenu()
 		armourScroll:SetPos(50, 175)
 		armourScroll:SetSize(250, 150)
 		
-		local armourList = vgui.Create("DIconLayout", armourScroll)
-		armourList:Dock(FILL)
-		armourList:SetSpaceX(5)
-		armourList:SetSpaceY(5)
+		local armourLayout = vgui.Create("DIconLayout", armourScroll)
+		armourLayout:Dock(FILL)
+		armourLayout:SetSpaceX(5)
+		armourLayout:SetSpaceY(5)
 		
-		for i = 1, 3 do
-			local armourItem = armourList:Add("DPanel")
+		for i, armour in pairs(armourItem or {}) do
+			local armourItem = armourLayout:Add("DPanel")
 			armourItem:SetSize(75, 75)
 			
 			local armourIcon = armourItem:Add("DImage")
 			armourIcon:SetSize(75, 75)
-			armourIcon:SetImage(armourMats[i])
+			armourIcon:SetImage(armourItem[i].mat)
 			
 			local armourLabel = armourItem:Add("DLabel")
-			armourLabel:SetText(armourName[i])
+			armourLabel:SetText(armourItem[i].name)
 			armourLabel:SetPos(0, 0)
 			armourLabel:SizeToContents()
 			
 			local armourButton = armourItem:Add("DButton")
 			armourButton:SetSize(125, 125)
-			armourButton:SetText(armourCost[i])
+			armourButton:SetText(armour[i].cost)
 			armourButton:SetColor(Color(255, 255, 255))
 			armourButton:SetDrawBackground(false)
 			armourButton.DoClick = function()
@@ -364,16 +334,16 @@ function OpenMenu()
 		weaponList:SetSpaceX(5)
 		weaponList:SetSpaceY(5)
 		
-		for i = 1, 4 do
+		for k, weapon in pairs(weaponItem or {}) do
 			local weaponItem = weaponList:Add("DPanel")
 			weaponItem:SetSize(75, 75)
 			
 			local weaponIcon = weaponItem:Add("DImage")
 			weaponIcon:SetSize(75, 75)
-			weaponIcon:SetImage(weaponMats[i])
+			weaponIcon:SetImage(weaponItem[i])
 			
 			local weaponLabel = weaponItem:Add("DLabel")
-			weaponLabel:SetText(weaponName[i])
+			weaponLabel:SetText(weaponItem[i])
 			weaponLabel:SizeToContents()
 			
 			local weaponButton = weaponItem:Add("DButton")
@@ -387,7 +357,7 @@ function OpenMenu()
 				curCoins = curCoins - weaponCost[i]
 				net.Start("Purchase")
 					net.WriteInt(weaponCost[i], 32)
-					net.WriteString(weaponName[i])
+					net.WriteString(weaponItem[i])
 				net.SendToServer()
 			elseif curCoins < weaponCost[i] then
 				surface.PlaySound("buttons/button10.wav")				
@@ -398,7 +368,7 @@ function OpenMenu()
 	TabSheet:AddSheet("Shop", shopPanel, nil)
 	
 	end
-	local statsPanel = vgui.Create("DPanel", frame)
+	local statsPanel = vgui.Create("DPanel", F4_Frame)
 	statsPanel.Paint = function( self, w, h ) 
 		draw.RoundedBox( 4, 0, 0, w, h, COLOUR_MODEL_PANEL ) 
 	end 

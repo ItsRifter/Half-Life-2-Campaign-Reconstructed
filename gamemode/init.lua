@@ -26,6 +26,7 @@ include("shared/sh_indicators.lua")
 include("shared/sh_player.lua")
 include("shared/sh_npc.lua")
 include("shared/items/sh_items_hats.lua")
+include("shared/shop/sh_shop_items.lua")
 
 include("server/config/maps/sv_init_maps.lua")
 
@@ -225,5 +226,3 @@ function GM:ShowSpare2(ply)
 	net.Start("Open_F4_Menu")
 	net.Send(ply)
 end
-
-print("Files loaded")

@@ -427,6 +427,7 @@ function SetCheckpointsStage()
 		TRIGGER_CHECKPOINT = {
 			Vector(-6861, -4255, 543), Vector(-7102, -4104, 670),
 			Vector( -7638, -4026, -253 ), Vector( -7653, -3879, -143 ),
+			Vector( -7882, -4154, -238 ), Vector( -7796, -4024, -251 ),
 		}
 		local Checkpoint1 = ents.Create("trigger_checkpoint")
 		Checkpoint1.Min = Vector(-6861, -4255, 543)
@@ -445,9 +446,9 @@ function SetCheckpointsStage()
 		Checkpoint2:Spawn()
 		
 		local Checkpoint3 = ents.Create("trigger_checkpoint")
-		Checkpoint3.Min = Vector(-7882, -4154, -248)
-		Checkpoint3.Max = Vector(-7817, -4106, -170)
-		Checkpoint3.Pos = Vector(-7882, -4154, -248) - ( ( Vector(-7882, -4154, -248) - Vector(-7817, -4106, -170)) / 2 )
+		Checkpoint3.Min = Vector(-7882, -4154, -238)
+		Checkpoint3.Max = Vector(-7796, -4024, -251)
+		Checkpoint3.Pos = Vector(-7796, -4024, -251) - ( ( Vector(-7796, -4024, -251) - Vector(-7882, -4154, -238)) / 2 )
 		Checkpoint3.Point3 = Vector(-7864, -4125, -242)
 		Checkpoint3:SetPos(Checkpoint3.Pos)
 		Checkpoint3:Spawn()
@@ -456,6 +457,7 @@ function SetCheckpointsStage()
 		TRIGGER_CHECKPOINT = {
 			 Vector(-6526, -1120, 17), Vector(-6421, -1203, 119),
 			 Vector(-7073, -1325, 14), Vector(-7252, -1457, 116),
+			 Vector(-10272, -4752, 321), Vector(-10427, -4703, 427),
 		}
 		local Checkpoint1 = ents.Create("trigger_checkpoint")
 		Checkpoint1.Min = Vector(-6526, -1120, 17)
@@ -472,6 +474,14 @@ function SetCheckpointsStage()
 		Checkpoint2.Point2 = Vector(-7170, -1389, 64)
 		Checkpoint2:SetPos(Checkpoint2.Pos)
 		Checkpoint2:Spawn()
+		
+		local Checkpoint3 = ents.Create("trigger_checkpoint")
+		Checkpoint3.Min = Vector(-10272, -4752, 321)
+		Checkpoint3.Max = Vector(-10427, -4703, 427)
+		Checkpoint3.Pos = Vector(-10427, -4703, 427) - ( ( Vector(-10427, -4703, 427) - Vector(-10272, -4752, 321)) / 2 )
+		Checkpoint3.Point3 = Vector(-10235, -4719, 329)
+		Checkpoint3:SetPos(Checkpoint3.Pos)
+		Checkpoint3:Spawn()
 		
 	elseif game.GetMap() == "d1_canals_01" then
 		TRIGGER_CHECKPOINT = {
@@ -493,6 +503,16 @@ function SetCheckpointsStage()
 		Checkpoint1.Max = Vector(-2108, -829, -1076)
 		Checkpoint1.Pos = Vector(-2108, -829, -1076) - ( ( Vector(-2108, -829, -1076) - Vector(-2180, -885, -1028)) / 2 )
 		Checkpoint1.Point1 = Vector(-2073, -871, -1167)
+		Checkpoint1:SetPos(Checkpoint1.Pos)
+	elseif game.GetMap() == "d1_canals_05" then
+		TRIGGER_CHECKPOINT = {
+			 Vector(4281, 1474, -453), Vector(4114, 1549, -294),
+		}
+		local Checkpoint1 = ents.Create("trigger_checkpoint")
+		Checkpoint1.Min = Vector(4281, 1474, -453)
+		Checkpoint1.Max = Vector(4114, 1549, -294)
+		Checkpoint1.Pos = Vector(4114, 1549, -294) - ( ( Vector(4114, 1549, -294) - Vector(4281, 1474, -453)) / 2 )
+		Checkpoint1.Point1 = Vector(4187, 1559, -448)
 		Checkpoint1:SetPos(Checkpoint1.Pos)
 		Checkpoint1:Spawn()
 		

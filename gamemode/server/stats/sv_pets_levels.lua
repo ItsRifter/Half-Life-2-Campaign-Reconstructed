@@ -401,7 +401,7 @@ hook.Add( "OnNPCKilled", "PetDeath", function(npc, attacker, inflictor)
 		npc.owner.petAlive = false
 	end
 	
-	if attacker:IsPlayer() and not npc.owner then
+	if attacker:IsPlayer() and not npc.owner and npc:IsPet() then
 		npc.owner:ChatPrint(attacker:Nick() .. " killed your pet!")
 	end
 end)
