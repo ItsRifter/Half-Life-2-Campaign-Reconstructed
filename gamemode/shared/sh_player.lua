@@ -311,60 +311,60 @@ net.Receive("Diff_Vote", function()
 		end
 	end
 end)
+if SERVER then
+	hook.Add("Think", "AmmoLimiter", function()
+		for k, p in pairs(player.GetAll()) do
+			if p:GetAmmoCount("357") > GetConVar("max_357"):GetInt() then		
+				p:RemoveAmmo( p:GetAmmoCount("357") -GetConVar("max_357"):GetInt(), "357" )
+			end
+			
+			if p:GetAmmoCount("AR2") > GetConVar("max_AR2"):GetInt() then		
+				p:RemoveAmmo( p:GetAmmoCount("AR2") -GetConVar("max_AR2"):GetInt(), "AR2" )
+			end
+			
+			if p:GetAmmoCount("AR2AltFire") > GetConVar("max_ar2_ball"):GetInt() then		
+				p:RemoveAmmo( p:GetAmmoCount("AR2AltFire") -GetConVar("max_ar2_ball"):GetInt(), "AR2AltFire" )
+			end
+			
+			if p:GetAmmoCount("Buckshot") > GetConVar("max_Buckshot"):GetInt() then		
+				p:RemoveAmmo( p:GetAmmoCount("Buckshot") -GetConVar("max_Buckshot"):GetInt(), "Buckshot" )
+			end
+			
+			if p:GetAmmoCount("XBowBolt") > GetConVar("max_crossbowbolt"):GetInt() then		
+				p:RemoveAmmo( p:GetAmmoCount("XBowBolt") -GetConVar("max_crossbowbolt"):GetInt(), "XBowBolt" )
+			end
 
-hook.Add("Think", "AmmoLimiter", function()
-	for k, p in pairs(player.GetAll()) do
-		if p:GetAmmoCount("357") > GetConVar("max_357"):GetInt() then		
-			p:RemoveAmmo( p:GetAmmoCount("357") -GetConVar("max_357"):GetInt(), "357" )
-		end
-		
-		if p:GetAmmoCount("AR2") > GetConVar("max_AR2"):GetInt() then		
-			p:RemoveAmmo( p:GetAmmoCount("AR2") -GetConVar("max_AR2"):GetInt(), "AR2" )
-		end
-		
-		if p:GetAmmoCount("AR2AltFire") > GetConVar("max_ar2_ball"):GetInt() then		
-			p:RemoveAmmo( p:GetAmmoCount("AR2AltFire") -GetConVar("max_ar2_ball"):GetInt(), "AR2AltFire" )
-		end
-		
-		if p:GetAmmoCount("Buckshot") > GetConVar("max_Buckshot"):GetInt() then		
-			p:RemoveAmmo( p:GetAmmoCount("Buckshot") -GetConVar("max_Buckshot"):GetInt(), "Buckshot" )
-		end
-		
-		if p:GetAmmoCount("XBowBolt") > GetConVar("max_crossbowbolt"):GetInt() then		
-			p:RemoveAmmo( p:GetAmmoCount("XBowBolt") -GetConVar("max_crossbowbolt"):GetInt(), "XBowBolt" )
-		end
+			if p:GetAmmoCount("Grenade") > GetConVar("max_grenade"):GetInt() then		
+				p:RemoveAmmo( p:GetAmmoCount("Grenade") -GetConVar("max_grenade"):GetInt(), "Grenade" )
+			end
 
-		if p:GetAmmoCount("Grenade") > GetConVar("max_grenade"):GetInt() then		
-			p:RemoveAmmo( p:GetAmmoCount("Grenade") -GetConVar("max_grenade"):GetInt(), "Grenade" )
+			if p:GetAmmoCount("slam") > GetConVar("max_slam"):GetInt() then		
+				p:RemoveAmmo( p:GetAmmoCount("slam") -GetConVar("max_slam"):GetInt(), "slam" )
+			end
+			
+			if p:GetAmmoCount("Pistol") > GetConVar("max_Pistol"):GetInt() then		
+				p:RemoveAmmo( p:GetAmmoCount("Pistol") -GetConVar("max_Pistol"):GetInt(), "Pistol" )
+			end
+			
+			if p:GetAmmoCount("RPG_Round") > GetConVar("max_RPG_Round"):GetInt() then		
+				p:RemoveAmmo( p:GetAmmoCount("RPG_Round") -GetConVar("max_RPG_Round"):GetInt(), "RPG_Round" )
+			end
+			
+			if p:GetAmmoCount("SMG1") > GetConVar("max_SMG1"):GetInt() then		
+				p:RemoveAmmo( p:GetAmmoCount("SMG1") -GetConVar("max_SMG1"):GetInt(), "SMG1" )
+			end
+			
+			if p:GetAmmoCount("SMG1_Grenade") > GetConVar("max_SMG1_Grenade"):GetInt() then		
+				p:RemoveAmmo( p:GetAmmoCount("SMG1_Grenade") - GetConVar("max_SMG1_Grenade"):GetInt(), "SMG1_Grenade" )
+			end
 		end
-
-		if p:GetAmmoCount("slam") > GetConVar("max_slam"):GetInt() then		
-			p:RemoveAmmo( p:GetAmmoCount("slam") -GetConVar("max_slam"):GetInt(), "slam" )
-		end
-		
-		if p:GetAmmoCount("Pistol") > GetConVar("max_Pistol"):GetInt() then		
-			p:RemoveAmmo( p:GetAmmoCount("Pistol") -GetConVar("max_Pistol"):GetInt(), "Pistol" )
-		end
-		
-		if p:GetAmmoCount("RPG_Round") > GetConVar("max_RPG_Round"):GetInt() then		
-			p:RemoveAmmo( p:GetAmmoCount("RPG_Round") -GetConVar("max_RPG_Round"):GetInt(), "RPG_Round" )
-		end
-		
-		if p:GetAmmoCount("SMG1") > GetConVar("max_SMG1"):GetInt() then		
-			p:RemoveAmmo( p:GetAmmoCount("SMG1") -GetConVar("max_SMG1"):GetInt(), "SMG1" )
-		end
-		
-		if p:GetAmmoCount("SMG1_Grenade") > GetConVar("max_SMG1_Grenade"):GetInt() then		
-			p:RemoveAmmo( p:GetAmmoCount("SMG1_Grenade") - GetConVar("max_SMG1_Grenade"):GetInt(), "SMG1_Grenade" )
-		end
-	end
-end)
+	end)
+end
 
 local neededVotes = #player.GetAll()
 local lobbyVotes = 0
 
 net.Receive("ReturnLobby", function(ply)
-
 	for k, p in pairs(player.GetAll()) do
 		p:ChatPrint(ply:Nick() .. " has voted to return to the lobby: " .. lobbyVotes .. "/" .. neededVotes)
 	end

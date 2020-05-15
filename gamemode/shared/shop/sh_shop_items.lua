@@ -1,15 +1,18 @@
 AddCSLuaFile() -- Add itself to files to be sent to the clients, as this file is shared
 
-function addShopWeapons(name, cost, mat)
-	table.insert(weaponItems, {name, cost, mat})
-end
+-- Armour items
+local ArmourItem = createItemBase(itemBase, "Health Enhancer MK1", "Improves your life expectancy", "hlmv/gray")
+ArmourItem.Cost = 1000
+Register.Armour(ArmourItem)
 
-function addShopArmours(name, cost, mat)
-	table.insert(armourItems, {name, cost, mat})
-end
+local ArmourItem = createItemBase(itemBase, "Health Enhancer MK2", "Improves your life expectancy", "hlmv/gray")
+ArmourItem.Cost = 1000
+Register.Armour(ArmourItem)
 
-GM.armourItems = {}
-GM.weaponItems = {}
+-- Weapon items
+local WeaponItem = createItemBase(itemBase, "Shotgun Barrel", "A shotgun barrel", "hl2cr/weapon_parts/barrel")
+WeaponItem.Cost = 1000
+Register.Weapon(WeaponItem)
 
 armourList = {
 	{name = "Health Enhancer", cost = 1000, mat = "hlmv/gray"},
@@ -23,7 +26,3 @@ weaponList = {
 	{name = "Crossbow Scope", cost = 750, mat = "hl2cr/weapon_parts/scope"},
 	{name = "High Explosive Rocket", cost = 5000, mat = "hl2cr/weapon_parts/rocket"}
 }
-
-addShopArmours("Health Enhancer", 1000, "hlmv/gray")
-
-addShopWeapons("Shotgun Barrel", 500, "hl2cr/weapon_parts/barrel")
