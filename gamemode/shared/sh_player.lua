@@ -1,3 +1,5 @@
+AddCSLuaFile() -- Add itself to files to be sent to the clients, as this file is shared
+
 startingWeapons = startingWeapons or {}
 hook.Add("PlayerInitialSpawn", "MiscSurv", function(ply)
 	

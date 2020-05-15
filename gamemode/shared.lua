@@ -1,3 +1,13 @@
+AddCSLuaFile() -- Add itself to files to be sent to the clients
+
+-- All of these included files call AddCSLuaFile on their own
+include("shared/sh_indicators.lua")
+include("shared/sh_player.lua")
+include("shared/sh_npc.lua")
+include("shared/items/sh_items_init.lua")
+include("shared/items/sh_items_hats.lua")
+include("shared/shop/sh_shop_items.lua")
+
 GM.Name = "Half-Life 2: Campaign - Revisited"
 GM.Author = "SuperSponer"
 GM.Email = "d_thomas_smith30@hotmail.com"

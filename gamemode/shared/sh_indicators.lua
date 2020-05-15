@@ -1,3 +1,5 @@
+AddCSLuaFile() -- Add itself to files to be sent to the clients, as this file is shared
+
 hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 	local giveXP = 0
 	local giveCoins = 0

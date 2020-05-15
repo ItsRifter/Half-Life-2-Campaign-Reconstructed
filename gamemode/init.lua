@@ -1,17 +1,17 @@
 include("shared.lua")
 
+-- Mark all client side only files to be sent to client
 AddCSLuaFile("cl_init.lua")
-AddCSLuaFile("shared.lua")
-
 AddCSLuaFile("client/achievements/cl_ach_base.lua")
-AddCSLuaFile("client/menus/cl_new_player.lua")
 AddCSLuaFile("client/menus/cl_f4_menu.lua")
-AddCSLuaFile("client/menus/cl_scoreboard.lua")
 AddCSLuaFile("client/menus/cl_difficulty_vote.lua")
 AddCSLuaFile("client/commands/cl_commands_list.lua")
+AddCSLuaFile("client/menus/cl_scoreboard.lua")
 AddCSLuaFile("client/cl_hud.lua")
 AddCSLuaFile("client/menus/cl_pets.lua")
+AddCSLuaFile("client/menus/cl_new_player.lua")
 
+-- Server side files only
 include("server/commands/sv_commands_list.lua")
 include("server/stats/sv_player_levels.lua")
 include("server/saving_modules/sv_data_flatfile.lua")
@@ -21,12 +21,6 @@ include("server/config/achievements/sv_ach.lua")
 
 include("server/sv_unstuck.lua")
 include("server/config/sv_difficulty.lua")
-
-include("shared/sh_indicators.lua")
-include("shared/sh_player.lua")
-include("shared/sh_npc.lua")
-include("shared/items/sh_items_hats.lua")
-include("shared/shop/sh_shop_items.lua")
 
 include("server/config/maps/sv_init_maps.lua")
 
