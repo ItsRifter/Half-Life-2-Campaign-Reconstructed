@@ -17,6 +17,22 @@ surface.CreateFont("F4_Shop_font", {
 	size = 32,
 })
 
+function DoDrop(self, panels, IsDropped, Command, x, y )
+	if IsDropped then
+		for k, v in pairs(panels) do
+			print("Put in backpack")
+		end
+	end
+end	
+
+function DoDropHelmet(self, panels, IsDropped, Command, x, y )
+	if IsDropped then
+		for k, v in pairs(panels) do
+			helmetImage:SetImage(v:GetImage())
+		end
+	end
+end
+
 function OpenMenu()
 	
 	local getModel = LocalPlayer():GetNWString("Model")
@@ -186,54 +202,56 @@ function OpenMenu()
 			end
 		end
 	end
-	
-	local invName = string.Split(LocalPlayer():GetNWString("Inventory"), " ")
+
 	local invSpace = tonumber(LocalPlayer():GetNWInt("InvSpace"))
-	
-	local inventoryPanel = vgui.Create("DIconLayout", pmPanel)
-	inventoryPanel:SetPos(450, 100)
-	inventoryPanel:SetSize(400, 150)
-	inventoryPanel:Receiver("Inventory", DoDrop)
-	inventoryPanel:SetSpaceX(5)
-	inventoryPanel:SetSpaceY(5)
-	
-	for i = 1, invSpace do
-		local ItemName = invName[i]
-		
-		local item = inventoryPanel:Add("DImage")
-		item:SetImage("hlmv/gray")
-		item:SetSize(75, 75)
-		local itemDesc = item:Add("DLabel")
-		
-		if ItemName then
-			itemDesc:SetText(ItemName)
-			itemDesc:SizeToContents()
-		else
-			itemDesc:SetText("")
-		end
-	end
 	
 	local helmetPanelReceiver = vgui.Create("DPanel", pmPanel)
 	helmetPanelReceiver:SetPos(250, 50)
 	helmetPanelReceiver:SetSize(75, 75)
 	helmetPanelReceiver:SetToolTip("Helmets for your head")
-	helmetPanelReceiver:Receiver("Helmet", DoDrop)
+	helmetPanelReceiver:Receiver("Helmet", DoDropHelmet)
 	
-	local helmetImage = vgui.Create("DImage", helmetPanelReceiver)
+	helmetImage = vgui.Create("DImage", helmetPanelReceiver)
 	helmetImage:SetSize(75, 75)
 	helmetImage:SetImage("hlmv/gray")
 	--vgui/hud/icon_locked
 	--vgui/cursors/no
 	--vgui/hud/icon_check
+	local itemName = string.Split(LocalPlayer():GetNWString("Inventory"), "  ")
 	
-	TabSheet:AddSheet("Suit", pmPanel, nil)
+	local inventoryLayout = vgui.Create("DIconLayout", pmPanel)
+	inventoryLayout:SetPos(400, 100)
+	inventoryLayout:SetSize(400, 150)
+	inventoryLayout:Receiver("Inventory", DoDrop)
+	inventoryLayout:SetSpaceX(5)
+	inventoryLayout:SetSpaceY(5)
 	
-	local function DoDrop(self, panels, IsDropped, Command, x, y )
-		if IsDropped then
+	
+	for i = 2, invSpace do
+		
+		local item = vgui.Create("DImage")
+		item:SetSize(75, 75)
+		if itemName[i] == "Suit Battery Pack" then
+			item:SetImage("hl2cr/armour_parts/battery")
 			
+		elseif itemName[i] == "Mark VII Helmet" then
+			item:SetImage("hl2cr/armour_parts/suit")
+			item:Droppable("Helmet")
+			
+		elseif itemName[i] == "Mark VII Suit" then
+			item:SetImage("hl2cr/armour_parts/suit")
+			
+		elseif itemName[i] == "Shotgun Barrel" then
+			item:SetImage("hl2cr/weapon_parts/barrel")
+		else
+			item:SetImage("hlmv/gray")
 		end
+		
+		inventoryLayout:Add(item)
 	end
 	
+
+	TabSheet:AddSheet("Suit", pmPanel, nil)	
 		
 	local shopPanel = vgui.Create("DPanel", F4_Frame)
 	shopPanel.Paint = function( self, w, h ) 
@@ -250,7 +268,6 @@ function OpenMenu()
 	
 		TabSheet:AddSheet("Shop", shopPanel, nil)
 	else
-	
 	
 		local shopTitleLabel = vgui.Create("DLabel", shopPanel)
 		shopTitleLabel:SetText("CrowMart Shop")
@@ -276,44 +293,38 @@ function OpenMenu()
 		shopArmourLabel:SizeToContents()
 		shopArmourLabel:SetPos(65, 125)
 		
-		
-		
 		local armourScroll = vgui.Create("DScrollPanel", shopPanel)
 		armourScroll:SetPos(50, 175)
-		armourScroll:SetSize(250, 150)
+		armourScroll:SetSize(275, 150)
 		
 		local armourLayout = vgui.Create("DIconLayout", armourScroll)
 		armourLayout:Dock(FILL)
 		armourLayout:SetSpaceX(5)
 		armourLayout:SetSpaceY(5)
 		
-		for i, armour in pairs(armourItem or {}) do
+		for i, armour in pairs(GAMEMODE.ArmourItem) do
 			local armourItem = armourLayout:Add("DPanel")
-			armourItem:SetSize(75, 75)
+			armourItem:SetSize(80, 80)
 			
 			local armourIcon = armourItem:Add("DImage")
-			armourIcon:SetSize(75, 75)
-			armourIcon:SetImage(armourItem[i].mat)
-			
-			local armourLabel = armourItem:Add("DLabel")
-			armourLabel:SetText(armourItem[i].name)
-			armourLabel:SetPos(0, 0)
-			armourLabel:SizeToContents()
-			
+			armourIcon:SetSize(80, 80)
+			armourIcon:SetImage(GAMEMODE.ArmourItem[i].Icon)
+						
 			local armourButton = armourItem:Add("DButton")
-			armourButton:SetSize(125, 125)
-			armourButton:SetText(armour[i].cost)
-			armourButton:SetColor(Color(255, 255, 255))
+			armourButton:SetSize(80, 80)
+			armourButton:SetToolTip(GAMEMODE.ArmourItem[i].Name)
+			armourButton:SetText("λ" .. GAMEMODE.ArmourItem[i].Cost)
+			armourButton:SetColor(Color(255, 225, 165))
 			armourButton:SetDrawBackground(false)
 			armourButton.DoClick = function()
-			if curCoins >= armourCost[i] then
+			if curCoins >= GAMEMODE.ArmourItem[i].Cost then
 					surface.PlaySound("ambient/levels/labs/coinslot1.wav")
-					curCoins = curCoins - armourCost[i]
+					curCoins = curCoins - GAMEMODE.ArmourItem[i].Cost
 					net.Start("Purchase")
-						net.WriteInt(armourCost[i], 32)
-						net.WriteString(armourName[i])
+						net.WriteInt(GAMEMODE.ArmourItem[i].Cost, 32)
+						net.WriteString(" " .. GAMEMODE.ArmourItem[i].Name)
 					net.SendToServer()
-				elseif curCoins < armourCost[i] then
+				elseif curCoins < GAMEMODE.ArmourItem[i].Cost then
 					surface.PlaySound("buttons/button10.wav")				
 				end
 			end
@@ -327,39 +338,36 @@ function OpenMenu()
 		
 		local weaponScroll = vgui.Create("DScrollPanel", shopPanel)
 		weaponScroll:SetPos(580, 175)
-		weaponScroll:SetSize(250, 150)
+		weaponScroll:SetSize(275, 150)
 		
 		local weaponList = vgui.Create("DIconLayout", weaponScroll)
 		weaponList:Dock(FILL)
 		weaponList:SetSpaceX(5)
 		weaponList:SetSpaceY(5)
 		
-		for k, weapon in pairs(weaponItem or {}) do
+		for k, weapon in pairs(GAMEMODE.WeaponItem) do
 			local weaponItem = weaponList:Add("DPanel")
-			weaponItem:SetSize(75, 75)
+			weaponItem:SetSize(80, 80)
 			
 			local weaponIcon = weaponItem:Add("DImage")
-			weaponIcon:SetSize(75, 75)
-			weaponIcon:SetImage(weaponItem[i])
-			
-			local weaponLabel = weaponItem:Add("DLabel")
-			weaponLabel:SetText(weaponItem[i])
-			weaponLabel:SizeToContents()
+			weaponIcon:SetSize(80, 80)
+			weaponIcon:SetImage(GAMEMODE.WeaponItem[k].Icon)
 			
 			local weaponButton = weaponItem:Add("DButton")
-			weaponButton:SetSize(125, 125)
-			weaponButton:SetText(weaponCost[i])
-			weaponButton:SetColor(Color(255, 255, 255))
+			weaponButton:SetSize(80, 80)
+			weaponButton:SetToolTip(GAMEMODE.WeaponItem[k].Name)
+			weaponButton:SetText("λ" .. GAMEMODE.WeaponItem[k].Cost)
+			weaponButton:SetColor(Color(255, 225, 165))
 			weaponButton:SetDrawBackground(false)
 			weaponButton.DoClick = function()
-			if curCoins >= weaponCost[i] then
+			if curCoins >= GAMEMODE.WeaponItem[k].Cost then
 				surface.PlaySound("ambient/levels/labs/coinslot1.wav")
-				curCoins = curCoins - weaponCost[i]
+				curCoins = curCoins - GAMEMODE.WeaponItem[k].Cost
 				net.Start("Purchase")
-					net.WriteInt(weaponCost[i], 32)
-					net.WriteString(weaponItem[i])
+					net.WriteInt(GAMEMODE.WeaponItem[k].Cost, 32)
+					net.WriteString(" " .. GAMEMODE.WeaponItem[k].Name)
 				net.SendToServer()
-			elseif curCoins < weaponCost[i] then
+			elseif curCoins < GAMEMODE.WeaponItem[k].Cost then
 				surface.PlaySound("buttons/button10.wav")				
 			end
 		end

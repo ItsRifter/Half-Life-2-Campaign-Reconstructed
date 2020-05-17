@@ -6,7 +6,7 @@ function AddXP(ply, amt)
 		math.ceil(ply.hl2cPersistent.MaxXP)
 		ply.hl2cPersistent.Level = ply.hl2cPersistent.Level + 1
 		ply.hl2cPersistent.XP = ply.hl2cPersistent.XP - ply.hl2cPersistent.MaxXP
-		ply.hl2cPersistent.MaxXP = ply.hl2cPersistent.MaxXP + 250
+		ply.hl2cPersistent.MaxXP = ply.hl2cPersistent.MaxXP + 500
 		ply:SetNWInt("Level", ply.hl2cPersistent.Level)
 		ply:SetNWInt("XP", math.Round(ply.hl2cPersistent.XP))
 		ply:SetNWInt("maxXP", math.Round(ply.hl2cPersistent.MaxXP))

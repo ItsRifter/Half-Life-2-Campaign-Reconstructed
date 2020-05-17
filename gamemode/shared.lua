@@ -1,12 +1,6 @@
 AddCSLuaFile() -- Add itself to files to be sent to the clients
 
 -- All of these included files call AddCSLuaFile on their own
-include("shared/sh_indicators.lua")
-include("shared/sh_player.lua")
-include("shared/sh_npc.lua")
-include("shared/items/sh_items_base.lua")
-include("shared/items/sh_items_hats.lua")
-include("shared/shop/sh_shop_items.lua")
 
 GM.Name = "Half-Life 2: Campaign - Revisited"
 GM.Author = "SuperSponer"
@@ -125,11 +119,17 @@ addHevModels("models/player/SGG/hev_helmet.mdl")
 Register = {}
 GM.ArmourItem = {}
 GM.WeaponItem = {}
-function Register.Armour(ArmourItem) 
-	GM.ArmourItem[ArmourItem.Name] = ArmourItem
-	print("Works")
+function Register.Armour(tableArmItem) 
+	GM.ArmourItem[tableArmItem.Name] = tableArmItem
 end	
 
 function Register.Weapon(tableWepItem) 
 	GM.WeaponItem[tableWepItem.Name] = tableWepItem
 end	
+
+include("shared/sh_indicators.lua")
+include("shared/sh_player.lua")
+include("shared/sh_npc.lua")
+include("shared/items/sh_items_base.lua")
+include("shared/shop/sh_shop_items.lua")
+include("shared/items/sh_items_hats.lua")

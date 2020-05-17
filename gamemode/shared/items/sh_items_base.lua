@@ -31,3 +31,9 @@ BaseEquipment.SlotPos = "slotpos_primwep"
 BaseEquipment.ReqLevel = 1
 BaseEquipment.Buffs = {}
 BaseEquipment.DeBuffs = {}
+
+BaseSuitArmour = DeriveTable(BaseEquipment)
+BaseSuitArmour.Armour = 1
+
+BaseSuitWeapon = DeriveTable(BaseEquipment)
+BaseSuitWeapon.Damage = 2
