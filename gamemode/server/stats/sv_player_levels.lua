@@ -45,21 +45,3 @@ function AddXP(ply, amt)
 		end
 	end
 end
-
-net.Receive("GiveXP", function(len, ply)
-	local amount = net.ReadInt(16)
-	AddXP(ply, amount)
-end)
-
-net.Receive("SetLevel", function(len, ply)
-	local level = net.ReadInt(16)
-	ply.hl2cPersistent.Level = level
-	ply.hl2cPersistent.XP = 0
-	ply:SetNWInt("Level", ply.hl2cPersistent.Level)
-end)
-
-net.Receive("SetMaxXP", function(len, ply)
-	local maxXP = net.ReadInt(16)
-	ply.hl2cPersistent.MaxXP = maxXP
-	ply:SetNWInt("maxXP", math.Round(ply.hl2cPersistent.MaxXP))
-end)

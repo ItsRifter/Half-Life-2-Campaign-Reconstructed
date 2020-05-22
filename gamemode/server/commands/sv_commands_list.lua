@@ -216,19 +216,10 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 	end
 end)
 
-net.Receive("SetSuicide", function()
-	GetConVar("hl2c_allowsuicide"):SetInt(net.ReadInt(16))
-end)
-
 function AddCoins(ply, amount)
 	ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins + amount
 	ply:SetNWInt("Coins", math.Round(ply.hl2cPersistent.Coins))
 end
-
-net.Receive("AddCoins", function(len, ply, coin)
-	local coins = net.ReadInt(32)
-	AddCoins(ply, coins)
-end)
 
 net.Receive("SurvMode", function(len, ply, survInt)
 	local surv = net.ReadInt(8)
@@ -240,9 +231,7 @@ concommand.Add("hl2cr_givexp", function(ply, cmd, args)
 	
 	if ply:IsAdmin() then
 		if int then
-			net.Start("GiveXP")
-				net.WriteInt(int, 16)
-			net.SendToServer()
+			AddXP(ply, int)
 			ply:PrintMessage(HUD_PRINTCONSOLE, int)
 		elseif not int then
 			ply:PrintMessage(HUD_PRINTCONSOLE, "Invalid Value")
@@ -256,14 +245,10 @@ concommand.Add("hl2cr_allowsuicide", function(ply, cmd, args)
 	local int = tonumber(args[1])
 	if ply:IsAdmin() then
 		if int == 1 then
-			net.Start("SetSuicide")
-				net.WriteInt(int, 16)
-			net.SendToServer()
+			GetConVar("hl2c_allowsuicide"):SetInt(int)
 			ply:PrintMessage(HUD_PRINTCONSOLE, "Suicide enabled")
 		elseif int == 0 then
-			net.Start("SetSuicide")
-				net.WriteInt(int, 16)
-			net.SendToServer()
+			GetConVar("hl2c_allowsuicide"):SetInt(int)
 			ply:PrintMessage(HUD_PRINTCONSOLE, "Suicide disabled")
 		else
 			ply:PrintMessage(HUD_PRINTCONSOLE, "INVALID VALUE")
@@ -276,10 +261,9 @@ end)
 concommand.Add("hl2cr_setmaxxp", function(ply, cmd, args)
 	local maxXP = tonumber(args[1])
 	if ply:IsAdmin() then
-		if maxXP then
-			net.Start("SetMaxXP")
-				net.WriteInt(maxXP, 16)
-			net.SendToServer()
+		if maxXP >= 0 then
+			ply.hl2cPersistent.MaxXP = maxXP
+			ply:SetNWInt("maxXP", math.Round(ply.hl2cPersistent.MaxXP))
 		else
 			ply:PrintMessage(HUD_PRINTCONSOLE, "Invalid Value")
 		end
@@ -291,10 +275,10 @@ end)
 concommand.Add("hl2cr_setlevel", function(ply, cmd, args)
 	local level = tonumber(args[1])
 	if ply:IsAdmin() then
-		if level then
-			net.Start("SetLevel")
-				net.WriteInt(level, 16)
-			net.SendToServer()
+		if level >= 0 then
+			ply.hl2cPersistent.Level = level
+			ply.hl2cPersistent.XP = 0
+			ply:SetNWInt("Level", ply.hl2cPersistent.Level)
 		else
 			ply:PrintMessage(HUD_PRINTCONSOLE, "Invalid Value")
 		end
@@ -306,10 +290,8 @@ end)
 concommand.Add("hl2cr_addcoins", function(ply, cmd, args)
 	local coins = tonumber(args[1])
 	if ply:IsAdmin() then
-		if coins then
-			net.Start("AddCoins")
-				net.WriteInt(coins, 32)
-			net.SendToServer()
+		if coins >= 0 then
+			AddCoins(ply, coins)
 		else
 			ply:PrintMessage(HUD_PRINTCONSOLE, "Invalid Value")
 		end
@@ -322,9 +304,7 @@ concommand.Add("hl2cr_difficulty", function(ply, cmd, args)
 	local diff = tonumber(args[1])
 	if ply:IsAdmin() then
 		if diff >= 1 and diff <= 3 then
-			net.Start("DiffMode")
-				net.WriteInt(diff, 8)
-			net.SendToServer()
+			SetDiffMode(diff)
 		else
 			ply:PrintMessage(HUD_PRINTCONSOLE, "Invalid Value")
 		end
@@ -337,9 +317,7 @@ concommand.Add("hl2cr_survival", function(ply, cmd, args)
 	local surv = tonumber(args[1])
 	if ply:IsAdmin() then
 		if surv == 0 or surv == 1 then
-			net.Start("SurvMode")
-				net.WriteInt(surv, 16)
-			net.SendToServer()
+			SetSurvMode(surv)
 		else
 			ply:PrintMessage(HUD_PRINTCONSOLE, "Invalid Value")
 		end
@@ -349,11 +327,15 @@ concommand.Add("hl2cr_survival", function(ply, cmd, args)
 end)
 
 concommand.Add("hl2cr_petsummon", function(ply, cmd, args)
-	local level = ply:GetNWInt("Level")
-	local petEnt = ply:GetNWEntity("PetEntity")
+	local level = ply.hl2cPersistent.Level
+	local petEnt = ply.pet
 	if tonumber(level) >= 10 then
-		net.Start("SpawnPetConCommand")
-		net.SendToServer()
+		if not ply.petAlive then
+			spawnPet(ply)
+			ply:SetNWString("PetOwnerName", ply:Nick())
+		else
+			ply:PrintMessage(HUD_PRINTCONSOLE, "You can only summon your pet once every life!")
+		end
 	elseif tonumber(level) < 10 then
 		ply:PrintMessage(HUD_PRINTCONSOLE, "You don't have access to pets")
 	end
