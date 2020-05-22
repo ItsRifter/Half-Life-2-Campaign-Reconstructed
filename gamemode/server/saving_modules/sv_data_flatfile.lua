@@ -16,8 +16,8 @@ function CreateData(ply)
 	ply.hl2cPersistent.Model = ply:GetModel()
 	ply.hl2cPersistent.Milestone = 5
 	ply.hl2cPersistent.Achievements = ""
-	ply.hl2cPersistent.Inventory = "Health Enhancer MK1"
-	ply.hl2cPersistent.InvSpace = 10
+	ply.hl2cPersistent.Inventory = ""
+	ply.hl2cPersistent.InvSpace = 16
 	
 	--Default pet settings
 	ply.hl2cPersistent.PetName = ""

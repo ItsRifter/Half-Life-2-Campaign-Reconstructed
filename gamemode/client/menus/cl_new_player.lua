@@ -28,6 +28,16 @@ surface.CreateFont("Intro_Tab3_Font", {
 	size = 28,
 })
 
+surface.CreateFont("Intro_Tab4_Title_Font", {
+	font = "Arial",
+	size = 48,
+})
+
+surface.CreateFont("Intro_Tab4_Font", {
+	font = "Arial",
+	size = 32,
+})
+
 local exampleModels = {
 	["models/player/Group03/male_06.mdl"] = {},
 	["models/player/police.mdl"] = {},
@@ -51,7 +61,7 @@ function LobbyMenu()
 	frame:Center()
 	frame:SetVisible(true)
 	frame:SetDraggable(false)
-	frame:ShowCloseButton(true)
+	frame:ShowCloseButton(false)
 	frame:SetTitle("")
 	frame.Paint = function(s, w, h)
 		draw.RoundedBox(0,0,0, w, h, Color(140, 140, 140, 255))
@@ -77,14 +87,14 @@ function LobbyMenu()
 	LabelTitle:SizeToContents()
 	LabelTitle:SetText("Welcome to Half-Life 2:\n Campaign - Revisited")
 	LabelTitle:SizeToContents()
-	LabelTitle:SetDark( 1 )
+	LabelTitle:SetColor(Color(0, 0, 0))
 	
 	LabelDescText = vgui.Create( "DLabel", PanelTabOne )
 	LabelDescText:SetPos(75, 450)
 	LabelDescText:SetFont("Intro_Tab1_Font")
 	LabelDescText:SetText("Please read the rules before beginning!")
 	LabelDescText:SizeToContents()
-	LabelDescText:SetDark(1)
+	LabelDescText:SetColor(Color(0, 0, 0))
 	
 	TabSheet:AddSheet("Intro", PanelTabOne, nil)
 	
@@ -102,42 +112,42 @@ function LobbyMenu()
 	LabelTabTwoTitle:SetFont("Intro_Tab2_Title_Font")
 	LabelTabTwoTitle:SetText("Half-Life 2: Campaign - Revisited is a cooperative gamemode\nbased from Leiftigers gamemode but with modern updates")
 	LabelTabTwoTitle:SizeToContents()
-	LabelTabTwoTitle:SetDark(1)
+	LabelTabTwoTitle:SetColor(Color(0, 0, 0))
 	
 	LabelTabTwoDesc1 = vgui.Create( "DLabel", PanelTabTwo)
 	LabelTabTwoDesc1:SetPos(100, 250)
 	LabelTabTwoDesc1:SetFont("Intro_Tab2_Font")
 	LabelTabTwoDesc1:SetText("Unlike other versions such as Iceman's Half-Life 2 Campaign\nthis is coded from scratch with a lot more to offer")
 	LabelTabTwoDesc1:SizeToContents()
-	LabelTabTwoDesc1:SetDark(1)
+	LabelTabTwoDesc1:SetColor(Color(0, 0, 0))
 	
 	LabelTabTwoDesc2 = vgui.Create( "DLabel", PanelTabTwo)
 	LabelTabTwoDesc2:SetPos(150, 350)
 	LabelTabTwoDesc2:SetFont("Intro_Tab2_Font")
 	LabelTabTwoDesc2:SetText("With this version, you can earn not only XP but also")
 	LabelTabTwoDesc2:SizeToContents()
-	LabelTabTwoDesc2:SetDark(1)
+	LabelTabTwoDesc2:SetColor(Color(0, 0, 0))
 	
 	LabelTabTwoDesc3 = vgui.Create( "DLabel", PanelTabTwo)
 	LabelTabTwoDesc3:SetPos(250, 400)
 	LabelTabTwoDesc3:SetFont("Intro_Tab2_Font")
 	LabelTabTwoDesc3:SetText("Lambda Coins\nArmour Sets\nPets\nUpgrades")
 	LabelTabTwoDesc3:SizeToContents()
-	LabelTabTwoDesc3:SetDark(1)
+	LabelTabTwoDesc3:SetColor(Color(0, 0, 0))
 	
 	LabelTabTwoDesc4 = vgui.Create( "DLabel", PanelTabTwo)
 	LabelTabTwoDesc4:SetPos(450, 400)
 	LabelTabTwoDesc4:SetFont("Intro_Tab2_Font")
 	LabelTabTwoDesc4:SetText("Suits\nCrafting Materials\nAchievements\nBuffs")
 	LabelTabTwoDesc4:SizeToContents()
-	LabelTabTwoDesc4:SetDark(1)
+	LabelTabTwoDesc4:SetColor(Color(0, 0, 0))
 	
 	LabelTabTwoDesc5 = vgui.Create( "DLabel", PanelTabTwo)
 	LabelTabTwoDesc5:SetPos(250, 550)
 	LabelTabTwoDesc5:SetFont("Intro_Tab2_Font")
 	LabelTabTwoDesc5:SetText("And a whole lot more to discover!")
 	LabelTabTwoDesc5:SizeToContents()
-	LabelTabTwoDesc5:SetDark(1)
+	LabelTabTwoDesc5:SetColor(Color(0, 0, 0))
 	
 	ModelsTabTwo = vgui.Create("DModelSelect", PanelTabTwo)
 	ModelsTabTwo:SetModelList(exampleModels)
@@ -167,28 +177,28 @@ function LobbyMenu()
 	LabelTabThreeRuleTitle:SetFont("Intro_Tab3_Title_Font")
 	LabelTabThreeRuleTitle:SetText("RULES")
 	LabelTabThreeRuleTitle:SizeToContents()
-	LabelTabThreeRuleTitle:SetDark(1)
+	LabelTabThreeRuleTitle:SetColor(Color(0, 0, 0))
 	
 	local LabelTabThreeRules = vgui.Create( "DLabel", PanelTabThree )
 	LabelTabThreeRules:SetPos(50, 250)
 	LabelTabThreeRules:SetFont("Intro_Tab3_Font")
 	LabelTabThreeRules:SetText("No griefing other players (prop killing, disrupting achievements)\nDo not steal pet kills\nNo Mic/Chat spamming\nKeep it english only in voice chat\nDo not offend other players\nNo exploits/cheating")
 	LabelTabThreeRules:SizeToContents()
-	LabelTabThreeRules:SetDark(1)
+	LabelTabThreeRules:SetColor(Color(0, 0, 0))
 	
 	local LabelTabThreeCmdTitle = vgui.Create( "DLabel", PanelTabThree )
 	LabelTabThreeCmdTitle:SetPos(350, 550)
 	LabelTabThreeCmdTitle:SetFont("Intro_Tab3_Title_Font")
 	LabelTabThreeCmdTitle:SetText("COMMANDS")
 	LabelTabThreeCmdTitle:SizeToContents()
-	LabelTabThreeCmdTitle:SetDark(1)
+	LabelTabThreeCmdTitle:SetColor(Color(0, 0, 0))
 	
 	local LabelTabThreeCmds = vgui.Create( "DLabel", PanelTabThree )
 	LabelTabThreeCmds:SetPos(350, 650)
 	LabelTabThreeCmds:SetFont("Intro_Tab3_Font")
 	LabelTabThreeCmds:SetText("!Difficulty\n!pet\n!petduel\n!lobby\n!petsummon\n!petbring\n!seats\n!ach\n!petname")
 	LabelTabThreeCmds:SizeToContents()
-	LabelTabThreeCmds:SetDark(1)
+	LabelTabThreeCmds:SetColor(Color(0, 0, 0))
 	
 	TabSheet:AddSheet("Rules and Commands", PanelTabThree, nil)
 	
@@ -201,6 +211,28 @@ function LobbyMenu()
 	PanelTabFour.Paint = function(s, w, h)
 		draw.RoundedBox(0,0,0, w, h, Color(170, 170, 170, 255))
 	end
+	
+	local creditsTitleLabel = vgui.Create("DLabel", PanelTabFour)
+	creditsTitleLabel:SetText("CREDITS")
+	creditsTitleLabel:SetFont("Intro_Tab4_Title_Font")
+	creditsTitleLabel:SetColor(Color(0, 0, 0))
+	creditsTitleLabel:SetPos(PanelTabFour:GetWide() / 2 - 50, 75)
+	creditsTitleLabel:SizeToContents()
+	
+	local creditsLabel = vgui.Create("DLabel", PanelTabFour)
+	creditsLabel:SetText("SuperSponer - Creator\nD3 - Helper/Developer\n\nSpecial thanks to Sponer's\nfriends for playtesting")
+	creditsLabel:SetFont("Intro_Tab4_Font")
+	creditsLabel:SetColor(Color(0, 0, 0))
+	creditsLabel:SetPos(PanelTabFour:GetWide() / 2 - 100, 175)
+	creditsLabel:SizeToContents()
+	
+	local creditsDiscordUrl = vgui.Create("DLabelURL", PanelTabFour)
+	creditsDiscordUrl:SetText("Join the Discord!")
+	creditsDiscordUrl:SetColor(Color(0, 0, 0))
+	creditsDiscordUrl:SetURL("https://discord.gg/xu5tUCM")
+	creditsDiscordUrl:SetSize(100, 75)
+	creditsDiscordUrl:SetPos(PanelTabFour:GetWide() / 2 + 5, 775)
+	
 	
 	local startButton = vgui.Create("DButton", PanelTabFour)
 	startButton:SetSize(200, 75)

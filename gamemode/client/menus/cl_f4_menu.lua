@@ -29,6 +29,25 @@ function DoDropHelmet(self, panels, IsDropped, Command, x, y )
 	if IsDropped then
 		for k, v in pairs(panels) do
 			helmetImage:SetImage(v:GetImage())
+			surface.PlaySound("npc/combine_gunship/gunship_ping_search.wav")
+		end
+	end
+end
+
+function DoDropSuit(self, panels, IsDropped, Command, x, y )
+	if IsDropped then
+		for k, v in pairs(panels) do
+			suitImage:SetImage(v:GetImage())
+			surface.PlaySound("npc/combine_gunship/gunship_ping_search.wav")
+		end
+	end
+end
+
+function DoDropArm(self, panels, IsDropped, Command, x, y )
+	if IsDropped then
+		for k, v in pairs(panels) do
+			armImage:SetImage(v:GetImage())
+			surface.PlaySound("npc/combine_gunship/gunship_ping_search.wav")
 		end
 	end
 end
@@ -68,19 +87,17 @@ function OpenMenu()
 		currentModel:SetModel(getModel)
 	end
 	function currentModel:LayoutEntity( Entity ) return end
+	
+	local selectPMScrollPanel = vgui.Create("DHorizontalScroller", pmPanel)
+	selectPMScrollPanel:SetSize(275, 65)
+	selectPMScrollPanel:SetPos(525, 475)
+	selectPMScrollPanel:SetOverlap(-4)
 
-	local selectPMScrollPanel = vgui.Create("DScrollPanel", pmPanel)
-	selectPMScrollPanel:Dock(FILL)
-
-	local selectPMLabel = vgui.Create("DLabel", selectPMScrollPanel)
+	local selectPMLabel = vgui.Create("DLabel", pmPanel)
 	selectPMLabel:SetText("Select Model")
 	selectPMLabel:SetFont("F4_font")
 	selectPMLabel:SetPos(565, 450)
 	selectPMLabel:SizeToContents()
-
-	local selectPMPanel = vgui.Create("DPanel", selectPMScrollPanel)
-	selectPMPanel:SetPos(525, 475)
-	selectPMPanel:SetSize(275, 900)
 
 	local selectModelLayout = vgui.Create("DIconLayout", selectPMPanel)
 	selectModelLayout:Dock(FILL)
@@ -97,6 +114,7 @@ function OpenMenu()
 			net.SendToServer()
 			getModel = citizenModel:GetModelName()
 		end
+		selectPMScrollPanel:AddPanel(citizenModel)
 	end
 	
 	if tonumber(getLevel) >= 5 then
@@ -208,12 +226,33 @@ function OpenMenu()
 	local helmetPanelReceiver = vgui.Create("DPanel", pmPanel)
 	helmetPanelReceiver:SetPos(250, 50)
 	helmetPanelReceiver:SetSize(75, 75)
-	helmetPanelReceiver:SetToolTip("Helmets for your head")
+	helmetPanelReceiver:SetToolTip("Armour for your head")
 	helmetPanelReceiver:Receiver("Helmet", DoDropHelmet)
 	
 	helmetImage = vgui.Create("DImage", helmetPanelReceiver)
 	helmetImage:SetSize(75, 75)
 	helmetImage:SetImage("hlmv/gray")
+	
+	local suitPanelReceiver = vgui.Create("DPanel", pmPanel)
+	suitPanelReceiver:SetPos(25, 175)
+	suitPanelReceiver:SetSize(75, 75)
+	suitPanelReceiver:SetToolTip("Armour for your body")
+	suitPanelReceiver:Receiver("Suit", DoDropSuit)
+	
+	suitImage = vgui.Create("DImage", suitPanelReceiver)
+	suitImage:SetSize(75, 75)
+	suitImage:SetImage("hlmv/gray")
+	
+	local armPanelReceiver = vgui.Create("DPanel", pmPanel)
+	armPanelReceiver:SetPos(300, 250)
+	armPanelReceiver:SetSize(75, 75)
+	armPanelReceiver:SetToolTip("Armour for your arms")
+	armPanelReceiver:Receiver("Arm", DoDropArm)
+	
+	armImage = vgui.Create("DImage", armPanelReceiver)
+	armImage:SetSize(75, 75)
+	armImage:SetImage("hlmv/gray")
+	
 	--vgui/hud/icon_locked
 	--vgui/cursors/no
 	--vgui/hud/icon_check
@@ -235,14 +274,18 @@ function OpenMenu()
 			item:SetImage("hl2cr/armour_parts/battery")
 			
 		elseif itemName[i] == "Mark VII Helmet" then
-			item:SetImage("hl2cr/armour_parts/suit")
+			item:SetImage("hl2cr/armour_parts/helmet")
 			item:Droppable("Helmet")
 			
 		elseif itemName[i] == "Mark VII Suit" then
 			item:SetImage("hl2cr/armour_parts/suit")
-			
+			item:Droppable("Suit")
 		elseif itemName[i] == "Shotgun Barrel" then
-			item:SetImage("hl2cr/weapon_parts/barrel")
+			item:SetImage("hl2cr/weapon_parts/barrel")	
+		elseif itemName[i] == "Health Enhancer MK1" then
+			item:SetImage("hl2cr/armour_parts/health")
+		elseif itemName[i] == "Health Enhancer MK2" then
+			item:SetImage("hl2cr/armour_parts/healthmk2")
 		else
 			item:SetImage("hlmv/gray")
 		end

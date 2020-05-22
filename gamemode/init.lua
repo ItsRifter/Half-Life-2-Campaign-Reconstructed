@@ -18,14 +18,10 @@ include("server/saving_modules/sv_data_flatfile.lua")
 include("server/sv_change_map.lua")
 include("server/extend/network.lua")
 include("server/config/achievements/sv_ach.lua")
-
 include("server/sv_unstuck.lua")
 include("server/config/sv_difficulty.lua")
-
 include("server/config/maps/sv_init_maps.lua")
-
 include("server/sv_spectate.lua")
-
 include("server/stats/sv_pets_levels.lua")
 
 --HL2C Convars
@@ -115,8 +111,8 @@ function GM:ShowHelp(ply)
 end
 
 function GM:ShowTeam(ply)
-	ply.hl2cPersistent.PetPoints = 99
-	ply:SetNWInt("PetSkillPoints", ply.hl2cPersistent.PetPoints)
+	net.Start("TestStart")
+	net.Send(ply)
 end
 
 net.Receive("KickUser", function(len, ply)

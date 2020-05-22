@@ -1,11 +1,11 @@
 AddCSLuaFile() -- Add itself to files to be sent to the clients, as this file is shared
 
 -- Armour items
-local ArmourItem = createItemBase(BaseSuitArmour, "Health Enhancer MK1", "Improves your life expectancy", "hlmv/gray")
+local ArmourItem = createItemBase(BaseSuitArmour, "Health Module MK1", "Improves your life expectancy", "hl2cr/armour_parts/health")
 ArmourItem.Cost = 1000
 Register.Armour(ArmourItem)
 
-local ArmourItem = createItemBase(BaseSuitArmour, "Health Enhancer MK2", "Improves your life expectancy", "hlmv/gray")
+local ArmourItem = createItemBase(BaseSuitArmour, "Health Module MK2", "Improves your life expectancy", "hl2cr/armour_parts/healthmk2")
 ArmourItem.Cost = 1500
 Register.Armour(ArmourItem)
 
@@ -17,7 +17,7 @@ local ArmourItem = createItemBase(BaseSuitArmour, "Mark VII Suit", "Better than 
 ArmourItem.Cost = 25000
 Register.Armour(ArmourItem)
 
-local ArmourItem = createItemBase(BaseSuitArmour, "Mark VII Helmet", "Mind your head", "hl2cr/armour_parts/suit")
+local ArmourItem = createItemBase(BaseSuitArmour, "Mark VII Helmet", "Mind your head", "hl2cr/armour_parts/helmet")
 ArmourItem.Cost = 17500
 Register.Armour(ArmourItem)
 

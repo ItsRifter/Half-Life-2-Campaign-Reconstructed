@@ -49,13 +49,13 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 	
 	if attacker:IsNPC() and attacker.owner and attacker:GetClass() == "npc_headcrab" then
 		if npc:GetClass() == "npc_zombie" then
-			givePetXP = math.Rand(10, 30)
+			givePetXP = math.random(10, 30)
 		elseif npc:GetClass() == "npc_fastzombie" then
-			givePetXP = math.Rand(15, 40)
+			givePetXP = math.random(15, 40)
 		elseif npc:GetClass() == "npc_poisonzombie" then
-			givePetXP = math.Rand(20, 50)
+			givePetXP = math.random(20, 50)
 		else
-			givePetXP = math.Rand(15, 40)
+			givePetXP = math.random(15, 40)
 		end
 		addPetXP(attacker.owner, givePetXP)
 		net.Start("UpdatePetsXP")

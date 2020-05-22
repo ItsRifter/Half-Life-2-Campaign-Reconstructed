@@ -27,7 +27,6 @@ itemBase.Icon = "icons/junk_metalcan1"
 itemBase.Cost = 1
 
 BaseEquipment = DeriveTable(itemBase)
-BaseEquipment.SlotPos = "slotpos_primwep"
 BaseEquipment.ReqLevel = 1
 BaseEquipment.Buffs = {}
 BaseEquipment.DeBuffs = {}

@@ -426,7 +426,7 @@ function SetCheckpointsStage()
 	elseif game.GetMap() == "d1_trainstation_04" then
 		TRIGGER_CHECKPOINT = {
 			Vector(-6861, -4255, 543), Vector(-7102, -4104, 670),
-			Vector( -7638, -4026, -253 ), Vector( -7653, -3879, -143 ),
+			Vector( -7882, -4154, -242 ), Vector( -7796, -4024, -153 ),
 			Vector( -7882, -4154, -238 ), Vector( -7796, -4024, -251 ),
 		}
 		local Checkpoint1 = ents.Create("trigger_checkpoint")
@@ -438,9 +438,9 @@ function SetCheckpointsStage()
 		Checkpoint1:Spawn()
 		
 		local Checkpoint2 = ents.Create("trigger_checkpoint")
-		Checkpoint2.Min = Vector(-7638, -4026, -253)
-		Checkpoint2.Max = Vector(-7653, -3879, -143)
-		Checkpoint2.Pos = Vector(-7653, -3879, -143) - ( ( Vector(-7545, -3882, -158) - Vector(-7653, -3879, -143)) / 2 )
+		Checkpoint2.Min = Vector(-7638, -4026, -242)
+		Checkpoint2.Max = Vector(-7653, -3879, -251)
+		Checkpoint2.Pos = Vector(-7653, -3879, -251) - ( ( Vector(-7545, -3882, -251) - Vector(-7653, -3879, -242)) / 2 )
 		Checkpoint2.Point2 = Vector(-7485, -4141, -236)
 		Checkpoint2:SetPos(Checkpoint2.Pos)
 		Checkpoint2:Spawn()
@@ -493,7 +493,20 @@ function SetCheckpointsStage()
 		Checkpoint1.Pos = Vector(758, 2756, -0) - ( ( Vector(758, 2756, -0) - Vector(707, 2727, -87)) / 2 )
 		Checkpoint1.Point1 = Vector(512, 2882, -31)
 		Checkpoint1:SetPos(Checkpoint1.Pos)
+		Checkpoint1:Spawn()	
+	elseif game.GetMap() == "d1_canals_01a" then
+		TRIGGER_CHECKPOINT = {
+			 Vector(-2931, 5371, -56), Vector(-3012, 5216, 112),
+		}
+		local Checkpoint1 = ents.Create("trigger_checkpoint")
+		Checkpoint1.Min = Vector(-2931, 5371, -56)
+		Checkpoint1.Max = Vector(-3012, 5216, 112)
+		Checkpoint1.Pos = Vector(-3012, 5216, 112) - ( ( Vector(-3012, 5216, 112) - Vector(-2931, 5371, -56)) / 2 )
+		Checkpoint1.Point1 = Vector(-3200, 5180, -78)
+		Checkpoint1:SetPos(Checkpoint1.Pos)
 		Checkpoint1:Spawn()
+		
+		
 	elseif game.GetMap() == "d1_canals_03" then
 		TRIGGER_CHECKPOINT = {
 			 Vector(-2180, -885, -1028), Vector(-2108, -829, -1076),
@@ -504,6 +517,7 @@ function SetCheckpointsStage()
 		Checkpoint1.Pos = Vector(-2108, -829, -1076) - ( ( Vector(-2108, -829, -1076) - Vector(-2180, -885, -1028)) / 2 )
 		Checkpoint1.Point1 = Vector(-2073, -871, -1167)
 		Checkpoint1:SetPos(Checkpoint1.Pos)
+		Checkpoint1:Spawn()
 	elseif game.GetMap() == "d1_canals_05" then
 		TRIGGER_CHECKPOINT = {
 			 Vector(4281, 1474, -453), Vector(4114, 1549, -294),
