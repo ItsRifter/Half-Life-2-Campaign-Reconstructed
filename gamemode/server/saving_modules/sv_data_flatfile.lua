@@ -1,79 +1,46 @@
-function CreateData(ply)
-	local PlayerID = string.Replace(ply:SteamID(), ":", "!")
-	
-	-- Set default model
-	ply:SetModel("models/player/Group01/male_07.mdl")
-	
-	-- Set some default settings. Also create its own field for all persistent data
-	ply.hl2cPersistent = {}
-	ply.hl2cPersistent.Name = ply:Nick()
-	ply.hl2cPersistent.Level = 1
-	ply.hl2cPersistent.DeathCount = 0
-	ply.hl2cPersistent.KillCount = 0
-	ply.hl2cPersistent.XP = 0
-	ply.hl2cPersistent.MaxXP = 500
-	ply.hl2cPersistent.Coins = 0
-	ply.hl2cPersistent.Model = ply:GetModel()
-	ply.hl2cPersistent.Milestone = 5
-	ply.hl2cPersistent.Inventory = ""
-	ply.hl2cPersistent.InvSpace = 16
-	
-	--Default pet settings
-	ply.hl2cPersistent.PetName = ""
-	ply.hl2cPersistent.PetXP = 0
-	ply.hl2cPersistent.PetMaxXP = 100
-	ply.hl2cPersistent.PetLevel = 1
-	ply.hl2cPersistent.PetPoints = 0
-	ply.hl2cPersistent.PetHP = 100
-	ply.hl2cPersistent.PetStr = 0
-	ply.hl2cPersistent.PetRegen = 0
-	ply.hl2cPersistent.PetMaxLvl = 6
-	ply.hl2cPersistent.PetStage = 0
-	
-	--Pet skills default settings
-	ply.hl2cPersistent.PetSkills1 = 0
-	ply.hl2cPersistent.PetSkills2 = 0
-	ply.hl2cPersistent.PetSkills3 = 0
-	ply.hl2cPersistent.PetSkills4 = 0
-	ply.hl2cPersistent.PetSkills5 = 0
-	ply.hl2cPersistent.PetSkills6 = 0
-	ply.hl2cPersistent.PetSkills7 = 0
-	ply.hl2cPersistent.PetSkills8 = 0
-	ply.hl2cPersistent.PetSkills9 = 0
-	ply.hl2cPersistent.PetSkills10 = 0
+local function InitData(ply)
+	-- Create persistent data field in ply
+	ply.hl2cPersistent = ply.hl2cPersistent or {}
 
-	-- Store all persistent data as JSON
-	file.Write("hl2c_data/" .. PlayerID .. ".txt", util.TableToJSON(ply.hl2cPersistent, true))
-	
-	ply:SetNWString("Model", ply.hl2cPersistent.Model)
-	
-	ply:SetNWString("PetName", ply.hl2cPersistent.PetName)
-	ply:SetNWInt("PetLevel", ply.hl2cPersistent.PetLevel)
-	ply:SetNWInt("PetXP", math.Round(ply.hl2cPersistent.PetXP))
-	ply:SetNWInt("PetMaxXP", ply.hl2cPersistent.PetMaxXP)
-	ply:SetNWInt("PetStr", ply.hl2cPersistent.PetStr)
-	ply:SetNWInt("PetHP", ply.hl2cPersistent.PetHP)
-	ply:SetNWInt("PetRegen", ply.hl2cPersistent.PetRegen)
-	
-	ply:SetNWInt("PetStage", tonumber(ply.hl2cPersistent.PetStage))
-	
-	ply:SetNWString("Ach", table.concat(ply.hl2cPersistent.Achievements, " "))
-	ply:SetNWString("Inventory", ply.hl2cPersistent.Inventory)
-	ply:SetNWInt("InvSpace", ply.hl2cPersistent.InvSpace)
-end
-
-local function LoadData(ply)
-	local PlayerID = string.Replace(ply:SteamID(), ":", "!")
-	local jsonContent = file.Read("hl2c_data/" .. PlayerID .. ".txt", "DATA")
-	if not jsonContent then return end
-
-	-- Read persistent data from JSON
-	ply.hl2cPersistent = util.JSONToTable(jsonContent)
-
-	-- Init some maps, if they don't exist
+	-- Set some default settings
+	ply.hl2cPersistent.Name = ply.hl2cPersistent.Name or ply:Nick()
+	ply.hl2cPersistent.Level = ply.hl2cPersistent.Level or 1
+	ply.hl2cPersistent.DeathCount = ply.hl2cPersistent.DeathCount or 0
+	ply.hl2cPersistent.KillCount = ply.hl2cPersistent.KillCount or 0
+	ply.hl2cPersistent.XP = ply.hl2cPersistent.XP or 0
+	ply.hl2cPersistent.MaxXP = ply.hl2cPersistent.MaxXP or 500
+	ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins or 0
+	ply.hl2cPersistent.Model = ply.hl2cPersistent.Model or ply:GetModel()
+	ply.hl2cPersistent.Milestone = ply.hl2cPersistent.Milestone or 5
 	ply.hl2cPersistent.Achievements = ply.hl2cPersistent.Achievements or {}
+	ply.hl2cPersistent.Inventory = ply.hl2cPersistent.Inventory or ""
+	ply.hl2cPersistent.InvSpace = ply.hl2cPersistent.InvSpace or 16
+	
+	-- Default pet settings
+	ply.hl2cPersistent.PetName = ply.hl2cPersistent.PetName or ""
+	ply.hl2cPersistent.PetXP = ply.hl2cPersistent.PetXP or 0
+	ply.hl2cPersistent.PetMaxXP = ply.hl2cPersistent.PetMaxXP or 100
+	ply.hl2cPersistent.PetLevel = ply.hl2cPersistent.PetLevel or 1
+	ply.hl2cPersistent.PetPoints = ply.hl2cPersistent.PetPoints or 0
+	ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP or 100
+	ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr or 0
+	ply.hl2cPersistent.PetRegen = ply.hl2cPersistent.PetRegen or 0
+	ply.hl2cPersistent.PetMaxLvl = ply.hl2cPersistent.PetMaxLvl or 6
+	ply.hl2cPersistent.PetStage = ply.hl2cPersistent.PetStage or 0
+	
+	-- Pet skills default settings
+	ply.hl2cPersistent.PetSkills1 = ply.hl2cPersistent.PetSkills1 or 0
+	ply.hl2cPersistent.PetSkills2 = ply.hl2cPersistent.PetSkills2 or 0
+	ply.hl2cPersistent.PetSkills3 = ply.hl2cPersistent.PetSkills3 or 0
+	ply.hl2cPersistent.PetSkills4 = ply.hl2cPersistent.PetSkills4 or 0
+	ply.hl2cPersistent.PetSkills5 = ply.hl2cPersistent.PetSkills5 or 0
+	ply.hl2cPersistent.PetSkills6 = ply.hl2cPersistent.PetSkills6 or 0
+	ply.hl2cPersistent.PetSkills7 = ply.hl2cPersistent.PetSkills7 or 0
+	ply.hl2cPersistent.PetSkills8 = ply.hl2cPersistent.PetSkills8 or 0
+	ply.hl2cPersistent.PetSkills9 = ply.hl2cPersistent.PetSkills9 or 0
+	ply.hl2cPersistent.PetSkills10 = ply.hl2cPersistent.PetSkills10 or 0
 
-	-- Init some networked variables
+	-- Also set/create networked variables
 	ply:SetNWInt("Level", ply.hl2cPersistent.Level)
 	ply:SetNWInt("Coins", math.Round(ply.hl2cPersistent.Coins))
 	ply:SetNWInt("XP", math.Round(ply.hl2cPersistent.XP))
@@ -82,19 +49,20 @@ local function LoadData(ply)
 	ply:SetNWString("Ach", table.concat(ply.hl2cPersistent.Achievements, " "))
 	ply:SetNWString("Inventory", ply.hl2cPersistent.Inventory)
 	ply:SetNWInt("InvSpace", ply.hl2cPersistent.InvSpace)
-
 	ply:SetNWString("Model", ply.hl2cPersistent.Model)
 	ply:SetNWInt("Kills", ply.hl2cPersistent.KillCount)
 	ply:SetNWInt("Deaths", ply.hl2cPersistent.DeathCount)
 	
-	
 	ply:SetNWInt("PetLevel", ply.hl2cPersistent.PetLevel)
+	ply:SetNWString("PetName", ply.hl2cPersistent.PetName)
 	ply:SetNWInt("PetXP", math.Round(ply.hl2cPersistent.PetXP))
 	ply:SetNWInt("PetMaxXP", ply.hl2cPersistent.PetMaxXP)
 	ply:SetNWInt("PetSkillPoints", ply.hl2cPersistent.PetPoints)
 	ply:SetNWInt("PetStr", ply.hl2cPersistent.PetStr)
 	ply:SetNWInt("PetHP", ply.hl2cPersistent.PetHP)
 	ply:SetNWInt("PetSpd", ply.hl2cPersistent.PetSpd)
+	ply:SetNWInt("PetRegen", ply.hl2cPersistent.PetRegen)
+	ply:SetNWInt("PetStage", tonumber(ply.hl2cPersistent.PetStage))
 	
 	ply:SetNWInt("PetSkill1", ply.hl2cPersistent.PetSkills1)
 	ply:SetNWInt("PetSkill2", ply.hl2cPersistent.PetSkills2)
@@ -106,8 +74,31 @@ local function LoadData(ply)
 	ply:SetNWInt("PetSkill8", ply.hl2cPersistent.PetSkills8)
 	ply:SetNWInt("PetSkill9", ply.hl2cPersistent.PetSkills9)
 	ply:SetNWInt("PetSkill10", ply.hl2cPersistent.PetSkills10)
+end
+
+local function CreateData(ply)
+	local PlayerID = string.Replace(ply:SteamID(), ":", "!")
 	
-	ply:SetNWInt("PetStage", ply.hl2cPersistent.PetStage)
+	-- Set default model
+	ply:SetModel("models/player/Group01/male_07.mdl")
+	
+	-- Create and init persistent data fields
+	InitData(ply)
+	
+	-- Store all persistent data as JSON
+	file.Write("hl2c_data/" .. PlayerID .. ".txt", util.TableToJSON(ply.hl2cPersistent, true))
+end
+
+local function LoadData(ply)
+	local PlayerID = string.Replace(ply:SteamID(), ":", "!")
+	local jsonContent = file.Read("hl2c_data/" .. PlayerID .. ".txt", "DATA")
+	if not jsonContent then return false end
+
+	-- Read persistent data from JSON
+	ply.hl2cPersistent = util.JSONToTable(jsonContent)
+
+	-- Init not set fields of persistent data
+	InitData(ply)
 	
 	-- Init player model and other stuff
 	ply:SetModel(ply.hl2cPersistent.Model)
@@ -121,7 +112,6 @@ local function SaveData(ply)
 	-- Fetch some data, that wouldn't be updated otherwise
 	ply.hl2cPersistent.Name = ply:Nick()
 	ply.hl2cPersistent.Model = ply:GetModel()
-	ply.hl2cPersistent.KillCount = ply.hl2cPersistent.KillCount + ply:Frags()
 
 	-- Store all persistent data as JSON
 	file.Write("hl2c_data/" .. PlayerID .. ".txt", util.TableToJSON(ply.hl2cPersistent, true))
@@ -141,12 +131,14 @@ hook.Add("Initialize", "CreateDataFolder", function()
 end)
 
 hook.Add("PlayerDisconnected", "SavePlayerDataDisconnect", function(ply) 
+	ply.hl2cPersistent.KillCount = ply.hl2cPersistent.KillCount + ply:Frags()
 	SaveData(ply)
 end)
 
 
 hook.Add( "ShutDown", "ChangeMapSave", function() 
 	for _, ply in ipairs( player.GetAll() ) do
+		ply.hl2cPersistent.KillCount = ply.hl2cPersistent.KillCount + ply:Frags()
 		SaveData(ply)
 	end
 end)
