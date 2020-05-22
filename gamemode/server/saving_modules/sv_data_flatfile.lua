@@ -15,7 +15,6 @@ function CreateData(ply)
 	ply.hl2cPersistent.Coins = 0
 	ply.hl2cPersistent.Model = ply:GetModel()
 	ply.hl2cPersistent.Milestone = 5
-	ply.hl2cPersistent.Achievements = ""
 	ply.hl2cPersistent.Inventory = ""
 	ply.hl2cPersistent.InvSpace = 16
 	
@@ -58,7 +57,7 @@ function CreateData(ply)
 	
 	ply:SetNWInt("PetStage", tonumber(ply.hl2cPersistent.PetStage))
 	
-	ply:SetNWString("Ach", ply.hl2cPersistent.Achievements)
+	ply:SetNWString("Ach", table.concat(ply.hl2cPersistent.Achievements, " "))
 	ply:SetNWString("Inventory", ply.hl2cPersistent.Inventory)
 	ply:SetNWInt("InvSpace", ply.hl2cPersistent.InvSpace)
 end
@@ -71,13 +70,16 @@ local function LoadData(ply)
 	-- Read persistent data from JSON
 	ply.hl2cPersistent = util.JSONToTable(jsonContent)
 
+	-- Init some maps, if they don't exist
+	ply.hl2cPersistent.Achievements = ply.hl2cPersistent.Achievements or {}
+
 	-- Init some networked variables
 	ply:SetNWInt("Level", ply.hl2cPersistent.Level)
 	ply:SetNWInt("Coins", math.Round(ply.hl2cPersistent.Coins))
 	ply:SetNWInt("XP", math.Round(ply.hl2cPersistent.XP))
 	ply:SetNWInt("MaxXP", ply.hl2cPersistent.MaxXP)
 	ply:SetNWInt("Milestone", ply.hl2cPersistent.Milestone)
-	ply:SetNWString("Ach", ply.hl2cPersistent.Achievements)
+	ply:SetNWString("Ach", table.concat(ply.hl2cPersistent.Achievements, " "))
 	ply:SetNWString("Inventory", ply.hl2cPersistent.Inventory)
 	ply:SetNWInt("InvSpace", ply.hl2cPersistent.InvSpace)
 
