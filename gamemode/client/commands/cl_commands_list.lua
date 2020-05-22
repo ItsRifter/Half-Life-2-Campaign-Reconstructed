@@ -42,7 +42,7 @@ concommand.Add("hl2cr_setmaxxp", function(ply, cmd, args)
 		if maxXP then
 			net.Start("SetMaxXP")
 				net.WriteInt(maxXP, 16)
-			net.SendToServer(ply)
+			net.SendToServer()
 		else
 			print("Invalid Value")
 		end
@@ -57,7 +57,7 @@ concommand.Add("hl2cr_setlevel", function(ply, cmd, args)
 		if level then
 			net.Start("SetLevel")
 				net.WriteInt(level, 16)
-			net.SendToServer(ply)
+			net.SendToServer()
 		else
 			print("Invalid Value")
 		end
@@ -72,7 +72,7 @@ concommand.Add("hl2cr_addcoins", function(ply, cmd, args)
 		if coins then
 			net.Start("AddCoins")
 				net.WriteInt(coins, 32)
-			net.SendToServer(ply)
+			net.SendToServer()
 		else
 			print("Invalid Value")
 		end
@@ -116,7 +116,7 @@ concommand.Add("hl2cr_petsummon", function(ply, cmd, args)
 	local petEnt = ply:GetNWEntity("PetEntity")
 	if tonumber(level) >= 10 then
 		net.Start("SpawnPetConCommand")
-		net.SendToServer(ply)
+		net.SendToServer()
 	elseif tonumber(level) < 10 then
 		LocalPlayer():ChatPrint("You don't have access to pets")
 	end

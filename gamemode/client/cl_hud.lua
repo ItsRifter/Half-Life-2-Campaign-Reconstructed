@@ -294,7 +294,7 @@ net.Receive("WarningPetKill", function(len, ply)
 		net.Start("KickUser")
 			net.WriteInt(3600, 32)
 			net.WriteString("Pet Killing")
-		net.SendToServer(ply)
+		net.SendToServer()
 	end
 	chat.AddText(Color(255, 0, 0), "DON'T KILL OTHER PLAYERS PETS")
 end)
