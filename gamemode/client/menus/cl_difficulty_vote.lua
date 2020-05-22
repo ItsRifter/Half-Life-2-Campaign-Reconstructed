@@ -58,7 +58,7 @@ function OpenDiffMenu(ply, diff, surv)
 	easyButton:SetSize(125, 50)
 	easyButton:SetPos(165, 150)
 	easyButton.DoClick = function()
-		if not hasUserVoted and Diff != 1 then
+		if not hasUserVoted and Diff ~= 1 then
 			hasUserVoted = true
 			easyVotes = easyVotes + 1			
 			for k, v in pairs(player.GetAll()) do
@@ -91,7 +91,7 @@ function OpenDiffMenu(ply, diff, surv)
 	mediumButton:SetSize(125, 50)
 	mediumButton:SetPos(165, 200)
 	mediumButton.DoClick = function()
-		if not hasUserVoted and Diff != 2 then
+		if not hasUserVoted and Diff ~= 2 then
 			hasUserVoted = true
 			mediumVotes = mediumVotes + 1	
 			for k, v in pairs(player.GetAll()) do
@@ -123,7 +123,7 @@ function OpenDiffMenu(ply, diff, surv)
 	HardButton:SetSize(125, 50)
 	HardButton:SetPos(165, 250)
 	HardButton.DoClick = function()
-		if not hasUserVoted and Diff != 3 then
+		if not hasUserVoted and Diff ~= 3 then
 			hasUserVoted = true
 			hardVotes = hardVotes + 1
 			for k, v in pairs(player.GetAll()) do

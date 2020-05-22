@@ -96,7 +96,7 @@ hook.Add("EntityTakeDamage", "DisableAR2DMG", function(ent, dmgInfo)
 end)
 
 hook.Add("PlayerShouldTakeDamage", "DisablePVP", function(ply, attacker)
-	if ply:Team() != TEAM_ALIVE or (attacker:IsPlayer() and attacker != ply) or attacker == "prop_combine_ball" then
+	if ply:Team() ~= TEAM_ALIVE or (attacker:IsPlayer() and attacker ~= ply) or attacker == "prop_combine_ball" then
 		return false
 	end
 	return true
@@ -104,7 +104,7 @@ hook.Add("PlayerShouldTakeDamage", "DisablePVP", function(ply, attacker)
 end)
 
 function GM:PlayerCanPickupWeapon(ply, weapon) 
-	if ply:Team() != TEAM_ALIVE or weapon:GetClass() == "weapon_stunstick" or (weapon:GetClass() == "weapon_physgun" and not ply:IsAdmin()) then
+	if ply:Team() ~= TEAM_ALIVE or weapon:GetClass() == "weapon_stunstick" or (weapon:GetClass() == "weapon_physgun" and not ply:IsAdmin()) then
 		weapon:Remove()
 		return false
 	end
@@ -242,7 +242,7 @@ end)
 function RespawnTimerActive(ply, deaths)
 	ply.hasDiedOnce = true
 	
-	if GetConVar("hl2c_survivalmode"):GetInt() == 1 and game.GetMap() != "hl2c_lobby_remake" then
+	if GetConVar("hl2c_survivalmode"):GetInt() == 1 and game.GetMap() ~= "hl2c_lobby_remake" then
 		ply:Lock()
 		isAliveSurv = false
 		local playersAlive = #player.GetAll()
@@ -268,7 +268,7 @@ function RespawnTimerActive(ply, deaths)
 	return
 	end
 
-	if GetConVarNumber("hl2c_respawntime") != 0 then
+	if GetConVarNumber("hl2c_respawntime") ~= 0 then
 		ply:Lock()
 		timer.Simple(5, function()
 			SpectateMode(ply)

@@ -169,13 +169,13 @@ local shouldDrawRestartTimer = false
 net.Receive("DisplayMapTimer", function() shouldDrawTimer = true end)
 
 hook.Add("HUDPaint", "HUDPaint_DrawCPMarker", function()
-	if showNav && checkpointPosition && LocalPlayer():Team() == TEAM_ALIVE then
+	if showNav and checkpointPosition and LocalPlayer():Team() == TEAM_ALIVE then
 		local checkpointDistance = math.Round(LocalPlayer():GetPos():Distance(checkpointPosition) / 39)
 		local checkpointPositionScreen = checkpointPosition:ToScreen()
 		
 		surface.SetDrawColor(255, 255, 255, 255)
 		
-		if checkpointPositionScreen.x > 32 && checkpointPositionScreen.x < w - 43 && checkpointPositionScreen.y > 32 && checkpointPositionScreen.y < h - 38 then
+		if checkpointPositionScreen.x > 32 and checkpointPositionScreen.x < w - 43 and checkpointPositionScreen.y > 32 and checkpointPositionScreen.y < h - 38 then
 			surface.SetTexture(surface.GetTextureID("hl2c_nav_marker"))
 			surface.DrawTexturedRect(checkpointPositionScreen.x - 14, checkpointPositionScreen.y - 14, 28, 28)
 			draw.DrawText(tostring(checkpointDistance).." m", "Arial", checkpointPositionScreen.x, checkpointPositionScreen.y + 15, Color(255, 220, 0, 255), 1)

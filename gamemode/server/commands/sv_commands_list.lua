@@ -162,7 +162,7 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 	if (string.lower(text) == "!unstuck") then
 	ply:ChatPrint("Checking if you are stuck...")
 		timer.Simple(5, function()
-			if not ply:IsOnGround() and ply:GetSequence() != 199 and ply:GetSequence() != 122 then
+			if not ply:IsOnGround() and ply:GetSequence() ~= 199 and ply:GetSequence() ~= 122 then
 				ply:ChatPrint("You appear to be stuck, Unstucking...")
 				IsStuck(ply)
 			else
@@ -172,7 +172,7 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 		return ""
 	end
 	if (string.lower(text) == "!lobby") then
-		if game.GetMap() != "hl2c_lobby_remake" then
+		if game.GetMap() ~= "hl2c_lobby_remake" then
 			if not hasVotedLobby then
 				lobbyVotes = lobbyVotes + 1
 				hasVotedLobby = true

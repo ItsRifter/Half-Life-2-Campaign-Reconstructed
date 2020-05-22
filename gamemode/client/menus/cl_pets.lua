@@ -58,7 +58,7 @@ function petDuelMenu(enemyPet)
 	end
 	
 	for k,v in pairs(player.GetAll()) do
-		if v != LocalPlayer() then
+		if v ~= LocalPlayer() then
 			petPlayerListBox:AddChoice(v:Name())
 		end
 	end

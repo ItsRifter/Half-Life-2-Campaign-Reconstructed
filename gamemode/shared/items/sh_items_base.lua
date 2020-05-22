@@ -3,7 +3,7 @@ AddCSLuaFile() -- Add itself to files to be sent to the clients, as this file is
 function DeriveTable(DerivedTable)
 	local newTable = {}
 	for k, v in pairs(DerivedTable) do
-		if type(v) != "table" then
+		if type(v) ~= "table" then
 			newTable[k] = v
 		else
 			newTable[k] = table.Copy(v)

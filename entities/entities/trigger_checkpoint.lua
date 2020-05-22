@@ -27,7 +27,7 @@ function ENT:StartTouch(ent)
 		end
 	end
 	
-	if ent and ent:IsValid() and ent:IsPlayer() and ent:Team() == TEAM_ALIVE and !self.triggered then
+	if ent and ent:IsValid() and ent:IsPlayer() and ent:Team() == TEAM_ALIVE and not self.triggered then
 		self.triggered = true
 		local ang = ent:GetAngles()
 		local point1 = self.Point1
@@ -64,7 +64,7 @@ function ENT:StartTouch(ent)
 		for k, p in pairs(player.GetAll()) do
 			p:ChatPrint("Checkpoint Reached")
 			for l, spawn in pairs(ents.FindByClass("info_player_start")) do
-				if p and IsValid(p) and p != ent and p:Team() == TEAM_ALIVE then
+				if p and IsValid(p) and p ~= ent and p:Team() == TEAM_ALIVE then
 					if p:GetVehicle() and p:GetVehicle():IsValid() then
 						p:ExitVehicle()
 						if isvector(point1) then
