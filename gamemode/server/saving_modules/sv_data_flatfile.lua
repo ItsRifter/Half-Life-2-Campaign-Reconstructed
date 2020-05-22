@@ -43,13 +43,8 @@ function CreateData(ply)
 	ply.hl2cPersistent.PetSkills9 = 0
 	ply.hl2cPersistent.PetSkills10 = 0
 
-	-- Get all fields that should be stored
-	local fields = {}
-	for k, v in pairs(ply.hl2cPersistent) do
-		table.insert(fields, k .. ": " .. v)
-	end
-	-- Store them delimited by a newline character
-	file.Write("hl2c_data/" .. PlayerID .. ".txt", table.concat(fields, "\n"))
+	-- Store all persistent data as JSON
+	file.Write("hl2c_data/" .. PlayerID .. ".txt", util.TableToJSON(ply.hl2cPersistent, true))
 	
 	ply:SetNWString("Model", ply.hl2cPersistent.Model)
 	
@@ -70,18 +65,11 @@ end
 
 local function LoadData(ply)
 	local PlayerID = string.Replace(ply:SteamID(), ":", "!")
-	local content = file.Read("hl2c_data/" .. PlayerID .. ".txt", "DATA")
-	if not content then return end
-	local lines = string.Split(content, "\n")
+	local jsonContent = file.Read("hl2c_data/" .. PlayerID .. ".txt", "DATA")
+	if not jsonContent then return end
 
-	-- Create field for all persistent data
-	ply.hl2cPersistent = {}
-
-	-- Read line by line. And get key, value pairs. This will load the values directly into the player object
-	for i, line in ipairs(lines) do
-		key, val = line:match('^([^:]+): (.*)')
-		ply.hl2cPersistent[key] = val
-	end
+	-- Read persistent data from JSON
+	ply.hl2cPersistent = util.JSONToTable(jsonContent)
 
 	-- Init some networked variables
 	ply:SetNWInt("Level", ply.hl2cPersistent.Level)
@@ -133,13 +121,8 @@ local function SaveData(ply)
 	ply.hl2cPersistent.Model = ply:GetModel()
 	ply.hl2cPersistent.KillCount = ply.hl2cPersistent.KillCount + ply:Frags()
 
-	-- Get all fields that should be stored
-	local fields = {}
-	for k, v in pairs(ply.hl2cPersistent) do
-		table.insert(fields, k .. ": " .. v)
-	end
-	-- Store them delimited by a newline character
-	file.Write("hl2c_data/" .. PlayerID .. ".txt", table.concat(fields, "\n"))
+	-- Store all persistent data as JSON
+	file.Write("hl2c_data/" .. PlayerID .. ".txt", util.TableToJSON(ply.hl2cPersistent, true))
 	
 	print("Save committed")
 end
