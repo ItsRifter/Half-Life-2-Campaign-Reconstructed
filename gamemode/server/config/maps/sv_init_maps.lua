@@ -482,7 +482,7 @@ function SetCheckpointsStage()
 		TRIGGER_CHECKPOINT = {
 			Vector(-6861, -4255, 543), Vector(-7102, -4104, 670),
 			Vector( -7882, -4154, -242 ), Vector( -7796, -4024, -153 ),
-			Vector( -7882, -4154, -238 ), Vector( -7796, -4024, -251 ),
+			Vector( -7904, -4158, -251 ), Vector( -7807, -4098, -128 ),
 		}
 		local Checkpoint1 = ents.Create("trigger_checkpoint")
 		Checkpoint1.forcePlyTP = true
@@ -504,9 +504,9 @@ function SetCheckpointsStage()
 		
 		local Checkpoint3 = ents.Create("trigger_checkpoint")
 		Checkpoint3.forcePlyTP = true
-		Checkpoint3.Min = Vector(-7882, -4154, -238)
-		Checkpoint3.Max = Vector(-7796, -4024, -251)
-		Checkpoint3.Pos = Vector(-7796, -4024, -251) - ( ( Vector(-7796, -4024, -251) - Vector(-7882, -4154, -238)) / 2 )
+		Checkpoint3.Min = Vector(-7904, -4158, -251)
+		Checkpoint3.Max = Vector(-7807, -4098, -128)
+		Checkpoint3.Pos = Vector(-7807, -4098, -128) - ( ( Vector(-7807, -4098, -128) - Vector(-7904, -4158, -251)) / 2 )
 		Checkpoint3.Point3 = Vector(-7864, -4125, -242)
 		Checkpoint3:SetPos(Checkpoint3.Pos)
 		Checkpoint3:Spawn()
