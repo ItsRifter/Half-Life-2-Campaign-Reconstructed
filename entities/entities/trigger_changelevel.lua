@@ -130,10 +130,87 @@ elseif game.GetMap() == "d2_prison_02" then
 	ENT.PointA = Vector(-2791, 1157, 646)
 	ENT.PointB = Vector(-2666, 1294, 791)
 elseif game.GetMap() == "d2_prison_03" then
-	ENT.PointA = Vector(-2791, 1157, 646)
-	ENT.PointB = Vector(-2666, 1294, 791)
+	ENT.PointA = Vector(-3394, 6140, 4)
+	ENT.PointB = Vector(-3317, 5963, 155)
+elseif game.GetMap() == "d2_prison_04" then
+	ENT.PointA = Vector(-1437, 3029, 386)
+	ENT.PointB = Vector(-1249, 2841, 541)
+elseif game.GetMap() == "d2_prison_05" then
+	ENT.PointA = Vector(-4054, -1079, 403)
+	ENT.PointB = Vector(-4305, -978, 539)
+elseif game.GetMap() == "d2_prison_06" then
+	ENT.PointA = Vector(-1, -2683, -235)
+	ENT.PointB = Vector(155, -2410, -118)
+elseif game.GetMap() == "d2_prison_07" then
+	ENT.PointA = Vector(4628, -4241, -695)
+	ENT.PointB = Vector(4432, -4428, -571)
+elseif game.GetMap() == "d2_prison_08" then
+	ENT.PointA = Vector(-862, -1091, 919)
+	ENT.PointB = Vector(-958, -959, 1069)
+elseif game.GetMap() == "d3_c17_01" then
+	ENT.PointA = Vector(-6602, -918, -35)
+	ENT.PointB = Vector(-6782, -745, -157)
+elseif game.GetMap() == "d3_c17_02" then
+	ENT.PointA = Vector(-5143, -4472, 4)
+	ENT.PointB = Vector(-5208, -4519, 124)
+elseif game.GetMap() == "d3_c17_03" then
+	ENT.PointA = Vector(-1216, -3521, 51)
+	ENT.PointB = Vector(-1091, -3576, 248)
+elseif game.GetMap() == "d3_c17_04" then
+	ENT.PointA = Vector(179, -5875, 129)
+	ENT.PointB = Vector(62, -5819, 244)
+elseif game.GetMap() == "d3_c17_05" then
+	ENT.PointA = Vector(2785, -3333, -123)
+	ENT.PointB = Vector(2567, -3446, -11)
+elseif game.GetMap() == "d3_c17_06a" then
+	ENT.PointA = Vector(2112, 2951, -130)
+	ENT.PointB = Vector(2170, 3070, 52)
+elseif game.GetMap() == "d3_c17_06b" then
+	ENT.PointA = Vector(2112, 2951, -130)
+	ENT.PointB = Vector(5372, 1675, 374)
+elseif game.GetMap() == "d3_c17_07" then
+	ENT.PointA = Vector(10205, 2848, -478)
+	ENT.PointB = Vector(10115, 2924, -319)
+elseif game.GetMap() == "d3_c17_08" then
+	ENT.PointA = Vector(2296, -487, 496)
+	ENT.PointB = Vector(2502, -363, 676)
+elseif game.GetMap() == "d3_c17_09" then
+	ENT.PointA = Vector(9296, 7149, 1)
+	ENT.PointB = Vector(9080, 7061, 188)
+elseif game.GetMap() == "d3_c17_10a" then
+	ENT.PointA = Vector(493, 4973, 259)
+	ENT.PointB = Vector(308, 4803, 429)
+elseif game.GetMap() == "d3_c17_10b" then
+	ENT.PointA = Vector(2658, 1246, 833)
+	ENT.PointB = Vector(2720, 1182, 999)
+elseif game.GetMap() == "d3_c17_11" then
+	ENT.PointA = Vector(1254, 3384, 965)
+	ENT.PointB = Vector(1251, 3329, 1088)
+elseif game.GetMap() == "d3_c17_12" then
+	ENT.PointA = Vector(-2686, 9105, -124)
+	ENT.PointB = Vector(-2572, 9255, -8)
+elseif game.GetMap() == "d3_c17_12b" then
+	ENT.PointA = Vector(-4363, 747, -28)
+	ENT.PointB = Vector(-4517, 866, 85)
+elseif game.GetMap() == "d3_c17_13" then
+	ENT.PointA = Vector(8327, 1835, -427)
+	ENT.PointB = Vector(8460, 1983, -276)
+elseif game.GetMap() == "d3_citadel_01" then
+	ENT.PointA = Vector(11326, 5981, -1774)
+	ENT.PointB = Vector(11091, 5793, -1537)
+elseif game.GetMap() == "d3_citadel_03" then
+	ENT.PointA = Vector(692, -258, 2369)
+	ENT.PointB = Vector(454, -383, 2494)
+elseif game.GetMap() == "d3_citadel_04" then
+	ENT.PointA = Vector(-1154, -7748, 6022)
+	ENT.PointB = Vector(-1271, -8556, 6172)
+elseif game.GetMap() == "d3_citadel_05" then
+	ENT.PointA = Vector(0, 0, 6022)
+	ENT.PointB = Vector(0, 0, 6172)
 	
 end
+
+
 
 function ENT:Initialize()
 	if createTrigger then
@@ -214,13 +291,6 @@ function ENT:Think()
 	if timer.Exists("MapTimer") then
 		if GetConVar("hl2c_survivalmode"):GetInt() == 1 then
 			subOne = team.NumPlayers(TEAM_DEAD)
-		end
-	end
-	
-	if timer.Exists("MapTimer") then
-		if team.NumPlayers(TEAM_ALIVE) == 0 and playerCount > 0 then
-			timer.Remove("MapTimer")
-			hook.Call("OnChangeLevel")
 		end
 	end
 	

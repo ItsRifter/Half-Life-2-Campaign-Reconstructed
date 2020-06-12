@@ -5,11 +5,24 @@ BringPet = true
 
 hook.Add("PlayerSay", "Commands", function(ply, text)
 	
+	--Worthless secret for worthless achievement hunter
 	if (string.lower(text) == "!gimmeasecret") then
 		Achievement(ply, "Test", "Lobby_Ach_List", 0)
 		return ""
 	end
 	
+	if (string.lower(text) == "!cp") then
+		--If the player can use !cp command, teleport them to the checkpoint
+		if ply.CPTP then
+			for k, sp in pairs(ents.FindByClass("info_player_start")) do
+				ply:SetPos(sp:GetPos())
+				ply.CPTP = false
+			end
+		end
+		return ""
+	end
+	
+	--Views the achievements the player has
 	if (string.lower(text) == "!ach" or string.lower(text) == "!achievement" ) then
 		net.Start("Open_Ach_Menu")
 			net.WriteTable(ply.hl2cPersistent)
@@ -17,15 +30,17 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 		return ""
 	end
 	
+	--if pets don't go as intended, force close it
 	if (string.lower(text) == "!petpanic" or string.lower(text) == "!panicpet") then
 		net.Start("PetPanic")
 		net.Send(ply)
 		return ""
 	end
 	
+	--spawns the players pet unless they already exist or have no access to it
 	if (string.lower(text) == "!petsummon" or string.lower(text) == "!spawnpet" ) then
 		if tonumber(ply.hl2cPersistent.Level) >= 10 then
-			if not ply:GetNWBool("PetActive") then
+			if not ply.petAlive then
 				spawnPet(ply)
 			else
 				ply:ChatPrint("Your pet has already been summoned!")
@@ -36,6 +51,7 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 		return ""
 	end
 	
+	--CMD for naming pets
 	if string.find(string.lower(text),"!petname ") then
 		ply:ChatPrint("You've change your pets name to" .. string.sub(text,9))
 		ply.hl2cPersistent.PetName = string.sub(text,9)
@@ -43,8 +59,7 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 		return ""
 	end
 
-	
-	
+	--access the difficulty menu
 	if (string.lower(text) == "!diff" or string.lower(text) == "!difficulty" ) then
 		net.Start("Open_Diff_Menu")
 			net.WriteInt(GetConVar("hl2c_difficulty"):GetInt(), 8)

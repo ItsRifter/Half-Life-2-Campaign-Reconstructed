@@ -29,16 +29,7 @@ local function InitData(ply)
 	ply.hl2cPersistent.PetStage = ply.hl2cPersistent.PetStage or 0
 	
 	-- Pet skills default settings
-	ply.hl2cPersistent.PetSkills1 = ply.hl2cPersistent.PetSkills1 or 0
-	ply.hl2cPersistent.PetSkills2 = ply.hl2cPersistent.PetSkills2 or 0
-	ply.hl2cPersistent.PetSkills3 = ply.hl2cPersistent.PetSkills3 or 0
-	ply.hl2cPersistent.PetSkills4 = ply.hl2cPersistent.PetSkills4 or 0
-	ply.hl2cPersistent.PetSkills5 = ply.hl2cPersistent.PetSkills5 or 0
-	ply.hl2cPersistent.PetSkills6 = ply.hl2cPersistent.PetSkills6 or 0
-	ply.hl2cPersistent.PetSkills7 = ply.hl2cPersistent.PetSkills7 or 0
-	ply.hl2cPersistent.PetSkills8 = ply.hl2cPersistent.PetSkills8 or 0
-	ply.hl2cPersistent.PetSkills9 = ply.hl2cPersistent.PetSkills9 or 0
-	ply.hl2cPersistent.PetSkills10 = ply.hl2cPersistent.PetSkills10 or 0
+	ply.hl2cPersistent.PetSkills = ply.hl2cPersistent.PetSkills or 0
 
 	-- Also set/create networked variables
 	ply:SetNWInt("Level", ply.hl2cPersistent.Level)
@@ -64,16 +55,7 @@ local function InitData(ply)
 	ply:SetNWInt("PetRegen", ply.hl2cPersistent.PetRegen)
 	ply:SetNWInt("PetStage", tonumber(ply.hl2cPersistent.PetStage))
 	
-	ply:SetNWInt("PetSkill1", ply.hl2cPersistent.PetSkills1)
-	ply:SetNWInt("PetSkill2", ply.hl2cPersistent.PetSkills2)
-	ply:SetNWInt("PetSkill3", ply.hl2cPersistent.PetSkills3)
-	ply:SetNWInt("PetSkill4", ply.hl2cPersistent.PetSkills4)
-	ply:SetNWInt("PetSkill5", ply.hl2cPersistent.PetSkills5)
-	ply:SetNWInt("PetSkill6", ply.hl2cPersistent.PetSkills6)
-	ply:SetNWInt("PetSkill7", ply.hl2cPersistent.PetSkills7)
-	ply:SetNWInt("PetSkill8", ply.hl2cPersistent.PetSkills8)
-	ply:SetNWInt("PetSkill9", ply.hl2cPersistent.PetSkills9)
-	ply:SetNWInt("PetSkill10", ply.hl2cPersistent.PetSkills10)
+	ply:SetNWInt("PetSkill", ply.hl2cPersistent.PetSkills)
 end
 
 local function CreateData(ply)
@@ -119,10 +101,7 @@ local function SaveData(ply)
 	print("Save committed")
 end
 
---function UpdateAchievements(ply)
---	print("Success")
---end
-
+--If there isn't a HL2CR data folder, create one
 hook.Add("Initialize", "CreateDataFolder", function()
 	if not file.IsDir( "hl2c_data", "DATA") then
 		print("MISSING FOLDER: Making new one")

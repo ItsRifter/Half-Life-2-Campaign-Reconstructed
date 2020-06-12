@@ -5,7 +5,6 @@ AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("client/achievements/cl_ach_base.lua")
 AddCSLuaFile("client/menus/cl_f4_menu.lua")
 AddCSLuaFile("client/menus/cl_difficulty_vote.lua")
-AddCSLuaFile("client/commands/cl_commands_list.lua")
 AddCSLuaFile("client/menus/cl_scoreboard.lua")
 AddCSLuaFile("client/cl_hud.lua")
 AddCSLuaFile("client/menus/cl_pets.lua")
@@ -111,8 +110,7 @@ function GM:ShowHelp(ply)
 end
 
 function GM:ShowTeam(ply)
-	net.Start("TestStart")
-	net.Send(ply)
+	ply.AllowSpawn = true
 end
 
 net.Receive("KickUser", function(len, ply)
@@ -159,7 +157,7 @@ function GM:ShowSpare1(ply)
 		}
 	}
 	
-	list.Set( "Vehicles", "Jeep", airboat )
+	list.Set( "Vehicles", "Airboat", airboat )
 	
 	local airboatGun = {
 		Name = "AirboatGun",
@@ -203,7 +201,19 @@ function GM:ShowSpare1(ply)
 			spawnAirboat:Fire( "addoutput", "targetname airboat" )
 			ply.AllowSpawn = false
 		end
-	elseif game.GetMap() == "d1_canals_11" and airboatGunSpawnable or game.GetMap() == "d1_canals_12" then
+	elseif game.GetMap() == "d1_canals_11" and airboatGunSpawnable or game.GetMap() == "d1_canals_12" or game.GetMap() == "d1_canals_13" then
+		if ply.AllowSpawn then
+			local spawnAirboatGun = ents.Create(airboatGun.Class)
+			spawnAirboatGun:SetModel(airboatGun.Model)
+			for k, v in pairs(airboatGun.KeyValues) do
+				spawnAirboatGun:SetKeyValue(k, v)
+			end
+			spawnAirboatGun:SetPos(Vector(ply:EyePos().x, ply:EyePos().y, ply:EyePos().z + 35))
+			spawnAirboatGun:Spawn()
+			spawnAirboatGun:SetOwner(ply)
+			spawnAirboatGun:Fire( "addoutput", "targetname airboat" )
+			ply.AllowSpawn = false
+		end
 	else
 		ply:ChatPrint("Vehicles are disabled on this map!")
 	end

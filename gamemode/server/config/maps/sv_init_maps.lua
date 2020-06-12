@@ -6,10 +6,15 @@ function SetupMap()
 	MapLua = ents.Create("lua_run")
 	MapLua:SetName("triggerhook")
 	MapLua:Spawn()
-	
+
 	if game.GetMap() == "hl2c_lobby_remake" then
 		for k, door in pairs(ents.FindByName("hl2_door")) do
 			door:Fire("Open")
+		end
+		
+		--Lost cause achievement trigger
+		for a, LCAch in pairs(ents.FindByName("trigger_achievement_lostcause")) do
+			LCAch:Fire("AddOutput", "OnTrigger triggerhook:RunPassedCode:hook.Run( 'GiveLostCause' ):0:-1" )
 		end
 	end
 	
@@ -57,8 +62,42 @@ function SetupMap()
 	
 	if game.GetMap() == "d2_prison_01" then 
 		for k, fix4 in pairs(ents.FindByClass("info_player_start")) do
-			fix4:SetPos(Vector(3987, -4444, 1155))
+			fix4:SetPos(Vector(4138, -4441, 1088))
 			fix4:SetAngles(Angle(0, 180, 0))
+		end
+	end
+	
+	if game.GetMap() == "d2_prison_03" then 
+		for k, fix5 in pairs(ents.FindByClass("info_player_start")) do
+			fix5:SetPos(Vector(-2405, 3192, 139))
+			fix5:SetAngles(Angle(0, -180, 0))
+		end
+	end
+	if game.GetMap() == "d2_prison_05" then 
+		for k, fix6 in pairs(ents.FindByClass("info_player_start")) do
+			fix6:SetPos(Vector(1446, 635, 404))
+			fix6:SetAngles(Angle(0, 90, 0))
+		end
+	end
+	
+	if game.GetMap() == "d3_c17_07" then 
+		for k, fix7 in pairs(ents.FindByClass("info_player_start")) do
+			fix7:SetPos(Vector(4435, 1203, 297))
+			fix7:SetAngles(Angle(90, 0, 0))
+		end
+	end
+	
+	if game.GetMap() == "d3_c17_10a" then 
+		for k, fix7 in pairs(ents.FindByClass("info_player_start")) do
+			fix7:SetPos(Vector(-3929, 6790, 22))
+			fix7:SetAngles(Angle(90, 0, 0))
+		end
+	end
+	
+	if game.GetMap() == "d3_c17_12" then 
+		for k, fix8 in pairs(ents.FindByClass("info_player_start")) do
+			fix8:SetPos(Vector(1185, 3404, 790))
+			fix8:SetAngles(Angle(0, -90, 0))
 		end
 	end
 	
@@ -177,6 +216,11 @@ function SetupMap()
 		fixLeap2:PhysicsInit(SOLID_VPHYSICS)
 		fixLeap2:Spawn()
 	end
+	if game.GetMap() == "d3_citadel_03" or game.GetMap() == "d3_citadel_04" or game.GetMap() == "d3_citadel_05" or game.GetMap() == "d3_breen_01" then
+		for k, l in pairs(ents.FindByClass("logic_auto")) do
+			l:Remove()
+		end
+	end
 
 	SetCheckpointsStage()
 	
@@ -245,6 +289,12 @@ hook.Add("GiveGravgun", "GrantGravgun", function()
 		v:Give("weapon_physcannon")
 		Achievement(v, "Gravgun", "HL2_Ach_List", 250)
 		v:ChatPrint("Gravity gun is now enabled")
+	end
+end)
+
+hook.Add("GiveLostCause", "GrantLobbyAch", function()
+	for k, v in pairs(player.GetAll()) do
+		Achievement(v, "Lost_Cause", "Lobby_Ach_List", 500)
 	end
 end)
 
@@ -318,7 +368,6 @@ hook.Add( "OnChangeLevel", "ChangeMap", function()
 		"d3_c17_12b",
 		"d3_c17_13",
 		"d3_citadel_01",
-		"d3_citadel_02",
 		"d3_citadel_03",
 		"d3_citadel_04",
 		"d3_citadel_05",
@@ -370,6 +419,7 @@ function SetCheckpointsStage()
 			Vector(-3288, -111, -17), Vector(-3512, -6, 71),
 		}
 		local Checkpoint1 = ents.Create("trigger_checkpoint")
+		Checkpoint1.forcePlyTP = true
 		Checkpoint1.Min = Vector(-9533, -2564, 22)
 		Checkpoint1.Max = Vector(-9343, -2405, 121)
 		Checkpoint1.Pos = Vector(-9343, -2405, 121) - ( ( Vector(-9343, -2405, 121) - Vector(-9533, -2564, 22)) / 2 )
@@ -378,6 +428,7 @@ function SetCheckpointsStage()
 		Checkpoint1:Spawn()
 		
 		local Checkpoint2 = ents.Create("trigger_checkpoint")
+		Checkpoint2.forcePlyTP = true
 		Checkpoint2.Min = Vector(-5211, -1932, -22)
 		Checkpoint2.Max = Vector(-5501, -2015, 157)
 		Checkpoint2.Pos = Vector(-5501, -2015, 157) - ( ( Vector(-5501, -2015, 157) - Vector(-5211, -1932, -22)) / 2 )
@@ -386,6 +437,7 @@ function SetCheckpointsStage()
 		Checkpoint2:Spawn()
 		
 		local Checkpoint3 = ents.Create("trigger_checkpoint")
+		Checkpoint3.forcePlyTP = true
 		Checkpoint3.Min = Vector(-4170, -589, -13)
 		Checkpoint3.Max = Vector(-4320, -531, 99)
 		Checkpoint3.Pos = Vector(-4320, -531, 99) - ( ( Vector(-4320, -531, 99) - Vector(-4170, -589, -13)) / 2 )
@@ -394,6 +446,7 @@ function SetCheckpointsStage()
 		Checkpoint3:Spawn()
 		
 		local Checkpoint4 = ents.Create("trigger_checkpoint")
+		Checkpoint4.forcePlyTP = true
 		Checkpoint4.Min = Vector(-3476, -442, -25)
 		Checkpoint4.Max = Vector(-3601, -289, 76)
 		Checkpoint4.Pos = Vector(-3601, -289, 76) - ( ( Vector(-3601, -289, 76) - Vector(-3476, -442, -25)) / 2 )
@@ -402,6 +455,7 @@ function SetCheckpointsStage()
 		Checkpoint4:Spawn()
 		
 		local Checkpoint5 = ents.Create("trigger_checkpoint")
+		Checkpoint5.forcePlyTP = true
 		Checkpoint5.Min = Vector(-3277, -118, -25)
 		Checkpoint5.Max = Vector(-3448, -19, 64)
 		Checkpoint5.Pos = Vector(-3448, -19, 64) - ( ( Vector(-3448, -19, 64) - Vector(-3277, -118, -25)) / 2 )
@@ -416,6 +470,7 @@ function SetCheckpointsStage()
 		}
 		
 		local Checkpoint1 = ents.Create("trigger_checkpoint")
+		Checkpoint1.forcePlyTP = true
 		Checkpoint1.Min = Vector(-5002, -4710, 522)
 		Checkpoint1.Max = Vector(-4899, -4821, 630)
 		Checkpoint1.Pos = Vector(-4899, -4821, 630) - ( ( Vector(-4899, -4821, 630) - Vector(-5002, -4710, 522)) / 2 )
@@ -430,6 +485,7 @@ function SetCheckpointsStage()
 			Vector( -7882, -4154, -238 ), Vector( -7796, -4024, -251 ),
 		}
 		local Checkpoint1 = ents.Create("trigger_checkpoint")
+		Checkpoint1.forcePlyTP = true
 		Checkpoint1.Min = Vector(-6861, -4255, 543)
 		Checkpoint1.Max = Vector(-7102, -4104, 670)
 		Checkpoint1.Pos = Vector(-7102, -4104, 670) - ( ( Vector(-7102, -4104, 670) - Vector(-6861, -4255, 543)) / 2 )
@@ -438,6 +494,7 @@ function SetCheckpointsStage()
 		Checkpoint1:Spawn()
 		
 		local Checkpoint2 = ents.Create("trigger_checkpoint")
+		Checkpoint2.forcePlyTP = true
 		Checkpoint2.Min = Vector(-7638, -4026, -242)
 		Checkpoint2.Max = Vector(-7653, -3879, -251)
 		Checkpoint2.Pos = Vector(-7653, -3879, -251) - ( ( Vector(-7545, -3882, -251) - Vector(-7653, -3879, -242)) / 2 )
@@ -446,6 +503,7 @@ function SetCheckpointsStage()
 		Checkpoint2:Spawn()
 		
 		local Checkpoint3 = ents.Create("trigger_checkpoint")
+		Checkpoint3.forcePlyTP = true
 		Checkpoint3.Min = Vector(-7882, -4154, -238)
 		Checkpoint3.Max = Vector(-7796, -4024, -251)
 		Checkpoint3.Pos = Vector(-7796, -4024, -251) - ( ( Vector(-7796, -4024, -251) - Vector(-7882, -4154, -238)) / 2 )
@@ -460,6 +518,7 @@ function SetCheckpointsStage()
 			 Vector(-10272, -4752, 321), Vector(-10427, -4703, 427),
 		}
 		local Checkpoint1 = ents.Create("trigger_checkpoint")
+		Checkpoint1.forcePlyTP = true
 		Checkpoint1.Min = Vector(-6526, -1120, 17)
 		Checkpoint1.Max = Vector(-6421, -1203, 119)
 		Checkpoint1.Pos = Vector(-6421, -1203, 119) - ( ( Vector(-6421, -1203, 119) - Vector(-6526, -1120, 17)) / 2 )
@@ -468,6 +527,7 @@ function SetCheckpointsStage()
 		Checkpoint1:Spawn()
 		
 		local Checkpoint2 = ents.Create("trigger_checkpoint")
+		Checkpoint2.forcePlyTP = true
 		Checkpoint2.Min = Vector(-7073, -1325, 14)
 		Checkpoint2.Max = Vector(-7252, -1457, 116)
 		Checkpoint2.Pos = Vector(-7252, -1457, 116) - ( ( Vector(-7252, -1457, 116) - Vector(-7073, -1325, 14)) / 2 )
@@ -476,6 +536,7 @@ function SetCheckpointsStage()
 		Checkpoint2:Spawn()
 		
 		local Checkpoint3 = ents.Create("trigger_checkpoint")
+		Checkpoint3.forcePlyTP = true
 		Checkpoint3.Min = Vector(-10272, -4752, 321)
 		Checkpoint3.Max = Vector(-10427, -4703, 427)
 		Checkpoint3.Pos = Vector(-10427, -4703, 427) - ( ( Vector(-10427, -4703, 427) - Vector(-10272, -4752, 321)) / 2 )
@@ -709,7 +770,296 @@ function SetCheckpointsStage()
 		Checkpoint3:SetPos(Checkpoint3.Pos)
 		Checkpoint3:Spawn()
 		
+	elseif game.GetMap() == "d2_coast_12" then
+		TRIGGER_CHECKPOINT = {
+			 Vector(2236, -317, 672), Vector(2055, -188, 815),
+			 Vector(8521, 7965, 1041), Vector(8680, 7835, 1247),
+		}
+		local Checkpoint1 = ents.Create("trigger_checkpoint")
+		Checkpoint1.Min = Vector(2236, -317, 672)
+		Checkpoint1.Max = Vector(2055, -188, 815)
+		Checkpoint1.Pos = Vector(2055, -188, 815) - ( ( Vector(2055, -188, 815) - Vector(2236, -317, 672)) / 2 )
+		Checkpoint1.Point1 = Vector(2086, -77, 694)
+		Checkpoint1:SetPos(Checkpoint1.Pos)
+		Checkpoint1:Spawn()	
+		
+	elseif game.GetMap() == "d2_prison_01" then
+		TRIGGER_CHECKPOINT = {
+			 Vector(1156, -1410, 1602), Vector(1000, -1582, 1777),
+		}
+		local Checkpoint1 = ents.Create("trigger_checkpoint")
+		Checkpoint1.forcePlyTP = true
+		Checkpoint1.Min = Vector(1156, -1410, 1602)
+		Checkpoint1.Max = Vector(1000, -1582, 1777)
+		Checkpoint1.Pos = Vector(1000, -1582, 1777) - ( ( Vector(1000, -1582, 1777) - Vector(1156, -1410, 1602)) / 2 )
+		Checkpoint1.Point1 = Vector(846, -1497, 1621)
+		Checkpoint1:SetPos(Checkpoint1.Pos)
+		Checkpoint1:Spawn()
+		
+	elseif game.GetMap() == "d2_prison_03" then
+		TRIGGER_CHECKPOINT = {
+			 Vector(-3395, 3390, 4), Vector(-3574, 3325, 191),
+		}
+		local Checkpoint1 = ents.Create("trigger_checkpoint")
+		Checkpoint1.forcePlyTP = false
+		Checkpoint1.Min = Vector(-3395, 3390, 4)
+		Checkpoint1.Max = Vector(-3574, 3325, 191)
+		Checkpoint1.Pos = Vector(-3574, 3325, 191) - ( ( Vector(-3574, 3325, 191) - Vector(-3395, 3390, 4)) / 2 )
+		Checkpoint1.Point1 = Vector(-3515, 3524, 64)
+		Checkpoint1:SetPos(Checkpoint1.Pos)
+		Checkpoint1:Spawn()	
+	elseif game.GetMap() == "d2_prison_05" then
+		TRIGGER_CHECKPOINT = {
+			 Vector(-3478, -468, 511), Vector(-3640, -665, 858),
+		}
+		local Checkpoint1 = ents.Create("trigger_checkpoint")
+		Checkpoint1.forcePlyTP = true
+		Checkpoint1.Min = Vector(-3478, -468, 511)
+		Checkpoint1.Max = Vector(-3640, -665, 858)
+		Checkpoint1.Pos = Vector(-3640, -665, 858) - ( ( Vector(-3640, -665, 858) - Vector(-3478, -468, 511)) / 2 )
+		Checkpoint1.Point1 = Vector(-3797, -557, 523)
+		Checkpoint1:SetPos(Checkpoint1.Pos)
+		Checkpoint1:Spawn()
+		
+	elseif game.GetMap() == "d2_prison_06" then
+		TRIGGER_CHECKPOINT = {
+			 Vector(1614, 749, -186), Vector(1487, 609, -67),
+			 Vector(428, 49, 2), Vector(506, 172, 130),
+			 Vector(357, -132, 6), Vector(357, -132, 6),
+		}
+		local Checkpoint1 = ents.Create("trigger_checkpoint")
+		Checkpoint1.forcePlyTP = true
+		Checkpoint1.Min = Vector(1614, 749, -186)
+		Checkpoint1.Max = Vector(1487, 609, -67)
+		Checkpoint1.Pos = Vector(1487, 609, -67) - ( ( Vector(1487, 609, -67) - Vector(1614, 749, -186)) / 2 )
+		Checkpoint1.Point1 = Vector(1563, 673, -176)
+		Checkpoint1:SetPos(Checkpoint1.Pos)
+		Checkpoint1:Spawn()
+		
+		local Checkpoint2 = ents.Create("trigger_checkpoint")
+		Checkpoint2.forcePlyTP = true
+		Checkpoint2.Min = Vector(428, 49, 2)
+		Checkpoint2.Max = Vector(506, 172, 130)
+		Checkpoint2.Pos = Vector(506, 172, 130) - ( ( Vector(506, 172, 130) - Vector(428, 49, 2)) / 2 )
+		Checkpoint2.Point2 = Vector(569, 99, 16)
+		Checkpoint2:SetPos(Checkpoint2.Pos)
+		Checkpoint2:Spawn()
+		
+		local Checkpoint3 = ents.Create("trigger_checkpoint")
+		Checkpoint3.forcePlyTP = true
+		Checkpoint3.Min = Vector(357, -132, 6)
+		Checkpoint3.Max = Vector(269, -217, 122)
+		Checkpoint3.Pos = Vector(269, -217, 122) - ( ( Vector(269, -217, 122) - Vector(357, -132, 6)) / 2 )
+		Checkpoint3.Point3 = Vector(315, -433, 0)
+		Checkpoint3:SetPos(Checkpoint3.Pos)
+		Checkpoint3:Spawn()
+		
+	elseif game.GetMap() == "d2_prison_07" then
+		TRIGGER_CHECKPOINT = {
+			 Vector(1604, -3354, -678), Vector(1434, -3268, -493),
+			 Vector(4333, -3907, -539), Vector(3988, -4088, -418),
+		}
+		local Checkpoint1 = ents.Create("trigger_checkpoint")
+		Checkpoint1.forcePlyTP = false
+		Checkpoint1.Min = Vector(1604, -3354, -678)
+		Checkpoint1.Max = Vector(1434, -3268, -493)
+		Checkpoint1.Pos = Vector(1434, -3268, -493) - ( ( Vector(1434, -3268, -493) - Vector(1604, -3354, -678)) / 2 )
+		Checkpoint1.Point1 = Vector(1727, -3308, -663)
+		Checkpoint1:SetPos(Checkpoint1.Pos)
+		Checkpoint1:Spawn()
+		
+		local Checkpoint2 = ents.Create("trigger_checkpoint")
+		Checkpoint2.forcePlyTP = true
+		Checkpoint2.Min = Vector(4333, -3907, -539)
+		Checkpoint2.Max = Vector(3988, -4088, -418)
+		Checkpoint2.Pos = Vector(3988, -4088, -418) - ( ( Vector(3988, -4088, -418) - Vector(4333, -3907, -539)) / 2 )
+		Checkpoint2.Point2 = Vector(4153, -3977, -528)
+		Checkpoint2:SetPos(Checkpoint2.Pos)
+		Checkpoint2:Spawn()	
+	elseif game.GetMap() == "d2_prison_08" then
+		TRIGGER_CHECKPOINT = {
+			 Vector(-467, 685, 933), Vector(-371, 603, 1081),
+			 Vector(-253, 645, 929), Vector(-168, 453, 1138),
+			 Vector(97, 23, 1181), Vector(150, -18, 1229),
+		}
+		local Checkpoint1 = ents.Create("trigger_checkpoint")
+		Checkpoint1.forcePlyTP = false
+		Checkpoint1.Min = Vector(-467, 685, 933)
+		Checkpoint1.Max = Vector(-371, 603, 1081)
+		Checkpoint1.Pos = Vector(-371, 603, 1081) - ( ( Vector(-371, 603, 1081) - Vector(-467, 685, 933)) / 2 )
+		Checkpoint1.Point1 = Vector(-474, 518, 941)
+		Checkpoint1:SetPos(Checkpoint1.Pos)
+		Checkpoint1:Spawn()
+		
+		local Checkpoint2 = ents.Create("trigger_checkpoint")
+		Checkpoint2.forcePlyTP = true
+		Checkpoint2.Min = Vector(-253, 645, 929)
+		Checkpoint2.Max = Vector(-168, 453, 1138)
+		Checkpoint2.Pos = Vector(-168, 453, 1138) - ( ( Vector(-168, 453, 1138) - Vector(-253, 645, 929)) / 2 )
+		Checkpoint2.Point2 = Vector(131, 300, 1003)
+		Checkpoint2:SetPos(Checkpoint2.Pos)
+		Checkpoint2:Spawn()
+		
+		local Checkpoint3 = ents.Create("trigger_checkpoint")
+		Checkpoint3.forcePlyTP = true
+		Checkpoint3.Min = Vector(97, 23, 1181)
+		Checkpoint3.Max = Vector(150, -18, 1229)
+		Checkpoint3.Pos = Vector(150, -18, 1229) - ( ( Vector(150, -18, 1229) - Vector(97, 23, 1181)) / 2 )
+		Checkpoint3.Point3 = Vector(128, 28, 1224)
+		Checkpoint3:SetPos(Checkpoint3.Pos)
+		Checkpoint3:Spawn()
+		
+	elseif game.GetMap() == "d3_c17_01" then
+		TRIGGER_CHECKPOINT = {
+			 Vector(-7047, -1500, 9), Vector(-7028, -1295, 123),
+			 Vector(-6543, -1079, 6), Vector(-6366, -925, 164),
+		}
+		local Checkpoint1 = ents.Create("trigger_checkpoint")
+		Checkpoint1.forcePlyTP = true
+		Checkpoint1.Min = Vector(-7047, -1500, 9)
+		Checkpoint1.Max = Vector(-7028, -1295, 123)
+		Checkpoint1.Pos = Vector(-7028, -1295, 123) - ( ( Vector(-7028, -1295, 123) - Vector(-7047, -1500, 9)) / 2 )
+		Checkpoint1.Point1 = Vector(-6841, -1384, 13)
+		Checkpoint1:SetPos(Checkpoint1.Pos)
+		Checkpoint1:Spawn()
+		
+		local Checkpoint2 = ents.Create("trigger_checkpoint")
+		Checkpoint2.forcePlyTP = true
+		Checkpoint2.Min = Vector(-6543, -1079, 6)
+		Checkpoint2.Max = Vector(-6366, -925, 164)
+		Checkpoint2.Pos = Vector(-6366, -925, 164) - ( ( Vector(-6366, -925, 164) - Vector(-6543, -1079, 6)) / 2 )
+		Checkpoint2.Point2 = Vector(-6476, -918, 11)
+		Checkpoint2:SetPos(Checkpoint2.Pos)
+		Checkpoint2:Spawn()
+	elseif game.GetMap() == "d3_c17_02" then
+		TRIGGER_CHECKPOINT = {
+			 Vector(-5586, -5702, 0), Vector(-5478, -5565, 150),
+		}
+		local Checkpoint1 = ents.Create("trigger_checkpoint")
+		Checkpoint1.forcePlyTP = true
+		Checkpoint1.Min = Vector(-5586, -5702, 0)
+		Checkpoint1.Max = Vector(-5478, -5565, 150)
+		Checkpoint1.Pos = Vector(-5478, -5565, 150) - ( ( Vector(-5478, -5565, 150) - Vector(-5586, -5702, 0)) / 2 )
+		Checkpoint1.Point1 = Vector(-5449, -5753, 22)
+		Checkpoint1:SetPos(Checkpoint1.Pos)
+		Checkpoint1:Spawn()
+		
+	elseif game.GetMap() == "d3_c17_06a" then
+		TRIGGER_CHECKPOINT = {
+			 Vector(3002, 2404, -310), Vector(2882, 2506, -169),
+		}
+		local Checkpoint1 = ents.Create("trigger_checkpoint")
+		Checkpoint1.forcePlyTP = true
+		Checkpoint1.Min = Vector(3002, 2404, -310)
+		Checkpoint1.Max = Vector(2882, 2506, -169)
+		Checkpoint1.Pos = Vector(2882, 2506, -169) - ( ( Vector(2882, 2506, -169) - Vector(3002, 2404, -310)) / 2 )
+		Checkpoint1.Point1 = Vector(2751, 2763, -301)
+		Checkpoint1:SetPos(Checkpoint1.Pos)
+		Checkpoint1:Spawn()
+		
+	elseif game.GetMap() == "d3_c17_07" then
+		TRIGGER_CHECKPOINT = {
+			 Vector(5520, 1383, 0), Vector(5525, 1432, 109),
+			 Vector(7275, 1282, 3), Vector(7499, 1788, 270),
+		}
+		local Checkpoint1 = ents.Create("trigger_checkpoint")
+		Checkpoint1.forcePlyTP = true
+		Checkpoint1.Min = Vector(5520, 1383, 0)
+		Checkpoint1.Max = Vector(5525, 1432, 109)
+		Checkpoint1.Pos = Vector(5525, 1432, 109) - ( ( Vector(5525, 1432, 109) - Vector(5520, 1383, 0)) / 2 )
+		Checkpoint1.Point1 = Vector(6585, 1531, 19)
+		Checkpoint1:SetPos(Checkpoint1.Pos)
+		Checkpoint1:Spawn()
+	
+		local Checkpoint2 = ents.Create("trigger_checkpoint")
+		Checkpoint2.forcePlyTP = true
+		Checkpoint2.Min = Vector(7275, 1282, 3)
+		Checkpoint2.Max = Vector(7499, 1788, 270)
+		Checkpoint2.Pos = Vector(7499, 1788, 270) - ( ( Vector(7499, 1788, 270) - Vector(7275, 1282, 3)) / 2 )
+		Checkpoint2.Point2 = Vector(7840, 1531, 6)
+		Checkpoint2:SetPos(Checkpoint2.Pos)
+		Checkpoint2:Spawn()
+		
+	elseif game.GetMap() == "d3_c17_08" then
+		TRIGGER_CHECKPOINT = {
+			 Vector(1310, -754, -320), Vector(1220, -682, -225),
+		}
+		local Checkpoint1 = ents.Create("trigger_checkpoint")
+		Checkpoint1.forcePlyTP = true
+		Checkpoint1.Min = Vector(1310, -754, -320)
+		Checkpoint1.Max = Vector(1220, -682, -225)
+		Checkpoint1.Pos = Vector(1220, -682, -225) - ( ( Vector(1220, -682, -225) - Vector(1310, -754, -320)) / 2 )
+		Checkpoint1.Point1 = Vector(1473, -596, -377)
+		Checkpoint1:SetPos(Checkpoint1.Pos)
+		Checkpoint1:Spawn()
+	
+	elseif game.GetMap() == "d3_c17_10a" then
+		TRIGGER_CHECKPOINT = {
+			 Vector(-2451, 8321, 130), Vector(-2579, 8441, 245),
+		}
+		local Checkpoint1 = ents.Create("trigger_checkpoint")
+		Checkpoint1.forcePlyTP = true
+		Checkpoint1.Min = Vector(-2451, 8321, 130)
+		Checkpoint1.Max = Vector(-2579, 8441, 245)
+		Checkpoint1.Pos = Vector(-2579, 8441, 245) - ( ( Vector(-2579, 8441, 245) - Vector(-2451, 8321, 130)) / 2 )
+		Checkpoint1.Point1 = Vector(-2817, 8090, 143)
+		Checkpoint1:SetPos(Checkpoint1.Pos)
+		Checkpoint1:Spawn()
+	elseif game.GetMap() == "d3_c17_13" then
+		TRIGGER_CHECKPOINT = {
+			 Vector(5009, 255, 258), Vector(5207, 338, 419),
+		}
+		local Checkpoint1 = ents.Create("trigger_checkpoint")
+		Checkpoint1.forcePlyTP = true
+		Checkpoint1.Min = Vector(5009, 255, 258)
+		Checkpoint1.Max = Vector(5207, 338, 419)
+		Checkpoint1.Pos = Vector(5207, 338, 419) - ( ( Vector(5207, 338, 419) - Vector(5009, 255, 258)) / 2 )
+		Checkpoint1.Point1 = Vector(5179, 1042, 20)
+		Checkpoint1:SetPos(Checkpoint1.Pos)
+		Checkpoint1:Spawn()
+	elseif game.GetMap() == "d3_citadel_01" then
+		TRIGGER_CHECKPOINT = {
+			 Vector(10545, 4302, -1774), Vector(10484, 4156, -1603),
+		}
+		local Checkpoint1 = ents.Create("trigger_checkpoint")
+		Checkpoint1.forcePlyTP = true
+		Checkpoint1.Min = Vector(10545, 4302, -1774)
+		Checkpoint1.Max = Vector(10484, 4156, -1603)
+		Checkpoint1.Pos = Vector(10484, 4156, -1603) - ( ( Vector(10484, 4156, -1603) - Vector(10545, 4302, -1774)) / 2 )
+		Checkpoint1.Point1 = Vector(10201, 4225, -1779)
+		Checkpoint1:SetPos(Checkpoint1.Pos)
+		Checkpoint1:Spawn()
+	elseif game.GetMap() == "d3_citadel_04" then
+		TRIGGER_CHECKPOINT = {
+			 Vector(435, 640, 2793), Vector(68, 974, 3087),
+			 Vector(459, 639, 4123), Vector(74, 1016, 4600),
+			 Vector(445, 252, 6403), Vector(72, 31, 6655),
+		}
+		local Checkpoint1 = ents.Create("trigger_checkpoint")
+		Checkpoint1.forcePlyTP = true
+		Checkpoint1.Min = Vector(435, 640, 2793)
+		Checkpoint1.Max = Vector(68, 974, 3087)
+		Checkpoint1.Pos = Vector(68, 974, 3087) - ( ( Vector(68, 974, 3087) - Vector(435, 640, 2793)) / 2 )
+		Checkpoint1.Point1 = Vector(264, 837, 2853)
+		Checkpoint1:SetPos(Checkpoint1.Pos)
+		Checkpoint1:Spawn()
+		
+		local Checkpoint2 = ents.Create("trigger_checkpoint")
+		Checkpoint2.forcePlyTP = true
+		Checkpoint2.Min = Vector(459, 639, 4123)
+		Checkpoint2.Max = Vector(74, 1016, 4600)
+		Checkpoint2.Pos = Vector(74, 1016, 4600) - ( ( Vector(74, 1016, 4600) - Vector(459, 639, 4123)) / 2 )
+		Checkpoint2.Point2 = Vector(240, 825, 4186)
+		Checkpoint2:SetPos(Checkpoint2.Pos)
+		Checkpoint2:Spawn()
+		
+		local Checkpoint3 = ents.Create("trigger_checkpoint")
+		Checkpoint3.forcePlyTP = false
+		Checkpoint3.Min = Vector(445, 252, 6403)
+		Checkpoint3.Max = Vector(72, 31, 6655)
+		Checkpoint3.Pos = Vector(72, 31, 6655) - ( ( Vector(72, 31, 6655) - Vector(445, 252, 6403)) / 2 )
+		Checkpoint3.Point3 = Vector(236, -245, 6422)
+		Checkpoint3:SetPos(Checkpoint3.Pos)
+		Checkpoint3:Spawn()
 	end
-
 end
-

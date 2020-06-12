@@ -61,6 +61,11 @@ hook.Add("PlayerSpawn", "Misc", function(ply)
 		RunConsoleCommand("gmod_suit", 1)
 		ply:AllowFlashlight(true)
 	end
+	
+	if game.GetMap() == "d3_citadel_03" then
+		ply:Give("weapon_physcannon")
+	end
+	
 end)
 
 function GM:DoPlayerDeath(ply, attacker, dmgInfo)
@@ -96,7 +101,7 @@ hook.Add("EntityTakeDamage", "DisableAR2DMG", function(ent, dmgInfo)
 end)
 
 hook.Add("PlayerShouldTakeDamage", "DisablePVP", function(ply, attacker)
-	if ply:Team() ~= TEAM_ALIVE or (attacker:IsPlayer() and attacker ~= ply) or attacker == "prop_combine_ball" then
+	if ply:Team() != TEAM_ALIVE or (attacker:IsPlayer() and attacker != ply) then
 		return false
 	end
 	return true
@@ -104,11 +109,15 @@ hook.Add("PlayerShouldTakeDamage", "DisablePVP", function(ply, attacker)
 end)
 
 function GM:PlayerCanPickupWeapon(ply, weapon) 
-	if ply:Team() ~= TEAM_ALIVE or weapon:GetClass() == "weapon_stunstick" or (weapon:GetClass() == "weapon_physgun" and not ply:IsAdmin()) then
+	if ply:Team() != TEAM_ALIVE or weapon:GetClass() == "weapon_stunstick" or (weapon:GetClass() == "weapon_physgun" and not ply:IsAdmin()) then
 		weapon:Remove()
 		return false
 	end
 	
+	if (game.GetMap() == "d3_citadel_03" or game.GetMap() == "d3_citadel_04" or game.GetMap() == "d3_citadel_05" or game.GetMap() == "d3_breen_01") and weapon:GetClass() != "weapon_superphyscannon" then
+		weapon:Remove()
+		return false
+	end
 	return true
 end
 
@@ -118,7 +127,7 @@ end
 
 hook.Add("PlayerLoadout", "StarterWeapons", function(ply)
 	if (game.GetMap() == "hl2c_lobby_remake") then
-		ply:Give("tfa_mmod_crowbar")
+		ply:Give("weapon_crowbar")
 		ply:Give("weapon_physcannon")
 		if ply:IsAdmin() then
 			ply:Give("weapon_physgun")
@@ -126,26 +135,40 @@ hook.Add("PlayerLoadout", "StarterWeapons", function(ply)
 	end
 	
 	if game.GetMap() == "d1_town_02" and file.Exists("hl2c_data/d1_town_02.txt", "DATA") then 
-		ply:Give("tfa_mmod_crowbar")
+		ply:Give("weapon_crowbar")
 		ply:Give("weapon_physcannon")
-		ply:Give("tfa_mmod_pistol")
-		ply:Give("tfa_mmod_357")
-		ply:Give("tfa_mmod_smg")
-		ply:Give("tfa_mmod_shotgun")
-		ply:Give("tfa_mmod_grenade")
+		ply:Give("weapon_pistol")
+		ply:Give("weapon_357")
+		ply:Give("weapon_smg1")
+		ply:Give("weapon_shotgun")
+		ply:Give("weapon_frag")
 	end
 	
 	if game.GetMap() == "d2_coast_08" then
-		ply:Give("tfa_mmod_crowbar")
+		ply:Give("weapon_crowbar")
 		ply:Give("weapon_physcannon")
-		ply:Give("tfa_mmod_pistol")
-		ply:Give("tfa_mmod_357")
-		ply:Give("tfa_mmod_smg")
-		ply:Give("tfa_mmod_ar2")
-		ply:Give("tfa_mmod_shotgun")
-		ply:Give("tfa_mmod_crossbow")
-		ply:Give("tfa_mmod_rpg")
-		ply:Give("tfa_mmod_grenade")
+		ply:Give("weapon_pistol")
+		ply:Give("weapon_357")
+		ply:Give("weapon_smg1")
+		ply:Give("weapon_ar2")
+		ply:Give("weapon_shotgun")
+		ply:Give("weapon_crossbow")
+		ply:Give("weapon_rpg")
+		ply:Give("weapon_frag")
+	end
+	
+	if game.GetMap() == "d2_prison_05" then
+		ply:Give("weapon_crowbar")
+		ply:Give("weapon_physcannon")
+		ply:Give("weapon_pistol")
+		ply:Give("weapon_357")
+		ply:Give("weapon_smg1")
+		ply:Give("weapon_ar2")
+		ply:Give("weapon_shotgun")
+		ply:Give("weapon_crossbow")
+		ply:Give("weapon_rpg")
+		ply:Give("weapon_frag")
+		ply:Give("weapon_bugbait")
 	end
 		
 	for k, curWep in pairs(ply:GetWeapons()) do
@@ -164,73 +187,8 @@ hook.Add("PlayerLoadout", "StarterWeapons", function(ply)
 end)
 
 hook.Add("WeaponEquip", "WeaponPickedUp", function(weapon, ply)
-	if weapon and weapon:IsValid() and not table.HasValue(startingWeapons, weapon:GetClass()) then
-		if weapon:GetClass() == "weapon_crowbar" then
-			timer.Simple(0.1, function()
-				ply:StripWeapon("weapon_crowbar")
-			end)
-			ply:Give("tfa_mmod_crowbar")
-			table.insert(startingWeapons, "tfa_mmod_crowbar")
-		elseif weapon:GetClass() == "weapon_pistol" then
-			timer.Simple(0.01, function()
-				ply:StripWeapon("weapon_pistol")
-			end)
-			ply:GiveAmmo(math.random(1, 18), "Pistol", false)
-			ply:Give("tfa_mmod_pistol")
-			table.insert(startingWeapons, "tfa_mmod_pistol")
-		elseif weapon:GetClass() == "weapon_357" then
-			timer.Simple(0.01, function()
-				ply:StripWeapon("weapon_357")
-			end)
-			ply:GiveAmmo(6, "357", false)
-			ply:Give("tfa_mmod_357")
-			table.insert(startingWeapons, "tfa_mmod_357")
-		elseif weapon:GetClass() == "weapon_smg1" then
-			timer.Simple(0.01, function()
-				ply:StripWeapon("weapon_smg1")
-			end)
-			ply:GiveAmmo(math.random(5, 45), "SMG1", false)
-			ply:Give("tfa_mmod_smg")
-			table.insert(startingWeapons, "tfa_mmod_smg")
-		elseif weapon:GetClass() == "weapon_ar2" then
-			timer.Simple(0.01, function()
-				ply:StripWeapon("weapon_ar2")
-			end)
-			ply:GiveAmmo(math.random(1, 30), "AR2", false)
-			ply:Give("tfa_mmod_ar2")
-			table.insert(startingWeapons, "tfa_mmod_ar2")
-		elseif weapon:GetClass() == "weapon_crossbow" then
-			timer.Simple(0.01, function()
-				ply:StripWeapon("weapon_crossbow")
-			end)
-			ply:GiveAmmo(2, "XBoxBolt", false)
-			ply:Give("tfa_mmod_crossbow")
-			table.insert(startingWeapons, "tfa_mmod_crossbow")
-		elseif weapon:GetClass() == "weapon_shotgun" then
-			timer.Simple(0.01, function()
-				ply:StripWeapon("weapon_shotgun")
-			end)
-			ply:GiveAmmo(math.random(1, 6), "Buckshot", false)
-			ply:Give("tfa_mmod_shotgun")
-			table.insert(startingWeapons, "tfa_mmod_shotgun")
-		elseif weapon:GetClass() == "weapon_frag" then
-			timer.Simple(0.01, function()
-				ply:StripWeapon("weapon_frag")
-			end)
-			ply:Give("tfa_mmod_grenade")
-			table.insert(startingWeapons, "tfa_mmod_grenade")
-		elseif weapon:GetClass() == "weapon_rpg" then
-			timer.Simple(0.01, function()
-				ply:StripWeapon("weapon_rpg")
-			end)
-			ply:GiveAmmo(1, "RPG_Round", false)
-			ply:Give("tfa_mmod_rpg")
-			table.insert(startingWeapons, "tfa_mmod_rpg")	
-		elseif weapon:GetClass() == "weapon_physcannon" then
-			table.insert(startingWeapons, "weapon_physcannon")
-		elseif weapon:GetClass() == "hlashotty" then
-			table.remove(startingWeapons, "hlashotty")
-		end
+	if weapon and weapon:IsValid() and not table.HasValue(startingWeapons, weapon:GetClass()) and not game.GetMap() == "d3_citadel_03" or game.GetMap() == "d3_breen_01" then
+		table.insert(startingWeapons, weapon:GetClass())
 	end
 	if weapon:GetClass() == "weapon_crowbar" and game.GetMap() == "d1_trainstation_06" then
 		for k, v in pairs(player.GetAll()) do
@@ -242,7 +200,7 @@ end)
 function RespawnTimerActive(ply, deaths)
 	ply.hasDiedOnce = true
 	
-	if GetConVar("hl2c_survivalmode"):GetInt() == 1 and game.GetMap() ~= "hl2c_lobby_remake" then
+	if GetConVar("hl2c_survivalmode"):GetInt() == 1 and game.GetMap() != "hl2c_lobby_remake" then
 		ply:Lock()
 		isAliveSurv = false
 		local playersAlive = #player.GetAll()

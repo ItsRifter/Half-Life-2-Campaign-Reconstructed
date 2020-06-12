@@ -38,6 +38,17 @@ surface.CreateFont("Intro_Tab4_Font", {
 	size = 32,
 })
 
+
+surface.CreateFont("Intro_Tab4_Title_Font", {
+	font = "Arial",
+	size = 48,
+})
+
+surface.CreateFont("Intro_Tab4_Font", {
+	font = "Arial",
+	size = 32,
+})
+
 local exampleModels = {
 	["models/player/Group03/male_06.mdl"] = {},
 	["models/player/police.mdl"] = {},
@@ -202,8 +213,7 @@ function LobbyMenu()
 	
 	TabSheet:AddSheet("Rules and Commands", PanelTabThree, nil)
 	
-	
-	--Fourth Tab Section - Begin playing
+	--Fourth Tab Section - Tips
 	
 	local PanelTabFour = vgui.Create( "DPanel", frame )
 	PanelTabFour:SetSize(800, 850)
@@ -212,29 +222,46 @@ function LobbyMenu()
 		draw.RoundedBox(0,0,0, w, h, Color(170, 170, 170, 255))
 	end
 	
-	local creditsTitleLabel = vgui.Create("DLabel", PanelTabFour)
+	local LabelTipsTitle = vgui.Create( "DLabel", PanelTabFour )
+	LabelTipsTitle:SetFont("Intro_Tab4_Title_Font")
+	LabelTipsTitle:SetText("Tips and Tricks")
+	LabelTipsTitle:SetPos(300, 100)
+	LabelTipsTitle:SizeToContents()
+	
+	TabSheet:AddSheet("Tips and Tricks", PanelTabFour, nil)
+	
+	--Fifth Tab Section - Begin playing
+	
+	local PanelTabFive = vgui.Create( "DPanel", frame )
+	PanelTabFive:SetSize(800, 850)
+	PanelTabFive:SetPos(0, 400)
+	PanelTabFive.Paint = function(s, w, h)
+		draw.RoundedBox(0,0,0, w, h, Color(170, 170, 170, 255))
+	end
+	
+	local creditsTitleLabel = vgui.Create("DLabel", PanelTabFive)
 	creditsTitleLabel:SetText("CREDITS")
 	creditsTitleLabel:SetFont("Intro_Tab4_Title_Font")
 	creditsTitleLabel:SetColor(Color(0, 0, 0))
-	creditsTitleLabel:SetPos(PanelTabFour:GetWide() / 2 - 50, 75)
+	creditsTitleLabel:SetPos(PanelTabFive:GetWide() / 2 - 50, 75)
 	creditsTitleLabel:SizeToContents()
 	
-	local creditsLabel = vgui.Create("DLabel", PanelTabFour)
+	local creditsLabel = vgui.Create("DLabel", PanelTabFive)
 	creditsLabel:SetText("SuperSponer - Creator\nD3 - Helper/Developer\n\nSpecial thanks to Sponer's\nfriends for playtesting")
 	creditsLabel:SetFont("Intro_Tab4_Font")
 	creditsLabel:SetColor(Color(0, 0, 0))
-	creditsLabel:SetPos(PanelTabFour:GetWide() / 2 - 100, 175)
+	creditsLabel:SetPos(PanelTabFive:GetWide() / 2 - 100, 175)
 	creditsLabel:SizeToContents()
 	
-	local creditsDiscordUrl = vgui.Create("DLabelURL", PanelTabFour)
+	local creditsDiscordUrl = vgui.Create("DLabelURL", PanelTabFive)
 	creditsDiscordUrl:SetText("Join the Discord!")
 	creditsDiscordUrl:SetColor(Color(0, 0, 0))
 	creditsDiscordUrl:SetURL("https://discord.gg/xu5tUCM")
 	creditsDiscordUrl:SetSize(100, 75)
-	creditsDiscordUrl:SetPos(PanelTabFour:GetWide() / 2 + 5, 775)
+	creditsDiscordUrl:SetPos(PanelTabFive:GetWide() / 2 + 5, 775)
 	
 	
-	local startButton = vgui.Create("DButton", PanelTabFour)
+	local startButton = vgui.Create("DButton", PanelTabFive)
 	startButton:SetSize(200, 75)
 	startButton:SetPos(350, 850)
 	startButton:SetText("Begin")
@@ -246,7 +273,7 @@ function LobbyMenu()
 		frame:Close()
 	end
 	
-	TabSheet:AddSheet("Begin Playing", PanelTabFour, nil)
+	TabSheet:AddSheet("Begin Playing", PanelTabFive, nil)
 end
 
 net.Receive("Greetings_new_player", LobbyMenu)

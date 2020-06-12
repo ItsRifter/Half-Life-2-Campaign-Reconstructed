@@ -127,6 +127,7 @@ function OpenMenu()
 				net.SendToServer()
 				getModel = rebelModel:GetModelName()
 			end
+			selectPMScrollPanel:AddPanel(rebelModel)
 		end
 	end
 	
@@ -140,6 +141,7 @@ function OpenMenu()
 				net.SendToServer()
 				getModel = medicsModel:GetModelName()
 			end
+			selectPMScrollPanel:AddPanel(medicsModel)
 		end
 	end
 	
@@ -153,6 +155,7 @@ function OpenMenu()
 				net.SendToServer()
 				getModel = policeModel:GetModelName()
 			end
+			selectPMScrollPanel:AddPanel(policeModel)
 		end
 	end
 	
@@ -166,6 +169,7 @@ function OpenMenu()
 				net.SendToServer()
 				getModel = soldierModel:GetModelName()
 			end
+			selectPMScrollPanel:AddPanel(soldierModel)
 		end
 	end
 	
@@ -179,6 +183,7 @@ function OpenMenu()
 				net.SendToServer()
 				getModel = heavyModel:GetModelName()
 			end
+			selectPMScrollPanel:AddPanel(heavyModel)
 		end
 	end
 	
@@ -192,6 +197,7 @@ function OpenMenu()
 				net.SendToServer()
 				getModel = eliteModel:GetModelName()
 			end
+			selectPMScrollPanel:AddPanel(eliteModel)
 		end
 	end
 	
@@ -205,6 +211,7 @@ function OpenMenu()
 				net.SendToServer()
 				getModel = captainModel:GetModelName()
 			end
+			selectPMScrollPanel:AddPanel(captainModel)
 		end
 	end
 	
@@ -218,6 +225,7 @@ function OpenMenu()
 				net.SendToServer()
 				getModel = hevModel:GetModelName()
 			end
+			selectPMScrollPanel:AddPanel(hevModel)
 		end
 	end
 

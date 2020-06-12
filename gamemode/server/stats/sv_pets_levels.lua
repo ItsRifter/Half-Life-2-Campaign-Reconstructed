@@ -69,28 +69,25 @@ function spawnPet(ply, pos)
 		ply.pet:SetNWInt("PetRegen", ply.hl2cPersistent.PetRegen)
 		
 		for k, v in pairs( ents.FindByClass( "npc_*" ) ) do
-		if IsValid(v) and v:IsPet() then
-			v:AddEntityRelationship(ply.pet, D_LI, 99)
-			ply.pet:AddEntityRelationship(v, D_LI, 99)
-		end
-		
-		for k, v in pairs( ents.FindByClass( "npc_*" ) ) do
-			if v:IsValid() and v:IsPet() then
+			if IsValid(v) and v:IsPet() then
 				v:AddEntityRelationship(ply.pet, D_LI, 99)
 				ply.pet:AddEntityRelationship(v, D_LI, 99)
-			elseif v:IsFriendly() then
-				v:AddEntityRelationship(ply.pet, D_LI, 99)
-				ply.pet:AddEntityRelationship(v, D_LI, 99)
-			else
-				ply.pet:AddEntityRelationship(v, D_HT, 99)
 			end
+			
+			for k, v in pairs( ents.FindByClass( "npc_*" ) ) do
+				if v:IsValid() and v:IsPet() then
+					v:AddEntityRelationship(ply.pet, D_LI, 99)
+					ply.pet:AddEntityRelationship(v, D_LI, 99)
+				elseif v:IsFriendly() then
+					v:AddEntityRelationship(ply.pet, D_LI, 99)
+					ply.pet:AddEntityRelationship(v, D_LI, 99)
+				else
+					ply.pet:AddEntityRelationship(v, D_HT, 99)
+				end
+			end
+			net.Start("IndicPetSpawn")
+			net.Send(ply)
 		end
-		net.Start("IndicPetSpawn")
-		net.Send(ply)
-	end
-		
-	else
-		ply:ChatPrint("You can only summon your pet once per map!")
 	end
 end
 

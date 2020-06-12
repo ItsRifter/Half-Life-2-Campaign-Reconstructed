@@ -14,7 +14,7 @@ surface.CreateFont("End_Stats_font", {
 end
 
 
-function showEndStats(ply)
+function showEndStats(len, ply)
 	
 	local endFrame = vgui.Create("DFrame")
 	endFrame:SetSize(800, 600)

@@ -1,7 +1,8 @@
 AchievementLists = {
 	Lobby_Ach_List = {
 		First_Time = {name = "First Time", desc = "Play the gamemode for the first time", mat = "vgui/achievements/hl2_beat_cemetery.png", isRare = false, clientTriggerable = true},
-		Test = {name = "Dumb Secret", desc = "You get this one, but with no XP!", mat = "entities/npc_kleiner.png", isRare = true}
+		Test = {name = "Dumb Secret", desc = "You get this one, but with no XP!", mat = "entities/npc_kleiner.png", isRare = true},
+		Lost_Cause = {name = "Lost Cause", desc = "Find what remains of Leiftiger's HL2C server", mat = "vgui/achievements/hl2_beat_cemetery.png", isRare = false, clientTriggerable = true}
 	},
 
 	HL2_Ach_List = {
@@ -28,7 +29,7 @@ function Achievement(ply, name, list, amt, clientTriggered)
 	local achievement = achievementList[name]
 	if not achievement then return end
 
-	-- Only allow the client to triggere achievements that are "clientTriggerable"
+	-- Only allow the client to trigger achievements that are "clientTriggerable"
 	if clientTriggered and not achievement.clientTriggerable then return end
 
 	-- Check if the player already got the achievement
