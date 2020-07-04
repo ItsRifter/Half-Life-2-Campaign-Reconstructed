@@ -10,11 +10,16 @@ local function InitData(ply)
 	ply.hl2cPersistent.XP = ply.hl2cPersistent.XP or 0
 	ply.hl2cPersistent.MaxXP = ply.hl2cPersistent.MaxXP or 500
 	ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins or 0
+	ply.hl2cPersistent.Essence = ply.hl2cPersistent.Essence or 0
+	ply.hl2cPersistent.Cryst = ply.hl2cPersistent.Cryst or 0
+	
 	ply.hl2cPersistent.Model = ply.hl2cPersistent.Model or ply:GetModel()
 	ply.hl2cPersistent.Milestone = ply.hl2cPersistent.Milestone or 5
 	ply.hl2cPersistent.Achievements = ply.hl2cPersistent.Achievements or {}
+	ply.hl2cPersistent.Vortexes = ply.hl2cPersistent.Vortexes or {}
 	ply.hl2cPersistent.Inventory = ply.hl2cPersistent.Inventory or ""
-	ply.hl2cPersistent.InvSpace = ply.hl2cPersistent.InvSpace or 16
+	ply.hl2cPersistent.InvSpace = ply.hl2cPersistent.InvSpace or 0
+	ply.hl2cPersistent.MaxInvSpace = ply.hl2cPersistent.MaxInvSpace or 16
 	
 	-- Default pet settings
 	ply.hl2cPersistent.PetName = ply.hl2cPersistent.PetName or ""
@@ -33,13 +38,21 @@ local function InitData(ply)
 
 	-- Also set/create networked variables
 	ply:SetNWInt("Level", ply.hl2cPersistent.Level)
+	
 	ply:SetNWInt("Coins", math.Round(ply.hl2cPersistent.Coins))
+	ply:SetNWInt("Essence", math.Round(ply.hl2cPersistent.Essence))
+	ply:SetNWInt("Cryst", math.Round(ply.hl2cPersistent.Cryst))
+	
 	ply:SetNWInt("XP", math.Round(ply.hl2cPersistent.XP))
 	ply:SetNWInt("MaxXP", ply.hl2cPersistent.MaxXP)
+	
 	ply:SetNWInt("Milestone", ply.hl2cPersistent.Milestone)
 	ply:SetNWString("Ach", table.concat(ply.hl2cPersistent.Achievements, " "))
+	ply:SetNWString("Vortex", table.concat(ply.hl2cPersistent.Vortexes, " "))
+	
 	ply:SetNWString("Inventory", ply.hl2cPersistent.Inventory)
 	ply:SetNWInt("InvSpace", ply.hl2cPersistent.InvSpace)
+	ply:SetNWInt("MaxInvSpace", ply.hl2cPersistent.MaxInvSpace)
 	ply:SetNWString("Model", ply.hl2cPersistent.Model)
 	ply:SetNWInt("Kills", ply.hl2cPersistent.KillCount)
 	ply:SetNWInt("Deaths", ply.hl2cPersistent.DeathCount)
@@ -53,7 +66,7 @@ local function InitData(ply)
 	ply:SetNWInt("PetHP", ply.hl2cPersistent.PetHP)
 	ply:SetNWInt("PetSpd", ply.hl2cPersistent.PetSpd)
 	ply:SetNWInt("PetRegen", ply.hl2cPersistent.PetRegen)
-	ply:SetNWInt("PetStage", tonumber(ply.hl2cPersistent.PetStage))
+	ply:SetNWInt("PetStage", ply.hl2cPersistent.PetStage)
 	
 	ply:SetNWInt("PetSkill", ply.hl2cPersistent.PetSkills)
 end
@@ -133,13 +146,6 @@ end)
 
 hook.Add("PostPlayerDeath", "AddDeathCount", function(ply)
 	ply.hl2cPersistent.DeathCount = ply.hl2cPersistent.DeathCount + 1
-end)
-
-net.Receive("Purchase", function(len, ply)
-	ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins - net.ReadInt(32)
-	ply.hl2cPersistent.Inventory = ply.hl2cPersistent.Inventory .. " " .. net.ReadString()
-	ply:SetNWInt("Coins", math.Round(ply.hl2cPersistent.Coins))
-	ply:SetNWString("Inventory", ply.hl2cPersistent.Inventory)
 end)
 
 net.Receive("Update_Model", function(len, ply) 

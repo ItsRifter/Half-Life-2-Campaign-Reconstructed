@@ -1,6 +1,5 @@
 AddCSLuaFile() -- Add itself to files to be sent to the clients, as this file is shared
-
-startingWeapons = startingWeapons or {}
+startingWeapons = {}
 hook.Add("PlayerInitialSpawn", "MiscSurv", function(ply)
 	
 	ply:SetNWInt("diffEasy", #player.GetAll())
@@ -17,6 +16,7 @@ hook.Add("PlayerInitialSpawn", "MiscSurv", function(ply)
 	end
 	
 	ply.hasDiedOnce = false
+	ply.crowbarOnly = true
 end)
 
 
@@ -66,6 +66,20 @@ hook.Add("PlayerSpawn", "Misc", function(ply)
 		ply:Give("weapon_physcannon")
 	end
 	
+	for k, curWep in pairs(ply:GetWeapons()) do
+		local wepClass = curWep:GetClass()
+			
+		if ply[wepClass] then
+			ply:GiveAmmo(tonumber(ply.info.loadout[wepClass][1]), curWep:GetPrimaryAmmoType())
+			ply:GiveAmmo(tonumber(ply.info.loadout[wepClass][2]), curWep:GetSecondaryAmmoType())
+		end
+	end
+	
+	if #startingWeapons > 0 then
+		for k, wep in pairs(startingWeapons) do
+			ply:Give(wep)
+		end
+	end
 end)
 
 function GM:DoPlayerDeath(ply, attacker, dmgInfo)
@@ -170,31 +184,17 @@ hook.Add("PlayerLoadout", "StarterWeapons", function(ply)
 		ply:Give("weapon_frag")
 		ply:Give("weapon_bugbait")
 	end
-		
-	for k, curWep in pairs(ply:GetWeapons()) do
-		local wepClass = curWep:GetClass()
-			
-		if ply[wepClass] then
-			ply:GiveAmmo(tonumber(ply.info.loadout[wepClass][1]), curWep:GetPrimaryAmmoType())
-			ply:GiveAmmo(tonumber(ply.info.loadout[wepClass][2]), curWep:GetSecondaryAmmoType())
-		end
-	end
-	if #startingWeapons > 0 then
-		for k, wep in pairs(startingWeapons) do
-			ply:Give(wep)
-		end
-	end
 end)
 
 hook.Add("WeaponEquip", "WeaponPickedUp", function(weapon, ply)
-	if weapon and weapon:IsValid() and not table.HasValue(startingWeapons, weapon:GetClass()) and not game.GetMap() == "d3_citadel_03" or game.GetMap() == "d3_breen_01" then
-		table.insert(startingWeapons, weapon:GetClass())
-	end
+	table.insert(startingWeapons, weapon:GetClass())
+	
 	if weapon:GetClass() == "weapon_crowbar" and game.GetMap() == "d1_trainstation_06" then
 		for k, v in pairs(player.GetAll()) do
-			Achievement(v, "Crowbar", "HL2_Ach_List", 250)
+			Achievement(v, "Trusty_Hardware", "HL2_Ach_List", 250)
 		end
 	end
+	
 end)
 
 function RespawnTimerActive(ply, deaths)
@@ -202,7 +202,7 @@ function RespawnTimerActive(ply, deaths)
 	
 	if GetConVar("hl2c_survivalmode"):GetInt() == 1 and game.GetMap() != "hl2c_lobby_remake" then
 		ply:Lock()
-		isAliveSurv = false
+		ply.isAliveSurv = false
 		local playersAlive = #player.GetAll()
 		local playerDeaths = deaths
 		
@@ -238,12 +238,11 @@ function RespawnTimerActive(ply, deaths)
 	end
 end
 
-local deaths = 0
+deaths = 0
 hook.Add("PlayerDeath", "RespawnTimer", function(victim, inflictor, attacker)
 	if GetConVar("hl2c_survivalmode"):GetInt() == 1 then
 		deaths = deaths + 1
 	end
-	AllowSpawn = true
 	RespawnTimerActive(victim, deaths)
 end)
 
@@ -269,6 +268,7 @@ net.Receive("Diff_Vote", function()
 		end
 	end
 end)
+
 if SERVER then
 	hook.Add("Think", "AmmoLimiter", function()
 		for k, p in pairs(player.GetAll()) do
@@ -327,3 +327,15 @@ net.Receive("ReturnLobby", function(ply)
 		p:ChatPrint(ply:Nick() .. " has voted to return to the lobby: " .. lobbyVotes .. "/" .. neededVotes)
 	end
 end)
+
+function giveVortex(map, ply)
+	if not string.find(table.ToString(ply.hl2cPersistent.Vortexes), map) then
+		ply:SetNWString("Vortex", table.concat(ply.hl2cPersistent.Vortexes, " "))
+		table.insert(ply.hl2cPersistent.Vortexes, map .. " ")
+		ply:ChatPrint("You found the vortex in " .. map .. ", 500XP")
+		AddXP(ply, 500)
+		print(ply:Nick() .. " found vortex in " .. map)
+	end	
+	
+	
+end

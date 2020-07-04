@@ -12,9 +12,20 @@ surface.CreateFont("F4_Shop_Title_font", {
 	font = "Arial",
 	size = 42,
 })
+
 surface.CreateFont("F4_Shop_font", {
 	font = "Arial",
 	size = 32,
+})
+
+surface.CreateFont("F4_Trader_font", {
+	font = "Arial",
+	size = 28,
+})
+
+surface.CreateFont("F4_Trader_Exchange_font", {
+	font = "Arial",
+	size = 18,
 })
 
 function DoDrop(self, panels, IsDropped, Command, x, y )
@@ -61,9 +72,12 @@ function OpenMenu()
 	local getXP = LocalPlayer():GetNWInt("XP")
 	local getMaxXP = LocalPlayer():GetNWInt("maxXP")
 	local curCoins = LocalPlayer():GetNWInt("Coins")
+	local curEssence = LocalPlayer():GetNWInt("Essence")
+	local curCryst = LocalPlayer():GetNWInt("Cryst")
+	
 	DEFAULT_COLOUR_HL2 = Color(243, 123, 33, 255)
 	COLOUR_MODEL_PANEL = Color(100, 100, 100)
-	XP_COLOUR_BAR_EMPTY = Color(0, 0, 0)
+	COLOUR_BLACK_PANEL = Color(0, 0, 0)
 	
 	local F4_Frame = vgui.Create("DFrame")
 	F4_Frame:SetSize(900, 700)
@@ -228,8 +242,22 @@ function OpenMenu()
 			selectPMScrollPanel:AddPanel(hevModel)
 		end
 	end
+	
+	for k, admin in pairs(GAMEMODE.admin) do
+		if LocalPlayer():IsAdmin() then
+			local adminModel = selectModelLayout:Add("SpawnIcon")
+			adminModel:SetModel(admin[1])
+			adminModel.OnMousePressed = function()
+				net.Start("Update_Model")
+					net.WriteString(adminModel:GetModelName())
+				net.SendToServer()
+				getModel = adminModel:GetModelName()
+			end
+			selectPMScrollPanel:AddPanel(adminModel)
+		end
+	end
 
-	local invSpace = tonumber(LocalPlayer():GetNWInt("InvSpace"))
+	local invSpace = tonumber(LocalPlayer():GetNWInt("MaxInvSpace"))
 	
 	local helmetPanelReceiver = vgui.Create("DPanel", pmPanel)
 	helmetPanelReceiver:SetPos(250, 50)
@@ -264,7 +292,7 @@ function OpenMenu()
 	--vgui/hud/icon_locked
 	--vgui/cursors/no
 	--vgui/hud/icon_check
-	local itemName = string.Split(LocalPlayer():GetNWString("Inventory"), "  ")
+	local itemName = string.Split(LocalPlayer():GetNWString("Inventory"), " ")
 	
 	local inventoryLayout = vgui.Create("DIconLayout", pmPanel)
 	inventoryLayout:SetPos(400, 100)
@@ -332,6 +360,12 @@ function OpenMenu()
 		curCoinsLabel:SetPos(365, 75)
 		curCoinsLabel:SizeToContents()
 		
+		local curEssenceLabel = vgui.Create("DLabel", shopPanel)
+		curEssenceLabel:SetText("Vorti-Essence: " .. curEssence)
+		curEssenceLabel:SetFont("F4_Shop_font")
+		curEssenceLabel:SetPos(345, 115)
+		curEssenceLabel:SizeToContents()
+		
 		shopPanel.Think = function()
 			curCoinsLabel:SetText("Coins: " .. curCoins)
 			curCoinsLabel:SetFont("F4_Shop_font")
@@ -368,19 +402,23 @@ function OpenMenu()
 			armourButton:SetColor(Color(255, 225, 165))
 			armourButton:SetDrawBackground(false)
 			armourButton.DoClick = function()
-			if curCoins >= GAMEMODE.ArmourItem[i].Cost then
-					surface.PlaySound("ambient/levels/labs/coinslot1.wav")
-					curCoins = curCoins - GAMEMODE.ArmourItem[i].Cost
+				if curCoins < GAMEMODE.ArmourItem[i].Cost then
+					surface.PlaySound("buttons/button10.wav")
+					LocalPlayer():ChatPrint("Insufficient Coins")
+				elseif LocalPlayer():GetNWInt("InvSpace") >= LocalPlayer():GetNWInt("MaxInvSpace") then
+						surface.PlaySound("buttons/button10.wav")
+						LocalPlayer():ChatPrint("Your inventory is full!")
+						surface.PlaySound("buttons/button10.wav")
+						LocalPlayer():ChatPrint("Your inventory is full!")
+				else
 					net.Start("Purchase")
-						net.WriteInt(GAMEMODE.ArmourItem[i].Cost, 32)
-						net.WriteString(" " .. GAMEMODE.ArmourItem[i].Name)
+						net.WriteString(GAMEMODE.ArmourItem[i].Name)
 					net.SendToServer()
-				elseif curCoins < GAMEMODE.ArmourItem[i].Cost then
-					surface.PlaySound("buttons/button10.wav")				
+					curCoins = curCoins - GAMEMODE.ArmourItem[i].Cost
+					surface.PlaySound("buttons/button9.wav")
 				end
 			end
-		end
-	
+		
 		local shopWeaponsLabel = vgui.Create("DLabel", shopPanel)
 		shopWeaponsLabel:SetText("Weapon Parts")
 		shopWeaponsLabel:SetFont("F4_Shop_font")
@@ -410,16 +448,23 @@ function OpenMenu()
 			weaponButton:SetText("λ" .. GAMEMODE.WeaponItem[k].Cost)
 			weaponButton:SetColor(Color(255, 225, 165))
 			weaponButton:SetDrawBackground(false)
+
 			weaponButton.DoClick = function()
-			if curCoins >= GAMEMODE.WeaponItem[k].Cost then
-				surface.PlaySound("ambient/levels/labs/coinslot1.wav")
-				curCoins = curCoins - GAMEMODE.WeaponItem[k].Cost
-				net.Start("Purchase")
-					net.WriteInt(GAMEMODE.WeaponItem[k].Cost, 32)
-					net.WriteString(" " .. GAMEMODE.WeaponItem[k].Name)
-				net.SendToServer()
-			elseif curCoins < GAMEMODE.WeaponItem[k].Cost then
-				surface.PlaySound("buttons/button10.wav")				
+				if curCoins < GAMEMODE.WeaponItem[i].Cost then
+					surface.PlaySound("buttons/button10.wav")
+					LocalPlayer():ChatPrint("Insufficient Coins")
+				elseif LocalPlayer():GetNWInt("InvSpace") >= LocalPlayer():GetNWInt("MaxInvSpace") then
+						surface.PlaySound("buttons/button10.wav")
+						LocalPlayer():ChatPrint("Your inventory is full!")
+						surface.PlaySound("buttons/button10.wav")
+						LocalPlayer():ChatPrint("Your inventory is full!")
+				else
+					net.Start("Purchase")
+						net.WriteString(GAMEMODE.WeaponItem[i].Name)
+					net.SendToServer()
+					curCoins = curCoins - GAMEMODE.WeaponItem[i].Cost
+					surface.PlaySound("buttons/button9.wav")
+				end
 			end
 		end
 	end
@@ -473,7 +518,77 @@ function OpenMenu()
 	CoinLabel:SetFont("F4_Stats_font")
 	CoinLabel:SizeToContents()
 	
+	local EssenceLabel = vgui.Create("DLabel", statsPanel)
+	EssenceLabel:SetText("Vorti-Essence: " .. curEssence)
+	EssenceLabel:SetSize(185, 25)
+	EssenceLabel:SetPos(25, 235)
+	EssenceLabel:SetFont("F4_Stats_font")
+	EssenceLabel:SizeToContents()
+	
+	local CrystLabel = vgui.Create("DLabel", statsPanel)
+	CrystLabel:SetText("Crystal Anomalies: " .. curCryst)
+	CrystLabel:SetSize(185, 25)
+	CrystLabel:SetPos(25, 275)
+	CrystLabel:SetFont("F4_Stats_font")
+	CrystLabel:SizeToContents()
+	
 	TabSheet:AddSheet("Stats", statsPanel, nil)
+
+	local traderPanel = vgui.Create("DPanel", F4_Frame)
+	traderPanel.Paint = function( self, w, h ) 
+		draw.RoundedBox( 4, 0, 0, w, h, COLOUR_BLACK_PANEL ) 
+	end
+	
+	local vortiModel = vgui.Create("DModelPanel", traderPanel)
+	vortiModel:SetSize(700, 600)
+	vortiModel:SetPos(425, 50)
+	vortiModel:SetModel("models/vortigaunt.mdl")
+	function vortiModel:LayoutEntity( Entity ) return end
+
+	local welcomeLabel = vgui.Create("DLabel", traderPanel)
+	welcomeLabel:SetText("Welcome Human,\nDo you wish to exchange some coins?")
+	welcomeLabel:SetPos(25, 25)
+	welcomeLabel:SetFont("F4_Trader_font")
+	welcomeLabel:SizeToContents()
+
+	local welcomeLabel2 = vgui.Create("DLabel", traderPanel)
+	welcomeLabel2:SetText("Every essence is worth 500 Lambda Coins")
+	welcomeLabel2:SetPos(25, 125)
+	welcomeLabel2:SetFont("F4_Trader_font")
+	welcomeLabel2:SizeToContents()
+
+	local exchangeLabel = vgui.Create("DLabel", traderPanel)
+	exchangeLabel:SetText("Essence")
+	exchangeLabel:SetPos(115, 195)
+	exchangeLabel:SetFont("F4_Trader_font")
+	exchangeLabel:SizeToContents()
+	
+	local exchangeLabel2 = vgui.Create("DLabel", traderPanel)
+	exchangeLabel2:SetText("Lambda")
+	exchangeLabel2:SetPos(265, 195)
+	exchangeLabel2:SetFont("F4_Trader_font")
+	exchangeLabel2:SizeToContents()
+
+	local exchangerEssence = vgui.Create("DNumberWang", traderPanel)
+	exchangerEssence:SetSize(75, 25)
+	exchangerEssence:SetPos(125, 225)
+	exchangerEssence:SetMin(1)
+	exchangerEssence:SetValue(1)
+	
+	local exchangerCoinLabel = vgui.Create("DLabel", traderPanel)
+	exchangerCoinLabel:SetText("λ" .. exchangerEssence:GetValue() * 500)
+	exchangerCoinLabel:SetPos(285, 225)
+	exchangerCoinLabel:SetFont("F4_Trader_Exchange_font")
+	exchangerCoinLabel:SizeToContents()
+	
+	exchangerCoinLabel.Think = function()
+		exchangerCoinLabel:SetText("λ" .. exchangerEssence:GetValue() * 500)
+		exchangerCoinLabel:SizeToContents()
+	end
+	
+	
+	TabSheet:AddSheet("Trader", traderPanel, nil)
+
 end
 	
 net.Receive("Open_F4_Menu", function(len, ply)

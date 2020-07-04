@@ -93,6 +93,15 @@ function ToggleBoard(toggle)
 			BoardPingLabel:SetPos(Board:GetWide() / 2 + 225, 85)
 		end
 		
+		local BoardRankLabel = vgui.Create("DLabel", Board)
+		BoardRankLabel:SetFont("Scoreboard_Board_font")
+		BoardRankLabel:SetText("Rank")
+		if (ScrW() == 3840 and ScrH() == 2160) then
+			BoardRankLabel:SetPos(Board:GetWide() / 5 + 540, 175)
+		else
+			BoardRankLabel:SetPos(Board:GetWide() / 2 + 375, 85)
+		end
+		
 		
 		for k, v in pairs( player.GetAll() ) do
 			
@@ -102,6 +111,7 @@ function ToggleBoard(toggle)
 			local playerXP = LocalPlayer():GetNWInt("XP", 0)
 			local playerMaxXP = LocalPlayer():GetNWInt("MaxXP", 500)
 			local playerTeam = v:Team()
+			local playerRank = v:GetUserGroup()
 			
 			local playerNamePanel = vgui.Create("DPanel", Board)
 			playerNamePanel:SetPos(0, yPos)
@@ -110,7 +120,7 @@ function ToggleBoard(toggle)
 				if IsValid(v) then
 					surface.SetDrawColor(0, 0, 0, 200)
 					surface.DrawRect(0, 0, w, h)
-					draw.SimpleText(playerName, "Scoreboard_Stats_font", 153, h / 2, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+					draw.SimpleText(playerName, "Scoreboard_Stats_font", 155, h / 2, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 				end
 			end
 			
@@ -153,8 +163,21 @@ function ToggleBoard(toggle)
 				end
 			end
 			
-			yPos = yPos + playerStatusPanel:GetTall() * 1.2
+			local playerRankPanel = vgui.Create("DPanel", Board)
+			playerRankPanel:SetPos(0, yPos)
+			playerRankPanel:SetSize(Board:GetWide() + 50, Board:GetTall() * .05)
+			playerRankPanel.Paint = function(self, w, h)
+				if IsValid(v) then
+					if (ScrW() == 3840 and ScrH() == 2160) then
+						draw.SimpleText(playerRank, "Scoreboard_Stats_font", 950, h / 2, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+					else
+						draw.SimpleText(playerRank, "Scoreboard_Stats_font", Board:GetWide() / 2 + 395, h / 2, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+					end
+				end
+			end
 			
+			yPos = yPos + playerStatusPanel:GetTall() * 1.2
+
 			local playerXPLabel = vgui.Create("DLabel", Board)
 				playerXPLabel:SetText("XP: " .. playerXP .. " / " .. playerMaxXP)
 				playerXPLabel:SetSize(185, 25)

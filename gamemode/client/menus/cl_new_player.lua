@@ -71,13 +71,19 @@ function LobbyMenu()
 	frame:SetSize(900, 1000)
 	frame:Center()
 	frame:SetVisible(true)
-	frame:SetDraggable(false)
-	frame:ShowCloseButton(false)
+	frame:SetDraggable(true)
+	frame:ShowCloseButton(true)
 	frame:SetTitle("")
 	frame.Paint = function(s, w, h)
 		draw.RoundedBox(0,0,0, w, h, Color(140, 140, 140, 255))
 	end
 	frame:MakePopup()
+	frame.OnClose = function()
+		net.Start("Achievement")
+			net.WriteString("First_Time")
+			net.WriteString("Lobby_Ach_List")
+		net.SendToServer()
+	end
 	
 	--Property Sheet
 	local TabSheet = vgui.Create( "DPropertySheet", frame )
@@ -226,7 +232,16 @@ function LobbyMenu()
 	LabelTipsTitle:SetFont("Intro_Tab4_Title_Font")
 	LabelTipsTitle:SetText("Tips and Tricks")
 	LabelTipsTitle:SetPos(300, 100)
+	LabelTipsTitle:SetColor(Color(0, 0, 0))
 	LabelTipsTitle:SizeToContents()
+	
+	local LabelTips = vgui.Create( "DLabel", PanelTabFour )
+	LabelTips:SetFont("Intro_Tab4_Font")
+	LabelTips:SetText("Use !cp for times where checkpoints don't teleport you.\nFor new pet owners, start having your pet kill zombies first.\nDon't duel with headcrab vs headcrab, it won't work out well.")
+	LabelTips:SetPos(115, 175)
+	LabelTips:SetColor(Color(0, 0, 0))
+	LabelTips:SizeToContents()
+	
 	
 	TabSheet:AddSheet("Tips and Tricks", PanelTabFour, nil)
 	

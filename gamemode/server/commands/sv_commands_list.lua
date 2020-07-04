@@ -1,13 +1,10 @@
-local neededVotes = #player.GetAll()
-local lobbyVotes = 0
-local hasVotedLobby = false
 BringPet = true
-
+lobbyVotes = 0
 hook.Add("PlayerSay", "Commands", function(ply, text)
 	
 	--Worthless secret for worthless achievement hunter
 	if (string.lower(text) == "!gimmeasecret") then
-		Achievement(ply, "Test", "Lobby_Ach_List", 0)
+		Achievement(ply, "Worthless_Secret", "Lobby_Ach_List", 0)
 		return ""
 	end
 	
@@ -25,7 +22,8 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 	--Views the achievements the player has
 	if (string.lower(text) == "!ach" or string.lower(text) == "!achievement" ) then
 		net.Start("Open_Ach_Menu")
-			net.WriteTable(ply.hl2cPersistent)
+			net.WriteTable(ply.hl2cPersistent.Achievements)
+			net.WriteTable(ply.hl2cPersistent.Vortexes)
 		net.Send(ply)
 		return ""
 	end
@@ -154,7 +152,6 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 	
 	if (string.lower(text) == "!petduel" or string.lower(text) == "!duelpet") then
 		net.Start("PetDuel")
-			net.WriteEntity(ply.pet)
 		net.Send(ply)
 		return ""
 	end
@@ -165,7 +162,9 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 					ply:ChatPrint("Pets are disabled on this map")
 				else
 					net.Start("Open_Pet_Menu")
-					net.WriteInt(ply:GetNWInt("PetSkills"), 16)
+						net.WriteInt(ply.hl2cPersistent.PetSkills, 16)
+						net.WriteInt(ply.hl2cPersistent.PetPoints, 16)
+						net.WriteInt(ply.hl2cPersistent.PetStage, 16)
 					net.Send(ply)
 				end
 			else
@@ -187,12 +186,18 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 		return ""
 	end
 	if (string.lower(text) == "!lobby") then
-		if game.GetMap() ~= "hl2c_lobby_remake" then
-			if not hasVotedLobby then
+		if game.GetMap() != "hl2c_lobby_remake" then
+			if not ply.hasVotedLobby then
 				lobbyVotes = lobbyVotes + 1
-				hasVotedLobby = true
+				ply.hasVotedLobby = true
+				for k, v in pairs(player.GetAll()) do
+					v:ChatPrint(ply:Nick() .. " Has voted to return to the lobby: " .. lobbyVotes .. "/" .. neededVotes)
+				end
 				if lobbyVotes == neededVotes then
-					RunConsoleCommand("changelevel", "hl2c_lobby_remake")
+					ply:ChatPrint("Enough players have voted to return the lobby, returning in 10 seconds")
+					timer.Simple(10, function()
+						RunConsoleCommand("changelevel", "hl2c_lobby_remake")
+					end)
 				end
 			else
 				ply:ChatPrint("You already voted to return to the lobby!")
@@ -204,24 +209,21 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 	end
 	
 	if (string.lower(text) == "!seats") then
-		if ply:InVehicle() and not hasSeat then
-			ply.hasSeat = true
+		if ply:InVehicle() and not ply.hasSeat then
 			local vehicle = ply:GetVehicle()
 			local seat = ents.Create("prop_vehicle_prisoner_pod")
-			if vehicle == "prop_vehicle_jeep" then
-				seat:SetPos(vehicle:LocalToWorld( Vector( 21, -32, 18 ) ))
-				seat:SetModel("models/nova/jeep_seat.mdl")
-				seat:SetAngles(vehicle:LocalToWorldAngles(Angle(0,-3.5, 0) ))
-				seat:Spawn()
-				seat:SetOwner(nil)
-				seat:SetKeyValue("limitview", "1")
-				seat:SetMoveType( MOVETYPE_NONE )
-				seat:SetParent( vehicle, -1 );
-				seat:SetNoDraw( false )
-				vehicle:SetKeyValue("EnablePassengerSeat", 1)
-				ply.seat = seat
-				ply:ChatPrint("Passenger seat added")
-			end
+			seat:SetPos(vehicle:LocalToWorld( Vector( 21, -32, 18 ) ))
+			seat:SetModel("models/nova/jeep_seat.mdl")
+			seat:SetAngles(vehicle:LocalToWorldAngles(Angle(0,-3.5, 0) ))
+			seat:Spawn()
+			seat:SetOwner(nil)
+			seat:SetKeyValue("limitview", "1")
+			seat:SetMoveType( MOVETYPE_NONE )
+			seat:SetParent( vehicle, -1 );
+			seat:SetNoDraw( false )
+			vehicle:SetKeyValue("EnablePassengerSeat", 1)
+			ply:ChatPrint("Passenger seat added")
+			ply.hasSeat = true
 		elseif ply.hasSeat then
 			ply:ChatPrint("You already have a passenger seat!")
 		else
@@ -234,6 +236,31 @@ end)
 function AddCoins(ply, amount)
 	ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins + amount
 	ply:SetNWInt("Coins", math.Round(ply.hl2cPersistent.Coins))
+end
+
+function AddEssen(ply, amount)
+	ply.hl2cPersistent.Essence = ply.hl2cPersistent.Essence + amount
+	ply:SetNWInt("Essence", math.Round(ply.hl2cPersistent.Essence))
+end
+
+function AddCryst(ply, amount)
+	ply.hl2cPersistent.Cryst = ply.hl2cPersistent.Cryst + amount
+	ply:SetNWInt("Cryst", math.Round(ply.hl2cPersistent.Cryst))
+end
+
+function SubCoins(ply, amount)
+	ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins - amount
+	ply:SetNWInt("Coins", math.Round(ply.hl2cPersistent.Coins))
+end
+
+function SubEssen(ply, amount)
+	ply.hl2cPersistent.Essence = ply.hl2cPersistent.Essence - amount
+	ply:SetNWInt("Essence", math.Round(ply.hl2cPersistent.Essence))
+end
+
+function SubCryst(ply, amount)
+	ply.hl2cPersistent.Cryst = ply.hl2cPersistent.Cryst - amount
+	ply:SetNWInt("Cryst", math.Round(ply.hl2cPersistent.Cryst))
 end
 
 net.Receive("SurvMode", function(len, ply, survInt)
@@ -315,6 +342,32 @@ concommand.Add("hl2cr_addcoins", function(ply, cmd, args)
 	end
 end)
 
+concommand.Add("hl2cr_addessence", function(ply, cmd, args)
+	local essen = tonumber(args[1])
+	if ply:IsAdmin() then
+		if essen >= 0 then
+			AddEssen(ply, essen)
+		else
+			ply:PrintMessage(HUD_PRINTCONSOLE, "Invalid Value")
+		end
+	else
+		ply:PrintMessage(HUD_PRINTCONSOLE, "You do not have access to this command")
+	end
+end)
+
+concommand.Add("hl2cr_addcrystals", function(ply, cmd, args)
+	local crystals = tonumber(args[1])
+	if ply:IsAdmin() then
+		if crystals >= 0 then
+			AddCryst(ply, crystals)
+		else
+			ply:PrintMessage(HUD_PRINTCONSOLE, "Invalid Value")
+		end
+	else
+		ply:PrintMessage(HUD_PRINTCONSOLE, "You do not have access to this command")
+	end
+end)
+
 concommand.Add("hl2cr_difficulty", function(ply, cmd, args)
 	local diff = tonumber(args[1])
 	if ply:IsAdmin() then
@@ -343,15 +396,54 @@ end)
 
 concommand.Add("hl2cr_petsummon", function(ply, cmd, args)
 	local level = ply.hl2cPersistent.Level
-	local petEnt = ply.pet
 	if tonumber(level) >= 10 then
 		if not ply.petAlive then
 			spawnPet(ply)
 			ply:SetNWString("PetOwnerName", ply:Nick())
 		else
-			ply:PrintMessage(HUD_PRINTCONSOLE, "You can only summon your pet once every life!")
+			ply:ChatPrint("You can only summon your pet once every life!")
 		end
 	elseif tonumber(level) < 10 then
-		ply:PrintMessage(HUD_PRINTCONSOLE, "You don't have access to pets")
+		ply:ChatPrint("You don't have access to pets")
+	end
+end)
+
+concommand.Add("hl2cr_petpoints", function(ply, cmd, args)
+	local petPoints = tonumber(args[1])
+	print(tonumber(args[1]))
+	if ply:IsAdmin() then
+		ply.hl2cPersistent.PetPoints = ply.hl2cPersistent.PetPoints + petPoints
+	else
+		ply:ChatPrint("You don't have access to this command")
+	end
+end)
+
+concommand.Add("hl2cr_petlevel", function(ply, cmd, args)
+	local newLevel = tonumber(args[1])
+	print(tonumber(args[1]))
+	if ply:IsAdmin() then
+		ply.hl2cPersistent.PetLevel = newLevel
+		ply:SetNWInt("PetLevel", ply.hl2cPersistent.PetLevel)
+	else
+		ply:ChatPrint("You don't have access to this command")
+	end
+end)
+
+concommand.Add("hl2cr_petstage", function(ply, cmd, args)
+	local newStage = tonumber(args[1])
+	print(tonumber(args[1]))
+	if ply:IsAdmin() then
+		ply.hl2cPersistent.PetStage = newStage
+		ply:SetNWInt("PetStage", ply.hl2cPersistent.PetStage)
+	else
+		ply:ChatPrint("You don't have access to this command")
+	end
+end)
+
+concommand.Add("hl2cr_petresetskills", function(ply, cmd, args)
+	if ply:IsAdmin() then
+		ply.hl2cPersistent.PetSkills = 0
+	else
+		ply:ChatPrint("You don't have access to this command")
 	end
 end)

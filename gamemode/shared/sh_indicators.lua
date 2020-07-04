@@ -64,11 +64,18 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 		AddXP(attacker, giveXP)
 		AddCoins(attacker, giveCoins)
 		Spawn(giveXP, giveCoins, npc:GetPos(), npc, attacker)
+				
 	elseif npc.owner != attacker and attacker:IsPlayer() then
 		npc.owner.petAlive = false
 		net.Start("WarningPetKill")
 			net.WriteInt(1, 8)
 		net.Send(attacker)
+	end
+	
+	--Crowbar bonus if the player beats the map using only the crowbar
+	if attacker:IsPlayer() and attacker:GetActiveWeapon():GetClass() != "weapon_crowbar" and attacker.crowbarOnly then
+		attacker.crowbarOnly = false
+		print(attacker:Nick() .. " Failed Crowbar")
 	end
 end)
 

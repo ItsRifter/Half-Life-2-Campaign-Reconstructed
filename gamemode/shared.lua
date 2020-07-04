@@ -47,6 +47,10 @@ function addHevModels(model)
 	table.insert(GM.hev, {model})
 end
 
+function addAdminModels(model)
+	table.insert(GM.admin, {model})
+end
+
 GM.citizens = {}
 GM.rebels = {}
 GM.medics = {}
@@ -56,6 +60,7 @@ GM.heavySoldier = {}
 GM.eliteSoldier = {}
 GM.captainSoldier = {}
 GM.hev = {}
+GM.admin = {}
 
 addCitizenModels("models/player/Group01/female_01.mdl")
 addCitizenModels("models/player/Group01/female_02.mdl")
@@ -116,6 +121,8 @@ addCaptainModels("models/hlvr/characters/combine_captain/combine_captain_hlvr_pl
 
 addHevModels("models/player/SGG/hev_helmet.mdl")
 
+addAdminModels("models/humans/hev_mark2.mdl")
+
 Register = {}
 GM.ArmourItem = {}
 GM.WeaponItem = {}
@@ -134,4 +141,3 @@ include("shared/items/sh_items_base.lua")
 include("shared/shop/sh_shop_items.lua")
 include("shared/items/sh_items_hats.lua")
 include("shared/sh_inventory.lua")
-include("shared/pets/sh_pets.lua")

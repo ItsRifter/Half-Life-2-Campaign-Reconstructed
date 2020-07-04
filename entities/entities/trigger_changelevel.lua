@@ -258,15 +258,17 @@ function ENT:StartTouch(ent)
 	
 	if ent and ent:IsValid() and ent:IsPlayer() and ent:Team() == TEAM_ALIVE then
 		ent:SetTeam(TEAM_COMPLETED_MAP)
+		giveRewards(ent)
 		if not ent.hasDiedOnce and not (game.GetMap() == "d1_trainstation_01" or game.GetMap() == "d1_trainstation_02" or game.GetMap() == "d1_trainstation_03" or game.GetMap() == "d1_trainstation_04" or game.GetMap() == "d1_trainstation_05") then
 			bonusCoins = 25 * GetConVar("hl2c_difficulty"):GetInt()
 			bonusXP = 50 * GetConVar("hl2c_difficulty"):GetInt()
 			AddXP(ent, bonusXP)
 			AddCoins(ent, bonusCoins)
-			net.Start("DisplayRewards")
-				net.WriteInt(bonusXP, 32)
-				net.WriteInt(bonusCoins, 32)
-			net.Send(ent)
+		elseif not ent.crowbarOnly and not (game.GetMap() == "d1_trainstation_01" or game.GetMap() == "d1_trainstation_02" or game.GetMap() == "d1_trainstation_03" or game.GetMap() == "d1_trainstation_04" or game.GetMap() == "d1_trainstation_05") then
+			bonusCoins = 45 * GetConVar("hl2c_difficulty"):GetInt()
+			bonusXP = 75 * GetConVar("hl2c_difficulty"):GetInt()
+			AddXP(ent, bonusXP)
+			AddCoins(ent, bonusCoins)
 		end
 		
 		if ent:GetVehicle() and ent:GetVehicle():IsValid() then

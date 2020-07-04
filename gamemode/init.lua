@@ -3,10 +3,10 @@ include("shared.lua")
 -- Mark all client side only files to be sent to client
 AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("client/achievements/cl_ach_base.lua")
-AddCSLuaFile("client/menus/cl_f4_menu.lua")
 AddCSLuaFile("client/menus/cl_difficulty_vote.lua")
 AddCSLuaFile("client/menus/cl_scoreboard.lua")
 AddCSLuaFile("client/cl_hud.lua")
+AddCSLuaFile("client/menus/cl_f4_menu.lua")
 AddCSLuaFile("client/menus/cl_pets.lua")
 AddCSLuaFile("client/menus/cl_new_player.lua")
 
@@ -19,9 +19,13 @@ include("server/extend/network.lua")
 include("server/config/achievements/sv_ach.lua")
 include("server/sv_unstuck.lua")
 include("server/config/sv_difficulty.lua")
-include("server/config/maps/sv_init_maps.lua")
 include("server/sv_spectate.lua")
 include("server/stats/sv_pets_levels.lua")
+
+
+include("server/config/maps/sv_init_maps.lua")
+include("server/config/maps/sv_coop_init_maps.lua")
+include("server/config/maps/sv_vortex.lua")
 
 --HL2C Convars
 CreateConVar("hl2c_allowsuicide", 1, FCVAR_NOTIFY, "Disable kill command", 0, 1) 
@@ -76,8 +80,8 @@ function meta:IsFriendly()
 		return false
 	end
 end
-
-
+neededVotes = #player.GetAll()
+lobbyVotes = 0
 
 function GM:Initialize(ply)
 	if not file.Exists("hl2c_data/config.txt", "DATA") then
@@ -102,6 +106,10 @@ function GM:Initialize(ply)
 	startingWeapons = {}
 	airboatSpawnable = false
 	airboatGunSpawnable = false
+	if game.GetMap() == "hl2c_lobby_remake" then
+		playingHL2 = false
+	end
+	
 end
 
 function GM:ShowHelp(ply)
@@ -110,7 +118,16 @@ function GM:ShowHelp(ply)
 end
 
 function GM:ShowTeam(ply)
-	ply.AllowSpawn = true
+	if ply.spawnJeep then
+		ply.spawnJeep:Remove()
+		ply.AllowSpawn = true
+		ply.hasSeat = false
+	end
+	
+	if ply.spawnAirboat then
+		ply.spawnAirboat:Remove()
+		ply.AllowSpawn = true
+	end
 end
 
 net.Receive("KickUser", function(len, ply)
@@ -125,6 +142,14 @@ function GM:ShouldCollide( ent1, ent2 )
     if IsValid(ent1) and IsValid(ent2) and ent1:IsPlayer() and ent2:IsPlayer() and ent1:Team() == TEAM_ALIVE and ent2:Team() == TEAM_ALIVE then
 		return false 
 	end
+	
+	if IsValid(ent1) and IsValid(ent2) and ent1:IsPlayer() and ent2:IsPlayer() and (ent1:Team() == TEAM_COMPLETED_MAP and ent2:Team() == TEAM_COMPLETED_MAP) then
+		return false 
+	end
+	
+	if IsValid(ent1) and IsValid(ent2) and ent1:IsPlayer() and ent2:IsPlayer() and (ent1:Team() == TEAM_ALIVE and ent2:Team() == TEAM_COMPLETED_MAP) and ent1:Team() == TEAM_COMPLETED_MAP and ent2:Team() == TEAM_ALIVE then
+		return false
+	end 
 	
 	if IsValid(ent1) and IsValid(ent2) and ent1:IsPlayer() and ent2:IsPet() then
 		return false
@@ -174,36 +199,34 @@ function GM:ShowSpare1(ply)
 	
 	if game.GetMap() == "d2_coast_01" or game.GetMap() == "d2_coast_03" or game.GetMap() == "d2_coast_04" or game.GetMap() == "d2_coast_05" or game.GetMap() == "d2_coast_06" or game.GetMap() == "d2_coast_07" or game.GetMap() == "d2_coast_09" or game.GetMap() == "d2_coast_10" then
 		if ply.AllowSpawn then
-			local spawnJeep = ents.Create(jeep.Class)
-			spawnJeep:SetModel(jeep.Model)
+			ply.spawnJeep = ents.Create(jeep.Class)
+			ply.spawnJeep:SetModel(jeep.Model)
 			for k, v in pairs( jeep.KeyValues ) do
-				spawnJeep:SetKeyValue(k, v)
+				ply.spawnJeep:SetKeyValue(k, v)
 			end
-			spawnJeep:SetPos(Vector(ply:EyePos().x, ply:EyePos().y, ply:EyePos().z + 35))
-			spawnJeep:Spawn()
-			spawnJeep:SetOwner(ply)
-			spawnJeep:Fire( "addoutput", "targetname jeep" )
+			ply.spawnJeep:SetPos(Vector(ply:EyePos().x, ply:EyePos().y, ply:EyePos().z + 35))
+			ply.spawnJeep:Spawn()
+			ply.spawnJeep:SetOwner(ply)
+			ply.spawnJeep:Fire( "addoutput", "targetname jeep" )
 			ply.AllowSpawn = false
 		end
-	
-		
 		
 	elseif game.GetMap() == "d1_canals_06" or game.GetMap() == "d1_canals_07" or game.GetMap() == "d1_canals_08" or game.GetMap() == "d1_canals_09" or game.GetMap() == "d1_canals_10" or game.GetMap() == "d1_canals_11" and not airboatGunSpawnable or airboatSpawnable then
 		if ply.AllowSpawn then
-			local spawnAirboat = ents.Create(airboat.Class)
-			spawnAirboat:SetModel(airboat.Model)
+			ply.spawnAirboat = ents.Create(airboat.Class)
+			ply.spawnAirboat:SetModel(airboat.Model)
 			for k, v in pairs( airboat.KeyValues ) do
-				spawnAirboat:SetKeyValue(k, v)
+				ply.spawnAirboat:SetKeyValue(k, v)
 			end
-			spawnAirboat:SetPos(Vector(ply:EyePos().x, ply:EyePos().y, ply:EyePos().z + 35))
-			spawnAirboat:Spawn()
-			spawnAirboat:SetOwner(ply)
-			spawnAirboat:Fire( "addoutput", "targetname airboat" )
+			ply.spawnAirboat:SetPos(Vector(ply:EyePos().x, ply:EyePos().y, ply:EyePos().z + 35))
+			ply.spawnAirboat:Spawn()
+			ply.spawnAirboat:SetOwner(ply)
+			ply.spawnAirboat:Fire( "addoutput", "targetname airboat" )
 			ply.AllowSpawn = false
 		end
 	elseif game.GetMap() == "d1_canals_11" and airboatGunSpawnable or game.GetMap() == "d1_canals_12" or game.GetMap() == "d1_canals_13" then
 		if ply.AllowSpawn then
-			local spawnAirboatGun = ents.Create(airboatGun.Class)
+			spawnAirboatGun = ents.Create(airboatGun.Class)
 			spawnAirboatGun:SetModel(airboatGun.Model)
 			for k, v in pairs(airboatGun.KeyValues) do
 				spawnAirboatGun:SetKeyValue(k, v)
@@ -217,6 +240,7 @@ function GM:ShowSpare1(ply)
 	else
 		ply:ChatPrint("Vehicles are disabled on this map!")
 	end
+	
 end
 
 function GM:CanPlayerEnterVehicle(ply)

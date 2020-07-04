@@ -1,20 +1,73 @@
 AddCSLuaFile()
 
-function storeInventory()
+net.Receive("Purchase", function(len, ply)
+	local itemName = net.ReadString()
 	
+	if itemName == "Health Module MK1" then
+		SubCoins(ply, 1000)
+	elseif itemName == "Health Module MK2" then
+		SubCoins(ply, 1500)
+	elseif itemName == "Suit Battery Pack" then
+		SubCoins(ply, 1500)
+	elseif itemName == "Mark VII Suit" then
+		SubCoins(ply, 25000)
+	elseif itemName == "Mark VII Helmet" then
+		SubCoins(ply, 17500)
+	end
+	
+	ply.hl2cPersistent.Inventory = ply.hl2cPersistent.Inventory .. " " .. itemName
+	ply:SetNWString("Inventory", ply.hl2cPersistent.Inventory .. " " .. itemName)
+	
+
+end)
+
+local minRewards = 1
+local maxRewards = 2
+local neverDiedBonus = false
+function giveRewards(ply)
+	if not ply.hasDiedOnce then
+		neverDiedBonus = true
+	else
+		neverDiedBonus = false
+	end
+	
+	for i = minRewards, maxRewards do
+		randCoins = math.random(1, 25)
+		ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins + randCoins
+		
+		randXP = math.random(1, 50)
+		ply.hl2cPersistent.XP = ply.hl2cPersistent.XP + randXP
+	end
+	
+	net.Start("ShowEndStats")
+		net.WriteInt(randCoins, 32)
+		net.WriteInt(randXP, 32)
+		net.WriteBool(neverDiedBonus)
+		net.WriteBool(ply.crowbarOnly)
+		net.WriteInt(GetConVar("hl2c_difficulty"):GetInt(), 8)
+	net.Send(ply)
 end
 
 if CLIENT then
-
-surface.CreateFont("End_Stats_font", {
-	font = "Arial",
-	size = 28,
-})
-
+	surface.CreateFont("End_Stats_font", {
+		font = "Arial",
+		size = 28,
+	})
+	surface.CreateFont("Rewards_Font", {
+		font = "Arial",
+		bold = true,
+		size = 22,
+	})
 end
 
 
-function showEndStats(len, ply)
+net.Receive("ShowEndStats", function()
+	
+	local coins = net.ReadInt(32)
+	local xp = net.ReadInt(32)
+	local boolDeaths = net.ReadBool()
+	local boolCrowbar = net.ReadBool()
+	local diffBoost = net.ReadInt(8)
 	
 	local endFrame = vgui.Create("DFrame")
 	endFrame:SetSize(800, 600)
@@ -23,68 +76,29 @@ function showEndStats(len, ply)
 	endFrame:Center()
 	endFrame:SetBackgroundBlur(true)
 	
-	local cratesPanel = vgui.Create("DPanel", endFrame)
-	cratesPanel:SetSize(325, 400)
-	cratesPanel:SetPos(25, 150)
-		
-	for i = 1, 4 do
-		
-		local cratesItem = vgui.Create("SpawnIcon", cratesPanel)
-		local cratesIcon = cratesItem:Add("DImage")
-		cratesIcon:SetSize(75, 75)
-		cratesItem:SetPos(-100, 0)
-		if i <= 5 then
-			cratesItem:MoveTo(45 * i - 25, 25, 0.75, 1, -1, function() end)
-		elseif i >= 6 and i <= 7 then
-			cratesItem:MoveTo(45 * i - 255, 125, 0.75, 1, -1, function() end)
-		end
-		
-		
-		cratesItem:SetModel("models/Items/item_item_crate.mdl")
-		cratesItem:SetSize(75, 75)
-		cratesItem:SetToolTip("Unbox me")
-		cratesItem.opened = false
-		cratesItem.DoClick = function()
-			local randomItem = math.random(0, 1)
-			if not cratesItem.opened then
-				surface.PlaySound("physics/wood/wood_box_impact_bullet1.wav")
-				if randomItem == 0 then
-					local randCoins = math.random(1, 25)
-					cratesItem:SetModel("")
-					cratesItem:SetToolTip("λ" .. randCoins)
-					cratesIcon:SetImage("hl2cr/misc/coins")
-					ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins + randCoins
-				elseif randomItem == 1 then
-					local randXP = math.random(1, 50)
-					cratesItem:SetModel("")
-					cratesItem:SetToolTip(randXP .. "XP")
-					cratesIcon:SetImage("hl2cr/misc/xp")
-					ply.hl2cPersistent.XP = ply.hl2cPersistent.XP + randXP
-				--[[elseif randomItem == 2 then
-					cratesItem:SetModel("")
-					cratesIcon:SetImage("hl2cr/armour_parts/health")
-					cratesItem:SetToolTip("Health Module MK1")
-				elseif randomItem == 3 then
-					cratesItem:SetModel("")
-					cratesIcon:SetImage("hl2cr/armour_parts/battery")
-				elseif randomItem == 4 then
-					cratesItem:SetModel("")
-					cratesIcon:SetImage("hl2cr/armour_parts/suit")
-					for k, v in pairs(player.GetAll()) do
-						v:ChatPrint(LocalPlayer():Nick() .. " has unboxed a rare item!")
-					end--]]
-				end
-				cratesItem.opened = true
-			end
-		end
-	end
+	local itemsPanel = vgui.Create("DPanel", endFrame)
+	itemsPanel:SetSize(325, 400)
+	itemsPanel:SetPos(25, 150)	
 	
-	cratesText = vgui.Create("DLabel", cratesPanel)
-	cratesText:SetText("Crates")
-	cratesText:SetFont("End_Stats_font")
-	cratesText:SetPos(125, 350)
-	cratesText:SetColor(Color(0, 0, 0))
-	cratesText:SizeToContents()
+	local itemsLayout = vgui.Create("DIconLayout", itemsPanel)
+	itemsLayout:Dock(FILL)
+	itemsLayout:SetSpaceY(5)
+	itemsLayout:SetSpaceX(10)
+
+	local xpReward = itemsLayout:Add("SpawnIcon")
+	xpReward:SetImage("hl2cr/misc/xp")
+	xpReward:SetToolTip(xp .. " XP") 
+	
+	local coinReward = itemsLayout:Add("SpawnIcon")
+	coinReward:SetImage("hl2cr/misc/coins")
+	coinReward:SetToolTip("λ" .. coins) 
+
+	itemsText = vgui.Create("DLabel", itemsPanel)
+	itemsText:SetText("Crates")
+	itemsText:SetFont("End_Stats_font")
+	itemsText:SetPos(125, 350)
+	itemsText:SetColor(Color(0, 0, 0))
+	itemsText:SizeToContents()
 	
 	local endTextPanel = vgui.Create("DPanel", endFrame)
 	endTextPanel:SetSize(400, 475)
@@ -97,8 +111,22 @@ function showEndStats(len, ply)
 	rewardsLabel:SetColor(Color(0, 0, 0))
 	rewardsLabel:SetFont("End_Stats_font")
 	rewardsLabel:SizeToContents()
-end
-
-net.Receive("TestStart", function(len, ply)
-	showEndStats(ply)
+	
+	if boolDeaths then
+		local rewardsTextNoDeaths = vgui.Create("DLabel", endTextPanel)
+		rewardsTextNoDeaths:SetText("NO DEATHS: " .. 50 * diffBoost .. "XP, λ" .. 25 * diffBoost) 
+		rewardsTextNoDeaths:SetFont("Rewards_Font")
+		rewardsTextNoDeaths:SizeToContents()	
+		rewardsTextNoDeaths:SetColor(Color(0, 0, 0))
+		rewardsTextNoDeaths:SetPos(100, 65)
+	end
+	if boolCrowbar then
+		local rewardsTextNoDeaths = vgui.Create("DLabel", endTextPanel)
+		rewardsTextNoDeaths:SetText("CROWBAR ONLY: " .. 75 * diffBoost .. "XP, λ" .. 45 * diffBoost) 
+		rewardsTextNoDeaths:SetFont("Rewards_Font")
+		rewardsTextNoDeaths:SizeToContents()	
+		rewardsTextNoDeaths:SetColor(Color(0, 0, 0))
+		rewardsTextNoDeaths:SetPos(100, 95)
+	end
+	
 end)

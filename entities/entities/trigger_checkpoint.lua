@@ -24,7 +24,7 @@ function ENT:StartTouch(ent)
 		ent:Remove()
 		file.Delete("hl2c_data/babydoll3.txt")
 		for k, v in pairs(player.GetAll()) do
-			Achievement(v, "Baby", "HL2_Ach_List", 1000)	
+			Achievement(v, "A_Red_Letter_Baby", "HL2_Ach_List", 1000)	
 		end
 	end
 	
@@ -58,24 +58,33 @@ function ENT:StartTouch(ent)
 			for k, sand in pairs(ents.FindByClass("env_player_surface_trigger")) do
 				sandAchEarnable = true
 				sand:Fire("AddOutput", "OnSurfaceChangedToTarget triggerhook:RunPassedCode:hook.Run( 'FailSand' ):0:-1" )
-				print(sand)
 			end
 		end
 		
 		--If point1 triggered and sand achievement is achievable
 		if point1 and game.GetMap() == "d2_coast_11" and sandAchEarnable then
 			for k, v in pairs(player.GetAll()) do
-				Achievement(v, "Sand", "HL2_Ach_List", 4000)
+				Achievement(v, "Keep_off_the_sand", "HL2_Ach_List", 4000)
 			end
 		end
-		
+				
 		--Chat print to all players and enable their one time command use
 		for k, p in pairs(player.GetAll()) do
 			p:ChatPrint("Checkpoint Reached")
+			if p:Team() == TEAM_DEAD then
+				p:Spawn()
+				p:UnLock()
+				p:UnSpectate()
+				p.isAliveSurv = true
+				deaths = deaths - deaths
+			end
 			for l, spawn in pairs(ents.FindByClass("info_player_start")) do
 				if p and IsValid(p) and p != ent and p:Team() == TEAM_ALIVE then
-					p.CPTP = true
-					ent.CPTP = false
+					if (game.GetMap() != "d1_trainstation_01" or game.GetMap() != "d1_trainstation_02" or game.GetMap() != "d1_trainstation_03" or 
+					game.GetMap() != "d1_trainstation_04" or game.GetMap() != "d1_trainstation_05") then 
+						p.CPTP = true
+						ent.CPTP = false
+					end
 					if p:GetVehicle() and p:GetVehicle():IsValid() then
 						p:ExitVehicle()
 					end
@@ -101,7 +110,6 @@ function ENT:StartTouch(ent)
 						if point1 then
 							spawn:SetPos(point1)
 						elseif point2 then
-
 							spawn:SetPos(point2)
 						elseif point3 then
 							spawn:SetPos(point3)
@@ -114,6 +122,18 @@ function ENT:StartTouch(ent)
 				end
 			end
 		end
+		if point1 then
+			lambdaModel1:Remove()
+		elseif point2 then
+			lambdaModel2:Remove()
+		elseif point3 then
+			lambdaModel3:Remove()
+		elseif point4 then
+			lambdaModel4:Remove()
+		elseif point5 then
+			lambdaModel5:Remove()
+		end
+		self:EmitSound("hl1/ambience/port_suckin1.wav", 100, 100)
 		self:Remove()
 	end
 end
