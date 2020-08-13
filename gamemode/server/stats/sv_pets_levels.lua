@@ -264,33 +264,67 @@ net.Receive("UpdateSkills", function(len, ply)
 				ply.hl2cPersistent.PetSkills = 2
 				ply.hl2cPersistent.PetRegen = ply.hl2cPersistent.PetRegen + 5
 				ply:SetNWInt("PetRegen", ply.hl2cPersistent.PetRegen)
+				
 			elseif skillUpdate == 3 then
 				ply.hl2cPersistent.PetSkills = 3	
 				ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 1
 				ply:SetNWInt("PetStr", ply.hl2cPersistent.PetStr)
+				
 			elseif skillUpdate == 4 then
 				ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 2
 				ply:SetNWInt("PetStr", ply.hl2cPersistent.PetStr)
 				ply.hl2cPersistent.PetSkills = 4
+				
 			elseif skillUpdate == 5 then
 				ply.hl2cPersistent.PetSkills = 5
 				ply.hl2cPersistent.PetRegen = ply.hl2cPersistent.PetRegen + 5
 				ply:SetNWInt("PetRegen", ply.hl2cPersistent.PetRegen)
+				
 			elseif skillUpdate == 6 then
 				ply.hl2cPersistent.PetSkills = 6
 				ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 1
 				ply:SetNWInt("PetStr", ply.hl2cPersistent.PetStr)
+				
 			elseif skillUpdate == 7 then
 				ply.hl2cPersistent.PetSkills = 7
 				ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 1
 				ply:SetNWInt("PetStr", ply.hl2cPersistent.PetStr)
-			elseif skillUpdate == 8 then
-				ply.hl2cPersistent.PetSkills = 8
+			end
+			
+	elseif ply.hl2cPersistent.PetStage == 2 then
+			if skillUpdate == 1 then
+				ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP + 5
+				ply:SetNWInt("PetHP", ply.hl2cPersistent.PetHP)
+				ply.hl2cPersistent.PetSkills = 1
+		
+			elseif skillUpdate == 2 then
+				ply.hl2cPersistent.PetSkills = 2
+				ply.hl2cPersistent.PetRegen = ply.hl2cPersistent.PetRegen + 5
+				ply:SetNWInt("PetRegen", ply.hl2cPersistent.PetRegen)
+				
+			elseif skillUpdate == 3 then
+				ply.hl2cPersistent.PetSkills = 3	
+				ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP + 5
+				ply:SetNWInt("PetHP", ply.hl2cPersistent.PetHP)
+				
+			elseif skillUpdate == 4 then
 				ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 1
 				ply:SetNWInt("PetStr", ply.hl2cPersistent.PetStr)
-			elseif skillUpdate == 9 then
-				ply.hl2cPersistent.PetSkills = 9
-				ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP + 10
+				ply.hl2cPersistent.PetSkills = 4
+				
+			elseif skillUpdate == 5 then
+				ply.hl2cPersistent.PetSkills = 5
+				ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP + 5
+				ply:SetNWInt("PetHP", ply.hl2cPersistent.PetHP)
+				
+			elseif skillUpdate == 6 then
+				ply.hl2cPersistent.PetSkills = 6
+				ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 1
+				ply:SetNWInt("PetStr", ply.hl2cPersistent.PetStr)
+				
+			elseif skillUpdate == 7 then
+				ply.hl2cPersistent.PetSkills = 7
+				ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 2
 				ply:SetNWInt("PetStr", ply.hl2cPersistent.PetStr)
 			end
 		end

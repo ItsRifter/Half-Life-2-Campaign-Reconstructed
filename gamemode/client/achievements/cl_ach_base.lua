@@ -1,15 +1,16 @@
 Lobby_Ach_List = {
-	[1] = {name = "First Time", desc = "Play the gamemode for the first time", mat = "vgui/achievements/hl2_beat_cemetery.png", isRare = false, clientTriggerable = true},
-	[2] = {name = "Worthless Secret", desc = "You get this one, but with no XP!", mat = "entities/npc_kleiner.png", isRare = true},
-	[3] = {name = "Lost Cause", desc = "Find what remains of Leiftiger's HL2C server", mat = "vgui/achievements/hl2_beat_cemetery.png", isRare = false, clientTriggerable = true}
+	[1] = {name = "First Time", desc = "Play the gamemode\nfor the first time", mat = "vgui/achievements/hl2_beat_cemetery.png", isRare = false, clientTriggerable = true},
+	[2] = {name = "Worthless Secret", desc = "You get this one\nbut with no XP!", mat = "entities/npc_kleiner.png", isRare = true},
+	[3] = {name = "Lost Cause", desc = "Find what remains of\nLeiftiger's HL2C server", mat = "vgui/achievements/hl2_beat_cemetery.png", isRare = false, clientTriggerable = true}
 }
 
 HL2_Ach_List = {
-	[1] = {name = "A Red Letter Baby", desc = "Bring the baby doll to Dr.Kleiner", mat = "vgui/achievements/hl2_beat_game.png", isRare = false},
-	[2] = {name = "Trusty Hardware", desc = "Acquire the crowbar", mat = "vgui/achievements/hl2_get_crowbar.png", isRare = false},
-	[3] = {name = "ZeroPoint Energy", desc = "Acquire the Gravity gun in Black Mesa East", mat = "vgui/achievements/hl2_get_gravitygun.png", isRare = false},
-	[4] = {name = "Rave Ball", desc = "Carry dog's ball through Ravenholm\ninto the mines", mat = "vgui/achievements/hl2_get_gravitygun.png", isRare = false},
-	[5] = {name = "Keep off the sand", desc = "Cross the antlion beach in d2_coast_11 without touching the sand", mat = "vgui/achievements/hl2_beat_donttouchsand.png", isRare = false},
+	[1] = {name = "A Red Letter Baby", desc = "Bring the baby\ndoll to Dr.Kleiner", mat = "vgui/achievements/hl2_beat_game.png", isRare = false},
+	[2] = {name = "What cat", desc = "Break the mini-teleporter\nin Kleiner's lab", mat = "vgui/achievements/hl2_break_miniteleporter.png", isRare = false},
+	[3] = {name = "Trusty Hardware", desc = "Acquire the crowbar", mat = "vgui/achievements/hl2_get_crowbar.png", isRare = false},
+	[4] = {name = "ZeroPoint Energy", desc = "Acquire the Gravity gun in Black Mesa East", mat = "vgui/achievements/hl2_get_gravitygun.png", isRare = false},
+	[5] = {name = "Rave Ball", desc = "Carry dog's ball through Ravenholm\ninto the mines", mat = "vgui/achievements/hl2_get_gravitygun.png", isRare = false},
+	[6] = {name = "Keep off the sand", desc = "Cross the antlion beach in d2_coast_11 without touching the sand", mat = "vgui/achievements/hl2_beat_donttouchsand.png", isRare = false},
 }
 
 Misc_Ach_List = {
@@ -25,13 +26,18 @@ HL2_Vortex_List = {
 	[4] = {name = "d1_canals_02", desc = "Find the vortex in the tunnel", mat = "vgui/achievements/hlx_find_onegman.png"},
 	[5] = {name = "d1_eli_01", desc = "Find the vortex inside\nBlack Mesa East", mat = "vgui/achievements/hlx_find_onegman.png"},
 	[6] = {name = "d1_eli_02", desc = "Find the vortex ontop of a silo in the scrapyard", mat = "vgui/achievements/hlx_find_onegman.png"},
-	[6] = {name = "d1_town_02", desc = "Find the vortex by grenade\njumping OR climbing to the chimney", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[7] = {name = "d1_town_02", desc = "Find the vortex by grenade\njumping OR climbing to the chimney", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[8] = {name = "d1_town_03", desc = "Find the vortex by prop\nclimbing to the roof", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[9] = {name = "d1_town_02a", desc = "Find the vortex by using\nsawblades to climb upto the roof", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[10] = {name = "d1_town_04", desc = "Find the vortex by prop\nclimbing to the big tank", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[11] = {name = "d1_town_05", desc = "Find the vortex by prop\nclimbing onto metal support", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[12] = {name = "d2_coast_01", desc = "Find the vortex by prop\nclimbing onto the hut", mat = "vgui/achievements/hlx_find_onegman.png"},
 }
 
 function AchievementMenu(achievement, vortexes)
 
 	local achFrame = vgui.Create("DFrame")
-	achFrame:SetSize(950, 600)
+	achFrame:SetSize(820, 600)
 	achFrame:Center()
 	achFrame:SetDraggable(false)
 	achFrame:ShowCloseButton(true)
@@ -48,19 +54,25 @@ function AchievementMenu(achievement, vortexes)
 		draw.RoundedBox(0,0,0, w, h, Color(170, 170, 170, 255))
 	end
 	
-	local ScrollLobbyAch = vgui.Create("DScrollPanel", PanelLobbyAch)
-	ScrollLobbyAch:Dock(FILL)
-	
 	local fixString = string.Replace(table.ToString(achievement), "_", " ")
 	local fixVortex = table.ToString(vortexes)
 	
+	local ScrollLobbyAch = vgui.Create("DScrollPanel", PanelLobbyAch)
+	ScrollLobbyAch:Dock(FILL)
+	
+	local iconListLobby = vgui.Create("DIconLayout", ScrollLobbyAch)
+	iconListLobby:Dock(FILL)
+	iconListLobby:SetSpaceY(5)
+	iconListLobby:SetSpaceX(5)
+	
 	for i = 1, #Lobby_Ach_List do
 		
-		local xPos = 280 * i
-		local yPos = 45
+		local lobbyPanel = iconListLobby:Add("DPanel")
+		lobbyPanel:SetPaintBackground(false)
+		lobbyPanel:SetSize(128, 128)
 		
-		local achLobbyName = ScrollLobbyAch:Add("DLabel")
-		achLobbyName:SetPos(xPos - 165, yPos)
+		local achLobbyName = lobbyPanel:Add("DLabel")
+		achLobbyName:SetPos(0, 65)
 		--Find if the player has this achievement, if so show it with name, desc and icon
 		if string.find(fixString, Lobby_Ach_List[i].name, 1, true) then
 			achLobbyName:SetText(Lobby_Ach_List[i].name)
@@ -70,8 +82,8 @@ function AchievementMenu(achievement, vortexes)
 		achLobbyName:SizeToContents()
 		achLobbyName:SetColor(Color(0, 0, 0))
 		
-		local achLobbyDesc = ScrollLobbyAch:Add("DLabel")
-		achLobbyDesc:SetPos(xPos - 165, yPos + 30)
+		local achLobbyDesc = lobbyPanel:Add("DLabel")
+		achLobbyDesc:SetPos(0, 90)
 		if string.find(fixString, Lobby_Ach_List[i].name, 1) then
 			achLobbyDesc:SetText(Lobby_Ach_List[i].desc)
 		else
@@ -80,8 +92,8 @@ function AchievementMenu(achievement, vortexes)
 		achLobbyDesc:SizeToContents()
 		achLobbyDesc:SetColor(Color(0, 0, 0))
 		
-		local achLobbyIcon = ScrollLobbyAch:Add("DImage")
-		achLobbyIcon:SetPos(xPos - 235, yPos)
+		local achLobbyIcon = lobbyPanel:Add("DImage")
+		achLobbyIcon:SetPos(0, 0)
 		achLobbyIcon:SetSize(64, 64)
 		
 		if string.find(fixString, Lobby_Ach_List[i].name, 1) then
@@ -103,22 +115,19 @@ function AchievementMenu(achievement, vortexes)
 	local ScrollHL2Ach = vgui.Create("DScrollPanel", PanelHL2Ach)
 	ScrollHL2Ach:Dock(FILL)
 	
+	local iconListHL2 = vgui.Create("DIconLayout", ScrollHL2Ach)
+	iconListHL2:Dock(FILL)
+	iconListHL2:SetSpaceY(5)
+	iconListHL2:SetSpaceX(5)
+	
 	for i = 1, #HL2_Ach_List do
-	
-		local xPos = 280
-		local yPos = 45
-	
-		if i <= 3 then
-			xPos = xPos * i
-		end
 		
-		if i >= 4 and i <= 7 then
-			xPos = xPos * i - 840
-			yPos = 135
-		end
+		local hl2Panel = iconListHL2:Add("DPanel")
+		hl2Panel:SetPaintBackground(false)
+		hl2Panel:SetSize(128, 128)
 		
-		local achHL2Name = ScrollHL2Ach:Add("DLabel")
-		achHL2Name:SetPos(xPos - 165, yPos)
+		local achHL2Name = hl2Panel:Add("DLabel")
+		achHL2Name:SetPos(0, 65)
 		if string.find(fixString, HL2_Ach_List[i].name, 1, true) then
 			achHL2Name:SetText(HL2_Ach_List[i].name)
 		else
@@ -127,8 +136,8 @@ function AchievementMenu(achievement, vortexes)
 		achHL2Name:SizeToContents()
 		achHL2Name:SetColor(Color(0, 0, 0))
 		
-		local achHL2Desc = ScrollHL2Ach:Add("DLabel")
-		achHL2Desc:SetPos(xPos - 165, yPos + 30)
+		local achHL2Desc = hl2Panel:Add("DLabel")
+		achHL2Desc:SetPos(0, 90)
 		if string.find(fixString, HL2_Ach_List[i].name, 1) then
 			achHL2Desc:SetText(HL2_Ach_List[i].desc)
 		else
@@ -137,8 +146,8 @@ function AchievementMenu(achievement, vortexes)
 		achHL2Desc:SizeToContents()
 		achHL2Desc:SetColor(Color(0, 0, 0))
 		
-		local achHL2Icon = ScrollHL2Ach:Add("DImage")
-		achHL2Icon:SetPos(xPos - 235, yPos)
+		local achHL2Icon = hl2Panel:Add("DImage")
+		achHL2Icon:SetPos(0, 0)
 		achHL2Icon:SetSize(64, 64)
 		if string.find(fixString, HL2_Ach_List[i].name, 1, true) then
 			achHL2Icon:SetImage(HL2_Ach_List[i].mat)
@@ -160,27 +169,30 @@ function AchievementMenu(achievement, vortexes)
 	local ScrollMiscAch = vgui.Create("DScrollPanel", PanelMiscAch)
 	ScrollMiscAch:Dock(FILL)
 	
-	for i = 1, #Misc_Ach_List do
+	local iconListMisc = vgui.Create("DIconLayout", ScrollMiscAch)
+	iconListMisc:Dock(FILL)
+	iconListMisc:SetSpaceY(5)
+	iconListMisc:SetSpaceX(5)
 	
-		local xPos = 280 * i
-		local yPos = 45
-		if xPos >= 960 then
-			xPos = xPos / i 
-			yPos = 135
-		end
+	for i = 1, #Misc_Ach_List do
 		
-		local achMiscName = ScrollMiscAch:Add("DLabel")
-		achMiscName:SetPos(xPos - 165, yPos)
+		local miscPanel = iconListMisc:Add("DPanel")
+		miscPanel:SetPaintBackground(false)
+		miscPanel:SetSize(128, 128)
+		
+		local achMiscName = miscPanel:Add("DLabel")
+		achMiscName:SetPos(0, 65)
 		if string.find(fixString, Misc_Ach_List[i].name, 1, true) then
 			achMiscName:SetText(Misc_Ach_List[i].name)
 		else
 			achMiscName:SetText("LOCKED")
 		end
+		
 		achMiscName:SizeToContents()
 		achMiscName:SetColor(Color(0, 0, 0))
 		
-		local achMiscDesc = ScrollMiscAch:Add("DLabel")
-		achMiscDesc:SetPos(xPos - 165, yPos + 30)
+		local achMiscDesc = miscPanel:Add("DLabel")
+		achMiscDesc:SetPos(0, 90)
 		if string.find(fixString, Misc_Ach_List[i].name, 1, true) then
 			achMiscDesc:SetText(Misc_Ach_List[i].desc)
 		else
@@ -189,8 +201,8 @@ function AchievementMenu(achievement, vortexes)
 		achMiscDesc:SizeToContents()
 		achMiscDesc:SetColor(Color(0, 0, 0))
 		
-		local achMiscIcon = ScrollMiscAch:Add("DImage")
-		achMiscIcon:SetPos(xPos - 235, yPos)
+		local achMiscIcon = miscPanel:Add("DImage")
+		achMiscIcon:SetPos(0, 0)
 		achMiscIcon:SetSize(64, 64)
 		if string.find(fixString, Misc_Ach_List[i].name, 1, true) then
 			achMiscIcon:SetImage(Misc_Ach_List[i].mat)
@@ -208,38 +220,29 @@ function AchievementMenu(achievement, vortexes)
 		draw.RoundedBox(0,0,0, w, h, Color(170, 170, 170, 255))
 	end
 		
-	
 	local ScrollHL2Vort = vgui.Create("DScrollPanel", PanelHL2Vort)
 	ScrollHL2Vort:Dock(FILL)
 	
-	for i = 1, #HL2_Vortex_List do
+	local iconListHL2Vort = vgui.Create("DIconLayout", ScrollHL2Vort)
+	iconListHL2Vort:Dock(FILL)
+	iconListHL2Vort:SetSpaceY(5)
+	iconListHL2Vort:SetSpaceX(5)
 	
-		--Not the best code but it works
-		local xPos = 280 * i
-		local yPos = 45
-		if i == 4 then
-			xPos = 280
-			yPos = 135
-		elseif i == 5 then
-			xPos = 280 * 2
-			yPos = 135
-		elseif i == 6 then
-			xPos = 280 * 3
-			yPos = 135
-		elseif i == 7 then
-			xPos = 280
-			yPos = 225
-		end
+	for i = 1, #HL2_Vortex_List do
 		
-		local vortHL2Name = ScrollHL2Vort:Add("DLabel")
-		vortHL2Name:SetPos(xPos - 165, yPos)
+		local vortHL2Panel = iconListHL2Vort:Add("DPanel")
+		vortHL2Panel:SetPaintBackground(false)
+		vortHL2Panel:SetSize(128, 128)
+		
+		local vortHL2Name = vortHL2Panel:Add("DLabel")
+		vortHL2Name:SetPos(0, 65)
 		vortHL2Name:SetText(HL2_Vortex_List[i].name)
 		
 		vortHL2Name:SizeToContents()
 		vortHL2Name:SetColor(Color(0, 0, 0))
 		
-		local vortHL2Desc = ScrollHL2Vort:Add("DLabel")
-		vortHL2Desc:SetPos(xPos - 165, yPos + 30)
+		local vortHL2Desc = vortHL2Panel:Add("DLabel")
+		vortHL2Desc:SetPos(0, 90)
 		if string.find(fixVortex, HL2_Vortex_List[i].name, 1, true) then
 			vortHL2Desc:SetText(HL2_Vortex_List[i].desc)
 		else
@@ -248,8 +251,8 @@ function AchievementMenu(achievement, vortexes)
 		vortHL2Desc:SizeToContents()
 		vortHL2Desc:SetColor(Color(0, 0, 0))
 		
-		local vortHL2Icon = ScrollHL2Vort:Add("DImage")
-		vortHL2Icon:SetPos(xPos - 235, yPos)
+		local vortHL2Icon = vortHL2Panel:Add("DImage")
+		vortHL2Icon:SetPos(0, 0)
 		vortHL2Icon:SetSize(64, 64)
 		if string.find(fixVortex, HL2_Vortex_List[i].name, 1, true) then
 			vortHL2Icon:SetImage(HL2_Vortex_List[i].mat)

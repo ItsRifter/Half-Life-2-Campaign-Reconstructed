@@ -34,5 +34,9 @@ BaseEquipment.DeBuffs = {}
 BaseSuitArmour = DeriveTable(BaseEquipment)
 BaseSuitArmour.Armour = 1
 
-BaseSuitWeapon = DeriveTable(BaseEquipment)
-BaseSuitWeapon.Damage = 2
+BaseTempUpg = DeriveTable(itemBase)
+BaseTempUpg.UpgBuffs = {}
+BaseTempUpg.EssenceCost = 1
+
+BaseWeapon = DeriveTable(BaseEquipment)
+BaseWeapon.Damage = 2

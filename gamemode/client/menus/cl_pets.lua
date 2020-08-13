@@ -105,6 +105,7 @@ PET_NORMAL_ZOMBIE_EVOL_MODEL = {
 }
 
 function PetMenu(curSkill, skillPoints, petStage)
+	
 	COLOUR_PET_MODEL_PANEL = Color(100, 100, 100)
 	COLOUR_PET_MAIN_PANEL = Color(100, 100, 100)
 	COLOUR_PET_EVOL_PANEL = Color(0, 0, 0)
@@ -151,7 +152,16 @@ function PetMenu(curSkill, skillPoints, petStage)
 	
 	petEvolPanel.Paint = function( self, w, h ) 
 		draw.RoundedBox( 4, 0, 0, w, h, COLOUR_PET_EVOL_PANEL)
-		
+	
+	--Optional paths for skill trees
+	local optionalPath1 = false
+	local optionalPath2 = false
+	local optionalPath3 = false
+	local optionalPath4 = false
+	local optionalPath5 = false
+	local optionalPath6 = false
+	
+		--Normal headcrab
 		if petStage == 0 then
 			if curSkill >= 1 then
 				surface.SetDrawColor(0, 255, 0)
@@ -199,11 +209,9 @@ function PetMenu(curSkill, skillPoints, petStage)
 			if curSkill >= 2 then
 				surface.SetDrawColor(0, 255, 0)
 				surface.DrawLine(275, 425, 375, 425)
-				surface.DrawLine(275, 425, 175, 425)
 			else
 				surface.SetDrawColor(255, 0, 0)
 				surface.DrawLine(275, 425, 375, 425)
-				surface.DrawLine(275, 425, 175, 425)
 			end
 			
 			if curSkill >= 3 then
@@ -229,58 +237,23 @@ function PetMenu(curSkill, skillPoints, petStage)
 				surface.SetDrawColor(255, 0, 0)
 				surface.DrawLine(375, 225, 275, 225)
 			end
-
+			
 			if curSkill >= 6 then
 				surface.SetDrawColor(0, 255, 0)
-				surface.DrawLine(175, 425, 175, 325)
-			else
-				surface.SetDrawColor(255, 0, 0)
-				surface.DrawLine(175, 425, 175, 325)
-			end
-			
-			if curSkill >= 7 then
-				surface.SetDrawColor(0, 255, 0)
-				surface.DrawLine(175, 325, 175, 225)
-			else
-				surface.SetDrawColor(255, 0, 0)
-				surface.DrawLine(175, 325, 175, 225)
-			end
-			
-			if curSkill >= 8 then
-				surface.SetDrawColor(0, 255, 0)
-				surface.DrawLine(175, 225, 275, 225)
-			else
-				surface.SetDrawColor(255, 0, 0)
-				surface.DrawLine(175, 225, 275, 225)
-			end
-			
-			if curSkill >= 9 then
-				surface.SetDrawColor(0, 255, 0)
 				surface.DrawLine(275, 225, 275, 125)
 			else
 				surface.SetDrawColor(255, 0, 0)
 				surface.DrawLine(275, 225, 275, 125)
-			end
-			
-			if curSkill >= 10 then
-				surface.SetDrawColor(0, 255, 0)
-				surface.DrawLine(175, 225, 275, 225)
-			else
-				surface.SetDrawColor(255, 0, 0)
-				surface.DrawLine(175, 225, 275, 225)
 			end
 
+		--Full bodied zombie
 		elseif petStage == 2 then
 			
 			if curSkill >= 1 then
-				surface.SetDrawColor(0, 255, 0)
-				surface.DrawLine(275, 525, 175, 425)
 				
 				surface.SetDrawColor(0, 255, 0)
 				surface.DrawLine(275, 525, 375, 425)
 			else
-				surface.SetDrawColor(255, 0, 0)
-				surface.DrawLine(275, 525, 175, 425)
 				
 				surface.SetDrawColor(255, 0, 0)
 				surface.DrawLine(275, 525, 375, 425)
@@ -316,38 +289,6 @@ function PetMenu(curSkill, skillPoints, petStage)
 			else
 				surface.SetDrawColor(255, 0, 0)
 				surface.DrawLine(175, 150, 275, 75)
-			end
-			
-			if curSkill >= 6 then
-				surface.SetDrawColor(0, 255, 0)
-				surface.DrawLine(175, 450, 375, 325)
-			else
-				surface.SetDrawColor(255, 0, 0)
-				surface.DrawLine(175, 450, 375, 325)
-			end
-			
-			if curSkill >= 7 then
-				surface.SetDrawColor(0, 255, 0)
-				surface.DrawLine(375, 350, 175, 225)
-			else
-				surface.SetDrawColor(255, 0, 0)
-				surface.DrawLine(375, 350, 175, 225)
-			end
-			
-			if curSkill >= 8 then
-				surface.SetDrawColor(0, 255, 0)
-				surface.DrawLine(175, 250, 375, 125)
-			else
-				surface.SetDrawColor(255, 0, 0)
-				surface.DrawLine(175, 250, 375, 125)
-			end
-			
-			if curSkill >= 9 then
-				surface.SetDrawColor(0, 255, 0)
-				surface.DrawLine(375, 150, 275, 75)
-			else
-				surface.SetDrawColor(255, 0, 0)
-				surface.DrawLine(375, 150, 275, 75)
 			end
 		
 		end
@@ -606,13 +547,13 @@ function PetMenu(curSkill, skillPoints, petStage)
 		torsozombTree6:SetSize(50, 50)
 		torsozombTree6:SetToolTip("Endurance:\nIncrease Max HP by 15")
 		torsozombTree6.DoClick = function()
-			if curSkill < 8 then
+			if curSkill < 5 then
 				LocalPlayer():ChatPrint("You need to unlock the connecting skills")
 				surface.PlaySound("buttons/button8.wav")
 			elseif skillPoints <= 0 then
 				LocalPlayer():ChatPrint("You don't have enough pet skill points")
 				surface.PlaySound("buttons/button8.wav")
-			elseif curSkill >= 9 then
+			elseif curSkill >= 6 then
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
@@ -620,18 +561,18 @@ function PetMenu(curSkill, skillPoints, petStage)
 				skillPoints = skillPoints - 1
 				surface.PlaySound("beams/beamstart5.wav")
 				net.Start("UpdateSkills")
-					net.WriteInt(9, 16)
+					net.WriteInt(6, 16)
 				net.SendToServer()
 			end
 		end
 		
 		local torsozombTree7 = vgui.Create("DImageButton", petEvolPanel)
-		torsozombTree7:SetImage("vgui/achievements/hl2_get_crowbar.png")
-		torsozombTree7:SetPos(150, 400)
+		torsozombTree7:SetImage("vgui/achievements/hl2_beat_game.png")
+		torsozombTree7:SetPos(250, 100)
 		torsozombTree7:SetSize(50, 50)
-		torsozombTree7:SetToolTip("Strength:\nIncrease damage by 1")
+		torsozombTree7:SetToolTip("Genetic Mutation:\nAllow your pet to become something stronger")
 		torsozombTree7.DoClick = function()
-			if curSkill < 5 then
+			if curSkill < 6 then
 				LocalPlayer():ChatPrint("You need to unlock the previous skill")
 				surface.PlaySound("buttons/button8.wav")
 			elseif skillPoints <= 0 then
@@ -640,85 +581,10 @@ function PetMenu(curSkill, skillPoints, petStage)
 			elseif curSkill >= 7 then
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
-			else 
+			else
 				curSkill = 7
-				surface.PlaySound("beams/beamstart5.wav")
 				net.Start("UpdateSkills")
 					net.WriteInt(7, 16)
-				net.SendToServer()
-				skillPoints = skillPoints - 1
-			end
-		end
-		
-		local torsozombTree8 = vgui.Create("DImageButton", petEvolPanel)
-		torsozombTree8:SetImage("vgui/achievements/hl2_get_crowbar.png")
-		torsozombTree8:SetPos(150, 300)
-		torsozombTree8:SetSize(50, 50)
-		torsozombTree8:SetToolTip("Strength:\nIncrease damage by 1")
-		torsozombTree8.DoClick = function()
-			if curSkill < 7 then
-				LocalPlayer():ChatPrint("You need to unlock the previous skill")
-				surface.PlaySound("buttons/button8.wav")
-			elseif skillPoints <= 0 then
-				LocalPlayer():ChatPrint("You don't have enough pet skill points")
-				surface.PlaySound("buttons/button8.wav")
-			elseif curSkill >= 8 then
-				LocalPlayer():ChatPrint("You already unlocked this!")
-				surface.PlaySound("buttons/button8.wav")
-			else
-				curSkill = 8
-				surface.PlaySound("beams/beamstart5.wav")
-				net.Start("UpdateSkills")
-					net.WriteInt(8, 16)
-				net.SendToServer()
-				skillPoints = skillPoints - 1
-			end
-		end
-		
-		local torsozombTree9 = vgui.Create("DImageButton", petEvolPanel)
-		torsozombTree9:SetImage("vgui/achievements/hl2_get_crowbar.png")
-		torsozombTree9:SetPos(150, 200)
-		torsozombTree9:SetSize(50, 50)
-		torsozombTree9:SetToolTip("Strength:\nIncrease damage by 1")
-		torsozombTree9.DoClick = function()
-			if curSkill < 8 then
-				LocalPlayer():ChatPrint("You need to unlock the previous skill")
-				surface.PlaySound("buttons/button8.wav")
-			elseif skillPoints <= 0 then
-				LocalPlayer():ChatPrint("You don't have enough pet skill points")
-				surface.PlaySound("buttons/button8.wav")
-			elseif curSkill >= 9 then
-				LocalPlayer():ChatPrint("You already unlocked this!")
-				surface.PlaySound("buttons/button8.wav")
-			else
-				curSkill = 9
-				surface.PlaySound("beams/beamstart5.wav")
-				net.Start("UpdateSkills")
-					net.WriteInt(9, 16)
-				net.SendToServer()
-				skillPoints = skillPoints - 1
-			end
-		end
-		
-		local torsozombTree10 = vgui.Create("DImageButton", petEvolPanel)
-		torsozombTree10:SetImage("vgui/achievements/hl2_beat_game.png")
-		torsozombTree10:SetPos(250, 100)
-		torsozombTree10:SetSize(50, 50)
-		torsozombTree10:SetToolTip("Genetic Mutation:\nAllow your pet to become something stronger")
-		torsozombTree10.DoClick = function()
-			if curSkill < 9 then
-				LocalPlayer():ChatPrint("You need to unlock the previous skill")
-				surface.PlaySound("buttons/button8.wav")
-			elseif skillPoints <= 0 then
-				LocalPlayer():ChatPrint("You don't have enough pet skill points")
-				surface.PlaySound("buttons/button8.wav")
-			elseif curSkill >= 10 then
-				LocalPlayer():ChatPrint("You already unlocked this!")
-				surface.PlaySound("buttons/button8.wav")
-			else
-				curSkill = 10
-				net.Start("UpdateSkills")
-					net.WriteInt(10, 16)
 				net.SendToServer()
 				skillPoints = skillPoints - 1
 				surface.PlaySound("beams/beamstart5.wav")
@@ -735,11 +601,11 @@ function PetMenu(curSkill, skillPoints, petStage)
 			if skillPoints <= 0 then
 				LocalPlayer():ChatPrint("You don't have enough pet skill points")
 				surface.PlaySound("buttons/button8.wav")
-			elseif headSkill1 == 1 then
+			elseif curSkill >= 1 then
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
-				headSkill1 = 1
+				curSkill = 1
 				net.Start("UpdateSkills")
 					net.WriteInt(1, 16)
 				net.SendToServer()
@@ -754,17 +620,17 @@ function PetMenu(curSkill, skillPoints, petStage)
 		zombTree2:SetSize(50, 50)
 		zombTree2:SetToolTip("Recovery:\nIncrease recovery by 5")
 		zombTree2.DoClick = function()
-			if headSkill1 == 0 then
+			if curSkill < 1 then
 				LocalPlayer():ChatPrint("You need to unlock the previous skill")
 				surface.PlaySound("buttons/button8.wav")
 			elseif skillPoints <= 0 then
 				LocalPlayer():ChatPrint("You don't have enough pet skill points")
 				surface.PlaySound("buttons/button8.wav")
-			elseif headSkill2 == 1 then
+			elseif curSkill >= 2 then
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
-				headSkill2 = 1
+				curSkill = 2
 				net.Start("UpdateSkills")
 					net.WriteInt(2, 16)
 				net.SendToServer()
@@ -779,17 +645,17 @@ function PetMenu(curSkill, skillPoints, petStage)
 		zombTree3:SetSize(50, 50)
 		zombTree3:SetToolTip("Endurance:\nIncrease Max HP by 5")
 		zombTree3.DoClick = function()
-			if headSkill2 == 0 then
+			if curSkill < 2 then
 				LocalPlayer():ChatPrint("You need to unlock the previous skill")
 				surface.PlaySound("buttons/button8.wav")
 			elseif skillPoints <= 0 then
 				LocalPlayer():ChatPrint("You don't have enough pet skill points")
 				surface.PlaySound("buttons/button8.wav")
-			elseif headSkill3 == 2 then
+			elseif curSkill >= 3 then
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
-				headSkill3 = 1
+				curSkill = 3
 				net.Start("UpdateSkills")
 					net.WriteInt(3, 16)
 				net.SendToServer()
@@ -804,17 +670,17 @@ function PetMenu(curSkill, skillPoints, petStage)
 		zombTree4:SetSize(50, 50)
 		zombTree4:SetToolTip("Strength:\nIncrease damage by 1")
 		zombTree4.DoClick = function()
-			if headSkill3 == 0 then
+			if curSkill < 3 then
 				LocalPlayer():ChatPrint("You need to unlock the previous skill")
 				surface.PlaySound("buttons/button8.wav")
 			elseif skillPoints <= 0 then
 				LocalPlayer():ChatPrint("You don't have enough pet skill points")
 				surface.PlaySound("buttons/button8.wav")
-			elseif headSkill4 == 1 then
+			elseif curSkill >= 4 then
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
-				headSkill4 = 1
+				curSkill = 4
 				net.Start("UpdateSkills")
 					net.WriteInt(4, 16)
 				net.SendToServer()
@@ -829,17 +695,17 @@ function PetMenu(curSkill, skillPoints, petStage)
 		zombTree5:SetSize(50, 50)
 		zombTree5:SetToolTip("Endurance:\nIncrease Max HP by 10")
 		zombTree5.DoClick = function()
-			if headSkill4 == 0 then
+			if curSkill < 4 then
 				LocalPlayer():ChatPrint("You need to unlock the previous skill")
 				surface.PlaySound("buttons/button8.wav")
 			elseif skillPoints <= 0 then
 				LocalPlayer():ChatPrint("You don't have enough pet skill points")
 				surface.PlaySound("buttons/button8.wav")
-			elseif headSkill5 == 1 then
+			elseif curSkill >= 5 then
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
-				headSkill5 = 1
+				curSkill = 5
 				net.Start("UpdateSkills")
 					net.WriteInt(5, 16)
 				net.SendToServer()
@@ -850,126 +716,30 @@ function PetMenu(curSkill, skillPoints, petStage)
 		
 		local zombTree6 = vgui.Create("DImageButton", petEvolPanel)
 		zombTree6:SetImage("vgui/achievements/hl2_get_crowbar.png")
-		zombTree6:SetPos(150, 415)
+		zombTree6:SetPos(250, 65)
 		zombTree6:SetSize(50, 50)
-		zombTree6:SetToolTip("Strength:\nIncrease damage by 1")
+		zombTree6:SetToolTip("Strength:\nIncrease damage by 2")
 		zombTree6.DoClick = function()
-			if headSkill1 == 0 then
-				LocalPlayer():ChatPrint("You need to unlock the previous skill")
-				surface.PlaySound("buttons/button8.wav")
-			elseif skillPoints <= 0 then
-				LocalPlayer():ChatPrint("You don't have enough pet skill points")
-				surface.PlaySound("buttons/button8.wav")
-			elseif headSkill6 == 1 then
-				LocalPlayer():ChatPrint("You already unlocked this!")
-				surface.PlaySound("buttons/button8.wav")
-			else
-				headSkill6 = 1
-				net.Start("UpdateSkills")
-					net.WriteInt(6, 16)
-				net.SendToServer()
-				skillPoints = skillPoints - 1
-				surface.PlaySound("beams/beamstart5.wav")
-			end
-		end
-		
-		local zombTree7 = vgui.Create("DImageButton", petEvolPanel)
-		zombTree7:SetImage("vgui/achievements/hl2_beat_cemetery.png")
-		zombTree7:SetPos(350, 315)
-		zombTree7:SetSize(50, 50)
-		zombTree7:SetToolTip("Endurance:\nIncrease Max HP by 5")
-		zombTree7.DoClick = function()
-			if headSkill6 == 0 then
-				LocalPlayer():ChatPrint("You need to unlock the previous skill")
-				surface.PlaySound("buttons/button8.wav")
-			elseif skillPoints <= 0 then
-				LocalPlayer():ChatPrint("You don't have enough pet skill points")
-				surface.PlaySound("buttons/button8.wav")
-			elseif headSkill7 == 1 then
-				LocalPlayer():ChatPrint("You already unlocked this!")
-				surface.PlaySound("buttons/button8.wav")
-			else
-				headSkill7 = 1
-				net.Start("UpdateSkills")
-					net.WriteInt(7, 16)
-				net.SendToServer()
-				skillPoints = skillPoints - 1
-				surface.PlaySound("beams/beamstart5.wav")
-			end
-		end
-		
-		local zombTree8 = vgui.Create("DImageButton", petEvolPanel)
-		zombTree8:SetImage("vgui/achievements/hl2_beat_cemetery.png")
-		zombTree8:SetPos(150, 215)
-		zombTree8:SetSize(50, 50)
-		zombTree8:SetToolTip("Endurance:\nIncrease Max HP by 10")
-		zombTree8.DoClick = function()
-			if headSkill7 == 0 then
-				LocalPlayer():ChatPrint("You need to unlock the previous skill")
-				surface.PlaySound("buttons/button8.wav")
-			elseif skillPoints <= 0 then
-				LocalPlayer():ChatPrint("You don't have enough pet skill points")
-				surface.PlaySound("buttons/button8.wav")
-			elseif headSkill8 == 1 then
-				LocalPlayer():ChatPrint("You already unlocked this!")
-				surface.PlaySound("buttons/button8.wav")
-			else
-				headSkill8 = 1
-				net.Start("UpdateSkills")
-					net.WriteInt(8, 16)
-				net.SendToServer()
-				skillPoints = skillPoints - 1
-				surface.PlaySound("beams/beamstart5.wav")
-			end
-		end
-		
-		local zombTree9 = vgui.Create("DImageButton", petEvolPanel)
-		zombTree9:SetImage("vgui/achievements/hl2_get_crowbar.png")
-		zombTree9:SetPos(350, 115)
-		zombTree9:SetSize(50, 50)
-		zombTree9:SetToolTip("Strength:\nIncrease damage by 1")
-		zombTree9.DoClick = function()
-			if headSkill8 == 0 then
-				LocalPlayer():ChatPrint("You need to unlock the previous skill")
-				surface.PlaySound("buttons/button8.wav")
-			elseif skillPoints <= 0 then
-				LocalPlayer():ChatPrint("You don't have enough pet skill points")
-				surface.PlaySound("buttons/button8.wav")
-			elseif headSkill9 == 1 then
-				LocalPlayer():ChatPrint("You already unlocked this!")
-				surface.PlaySound("buttons/button8.wav")
-			else
-				headSkill9 = 1
-				net.Start("UpdateSkills")
-					net.WriteInt(9, 16)
-				net.SendToServer()
-				skillPoints = skillPoints - 1
-				surface.PlaySound("beams/beamstart5.wav")
-			end
-		end
-		
-		local zombTree10 = vgui.Create("DImageButton", petEvolPanel)
-		zombTree10:SetImage("vgui/achievements/hl2_get_crowbar.png")
-		zombTree10:SetPos(250, 65)
-		zombTree10:SetSize(50, 50)
-		zombTree10:SetToolTip("Strength:\nIncrease damage by 2")
-		zombTree10.DoClick = function()
-			if headSkill9 == 0 or headSkill5 == 0 then
+			if curSkill < 5 then
 				LocalPlayer():ChatPrint("You need to unlock the connecting skills")
 				surface.PlaySound("buttons/button8.wav")
 			elseif skillPoints <= 0 then
 				LocalPlayer():ChatPrint("You don't have enough pet skill points")
 				surface.PlaySound("buttons/button8.wav")
-			elseif headSkill10 == 1 then
+			elseif curSkill >= 6 then
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
-				curSkill = 10
+				curSkill = 6
 				net.Start("UpdateSkills")
-					net.WriteInt(10, 16)
+					net.WriteInt(6, 16)
 				net.SendToServer()
-				net.Start("Ach_Pet_Zombie")
+				
+				net.Start("Achievement")
+					net.WriteString("Blast_that_little")
+					net.WriteString("Misc_Ach_List")
 				net.SendToServer()
+				
 				skillPoints = skillPoints - 1
 				surface.PlaySound("beams/beamstart5.wav")
 			end
@@ -994,7 +764,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("Your pet isn't ready to evolve")
 			end
 		elseif petStage == 1 then
-			if curSkill == 9 then
+			if curSkill == 7 then
 				isOpenPets = false
 				petStatFrame:Close()
 				net.Start("Evolving")
@@ -1021,22 +791,16 @@ net.Receive("Open_Pet_Menu", function(len, ply)
 	PetMenu(skills, points, stage)
 end)
 
+
+
 function petStats(ply, pet)
 	
 	XP = tonumber(LocalPlayer():GetNWInt("PetXP"))
-	MaxXP = tonumber(LocalPlayer():GetNWInt("PetMaxXP"))
+	MaxXP = LocalPlayer():GetNWInt("PetMaxXP")
 	
 	
 	local hp = pet:Health()
 	local maxHp = pet:GetMaxHealth()
-	
-	net.Receive("UpdatePetsHealthDMG", function(len, ply)
-		hp = pet:Health() + net.ReadInt(32)
-	end)
-	
-	net.Receive("UpdatePetsXP", function()
-		XP = tonumber(LocalPlayer():GetNWInt("PetXP")) + net.ReadInt(32)
-	end)
 	
 	petStatFrame = vgui.Create("DFrame")
 	if ScrW() == 3840 and ScrH() == 2160 then
@@ -1044,6 +808,7 @@ function petStats(ply, pet)
 	else
 		petStatFrame:SetSize(400, 225)
 	end
+	
 	petStatFrame:SetPos(-400, ScrH() / 2 - 200)
 	petStatFrame:SetDraggable(false)
 	petStatFrame:ShowCloseButton(false)
@@ -1083,23 +848,29 @@ function petStats(ply, pet)
 	petStatXPLabel:SetFont("Pets_Stats")
 	petStatXPLabel:SetText("XP")
 	
-	petStatXPBar = vgui.Create("DProgress", petStatFrame)
+	petStatXPBar = vgui.Create("DPanel", petStatFrame)
 	petStatXPBar:SetPos( 25, 175 )
 	petStatXPBar:SetSize( 350, 25 )
-	petStatXPBar:SetFraction( XP / MaxXP )
 	petStatXPBar.Paint = function(self, w, h)
 		surface.SetDrawColor(70, 70, 70 , 255)
-		surface.DrawRect(0,0, w, h)
+		surface.DrawRect(0,0, MaxXP, h)
 		
 		surface.SetDrawColor(50, 165, 255, 255)
 		surface.DrawRect(0,0, XP, h)
 	end
+	
+	petStatXPStatusLabel = vgui.Create("DLabel", petStatFrame)
+	petStatXPStatusLabel:SetPos(petStatXPBar:GetWide() - 315, petStatXPBar:GetTall() + 150)
+	petStatXPStatusLabel:SetFont("Pets_Stats")
+	petStatXPStatusLabel:SetText(XP .. "/" .. MaxXP)
+	petStatXPStatusLabel:SizeToContents()
 	
 	petStatFrame:Add(petStatLevelLabel)
 	petStatFrame:Add(petStatHealthBar)
 	petStatFrame:Add(petStatHPLabel)
 	petStatFrame:Add(petStatXPLabel)
 	petStatFrame:Add(petStatXPBar)
+	
 	petStatFrame:MoveTo(0, ScrH() / 2 - 200 , 1, 0, -1)
 	if pet then
 		petStatFrame.Think = function()
@@ -1109,11 +880,14 @@ function petStats(ply, pet)
 			
 			petStatXPBar.Paint = function(self, w, h)
 				surface.SetDrawColor(70, 70, 70 , 255)
-				surface.DrawRect(0,0, w, h)
+				surface.DrawRect(0,0, MaxXP, h)
 				
 				surface.SetDrawColor(50, 165, 255, 255)
-				surface.DrawRect(0,0, XP, h)
+				surface.DrawRect(0,0, tonumber(LocalPlayer():GetNWInt("PetXP")), h)
 			end
+			
+			petStatXPStatusLabel:SetText(tonumber(LocalPlayer():GetNWInt("PetXP")) .. "/" .. MaxXP)
+			petStatXPStatusLabel:SizeToContents()
 		end
 	end
 	petStatHealthBar.Paint = function(self, w, h)
@@ -1140,6 +914,10 @@ function petStats(ply, pet)
 	
 	petStatFrame:Add(terminatedLabel)
 end
+
+net.Receive("UpdatePetsHealthDMG", function(len, ply)
+	hp = pet:Health() + net.ReadInt(32)
+end)
 
 function clientClosePets()
 	petStatFrame:MoveTo(-400, ScrH() / 2 - 200, 1, 0, -1, function()

@@ -101,10 +101,10 @@ function SetupMap()
 		end
 	end
 	
-	if game.GetMap() == "d1_town_03" and not file.Exists("hl2c_data/d1_town_02", "DATA") then 
-		file.Write("hl2c_data/d1_town_02.txt", "Map checker please don't delete this file")
+	if game.GetMap() == "d1_town_03" and not file.Exists("hl2cr_data/d1_town_02", "DATA") then 
+		file.Write("hl2cr_data/d1_town_02.txt", "Map checker please don't delete this file")
 	end
-	if game.GetMap() == "d1_town_02" and file.Exists("hl2c_data/d1_town_02.txt", "DATA") then 
+	if game.GetMap() == "d1_town_02" and file.Exists("hl2cr_data/d1_town_02.txt", "DATA") then 
 		for k, returnMap in pairs(ents.FindByClass("info_player_start")) do
 			returnMap:SetPos(Vector(-3759, -45, -3435))
 			returnMap:SetAngles(Angle(0, 90, 0))
@@ -133,55 +133,51 @@ function SetupMap()
 	--Doll Achievement
 	local dollAch = ents.Create("prop_physics")
 	dollAch:SetModel("models/props_c17/doll01.mdl")
-	if game.GetMap() == "d1_trainstation_03" and file.Exists("hl2c_data/babydoll.txt", "DATA") then
+	if game.GetMap() == "d1_trainstation_03" and file.Exists("hl2cr_data/babydoll.txt", "DATA") then
 		dollAch:SetPos(Vector(-5177, -4719, 64))
 		dollAch:Spawn()
-		file.Delete("hl2c_data/babydoll.txt")
-	elseif game.GetMap() == "d1_trainstation_04" and file.Exists("hl2c_data/babydoll2.txt", "DATA") then
+		file.Delete("hl2cr_data/babydoll.txt")
+	elseif game.GetMap() == "d1_trainstation_04" and file.Exists("hl2cr_data/babydoll2.txt", "DATA") then
 		dollAch:SetPos(Vector(-3367, -3410, 628))
 		dollAch:Spawn()
-		file.Delete("hl2c_data/babydoll2.txt")
-	elseif game.GetMap() == "d1_trainstation_05" and file.Exists("hl2c_data/babydoll3.txt", "DATA") then
+		file.Delete("hl2cr_data/babydoll2.txt")
+	elseif game.GetMap() == "d1_trainstation_05" and file.Exists("hl2cr_data/babydoll3.txt", "DATA") then
 		dollAch:SetPos(Vector(-5833, -927, 128))
 		dollAch:Spawn()
-		file.Delete("hl2c_data/babydoll3.txt")
-	else
-		dollAch:Remove()
+		file.Delete("hl2cr_data/babydoll3.txt")
 	end
 	
 	--Ball achievement ravenholm
 	local ballAch = ents.Create("prop_physics")
 	ballAch:SetModel("models/Roller.mdl")
-	if game.GetMap() == "d1_town_01" and file.Exists("hl2c_data/ravenball1.txt", "DATA") then
+	if game.GetMap() == "d1_town_01" and file.Exists("hl2cr_data/ravenball1.txt", "DATA") then
 		ballAch:SetPos(Vector(4672, -2222, -3718))
 		ballAch:Spawn()
-		file.Delete("hl2c_data/ravenball1.txt")
-	elseif game.GetMap() == "d1_town_01a" and file.Exists("hl2c_data/ravenball2.txt", "DATA") then
+		file.Delete("hl2cr_data/ravenball1.txt")
+	elseif game.GetMap() == "d1_town_01a" and file.Exists("hl2cr_data/ravenball2.txt", "DATA") then
 		ballAch:SetPos(Vector(174, 177, -3263))
 		ballAch:Spawn()
-		file.Delete("hl2c_data/ravenball2.txt")
-	elseif game.GetMap() == "d1_town_02" and not file.Exists("hl2c_data/d1_town_02.txt", "DATA") and file.Exists("hl2c_data/ravenball3.txt", "DATA") then
+		file.Delete("hl2cr_data/ravenball2.txt")
+	elseif game.GetMap() == "d1_town_02" and not file.Exists("hl2cr_data/d1_town_02.txt", "DATA") and file.Exists("hl2cr_data/ravenball3.txt", "DATA") then
 		ballAch:SetPos(Vector(-955, 884, -3375))
 		ballAch:Spawn()
-		file.Delete("hl2c_data/ravenball3.txt")
-	elseif game.GetMap() == "d1_town_03" and file.Exists("hl2c_data/ravenball4.txt", "DATA") then
+		file.Delete("hl2cr_data/ravenball3.txt")
+	elseif game.GetMap() == "d1_town_03" and file.Exists("hl2cr_data/ravenball4.txt", "DATA") then
 		ballAch:SetPos(Vector(-3554, -725, -3519))
 		ballAch:Spawn()
-		file.Delete("hl2c_data/ravenball4.txt")
-	elseif game.GetMap() == "d1_town_02" and file.Exists("hl2c_data/d1_town_02.txt", "DATA") and file.Exists("hl2c_data/ravenball5.txt", "DATA") then
+		file.Delete("hl2cr_data/ravenball4.txt")
+	elseif game.GetMap() == "d1_town_02" and file.Exists("hl2cr_data/d1_town_02.txt", "DATA") and file.Exists("hl2cr_data/ravenball5.txt", "DATA") then
 		ballAch:SetPos(Vector(-3587, 260, -3391))
 		ballAch:Spawn()
-		file.Delete("hl2c_data/ravenball5.txt")
-	elseif game.GetMap() == "d1_town_02a" and file.Exists("hl2c_data/ravenball6.txt", "DATA") then
+		file.Delete("hl2cr_data/ravenball5.txt")
+	elseif game.GetMap() == "d1_town_02a" and file.Exists("hl2cr_data/ravenball6.txt", "DATA") then
 		ballAch:SetPos(Vector(-5361, 2333, -3218))
 		ballAch:Spawn()
-		file.Delete("hl2c_data/ravenball6.txt")
-	elseif game.GetMap() == "d1_town_04" and file.Exists("hl2c_data/ravenball7.txt", "DATA") then
+		file.Delete("hl2cr_data/ravenball6.txt")
+	elseif game.GetMap() == "d1_town_04" and file.Exists("hl2cr_data/ravenball7.txt", "DATA") then
 		ballAch:SetPos(Vector(818, -1190, -3583))
 		ballAch:Spawn()
-		file.Delete("hl2c_data/ravenball7.txt")
-	else
-		ballAch:Remove()
+		file.Delete("hl2cr_data/ravenball7.txt")
 	end
 	
 	if game.GetMap() == "d1_eli_02" then
@@ -198,7 +194,7 @@ function SetupMap()
 	end
 	
 	if game.GetMap() == "d1_town_02a" then
-		file.Delete("hl2c_data/d1_town_02.txt")
+		file.Delete("hl2cr_data/d1_town_02.txt")
 	end
 	
 	if game.GetMap() == "d2_coast_04" then
@@ -229,40 +225,41 @@ end
 hook.Add("InitPostEntity", "SetupHL2Lua", SetupMap)
 hook.Add("PostCleanupMap", "SetupHL2Lua", SetupMap)
 
-hook.Add("UpdateBaby", "Babys", function()
+function UpdateBaby()
 	
 	if game.GetMap() == "d1_trainstation_02" then
-		file.Write("hl2c_data/babydoll.txt", "Please leave this file alone unless you wanna disrupt someones achievement")
+		file.Write("hl2cr_data/babydoll.txt", "Please leave this file alone unless you wanna disrupt someones achievement")
 	elseif game.GetMap() == "d1_trainstation_03" then
-		file.Write("hl2c_data/babydoll2.txt", "Why are you back here?")
+		file.Write("hl2cr_data/babydoll2.txt", "Why are you back here?")
 	elseif game.GetMap() == "d1_trainstation_04" then
-		file.Write("hl2c_data/babydoll3.txt", "Secret: Sponer has plans for pet upgrades")
+		file.Write("hl2cr_data/babydoll3.txt", "Stop reading me every map change")
 	end
-end)
+end
 
-hook.Add("UpdateBall", "ravenball", function()
+function UpdateBall()
 	
 	if game.GetMap() == "d1_eli_02" then
-		file.Write("hl2c_data/ravenball1.txt", "Please leave this file alone unless you wanna disrupt someones achievement")
+		file.Write("hl2cr_data/ravenball1.txt", "Please leave this file alone unless you wanna disrupt someones achievement")
 	elseif game.GetMap() == "d1_town_01" then
-		file.Write("hl2c_data/ravenball2.txt", "Why are you reading this?")
+		file.Write("hl2cr_data/ravenball2.txt", "Why are you reading this?")
 	elseif game.GetMap() == "d1_town_01a" then
-		file.Write("hl2c_data/ravenball3.txt", "Stop coming back to read this")
-	elseif game.GetMap() == "d1_town_02" and not file.Exists("hl2c_data/d1_town_02.txt", "DATA") then
-		file.Write("hl2c_data/ravenball4.txt", "Can you please stop coming back?")
+		file.Write("hl2cr_data/ravenball3.txt", "Stop coming back to read this")
+	elseif game.GetMap() == "d1_town_02" and not file.Exists("hl2cr_data/d1_town_02.txt", "DATA") then
+		file.Write("hl2cr_data/ravenball4.txt", "Can you please stop coming back?")
 	elseif game.GetMap() == "d1_town_03" then
-		file.Write("hl2c_data/ravenball5.txt", "Stop reading me!")
-	elseif game.GetMap() == "d1_town_02" and file.Exists("hl2c_data/d1_town_02.txt", "DATA") then
-		file.Write("hl2c_data/ravenball6.txt", "God damn you are a madlad")
+		file.Write("hl2cr_data/ravenball5.txt", "Stop reading me!")
+	elseif game.GetMap() == "d1_town_02" and file.Exists("hl2cr_data/d1_town_02.txt", "DATA") then
+		file.Write("hl2cr_data/ravenball6.txt", "God damn you are a madlad")
 	elseif game.GetMap() == "d1_town_02a" then
-		file.Write("hl2c_data/ravenball7.txt", "Easter egg?")
+		file.Write("hl2cr_data/ravenball7.txt", "Easter egg?")
 	elseif game.GetMap() == "d1_town_04" then
-		file.Delete("hl2c_data/RavenBall8.txt")
+		file.Delete("hl2cr_data/RavenBall8.txt")
 		for k, v in pairs(player.GetAll()) do
 			Achievement(v, "Rave_Ball", "HL2_Ach_List", 2500)	
 		end
 	end
-end)
+end
+
 local enabled = false
 
 hook.Add("Airboat", "AllowAirboat", function()
@@ -377,13 +374,13 @@ hook.Add( "OnChangeLevel", "ChangeMap", function()
 	for k = 1, #HL2 do
 		if (map == HL2[k]) and not (map == "d1_town_02" and not map == "d2_coast_07") then
 			RunConsoleCommand("changelevel", HL2[k+1])
-		elseif map == "d1_town_02" and not file.Exists("hl2c_data/d1_town_02.txt", "DATA") or not map == "d2_coast_07" then
+		elseif map == "d1_town_02" and not file.Exists("hl2cr_data/d1_town_02.txt", "DATA") or not map == "d2_coast_07" then
 			RunConsoleCommand("changelevel", "d1_town_03")
-		elseif map == "d1_town_02" and file.Exists("hl2c_data/d1_town_02.txt", "DATA") or not map == "d2_coast_07" then
+		elseif map == "d1_town_02" and file.Exists("hl2cr_data/d1_town_02.txt", "DATA") or not map == "d2_coast_07" then
 			RunConsoleCommand("changelevel", "d1_town_02a")
-		elseif map == "d2_coast_07" and not file.Exists("hl2c_data/d2_coast_07.txt", "DATA") or not map == "d1_town_02" then
+		elseif map == "d2_coast_07" and not file.Exists("hl2cr_data/d2_coast_07.txt", "DATA") or not map == "d1_town_02" then
 			RunConsoleCommand("changelevel", "d2_coast_08")
-		elseif map == "d2_coast_08" and file.Exists("hl2c_data/d2_coast_07.txt", "DATA") or not map == "d1_town_02" then
+		elseif map == "d2_coast_08" and file.Exists("hl2cr_data/d2_coast_07.txt", "DATA") or not map == "d1_town_02" then
 			RunConsoleCommand("changelevel", "d2_coast_07")
 		end
 	end
@@ -869,7 +866,7 @@ function SetCheckpointsStage()
 		lambdaModel3:SetPos(Checkpoint3.Pos)
 		lambdaModel3:Spawn()
 		
-	elseif game.GetMap() == "d1_town_02" and file.Exists("hl2c_data/d1_town_02.txt", "DATA") then
+	elseif game.GetMap() == "d1_town_02" and file.Exists("hl2cr_data/d1_town_02.txt", "DATA") then
 		TRIGGER_CHECKPOINT = {
 			 Vector(-4522, 869, -3050), Vector(-4647, 957, -2914),
 		}

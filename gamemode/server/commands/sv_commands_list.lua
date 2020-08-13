@@ -317,7 +317,7 @@ end)
 concommand.Add("hl2cr_setlevel", function(ply, cmd, args)
 	local level = tonumber(args[1])
 	if ply:IsAdmin() then
-		if level >= 0 then
+		if level > 0 then
 			ply.hl2cPersistent.Level = level
 			ply.hl2cPersistent.XP = 0
 			ply:SetNWInt("Level", ply.hl2cPersistent.Level)

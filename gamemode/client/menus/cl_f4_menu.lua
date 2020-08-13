@@ -28,52 +28,72 @@ surface.CreateFont("F4_Trader_Exchange_font", {
 	size = 18,
 })
 
-function DoDrop(self, panels, IsDropped, Command, x, y )
-	if IsDropped then
+local function DropSuit( self, panels, onDropped, Command, x, y )
+	if (onDropped) then
 		for k, v in pairs(panels) do
-			print("Put in backpack")
-		end
-	end
-end	
-
-function DoDropHelmet(self, panels, IsDropped, Command, x, y )
-	if IsDropped then
-		for k, v in pairs(panels) do
-			helmetImage:SetImage(v:GetImage())
-			surface.PlaySound("npc/combine_gunship/gunship_ping_search.wav")
-		end
-	end
-end
-
-function DoDropSuit(self, panels, IsDropped, Command, x, y )
-	if IsDropped then
-		for k, v in pairs(panels) do
-			suitImage:SetImage(v:GetImage())
-			surface.PlaySound("npc/combine_gunship/gunship_ping_search.wav")
+			if suitImage:GetImage() != v:GetImage() then
+				suitImage:SetImage(v:GetImage())
+				surface.PlaySound("npc/combine_gunship/gunship_ping_search.wav")
+				
+				net.Start("AddArmour")
+					net.WriteString(v:GetImage())
+				net.SendToServer()
+			end
 		end
 	end
 end
 
-function DoDropArm(self, panels, IsDropped, Command, x, y )
-	if IsDropped then
+local function DropHelmet( self, panels, onDropped, Command, x, y )
+	if (onDropped) then
 		for k, v in pairs(panels) do
-			armImage:SetImage(v:GetImage())
-			surface.PlaySound("npc/combine_gunship/gunship_ping_search.wav")
+			if helmetImage:GetImage() != v:GetImage() then
+				helmetImage:SetImage(v:GetImage())
+				surface.PlaySound("npc/combine_gunship/gunship_ping_search.wav")
+				
+				net.Start("AddArmour")
+					net.WriteString(v:GetImage())
+				net.SendToServer()
+			end
 		end
 	end
 end
 
-function OpenMenu()
+local function DropArm( self, panels, onDropped, Command, x, y )
+	if (onDropped) then
+		for k, v in pairs(panels) do
+			if armImage:GetImage() != v:GetImage() then
+				armImage:SetImage(v:GetImage())
+				surface.PlaySound("npc/combine_gunship/gunship_ping_search.wav")
+				
+				net.Start("AddArmour")
+					net.WriteString(v:GetImage())
+				net.SendToServer()
+			end
+		end
+	end
+end
+
+function OpenMenu(inventoryItems)
 	
 	local getModel = LocalPlayer():GetNWString("Model")
+	
 	local totalDeaths = LocalPlayer():GetNWInt("Deaths")
 	local totalKills = LocalPlayer():GetNWInt("Kills")
+	
 	local getLevel = LocalPlayer():GetNWInt("Level")
 	local getXP = LocalPlayer():GetNWInt("XP")
 	local getMaxXP = LocalPlayer():GetNWInt("maxXP")
+	
 	local curCoins = LocalPlayer():GetNWInt("Coins")
 	local curEssence = LocalPlayer():GetNWInt("Essence")
 	local curCryst = LocalPlayer():GetNWInt("Cryst")
+	local curTempUpg = LocalPlayer():GetNWString("TempUpg")
+	
+	local invItems = LocalPlayer():GetNWString("Inventory")
+	
+	local suitSlot = LocalPlayer():GetNWString("SuitSlot")
+	local helmetSlot = LocalPlayer():GetNWString("HelmetSlot")
+	local armSlot = LocalPlayer():GetNWString("ArmSlot")
 	
 	DEFAULT_COLOUR_HL2 = Color(243, 123, 33, 255)
 	COLOUR_MODEL_PANEL = Color(100, 100, 100)
@@ -256,43 +276,96 @@ function OpenMenu()
 			selectPMScrollPanel:AddPanel(adminModel)
 		end
 	end
-
-	local invSpace = tonumber(LocalPlayer():GetNWInt("MaxInvSpace"))
 	
 	local helmetPanelReceiver = vgui.Create("DPanel", pmPanel)
 	helmetPanelReceiver:SetPos(250, 50)
 	helmetPanelReceiver:SetSize(75, 75)
 	helmetPanelReceiver:SetToolTip("Armour for your head")
-	helmetPanelReceiver:Receiver("Helmet", DoDropHelmet)
+	helmetPanelReceiver:Receiver("Helmet", DropHelmet)
 	
 	helmetImage = vgui.Create("DImage", helmetPanelReceiver)
 	helmetImage:SetSize(75, 75)
-	helmetImage:SetImage("hlmv/gray")
+	
+	if helmetSlot != "" then
+		helmetImage:SetImage(helmetSlot)
+		
+		local itemButton = helmetPanelReceiver:Add("DButton")
+		itemButton:SetPos(0, 60)
+		itemButton:SetSize(25, 25)
+		itemButton:SetText("Sell")
+		itemButton:SizeToContents()
+		
+		function itemButton:DoClick()
+			net.Start("SellItemSlot")
+				net.WriteString(helmetImage:GetImage())
+			net.SendToServer()
+			helmetImage:SetImage("hlmv/gray")
+			itemButton:Remove()
+		end
+	else
+		helmetImage:SetImage("hlmv/gray")
+	end
 	
 	local suitPanelReceiver = vgui.Create("DPanel", pmPanel)
 	suitPanelReceiver:SetPos(25, 175)
 	suitPanelReceiver:SetSize(75, 75)
 	suitPanelReceiver:SetToolTip("Armour for your body")
-	suitPanelReceiver:Receiver("Suit", DoDropSuit)
+	suitPanelReceiver:Receiver("Suit", DropSuit)
 	
 	suitImage = vgui.Create("DImage", suitPanelReceiver)
 	suitImage:SetSize(75, 75)
-	suitImage:SetImage("hlmv/gray")
+	
+	if suitSlot != "" then
+		suitImage:SetImage(suitSlot)
+		local itemButton = suitPanelReceiver:Add("DButton")
+		itemButton:SetPos(0, 60)
+		itemButton:SetSize(25, 25)
+		itemButton:SetText("Sell")
+		itemButton:SizeToContents()
+		
+		function itemButton:DoClick()
+			net.Start("SellItemSlot")
+				net.WriteString(suitImage:GetImage())
+			net.SendToServer()
+			suitImage:SetImage("hlmv/gray")
+			itemButton:Remove()
+		end
+	else
+		suitImage:SetImage("hlmv/gray")
+	end
 	
 	local armPanelReceiver = vgui.Create("DPanel", pmPanel)
 	armPanelReceiver:SetPos(300, 250)
 	armPanelReceiver:SetSize(75, 75)
 	armPanelReceiver:SetToolTip("Armour for your arms")
-	armPanelReceiver:Receiver("Arm", DoDropArm)
+	armPanelReceiver:Receiver("Arm", DropArm)
 	
 	armImage = vgui.Create("DImage", armPanelReceiver)
 	armImage:SetSize(75, 75)
-	armImage:SetImage("hlmv/gray")
+	
+	if armSlot != "" then
+		armImage:SetImage(armSlot)
+		
+		local itemButton = armPanelReceiver:Add("DButton")
+		itemButton:SetPos(0, 60)
+		itemButton:SetSize(25, 25)
+		itemButton:SetText("Sell")
+		itemButton:SizeToContents()
+		
+		function itemButton:DoClick()
+			net.Start("SellItemSlot")
+				net.WriteString(armImage:GetImage())
+			net.SendToServer()
+			armImage:SetImage("hlmv/gray")
+			itemButton:Remove()
+		end
+	else
+		armImage:SetImage("hlmv/gray")
+	end
 	
 	--vgui/hud/icon_locked
 	--vgui/cursors/no
 	--vgui/hud/icon_check
-	local itemName = string.Split(LocalPlayer():GetNWString("Inventory"), " ")
 	
 	local inventoryLayout = vgui.Create("DIconLayout", pmPanel)
 	inventoryLayout:SetPos(400, 100)
@@ -300,36 +373,62 @@ function OpenMenu()
 	inventoryLayout:Receiver("Inventory", DoDrop)
 	inventoryLayout:SetSpaceX(5)
 	inventoryLayout:SetSpaceY(5)
+
+	--Splits the item string into separate strings
+	local splitItems = inventoryItems
 	
+	--Gets max inventory space
+	local maxSpace = tonumber(LocalPlayer():GetNWInt("MaxInvSpace"))
 	
-	for i = 2, invSpace do
+	for i = 1, maxSpace do
 		
-		local item = vgui.Create("DImage")
+		local item = inventoryLayout:Add("DPanel")
 		item:SetSize(75, 75)
-		if itemName[i] == "Suit Battery Pack" then
-			item:SetImage("hl2cr/armour_parts/battery")
+		
+		local itemImg = vgui.Create("DImage")
+		itemImg:SetSize(75, 75)
+		
+		if splitItems[i] == "Health_Module_MK1" then
+			itemImg:SetImage("hl2cr/armour_parts/health")
+			itemImg:Droppable("Arm")
 			
-		elseif itemName[i] == "Mark VII Helmet" then
-			item:SetImage("hl2cr/armour_parts/helmet")
-			item:Droppable("Helmet")
+		elseif splitItems[i] == "Health_Module_MK2" then
+			itemImg:SetImage("hl2cr/armour_parts/healthmk2")
+			itemImg:Droppable("Arm")
 			
-		elseif itemName[i] == "Mark VII Suit" then
-			item:SetImage("hl2cr/armour_parts/suit")
-			item:Droppable("Suit")
-		elseif itemName[i] == "Shotgun Barrel" then
-			item:SetImage("hl2cr/weapon_parts/barrel")	
-		elseif itemName[i] == "Health Enhancer MK1" then
-			item:SetImage("hl2cr/armour_parts/health")
-		elseif itemName[i] == "Health Enhancer MK2" then
-			item:SetImage("hl2cr/armour_parts/healthmk2")
+		elseif splitItems[i] == "Suit_Battery_Pack" then
+			itemImg:SetImage("hl2cr/armour_parts/battery")
+			itemImg:Droppable("Arm")
+			
+		elseif splitItems[i] == "Mark_VII_Helmet" then
+			itemImg:SetImage("hl2cr/armour_parts/helmet")
+			itemImg:Droppable("Helmet")
+		
+		elseif splitItems[i] == "Mark_VII_Suit" then
+			itemImg:SetImage("hl2cr/armour_parts/suit")
+			itemImg:Droppable("Suit")
 		else
-			item:SetImage("hlmv/gray")
+			itemImg:SetImage("hlmv/gray")
 		end
 		
-		inventoryLayout:Add(item)
+		item:Add(itemImg)
+		
+		if splitItems[i] then
+			local itemButton = itemImg:Add("DButton")
+			itemButton:SetPos(0, 60)
+			itemButton:SetSize(25, 25)
+			itemButton:SetText("Sell")
+			itemButton:SizeToContents()
+			
+			function itemButton:DoClick()
+				net.Start("SellItem")
+					net.WriteString(itemImg:GetImage())
+				net.SendToServer()
+				itemImg:SetImage("hlmv/gray")
+				itemButton:Remove()
+			end
+		end
 	end
-	
-
 	TabSheet:AddSheet("Suit", pmPanel, nil)	
 		
 	local shopPanel = vgui.Create("DPanel", F4_Frame)
@@ -337,141 +436,180 @@ function OpenMenu()
 		draw.RoundedBox( 4, 0, 0, w, h, COLOUR_MODEL_PANEL ) 
 	end 
 	
-	if game.GetMap() == "d1_trainstation_01" or game.GetMap() == "d1_trainstation_02" or game.GetMap() == "d1_trainstation_03" or game.GetMap() == "d1_trainstation_04" or game.GetMap() == "d1_trainstation_05" then
+	local shopTitleLabel = vgui.Create("DLabel", shopPanel)
+	shopTitleLabel:SetText("CrowMart Shop")
+	shopTitleLabel:SetFont("F4_Shop_Title_font")
+	shopTitleLabel:SizeToContents()
+	shopTitleLabel:SetPos(300, 25)
 	
-	local shopUnavailableLabel = vgui.Create("DLabel", shopPanel)
-	shopUnavailableLabel:SetFont("F4_Shop_Title_font")
-	shopUnavailableLabel:SetText("The shop is unavailable on this map")
-	shopUnavailableLabel:SizeToContents()
-	shopUnavailableLabel:SetPos(150, 250)
+	local curCoinsLabel = vgui.Create("DLabel", shopPanel)
+	curCoinsLabel:SetText("Coins: " .. curCoins)
+	curCoinsLabel:SetFont("F4_Shop_font")
+	curCoinsLabel:SetPos(365, 75)
+	curCoinsLabel:SizeToContents()
 	
-		TabSheet:AddSheet("Shop", shopPanel, nil)
-	else
+	local curEssenceLabel = vgui.Create("DLabel", shopPanel)
+	curEssenceLabel:SetText("Vorti-Essence: " .. curEssence)
+	curEssenceLabel:SetFont("F4_Shop_font")
+	curEssenceLabel:SetPos(370, 115)
+	curEssenceLabel:SizeToContents()
 	
-		local shopTitleLabel = vgui.Create("DLabel", shopPanel)
-		shopTitleLabel:SetText("CrowMart Shop")
-		shopTitleLabel:SetFont("F4_Shop_Title_font")
-		shopTitleLabel:SizeToContents()
-		shopTitleLabel:SetPos(300, 25)
-		
-		local curCoinsLabel = vgui.Create("DLabel", shopPanel)
+	shopPanel.Think = function()
 		curCoinsLabel:SetText("Coins: " .. curCoins)
 		curCoinsLabel:SetFont("F4_Shop_font")
-		curCoinsLabel:SetPos(365, 75)
 		curCoinsLabel:SizeToContents()
 		
-		local curEssenceLabel = vgui.Create("DLabel", shopPanel)
-		curEssenceLabel:SetText("Vorti-Essence: " .. curEssence)
+		curEssenceLabel:SetText("Essence: " .. curEssence)
 		curEssenceLabel:SetFont("F4_Shop_font")
-		curEssenceLabel:SetPos(345, 115)
 		curEssenceLabel:SizeToContents()
+	end
+	
+	local shopArmourLabel = vgui.Create("DLabel", shopPanel)
+	shopArmourLabel:SetText("Armour")
+	shopArmourLabel:SetFont("F4_Shop_font")
+	shopArmourLabel:SizeToContents()
+	shopArmourLabel:SetPos(135, 125)
+	
+	local armourScroll = vgui.Create("DScrollPanel", shopPanel)
+	armourScroll:SetPos(50, 175)
+	armourScroll:SetSize(275, 150)
+	
+	local armourLayout = vgui.Create("DIconLayout", armourScroll)
+	armourLayout:Dock(FILL)
+	armourLayout:SetSpaceX(5)
+	armourLayout:SetSpaceY(5)
+	
+	for i, armour in pairs(GAMEMODE.ArmourItem) do
+		local armourItem = armourLayout:Add("DPanel")
+		armourItem:SetSize(80, 80)
 		
-		shopPanel.Think = function()
-			curCoinsLabel:SetText("Coins: " .. curCoins)
-			curCoinsLabel:SetFont("F4_Shop_font")
-			curCoinsLabel:SizeToContents()
+		local armourIcon = armourItem:Add("DImage")
+		armourIcon:SetSize(80, 80)
+		armourIcon:SetImage(GAMEMODE.ArmourItem[i].Icon)
+					
+		local armourButton = armourItem:Add("DButton")
+		armourButton:SetSize(80, 80)
+		armourButton:SetToolTip(GAMEMODE.ArmourItem[i].Name .. "\n" .. GAMEMODE.ArmourItem[i].Desc)
+		armourButton:SetText("λ" .. GAMEMODE.ArmourItem[i].Cost)
+		armourButton:SetColor(Color(255, 225, 165))
+		armourButton:SetDrawBackground(false)
+		armourButton.DoClick = function()
+			if curCoins < GAMEMODE.ArmourItem[i].Cost then
+				surface.PlaySound("buttons/button10.wav")
+				LocalPlayer():ChatPrint("Insufficient Coins")
+			elseif LocalPlayer():GetNWInt("InvSpace") >= LocalPlayer():GetNWInt("MaxInvSpace") then
+				surface.PlaySound("buttons/button10.wav")
+				LocalPlayer():ChatPrint("Your inventory is full!")
+			else
+				net.Start("Purchase")
+					net.WriteString(GAMEMODE.ArmourItem[i].Name)
+				net.SendToServer()
+				curCoins = curCoins - GAMEMODE.ArmourItem[i].Cost
+				surface.PlaySound("buttons/button9.wav")
+			end
 		end
+	
+		local shopTempUpgLabel = vgui.Create("DLabel", shopPanel)
+		shopTempUpgLabel:SetText("Temporary Upgrades")
+		shopTempUpgLabel:SetFont("F4_Shop_font")
+		shopTempUpgLabel:SizeToContents()
+		shopTempUpgLabel:SetPos(75, 350)
 		
-		local shopArmourLabel = vgui.Create("DLabel", shopPanel)
-		shopArmourLabel:SetText("Armour/Materials")
-		shopArmourLabel:SetFont("F4_Shop_font")
-		shopArmourLabel:SizeToContents()
-		shopArmourLabel:SetPos(65, 125)
+		local tempUpgScroll = vgui.Create("DScrollPanel", shopPanel)
+		tempUpgScroll:SetPos(50, 450)
+		tempUpgScroll:SetSize(275, 150)
 		
-		local armourScroll = vgui.Create("DScrollPanel", shopPanel)
-		armourScroll:SetPos(50, 175)
-		armourScroll:SetSize(275, 150)
+		local tempUpgLayout = vgui.Create("DIconLayout", tempUpgScroll)
+		tempUpgLayout:Dock(FILL)
+		tempUpgLayout:SetSpaceX(5)
+		tempUpgLayout:SetSpaceY(5)
 		
-		local armourLayout = vgui.Create("DIconLayout", armourScroll)
-		armourLayout:Dock(FILL)
-		armourLayout:SetSpaceX(5)
-		armourLayout:SetSpaceY(5)
-		
-		for i, armour in pairs(GAMEMODE.ArmourItem) do
-			local armourItem = armourLayout:Add("DPanel")
-			armourItem:SetSize(80, 80)
+		for i, tempUpg in pairs(GAMEMODE.TempUpgItem) do
+			if not string.find(curTempUpg, GAMEMODE.TempUpgItem[i].Name) then
+				local tempUpgItem = tempUpgLayout:Add("DPanel")
+				tempUpgItem:SetSize(80, 80)
 			
-			local armourIcon = armourItem:Add("DImage")
-			armourIcon:SetSize(80, 80)
-			armourIcon:SetImage(GAMEMODE.ArmourItem[i].Icon)
-						
-			local armourButton = armourItem:Add("DButton")
-			armourButton:SetSize(80, 80)
-			armourButton:SetToolTip(GAMEMODE.ArmourItem[i].Name)
-			armourButton:SetText("λ" .. GAMEMODE.ArmourItem[i].Cost)
-			armourButton:SetColor(Color(255, 225, 165))
-			armourButton:SetDrawBackground(false)
-			armourButton.DoClick = function()
-				if curCoins < GAMEMODE.ArmourItem[i].Cost then
-					surface.PlaySound("buttons/button10.wav")
-					LocalPlayer():ChatPrint("Insufficient Coins")
-				elseif LocalPlayer():GetNWInt("InvSpace") >= LocalPlayer():GetNWInt("MaxInvSpace") then
+				local tempUpgIcon = tempUpgItem:Add("DImage")
+				tempUpgIcon:SetSize(80, 80)
+				tempUpgIcon:SetImage(GAMEMODE.TempUpgItem[i].Icon)
+							
+				local tempUpgButton = tempUpgItem:Add("DButton")
+				tempUpgButton:SetSize(80, 80)
+				tempUpgButton:SetToolTip(GAMEMODE.TempUpgItem[i].Name .. "\n" .. GAMEMODE.TempUpgItem[i].Desc)
+				tempUpgButton:SetText("Essence: " .. GAMEMODE.TempUpgItem[i].EssenceCost)
+				tempUpgButton:SetColor(Color(255, 225, 165))
+				tempUpgButton:SetDrawBackground(false)
+				tempUpgButton.DoClick = function()
+					if curEssence < GAMEMODE.TempUpgItem[i].EssenceCost then
 						surface.PlaySound("buttons/button10.wav")
-						LocalPlayer():ChatPrint("Your inventory is full!")
-						surface.PlaySound("buttons/button10.wav")
-						LocalPlayer():ChatPrint("Your inventory is full!")
-				else
-					net.Start("Purchase")
-						net.WriteString(GAMEMODE.ArmourItem[i].Name)
-					net.SendToServer()
-					curCoins = curCoins - GAMEMODE.ArmourItem[i].Cost
-					surface.PlaySound("buttons/button9.wav")
+						LocalPlayer():ChatPrint("Insufficient Essence")
+					else
+						net.Start("Upgrade")
+							net.WriteString(GAMEMODE.TempUpgItem[i].Name)
+						net.SendToServer()
+						curEssence = curEssence - GAMEMODE.TempUpgItem[i].EssenceCost
+						surface.PlaySound("buttons/button9.wav")
+						tempUpgItem:Remove()
+					end
 				end
 			end
+		end
 		
-		local shopWeaponsLabel = vgui.Create("DLabel", shopPanel)
-		shopWeaponsLabel:SetText("Weapon Parts")
-		shopWeaponsLabel:SetFont("F4_Shop_font")
-		shopWeaponsLabel:SizeToContents()
-		shopWeaponsLabel:SetPos(625, 125)
+		local shopPetLabel = vgui.Create("DLabel", shopPanel)
+		if getLevel < 10 then
+			shopPetLabel:SetText("Locked until lvl 10")
+		else
+			shopPetLabel:SetText("Pet Items")
+		end
+		shopPetLabel:SetFont("F4_Shop_font")
+		shopPetLabel:SizeToContents()
+		shopPetLabel:SetPos(625, 125)
 		
-		local weaponScroll = vgui.Create("DScrollPanel", shopPanel)
-		weaponScroll:SetPos(580, 175)
-		weaponScroll:SetSize(275, 150)
+		local petScroll = vgui.Create("DScrollPanel", shopPanel)
+		petScroll:SetPos(580, 175)
+		petScroll:SetSize(275, 150)
 		
-		local weaponList = vgui.Create("DIconLayout", weaponScroll)
-		weaponList:Dock(FILL)
-		weaponList:SetSpaceX(5)
-		weaponList:SetSpaceY(5)
+		local petList = vgui.Create("DIconLayout", petScroll)
+		petList:Dock(FILL)
+		petList:SetSpaceX(5)
+		petList:SetSpaceY(5)
 		
-		for k, weapon in pairs(GAMEMODE.WeaponItem) do
-			local weaponItem = weaponList:Add("DPanel")
-			weaponItem:SetSize(80, 80)
+		--[[
+		for k, pet in pairs(GAMEMODE.PetItem) do
+			local petItem = petList:Add("DPanel")
+			petItem:SetSize(80, 80)
 			
-			local weaponIcon = weaponItem:Add("DImage")
+			local weaponIcon = petItem:Add("DImage")
 			weaponIcon:SetSize(80, 80)
-			weaponIcon:SetImage(GAMEMODE.WeaponItem[k].Icon)
+			weaponIcon:SetImage(GAMEMODE.PetItem[k].Icon)
 			
-			local weaponButton = weaponItem:Add("DButton")
+			local weaponButton = petItem:Add("DButton")
 			weaponButton:SetSize(80, 80)
-			weaponButton:SetToolTip(GAMEMODE.WeaponItem[k].Name)
-			weaponButton:SetText("λ" .. GAMEMODE.WeaponItem[k].Cost)
+			weaponButton:SetToolTip(GAMEMODE.PetItem[k].Name)
+			weaponButton:SetText("λ" .. GAMEMODE.PetItem[k].Cost)
 			weaponButton:SetColor(Color(255, 225, 165))
 			weaponButton:SetDrawBackground(false)
 
 			weaponButton.DoClick = function()
-				if curCoins < GAMEMODE.WeaponItem[i].Cost then
+				if curCoins < GAMEMODE.PetItem[i].Cost then
 					surface.PlaySound("buttons/button10.wav")
 					LocalPlayer():ChatPrint("Insufficient Coins")
 				elseif LocalPlayer():GetNWInt("InvSpace") >= LocalPlayer():GetNWInt("MaxInvSpace") then
-						surface.PlaySound("buttons/button10.wav")
-						LocalPlayer():ChatPrint("Your inventory is full!")
-						surface.PlaySound("buttons/button10.wav")
-						LocalPlayer():ChatPrint("Your inventory is full!")
+					surface.PlaySound("buttons/button10.wav")
+					LocalPlayer():ChatPrint("Your inventory is full!")
 				else
 					net.Start("Purchase")
-						net.WriteString(GAMEMODE.WeaponItem[i].Name)
+						net.WriteString(GAMEMODE.PetItem[i].Name)
 					net.SendToServer()
-					curCoins = curCoins - GAMEMODE.WeaponItem[i].Cost
+					curCoins = curCoins - GAMEMODE.PetItem[i].Cost
 					surface.PlaySound("buttons/button9.wav")
 				end
 			end
-		end
+		end--]]
 	end
 	
 	TabSheet:AddSheet("Shop", shopPanel, nil)
 	
-	end
 	local statsPanel = vgui.Create("DPanel", F4_Frame)
 	statsPanel.Paint = function( self, w, h ) 
 		draw.RoundedBox( 4, 0, 0, w, h, COLOUR_MODEL_PANEL ) 
@@ -586,11 +724,28 @@ function OpenMenu()
 		exchangerCoinLabel:SizeToContents()
 	end
 	
+	local exchangeButton = vgui.Create("DButton", traderPanel)
+	exchangeButton:SetPos(175, 275)
+	exchangeButton:SetSize(150, 50)
+	exchangeButton:SetText("Make Exchange")
+	exchangeButton:SetFont("F4_Trader_Exchange_font")
+	exchangeButton.DoClick = function()
+		if curCoins < exchangerEssence:GetValue() * 500 then
+			LocalPlayer():ChatPrint("You don't have enough coins")
+			surface.PlaySound("buttons/button10.wav")
+		else
+			net.Start("Exchange")
+				net.WriteInt(exchangerEssence:GetValue(), 32)
+			net.SendToServer()
+			surface.PlaySound("buttons/button9.wav")
+		end
+	end
 	
 	TabSheet:AddSheet("Trader", traderPanel, nil)
 
 end
-	
+
 net.Receive("Open_F4_Menu", function(len, ply)
-	OpenMenu()
+	local invItems = net.ReadTable()
+	OpenMenu(invItems)
 end)

@@ -223,11 +223,12 @@ function ENT:StartTouch(ent)
 	if ent and ent:IsValid() and ent:GetModel() == "models/props_c17/doll01.mdl" then
 		ent:Remove()
 		if game.GetMap() == "d1_trainstation_02" then
-			hook.Call("UpdateBaby")
+			UpdateBaby()
+			print("Babies?")
 		elseif game.GetMap() == "d1_trainstation_03" then
-			hook.Call("UpdateBaby")
+			UpdateBaby()
 		elseif game.GetMap() == "d1_trainstation_04" then
-			hook.Call("UpdateBaby")
+			UpdateBaby()
 		end
 	end
 	

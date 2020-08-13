@@ -21,18 +21,37 @@ end)
 
 
 hook.Add("PlayerSpawn", "Misc", function(ply)
+	local addHPUpg = 0
+	local levelHPBoost = ply.hl2cPersistent.Level - 1
+	local armourBoost = 0
+	local addStats = 0
+	
+	if string.find(ply.hl2cPersistent.TempUpg, "Health Boost") then
+		addHPUpg = 5
+	end
+	
 	ply.AllowSpawn = true
 	ply.hasSeat = false
+	
 	if not isAliveSurv then
 		ply:Kill()
 		ply:ChatPrint("Nice try, don't do that next time")
 		ply:Spectate(5)
 	end
-	if tonumber(ply:GetNWInt("Milestone")) > 5 then
-		local maxHP = 100 + ply:GetNWInt("Milestone")
-		ply:SetMaxHealth(maxHP)
-		ply:SetHealth(maxHP)
+	
+	if ply.hl2cPersistent.Arm == "hl2cr/armour_parts/health" then
+		addStats = 10
+	elseif ply.hl2cPersistent.Arm == "hl2cr/armour_parts/healthmk2" then
+		addStats = 15
+	elseif ply.hl2cPersistent.Arm == "hl2cr/armour_parts/battery" then
+		armourBoost = 5
 	end
+	
+	local maxHP = 100 + levelHPBoost + addHPUpg + addStats
+	local starterArmour = armourBoost
+	ply:SetMaxHealth(maxHP)
+	ply:SetHealth(maxHP)
+	ply:SetArmor(starterArmour)
 	
 	ply:SetTeam(TEAM_ALIVE)
 	ply:SetCustomCollisionCheck(true)
@@ -49,12 +68,13 @@ hook.Add("PlayerSpawn", "Misc", function(ply)
 			if hevFlash:IsValid() then
 				ply:AllowFlashlight(false)
 				RunConsoleCommand("gmod_suit", 0)
-				
 			elseif not hevFlash:IsValid() then 
-				ply:AllowFlashlight(true)
+				for k, v in pairs(player.GetAll()) do
+					v:AllowFlashlight(true)
+					v:SetRunSpeed( 240 )
+					v:SetWalkSpeed( 180 )
+				end
 				RunConsoleCommand("gmod_suit", 1)
-				ply:SetRunSpeed( 240 )
-				ply:SetWalkSpeed( 180 )
 			end
 		end
 	else
@@ -86,6 +106,22 @@ function GM:DoPlayerDeath(ply, attacker, dmgInfo)
 	ply:CreateRagdoll()
 	ply:SetTeam(TEAM_DEAD)
 end
+
+hook.Add("PlayerHurt", "PlayerRecover", function(vic, att, hp, dmg)
+	if string.find(vic.hl2cPersistent.TempUpg, "Self Healing") then
+		if not timer.Exists("HealingTimer") then
+			timer.Create("HealingTimer", 30, 0, function()
+				if vic:Health() <= vic:GetMaxHealth() then
+					vic:SetHealth(vic:Health() + 5)
+					if vic:Health() >= vic:GetMaxHealth() then
+						vic:SetHealth(vic:GetMaxHealth())
+						timer.Remove("HealingTimer")
+					end
+				end
+			end)
+		end
+	end
+end)
 
 hook.Add("CanPlayerSuicide", "DefaultSuicide", function(ply)
 
@@ -330,12 +366,19 @@ end)
 
 function giveVortex(map, ply)
 	if not string.find(table.ToString(ply.hl2cPersistent.Vortexes), map) then
-		ply:SetNWString("Vortex", table.concat(ply.hl2cPersistent.Vortexes, " "))
-		table.insert(ply.hl2cPersistent.Vortexes, map .. " ")
+	
+		table.insert(ply.hl2cPersistent.Vortexes, map)
 		ply:ChatPrint("You found the vortex in " .. map .. ", 500XP")
 		AddXP(ply, 500)
 		print(ply:Nick() .. " found vortex in " .. map)
+
+		timer.Simple(0.01, function()
+			local effectdata = EffectData()
+			effectdata:SetOrigin(ply:GetPos())
+			effectdata:SetScale(1.50)
+			effectdata:SetMagnitude(0.05)
+			util.Effect( "cball_explode", effectdata )
+			ply:EmitSound("ambient/energy/zap7.wav", 100, 100)
+		end)
 	end	
-	
-	
 end

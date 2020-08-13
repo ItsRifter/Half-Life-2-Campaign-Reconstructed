@@ -2,7 +2,7 @@ AddCSLuaFile() -- Add itself to files to be sent to the clients
 
 -- All of these included files call AddCSLuaFile on their own
 
-GM.Name = "Half-Life 2: Campaign - Revisited"
+GM.Name = "Half-Life 2 Campaign - Revisited"
 GM.Author = "SuperSponer"
 GM.Email = "d_thomas_smith30@hotmail.com"
 GM.Website = "N/A"
@@ -125,13 +125,19 @@ addAdminModels("models/humans/hev_mark2.mdl")
 
 Register = {}
 GM.ArmourItem = {}
-GM.WeaponItem = {}
-function Register.Armour(tableArmItem) 
-	GM.ArmourItem[tableArmItem.Name] = tableArmItem
+GM.PetItem = {}
+GM.TempUpgItem = {}
+
+function Register.Armour(armItem) 
+	GM.ArmourItem[armItem.Name] = armItem
 end	
 
-function Register.Weapon(tableWepItem) 
-	GM.WeaponItem[tableWepItem.Name] = tableWepItem
+function Register.Pet(petItem) 
+	GM.PetItem[petItem.Name] = petItem
+end	
+
+function Register.TempUpg(tempUpgItem) 
+	GM.TempUpgItem[tempUpgItem.Name] = tempUpgItem
 end	
 
 include("shared/sh_indicators.lua")

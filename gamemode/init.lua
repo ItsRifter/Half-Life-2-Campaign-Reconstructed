@@ -84,15 +84,15 @@ neededVotes = #player.GetAll()
 lobbyVotes = 0
 
 function GM:Initialize(ply)
-	if not file.Exists("hl2c_data/config.txt", "DATA") then
+	if not file.Exists("hl2cr_data/config.txt", "DATA") then
 		print("CONFIG MISSING, CREATING DEFAULT")
-		file.Write("hl2c_data/config.txt", "WARNING: Unless you know what you're doing, I suggest you leave this file\n")
-		file.Append("hl2c_data/config.txt", "Difficulty: \n")
-		file.Append("hl2c_data/config.txt", "1\n")
-		file.Append("hl2c_data/config.txt", "Survival Mode: \n")
-		file.Append("hl2c_data/config.txt", "0\n")
+		file.Write("hl2cr_data/config.txt", "WARNING: Unless you know what you're doing, I suggest you leave this file\n")
+		file.Append("hl2cr_data/config.txt", "Difficulty: \n")
+		file.Append("hl2cr_data/config.txt", "1\n")
+		file.Append("hl2cr_data/config.txt", "Survival Mode: \n")
+		file.Append("hl2cr_data/config.txt", "0")
 	end
-	local file = file.Open("hl2c_data/config.txt", "r", "DATA")
+	local file = file.Open("hl2cr_data/config.txt", "r", "DATA")
 	file:ReadLine()
 	file:ReadLine()
 	local difficulty = file:ReadLine()
@@ -106,10 +106,6 @@ function GM:Initialize(ply)
 	startingWeapons = {}
 	airboatSpawnable = false
 	airboatGunSpawnable = false
-	if game.GetMap() == "hl2c_lobby_remake" then
-		playingHL2 = false
-	end
-	
 end
 
 function GM:ShowHelp(ply)
@@ -248,5 +244,6 @@ function GM:CanPlayerEnterVehicle(ply)
 end
 function GM:ShowSpare2(ply)
 	net.Start("Open_F4_Menu")
+		net.WriteTable(ply.hl2cPersistent.Inventory)
 	net.Send(ply)
 end

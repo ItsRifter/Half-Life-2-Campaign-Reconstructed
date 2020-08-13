@@ -1,10 +1,5 @@
 local hasUserVoted = false
 
-local difficulty = 1
-local survivalMode = false
-
-local startSurvival = false
-
 local easyVotes = 0
 local mediumVotes = 0
 local hardVotes = 0
@@ -27,7 +22,7 @@ surface.CreateFont("Diff_Warning_Font", {
 
 })
 
-function OpenDiffMenu(ply, diff, surv)
+function OpenDiffMenu(diff, surv)
 
 	local diffFrame = vgui.Create("DFrame")
 	diffFrame:SetSize(450, 750)
@@ -178,23 +173,20 @@ function OpenDiffMenu(ply, diff, surv)
 		if not LocalPlayer().hasUserVoted then
 			LocalPlayer().hasUserVoted = true
 			survVotes = survVotes + 1
-			if survivalMode then
-				net.Start("Diff_Vote")
-					net.WriteInt(easyVotes, 8)
-					net.WriteInt(easyRequired, 8)
-					net.WriteInt(4, 8)
-					net.WriteString(LocalPlayer():Nick())
+			net.Start("Diff_Vote")
+				net.WriteInt(survVotes, 8)
+				net.WriteInt(survRequired, 8)
+				net.WriteInt(4, 8)
+				net.WriteString(LocalPlayer():Nick())
+			net.SendToServer()
+			if survVotes >= math.Round(survRequired) and not surv then
+				net.Start("Survival")
+					net.WriteInt(1, 8)
 				net.SendToServer()
-				if survVotes >= math.Round(survRequired) then
-					net.Start("Diff_Change")
-						net.WriteInt(4, 8)
-					net.SendToServer()
-				end
-				if survVotes >= math.Round(survRequired) then
-					net.Start("Diff_Change")
-						net.WriteInt(4, 8)
-					net.SendToServer()
-				end
+			elseif survVotes >= math.Round(survRequired) and surv then
+				net.Start("Survival")
+					net.WriteInt(0, 8)
+				net.SendToServer()
 			end
 			if not timer.Exists("VoteTimer") then
 			timer.Create("VoteTimer", 300, 1, function()
@@ -213,5 +205,5 @@ end
 net.Receive("Open_Diff_Menu", function()
 	local diff = net.ReadInt(8)
 	local surv = net.ReadInt(8)
-	OpenDiffMenu(ply, diff, surv)
+	OpenDiffMenu(diff, surv)
 end)

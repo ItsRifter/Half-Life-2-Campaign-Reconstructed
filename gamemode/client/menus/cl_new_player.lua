@@ -284,6 +284,7 @@ function LobbyMenu()
 		net.Start("Achievement")
 			net.WriteString("First_Time")
 			net.WriteString("Lobby_Ach_List")
+			net.WriteInt(500, 32)
 		net.SendToServer()
 		frame:Close()
 	end

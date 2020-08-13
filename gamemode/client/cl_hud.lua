@@ -334,4 +334,3 @@ hook.Add("HUDPaint", "HUDPaint_DrawPetName", function()
 		end
 	end
 end)
-

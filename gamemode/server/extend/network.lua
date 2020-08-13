@@ -1,11 +1,14 @@
+--New player
 util.AddNetworkString("Greetings_new_player")
+--Open menus and commands
 util.AddNetworkString("Open_Ach_Menu")
-util.AddNetworkString("Create_Data")
 util.AddNetworkString("Open_F4_Menu")
-
+--Data management
+util.AddNetworkString("Create_Data")
 util.AddNetworkString("Achievement_Earned")
 util.AddNetworkString("Achievement")
 util.AddNetworkString("Update_Model")
+
 util.AddNetworkString("SetSuicide")
 util.AddNetworkString("Open_Diff_Menu")
 util.AddNetworkString("Diff_Vote")
@@ -44,5 +47,15 @@ util.AddNetworkString("PetKilled")
 util.AddNetworkString("WarningPetKill")
 util.AddNetworkString("KickUser")
 util.AddNetworkString("PetPanic")
+--Shops
 util.AddNetworkString("Purchase")
+util.AddNetworkString("Exchange")
+util.AddNetworkString("Upgrade")
+util.AddNetworkString("SellItem")
+util.AddNetworkString("SellItemSlot")
+
+--Inventory
+util.AddNetworkString("AddArmour")
+
+--End map
 util.AddNetworkString("ShowEndStats")

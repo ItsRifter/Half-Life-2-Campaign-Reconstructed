@@ -1,39 +1,46 @@
 AddCSLuaFile() -- Add itself to files to be sent to the clients, as this file is shared
 
--- Armour items
-local ArmourItem = createItemBase(BaseSuitArmour, "Health Module MK1", "Improves your life expectancy", "hl2cr/armour_parts/health")
-ArmourItem.Cost = 1000
-Register.Armour(ArmourItem)
+-- Armour items - Shop
+local armourItem = createItemBase(BaseSuitArmour, "Health_Module_MK1", "Improves your life expectancy\n+10HP", "hl2cr/armour_parts/health")
+armourItem.Cost = 1000
+Register.Armour(armourItem)
 
-local ArmourItem = createItemBase(BaseSuitArmour, "Health Module MK2", "Improves your life expectancy", "hl2cr/armour_parts/healthmk2")
-ArmourItem.Cost = 1500
-Register.Armour(ArmourItem)
+local armourItem = createItemBase(BaseSuitArmour, "Health_Module_MK2", "Improves your life expectancy\n+15HP", "hl2cr/armour_parts/healthmk2")
+armourItem.Cost = 1500
+Register.Armour(armourItem)
 
-local ArmourItem = createItemBase(BaseSuitArmour, "Suit Battery Pack", "Better armour capacity", "hl2cr/armour_parts/battery")
-ArmourItem.Cost = 1500
-Register.Armour(ArmourItem)
+local armourItem = createItemBase(BaseSuitArmour, "Suit_Battery_Pack", "Start with more suit power\n+5 Power", "hl2cr/armour_parts/battery")
+armourItem.Cost = 1500
+Register.Armour(armourItem)
 
-local ArmourItem = createItemBase(BaseSuitArmour, "Mark VII Suit", "Better than the last version they had", "hl2cr/armour_parts/suit")
-ArmourItem.Cost = 25000
-Register.Armour(ArmourItem)
+local armourItem = createItemBase(BaseSuitArmour, "Mark_VII_Suit", "Better than the last version they had\n20 Armour", "hl2cr/armour_parts/suit")
+armourItem.Cost = 25000
+Register.Armour(armourItem)
 
-local ArmourItem = createItemBase(BaseSuitArmour, "Mark VII Helmet", "Mind your head", "hl2cr/armour_parts/helmet")
-ArmourItem.Cost = 17500
-Register.Armour(ArmourItem)
+local armourItem = createItemBase(BaseSuitArmour, "Mark_VII_Helmet", "Protects your head from bumps\n10 Armour", "hl2cr/armour_parts/helmet")
+armourItem.Cost = 17500
+Register.Armour(armourItem)
 
--- Weapon items
-local WeaponItem = createItemBase(BaseSuitWeapon, "Shotgun Barrel", "A shotgun barrel", "hl2cr/weapon_parts/barrel")
-WeaponItem.Cost = 2500
-Register.Weapon(WeaponItem)
+--[[ REMAKE INTO PET ITEMS
+-- Pet items - Shop
+local weaponItem = createItemBase(BaseWeapon, "Shotgun_Barrel", "A shotgun barrel", "hl2cr/weapon_parts/barrel")
+weaponItem.Cost = 2500
+Register.Weapon(weaponItem)
 
-local WeaponItem = createItemBase(BaseSuitWeapon, "SMG Muzzle", "A Sub-Machine gun Muzzle", "hl2cr/weapon_parts/muzzle")
-WeaponItem.Cost = 1250
-Register.Weapon(WeaponItem)
+local weaponItem = createItemBase(BaseWeapon, "SMG_Muzzle", "A Sub-Machine gun Muzzle", "hl2cr/weapon_parts/muzzle")
+weaponItem.Cost = 1250
+Register.Weapon(weaponItem)
 
-local WeaponItem = createItemBase(BaseSuitWeapon, "Crossbow Scope", "A scope attachment", "hl2cr/weapon_parts/scope")
-WeaponItem.Cost = 1750
-Register.Weapon(WeaponItem)
+local weaponItem = createItemBase(BaseWeapon, "Crossbow_Scope", "A scope attachment", "hl2cr/weapon_parts/scope")
+weaponItem.Cost = 1750
+Register.Weapon(weaponItem)
+-]]
 
-local WeaponItem = createItemBase(BaseSuitWeapon, "High Explosive Rocket", "A high impact explosive rocket", "hl2cr/weapon_parts/rocket")
-WeaponItem.Cost = 10000
-Register.Weapon(WeaponItem)
+--Temporary Upgrades (only lasts until player leaves)
+local tempUpgItem = createItemBase(BaseTempUpg, "Health Boost", "Bullets mean nothing to you\n+5HP", "hl2cr/armour_parts/health")
+tempUpgItem.EssenceCost = 5
+Register.TempUpg(tempUpgItem)
+
+local tempUpgItem = createItemBase(BaseTempUpg, "Self Healing", "Your body manages to self-heal any damage\nafter a certain time", "hl2cr/armour_parts/health")
+tempUpgItem.EssenceCost = 10
+Register.TempUpg(tempUpgItem)

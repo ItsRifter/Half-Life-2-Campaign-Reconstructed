@@ -13,10 +13,6 @@ function AddXP(ply, amt)
 		net.Start("PlaySoundLevelUp")
 			net.WriteInt(ply.hl2cPersistent.Level, 32)
 		net.Send(ply)
-
-		if tonumber(ply.hl2cPersistent.Level) >= tonumber(ply.hl2cPersistent.Milestone) then
-			ply.hl2cPersistent.Milestone = ply.hl2cPersistent.Milestone + 5
-		end
 		
 		if ply.hl2cPersistent.Level == 5 then
 			net.Start("NewSuit")

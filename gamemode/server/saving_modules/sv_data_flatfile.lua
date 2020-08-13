@@ -7,19 +7,28 @@ local function InitData(ply)
 	ply.hl2cPersistent.Level = ply.hl2cPersistent.Level or 1
 	ply.hl2cPersistent.DeathCount = ply.hl2cPersistent.DeathCount or 0
 	ply.hl2cPersistent.KillCount = ply.hl2cPersistent.KillCount or 0
+	
 	ply.hl2cPersistent.XP = ply.hl2cPersistent.XP or 0
 	ply.hl2cPersistent.MaxXP = ply.hl2cPersistent.MaxXP or 500
+	
 	ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins or 0
 	ply.hl2cPersistent.Essence = ply.hl2cPersistent.Essence or 0
 	ply.hl2cPersistent.Cryst = ply.hl2cPersistent.Cryst or 0
+	ply.hl2cPersistent.TempUpg = ply.hl2cPersistent.TempUpg or ""
 	
 	ply.hl2cPersistent.Model = ply.hl2cPersistent.Model or ply:GetModel()
-	ply.hl2cPersistent.Milestone = ply.hl2cPersistent.Milestone or 5
+	
+	-- Default Achievement and vortex settings
 	ply.hl2cPersistent.Achievements = ply.hl2cPersistent.Achievements or {}
 	ply.hl2cPersistent.Vortexes = ply.hl2cPersistent.Vortexes or {}
-	ply.hl2cPersistent.Inventory = ply.hl2cPersistent.Inventory or ""
+	
+	-- Default Inventory settings
+	ply.hl2cPersistent.Inventory = ply.hl2cPersistent.Inventory or {}
 	ply.hl2cPersistent.InvSpace = ply.hl2cPersistent.InvSpace or 0
 	ply.hl2cPersistent.MaxInvSpace = ply.hl2cPersistent.MaxInvSpace or 16
+	ply.hl2cPersistent.Suit = ply.hl2cPersistent.Suit or ""
+	ply.hl2cPersistent.Helmet = ply.hl2cPersistent.Helmet or ""
+	ply.hl2cPersistent.Arm = ply.hl2cPersistent.Arm or ""
 	
 	-- Default pet settings
 	ply.hl2cPersistent.PetName = ply.hl2cPersistent.PetName or ""
@@ -46,16 +55,20 @@ local function InitData(ply)
 	ply:SetNWInt("XP", math.Round(ply.hl2cPersistent.XP))
 	ply:SetNWInt("MaxXP", ply.hl2cPersistent.MaxXP)
 	
-	ply:SetNWInt("Milestone", ply.hl2cPersistent.Milestone)
 	ply:SetNWString("Ach", table.concat(ply.hl2cPersistent.Achievements, " "))
 	ply:SetNWString("Vortex", table.concat(ply.hl2cPersistent.Vortexes, " "))
+	ply:SetNWString("TempUpg", ply.hl2cPersistent.TempUpg)
 	
-	ply:SetNWString("Inventory", ply.hl2cPersistent.Inventory)
+	ply:SetNWString("Inventory", table.concat(ply.hl2cPersistent.Inventory, " "))
 	ply:SetNWInt("InvSpace", ply.hl2cPersistent.InvSpace)
 	ply:SetNWInt("MaxInvSpace", ply.hl2cPersistent.MaxInvSpace)
 	ply:SetNWString("Model", ply.hl2cPersistent.Model)
 	ply:SetNWInt("Kills", ply.hl2cPersistent.KillCount)
 	ply:SetNWInt("Deaths", ply.hl2cPersistent.DeathCount)
+	
+	ply:SetNWString("SuitSlot", ply.hl2cPersistent.Suit)
+	ply:SetNWString("HelmetSlot", ply.hl2cPersistent.Helmet)
+	ply:SetNWString("ArmSlot", ply.hl2cPersistent.Arm)
 	
 	ply:SetNWInt("PetLevel", ply.hl2cPersistent.PetLevel)
 	ply:SetNWString("PetName", ply.hl2cPersistent.PetName)
@@ -81,12 +94,12 @@ local function CreateData(ply)
 	InitData(ply)
 	
 	-- Store all persistent data as JSON
-	file.Write("hl2c_data/" .. PlayerID .. ".txt", util.TableToJSON(ply.hl2cPersistent, true))
+	file.Write("hl2cr_data/" .. PlayerID .. ".txt", util.TableToJSON(ply.hl2cPersistent, true))
 end
 
 local function LoadData(ply)
 	local PlayerID = string.Replace(ply:SteamID(), ":", "!")
-	local jsonContent = file.Read("hl2c_data/" .. PlayerID .. ".txt", "DATA")
+	local jsonContent = file.Read("hl2cr_data/" .. PlayerID .. ".txt", "DATA")
 	if not jsonContent then return false end
 
 	-- Read persistent data from JSON
@@ -109,21 +122,23 @@ local function SaveData(ply)
 	ply.hl2cPersistent.Model = ply:GetModel()
 
 	-- Store all persistent data as JSON
-	file.Write("hl2c_data/" .. PlayerID .. ".txt", util.TableToJSON(ply.hl2cPersistent, true))
+	file.Write("hl2cr_data/" .. PlayerID .. ".txt", util.TableToJSON(ply.hl2cPersistent, true))
 	
-	print("Save committed")
 end
 
 --If there isn't a HL2CR data folder, create one
 hook.Add("Initialize", "CreateDataFolder", function()
-	if not file.IsDir( "hl2c_data", "DATA") then
-		print("MISSING FOLDER: Making new one")
-		file.CreateDir("hl2c_data", "DATA")
+	if not file.IsDir( "hl2cr_data", "DATA") then
+		print("MISSING HL2CR FOLDER: Making new one")
+		file.CreateDir("hl2cr_data", "DATA")
 	end
 end)
 
+--When the player disconnects, add kills and remove temporary upgrades (THIS SHOULDN'T HAPPEN ON SERVER CRASH)
 hook.Add("PlayerDisconnected", "SavePlayerDataDisconnect", function(ply) 
 	ply.hl2cPersistent.KillCount = ply.hl2cPersistent.KillCount + ply:Frags()
+	ply.hl2cPersistent.TempUpg = ""
+	ply:SetNWString("TempUpg", "")
 	SaveData(ply)
 end)
 
