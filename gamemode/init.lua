@@ -28,10 +28,10 @@ include("server/config/maps/sv_coop_init_maps.lua")
 include("server/config/maps/sv_vortex.lua")
 
 --HL2C Convars
-CreateConVar("hl2c_allowsuicide", 1, FCVAR_NOTIFY, "Disable kill command", 0, 1) 
-CreateConVar("hl2c_respawntime", 5, FCVAR_NOTIFY)
-CreateConVar("hl2c_difficulty", 1, FCVAR_NOTIFY, "Change Difficulty", 1, 3)
-CreateConVar("hl2c_survivalmode", 0, FCVAR_NOTIFY, "Change Difficulty", 0, 1)
+CreateConVar("hl2c_allowsuicide", 1, {FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_ARCHIVE}, "Disable kill command", 0, 1) 
+CreateConVar("hl2c_respawntime", 5, {FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_ARCHIVE})
+CreateConVar("hl2c_difficulty", 1, {FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_ARCHIVE}, "Change Difficulty", 1, 3)
+CreateConVar("hl2c_survivalmode", 0, {FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_ARCHIVE}, "Change Difficulty", 0, 1)
 
 --Pet Convars
 CreateConVar("hl2c_petrecovertime", 15, FCVAR_NOTIFY, "Change Pets recovering time", 1, 999)
