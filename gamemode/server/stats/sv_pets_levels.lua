@@ -57,7 +57,6 @@ function spawnPet(ply, pos)
 		ply.pet:SetNWEntity("PetEntity", ply.pet)
 		timer.Simple(1, function()
 			net.Start("OpenPetStats")
-				net.WriteEntity(ply.pet)
 			net.Send(ply)
 		end)
 		
@@ -188,17 +187,23 @@ hook.Add("EntityTakeDamage", "PetHurtAndDamage", function(pet, dmgInfo)
 	local attacker = dmgInfo:GetAttacker()
 	local inflictor = dmgInfo:GetInflictor()
 	local dmg = dmgInfo:GetDamage()
+	
+	if pet:IsPlayer() or not pet:IsPet() then return end
+	local ply = pet.owner 
 		
-	if pet:IsPet() and not attacker:IsPlayer() then
+	local healthChange = ply.hl2cPersistent.PetHP
+	
+	if pet:IsPet() and not attacker:IsPlayer() then 
+		healthChange = healthChange - dmg 
+		ply:SetNWInt("PetHP", healthChange)
 		if not timer.Exists("PetRecoveryTimer") then
-			timer.Create("PetRecoveryTimer", GetConVar("hl2c_petrecovertime"):GetInt(), 0, function()
-				if pet:Health() <= pet:GetMaxHealth() and pet:IsValid() then
-					pet:SetHealth(pet:Health() + GetConVar("hl2c_petrecovery"):GetInt() + pet:GetNWInt("PetRegen"))
+			timer.Create("PetRecoveryTimer", GetConVar("hl2cr_petrecovertime"):GetInt(), 0, function()
+				if pet:IsValid() and pet:Health() <= pet:GetMaxHealth() then
+					pet:SetHealth(pet:Health() + GetConVar("hl2cr_petrecovertime"):GetInt() + pet:GetNWInt("PetRegen"))
 					
 					local regen = tonumber(pet:GetNWInt("PetRegen"))
-					net.Start("UpdatePetsHealthDMG")
-					net.WriteInt(regen, 32)
-					net.Send(pet.owner)
+					healthChange = healthChange + regen 
+						ply:SetNWInt("PetHP", healthChange)
 					if pet:Health() >= pet:GetMaxHealth() then
 						pet:SetHealth(pet:GetMaxHealth())
 						timer.Remove("PetRecoveryTimer")
@@ -206,7 +211,7 @@ hook.Add("EntityTakeDamage", "PetHurtAndDamage", function(pet, dmgInfo)
 				end
 			end)
 		end
-	elseif pet:IsPet() and attacker:IsPlayer() then
+	elseif attacker:IsPlayer() and pet:IsPet() then
 		dmgInfo:SetDamage(0)
 	end
 	
@@ -379,20 +384,17 @@ end)
 function addPetXP(ply, amt)
 	
 	ply.hl2cPersistent.PetXP = ply.hl2cPersistent.PetXP + amt
-	ply:SetNWInt("PetXP", math.Round(ply.hl2cPersistent.PetXP))
+	ply:SetNWInt("PetXP", ply.hl2cPersistent.PetXP)
 	ply.hl2cPersistent.PetPoints = ply:GetNWInt("PetSkillPoints")
 	
-	net.Start("UpdatePetsXP")
-		net.WriteInt(ply.hl2cPersistent.PetXP, 32)
-	net.Send(ply)
-	if tonumber(ply.hl2cPersistent.PetLevel) >= tonumber(ply.hl2cPersistent.PetMaxLvl) then
+	
+	if ply.hl2cPersistent.PetLevel >= ply.hl2cPersistent.PetMaxLvl then
 		ply.hl2cPersistent.PetXP = 0
 		ply:SetNWInt("PetXP", math.Round(ply.hl2cPersistent.PetXP))
 		ply:ChatPrint("Your pet will not earn anymore XP at this stage, try evolving it")
 	end
-	ply.hl2cPersistent.PetLevel = ply:GetNWInt("PetLevel")
-	ply.hl2cPersistent.PetPoints =  ply:GetNWInt("PetSkillPoints")
-	if tonumber(ply.hl2cPersistent.PetXP) >= tonumber(ply.hl2cPersistent.PetMaxXP) then
+
+	if ply.hl2cPersistent.PetXP >= ply.hl2cPersistent.PetMaxXP then
 		ply.hl2cPersistent.PetXP = 0
 		ply.hl2cPersistent.PetMaxXP = ply.hl2cPersistent.PetMaxXP + 50
 		ply.hl2cPersistent.PetLevel = ply.hl2cPersistent.PetLevel + 1

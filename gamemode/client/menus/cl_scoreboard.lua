@@ -30,6 +30,11 @@ surface.CreateFont("Scoreboard_Stats_XP_font", {
 	size = 26,
 })
 
+if game.GetMap() != "hl2c_lobby_remake" then
+	timer.Create("LobbyReturnAutoClient", 3600, 0, function()
+	RunConsoleCommand("changelevel", "hl2c_lobby_remake")
+	end)
+end
 
 
 function ToggleBoard(toggle)
@@ -153,7 +158,9 @@ function ToggleBoard(toggle)
 			playerPingPanel:SetSize(Board:GetWide() + 50, Board:GetTall() * .05)
 			playerPingPanel.Paint = function(self, w, h)
 				if IsValid(v) then
-					if v:Ping() < 100 then
+					if v:IsBot() then
+						draw.SimpleText("BOT", "Scoreboard_Stats_font", 750, h / 2, Color(255, 255, 0, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)	
+					elseif v:Ping() > 1 and v:Ping() < 100 then
 						draw.SimpleText(playerPing, "Scoreboard_Stats_font", 750, h / 2, Color(40, 255, 25, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 					elseif v:Ping() > 100 and v:Ping() < 200 then
 						draw.SimpleText(playerPing, "Scoreboard_Stats_font", 750, h / 2, Color(255, 255, 0, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
@@ -179,21 +186,38 @@ function ToggleBoard(toggle)
 			yPos = yPos + playerStatusPanel:GetTall() * 1.2
 
 			local playerXPLabel = vgui.Create("DLabel", Board)
-				playerXPLabel:SetText("XP: " .. playerXP .. " / " .. playerMaxXP)
-				playerXPLabel:SetSize(185, 25)
-				if IsValid(v) then
-					if ScrW() == 3840 and ScrH() == 2160 then
-						playerXPLabel:SetPos(Board:GetWide() / 2 - 100, Board:GetTall() / 2 + 490)
-						playerXPLabel:SetFont("Scoreboard_Stats_4K_XP_font")
-					else
-						playerXPLabel:SetPos(Board:GetWide() / 2 - 100, Board:GetTall() / 4 + 390)
-						playerXPLabel:SetFont("Scoreboard_Stats_XP_font")
-					end
-					playerXPLabel:SizeToContents()
+			playerXPLabel:SetText("XP: " .. playerXP .. " / " .. playerMaxXP)
+			playerXPLabel:SetSize(185, 25)
+			if IsValid(v) then
+				if ScrW() == 3840 and ScrH() == 2160 then
+					playerXPLabel:SetPos(Board:GetWide() / 2 - 100, Board:GetTall() / 2 + 490)
+					playerXPLabel:SetFont("Scoreboard_Stats_4K_XP_font")
+				else
+					playerXPLabel:SetPos(Board:GetWide() / 2 - 100, Board:GetTall() / 4 + 390)
+					playerXPLabel:SetFont("Scoreboard_Stats_XP_font")
 				end
+				playerXPLabel:SizeToContents()
 			end
+		end
 		
+		local boardTimer
 		
+		if game.GetMap() != "hl2c_lobby_remake" then
+			boardTimer = math.Round(timer.TimeLeft("LobbyReturnAutoClient"), 0)
+		elseif game.GetMap() == "hl2c_lobby_remake" then
+			boardTimer = "INF"
+		end
+		
+		local timeLeftLabel = vgui.Create("DLabel", Board)
+		timeLeftLabel:SetText("Time left: " .. boardTimer)
+		if ScrW() == 3840 and ScrH() == 2160 then
+			timeLeftLabel:SetPos(Board:GetWide() / 2 - 100, Board:GetTall() / 2 + 430)
+			timeLeftLabel:SetFont("Scoreboard_Stats_4K_XP_font")
+		else
+			timeLeftLabel:SetPos(Board:GetWide() / 2 - 100, Board:GetTall() / 4 + 330)
+			timeLeftLabel:SetFont("Scoreboard_Stats_XP_font")
+		end
+		timeLeftLabel:SizeToContents()
 	else
 		Board:SetVisible(false)
 	end

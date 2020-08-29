@@ -22,7 +22,7 @@ end
 function ENT:StartTouch(ent)	
 	if ent and ent:IsValid() and ent:GetModel() == "models/props_c17/doll01.mdl" and game.GetMap() == "d1_trainstation_05" then
 		ent:Remove()
-		file.Delete("hl2c_data/babydoll3.txt")
+		file.Delete("hl2cr_data/babydoll3.txt")
 		for k, v in pairs(player.GetAll()) do
 			Achievement(v, "A_Red_Letter_Baby", "HL2_Ach_List", 1000)	
 		end
@@ -54,11 +54,11 @@ function ENT:StartTouch(ent)
 		end
 		
 		--Achievement if the sand hasn't been touched and point1 hasn't been triggered
-		if game.GetMap() == "d2_coast_11" and not point1 then
+		if game.GetMap() == "d2_coast_11" then
 			for k, sand in pairs(ents.FindByClass("env_player_surface_trigger")) do
-				sandAchEarnable = true
 				sand:Fire("AddOutput", "OnSurfaceChangedToTarget triggerhook:RunPassedCode:hook.Run( 'FailSand' ):0:-1" )
 			end
+			sandAchEarnable = true
 		end
 		
 		--If point1 triggered and sand achievement is achievable
@@ -78,31 +78,44 @@ function ENT:StartTouch(ent)
 				p.isAliveSurv = true
 				deaths = deaths - deaths
 			end
+			
 			for l, spawn in pairs(ents.FindByClass("info_player_start")) do
-				if p and IsValid(p) and p != ent and p:Team() == TEAM_ALIVE then
+				if p and IsValid(p) and p:Team() == TEAM_ALIVE then
 					if (game.GetMap() != "d1_trainstation_01" or game.GetMap() != "d1_trainstation_02" or game.GetMap() != "d1_trainstation_03" or 
 					game.GetMap() != "d1_trainstation_04" or game.GetMap() != "d1_trainstation_05") then 
 						p.CPTP = true
 						ent.CPTP = false
 					end
+
 					if p:GetVehicle() and p:GetVehicle():IsValid() then
 						p:ExitVehicle()
 					end
+					
 					if forceTP then
 						if point1 then
-							p:SetPos(point1)
+							if p != ent then
+								p:SetPos(point1)
+							end
 							spawn:SetPos(point1)
 						elseif point2 then
-							p:SetPos(point2)
+							if p != ent then
+								p:SetPos(point2)
+							end
 							spawn:SetPos(point2)
 						elseif point3 then
-							p:SetPos(point3)
+							if p != ent then
+								p:SetPos(point3)
+							end
 							spawn:SetPos(point3)
 						elseif point4 then
-							p:SetPos(point4)
+							if p != ent then
+								p:SetPos(point4)
+							end
 							spawn:SetPos(point4)
 						elseif point5 then
-							p:SetPos(point5)
+							if p != ent then
+								p:SetPos(point5)
+							end
 							spawn:SetPos(point5)
 						end
 						p:SetAngles(ang)	
@@ -133,6 +146,19 @@ function ENT:StartTouch(ent)
 		elseif point5 then
 			lambdaModel5:Remove()
 		end
+		
+		if game.GetMap() == "d3_citadel_04" and (point1 or point2) then
+			local train = ents.FindByName("citadel_train_lift01_1")
+			
+			for k, resetSpawn in pairs(ents.FindByClass("info_player_start")) do
+				resetSpawn:SetParent(train[1])
+			end
+		else
+			for k, resetSpawn in pairs(ents.FindByClass("info_player_start")) do
+				resetSpawn:SetParent(nil)
+			end
+		end
+		
 		self:EmitSound("hl1/ambience/port_suckin1.wav", 100, 100)
 		self:Remove()
 	end

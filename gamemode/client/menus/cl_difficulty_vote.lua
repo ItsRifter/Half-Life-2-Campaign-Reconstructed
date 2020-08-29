@@ -13,13 +13,16 @@ local survRequired = #player.GetAll()
 surface.CreateFont("Diff_Font", {
 	font = "Arial",
 	size = 22,
+})
 
+surface.CreateFont("Diff_Warning_Title_Font", {
+	font = "Arial",
+	size = 32,
 })
 
 surface.CreateFont("Diff_Warning_Font", {
 	font = "Arial",
-	size = 28,
-
+	size = 30,
 })
 
 function OpenDiffMenu(diff, surv)
@@ -156,19 +159,20 @@ function OpenDiffMenu(diff, surv)
 	
 	local warningLabel = vgui.Create("DLabel", diffFrame)
 	warningLabel:SetText("WARNING:")
-	warningLabel:SetFont("Diff_Warning_Font")
+	warningLabel:SetFont("Diff_Warning_Title_Font")
 	warningLabel:SizeToContents()
 	warningLabel:SetPos(165, 415)
 	
 	local warningMessage = vgui.Create("DLabel", diffFrame)
-	warningMessage:SetText("Enabling this difficulty means if you die\nyou are out until next checkpoint\n\nIf everyone dies, the map restarts")
+	warningMessage:SetFont("Diff_Warning_Font")
+	warningMessage:SetText("Enabling this difficulty means\nif you die\nyou are out until next checkpoint\n\nIf everyone dies, the map restarts")
 	warningMessage:SizeToContents()
-	warningMessage:SetPos(145, 450)
+	warningMessage:SetPos(35, 450)
 	
 	local survivalButton = vgui.Create("DButton", diffFrame)
 	survivalButton:SetText("Survival")
 	survivalButton:SetSize(125, 50)
-	survivalButton:SetPos(165, 525)
+	survivalButton:SetPos(165, 625)
 	survivalButton.DoClick = function()
 		if not LocalPlayer().hasUserVoted then
 			LocalPlayer().hasUserVoted = true

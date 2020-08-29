@@ -1,5 +1,3 @@
-HasVortex = false
-
 function placeVortex()
 
 	if game.GetMap() == "d1_trainstation_05" then
@@ -10,6 +8,8 @@ function placeVortex()
 		VORTEX_POSITION = Vector(882, -1523, -143)
 	elseif game.GetMap() == "d1_canals_02" then
 		VORTEX_POSITION = Vector(124, 1744, -575)
+	elseif game.GetMap() == "d1_canals_05" then
+		VORTEX_POSITION = Vector(-29, -1280, -111)
 	elseif game.GetMap() == "d1_eli_01" then
 		VORTEX_POSITION = Vector(380, 2067, -2476)
 	elseif game.GetMap() == "d1_eli_02" then
@@ -28,13 +28,14 @@ function placeVortex()
 		VORTEX_POSITION = Vector(-12909, 656, 1784)
 	end
 	
-	Vortex = ents.Create("prop_dynamic")
-	Vortex:SetModel("models/effects/combineball.mdl")
-	Vortex:SetName("vortex")
-	
-	vortTrigger = ents.Create("trigger_vortex")
 	
 	if VORTEX_POSITION then
+		Vortex = ents.Create("prop_dynamic")
+		Vortex:SetModel("models/effects/combineball.mdl")
+		Vortex:SetName("vortex")
+	
+		vortTrigger = ents.Create("trigger_vortex")
+	
 		Vortex:SetPos(VORTEX_POSITION)
 		Vortex:Spawn()
 		vortTrigger:SetPos(Vortex:GetPos())

@@ -88,6 +88,7 @@ function OpenMenu(inventoryItems)
 	local curEssence = LocalPlayer():GetNWInt("Essence")
 	local curCryst = LocalPlayer():GetNWInt("Cryst")
 	local curTempUpg = LocalPlayer():GetNWString("TempUpg")
+	local curArmour = LocalPlayer():GetNWInt("Armour")
 	
 	local invItems = LocalPlayer():GetNWString("Inventory")
 	
@@ -125,7 +126,6 @@ function OpenMenu(inventoryItems)
 	local selectPMScrollPanel = vgui.Create("DHorizontalScroller", pmPanel)
 	selectPMScrollPanel:SetSize(275, 65)
 	selectPMScrollPanel:SetPos(525, 475)
-	selectPMScrollPanel:SetOverlap(-4)
 
 	local selectPMLabel = vgui.Create("DLabel", pmPanel)
 	selectPMLabel:SetText("Select Model")
@@ -133,12 +133,12 @@ function OpenMenu(inventoryItems)
 	selectPMLabel:SetPos(565, 450)
 	selectPMLabel:SizeToContents()
 
-	local selectModelLayout = vgui.Create("DIconLayout", selectPMPanel)
+	local selectModelLayout = vgui.Create("DIconLayout", selectPMScrollPanel)
 	selectModelLayout:Dock(FILL)
 	selectModelLayout:SetSpaceX(5)
 	selectModelLayout:SetSpaceY(5)
 	selectModelLayout:SetSize(80, 60)
-		
+	
 	for k, citizen in pairs(GAMEMODE.citizens) do
 		local citizenModel = selectModelLayout:Add("SpawnIcon")
 		citizenModel:SetModel(citizen[1])
@@ -367,6 +367,13 @@ function OpenMenu(inventoryItems)
 	--vgui/cursors/no
 	--vgui/hud/icon_check
 	
+	local armourLabel = vgui.Create("DLabel", pmPanel)
+	armourLabel:SetPos(400, 50)
+	armourLabel:SetFont("F4_Stats_font")
+	armourLabel:SetText("Armour: " .. curArmour)
+	armourLabel:SizeToContents()
+	
+	
 	local inventoryLayout = vgui.Create("DIconLayout", pmPanel)
 	inventoryLayout:SetPos(400, 100)
 	inventoryLayout:SetSize(400, 150)
@@ -398,6 +405,10 @@ function OpenMenu(inventoryItems)
 			
 		elseif splitItems[i] == "Suit_Battery_Pack" then
 			itemImg:SetImage("hl2cr/armour_parts/battery")
+			itemImg:Droppable("Arm")
+				
+		elseif splitItems[i] == "Pair_Gloves" then
+			itemImg:SetImage("hl2cr/armour_parts/gloves")
 			itemImg:Droppable("Arm")
 			
 		elseif splitItems[i] == "Mark_VII_Helmet" then

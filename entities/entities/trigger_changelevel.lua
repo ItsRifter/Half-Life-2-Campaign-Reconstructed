@@ -75,10 +75,10 @@ elseif game.GetMap() == "d1_town_01" then
 elseif game.GetMap() == "d1_town_01a" then
 	ENT.PointA = Vector(-522, 658, -3429)
 	ENT.PointB = Vector(-679, 760, -3300)
-elseif game.GetMap() == "d1_town_02" and not file.Exists("hl2c_data/d1_town_02.txt", "DATA") then
+elseif game.GetMap() == "d1_town_02" and not file.Exists("hl2cr_data/d1_town_02.txt", "DATA") then
 	ENT.PointA = Vector(-3575, -515, -3585)
 	ENT.PointB = Vector(-3710, -612, -3431)
-elseif game.GetMap() == "d1_town_02" and file.Exists("hl2c_data/d1_town_02.txt", "DATA") then
+elseif game.GetMap() == "d1_town_02" and file.Exists("hl2cr_data/d1_town_02.txt", "DATA") then
 	ENT.PointA = Vector(-5399, 1803, -3233)
 	ENT.PointB = Vector(-5026, 2262, -3033)
 elseif game.GetMap() == "d1_town_03" then
@@ -105,7 +105,7 @@ elseif game.GetMap() == "d2_coast_04" then
 elseif game.GetMap() == "d2_coast_05" then
 	ENT.PointA = Vector(1495, 5429, 1617)
 	ENT.PointB = Vector(2334, 5373, 1353)
-elseif game.GetMap() == "d2_coast_07" and not file.Exists("hl2c_data/d2_coast_07.txt", "DATA") then
+elseif game.GetMap() == "d2_coast_07" and not file.Exists("hl2cr_data/d2_coast_07.txt", "DATA") then
 	ENT.PointA = Vector(3356, 5183, 1542)
 	ENT.PointB = Vector(3297, 5140, 1661)
 elseif game.GetMap() == "d2_coast_08" and disableField then
@@ -166,8 +166,8 @@ elseif game.GetMap() == "d3_c17_06a" then
 	ENT.PointA = Vector(2112, 2951, -130)
 	ENT.PointB = Vector(2170, 3070, 52)
 elseif game.GetMap() == "d3_c17_06b" then
-	ENT.PointA = Vector(2112, 2951, -130)
-	ENT.PointB = Vector(5372, 1675, 374)
+	ENT.PointA = Vector(5281, 1773, 260)
+	ENT.PointB = Vector(5370, 1680, 373)
 elseif game.GetMap() == "d3_c17_07" then
 	ENT.PointA = Vector(10205, 2848, -478)
 	ENT.PointB = Vector(10115, 2924, -319)
@@ -205,12 +205,12 @@ elseif game.GetMap() == "d3_citadel_04" then
 	ENT.PointA = Vector(-1154, -7748, 6022)
 	ENT.PointB = Vector(-1271, -8556, 6172)
 elseif game.GetMap() == "d3_citadel_05" then
-	ENT.PointA = Vector(0, 0, 6022)
-	ENT.PointB = Vector(0, 0, 6172)
-	
+	ENT.PointA = Vector(14307, -9965, 8750)
+	ENT.PointB = Vector(14396, -9809, 9200)
+elseif game.GetMap() == "d3_breen_01" then
+	ENT.PointA = Vector(14000, 14944, 14956)
+	ENT.PointB = Vector(14096, 14891, 15094)
 end
-
-
 
 function ENT:Initialize()
 	if createTrigger then
@@ -235,22 +235,22 @@ function ENT:StartTouch(ent)
 	if ent and ent:IsValid() and ent:GetModel() == "models/roller.mdl" then
 		ent:Remove()
 		if game.GetMap() == "d1_eli_02" then
-			hook.Call("UpdateBall")
+			UpdateBall()
 		elseif game.GetMap() == "d1_town_01" then
-			hook.Call("UpdateBall")
+			UpdateBall()
 		elseif game.GetMap() == "d1_town_01a" then
-			hook.Call("UpdateBall")
-		elseif game.GetMap() == "d1_town_02" and not file.Exists("hl2c_data/d1_town_02.txt", "DATA") then
-			hook.Call("UpdateBall")
+			UpdateBall()
+		elseif game.GetMap() == "d1_town_02" and not file.Exists("hl2cr_data/d1_town_02.txt", "DATA") then
+			UpdateBall()
 		elseif game.GetMap() == "d1_town_03" then
-			hook.Call("UpdateBall")
-		elseif game.GetMap() == "d1_town_02" and file.Exists("hl2c_data/d1_town_02.txt", "DATA") then
-			hook.Call("UpdateBall")
+			UpdateBall()
+		elseif game.GetMap() == "d1_town_02" and file.Exists("hl2cr_data/d1_town_02.txt", "DATA") then
+			UpdateBall()
 		elseif game.GetMap() == "d1_town_02a" then
-			hook.Call("UpdateBall")
+			UpdateBall()
 		elseif game.GetMap() == "d1_town_04" then
-			file.Delete("hl2c_data/RavenBall8.txt")
-			hook.Call("UpdateBall")
+			file.Delete("hl2cr_data/RavenBall8.txt")
+			UpdateBall()
 		end
 	end
 		
@@ -261,13 +261,13 @@ function ENT:StartTouch(ent)
 		ent:SetTeam(TEAM_COMPLETED_MAP)
 		giveRewards(ent)
 		if not ent.hasDiedOnce and not (game.GetMap() == "d1_trainstation_01" or game.GetMap() == "d1_trainstation_02" or game.GetMap() == "d1_trainstation_03" or game.GetMap() == "d1_trainstation_04" or game.GetMap() == "d1_trainstation_05") then
-			bonusCoins = 25 * GetConVar("hl2c_difficulty"):GetInt()
-			bonusXP = 50 * GetConVar("hl2c_difficulty"):GetInt()
+			bonusCoins = 25 * GetConVar("hl2cr_difficulty"):GetInt()
+			bonusXP = 50 * GetConVar("hl2cr_difficulty"):GetInt()
 			AddXP(ent, bonusXP)
 			AddCoins(ent, bonusCoins)
 		elseif not ent.crowbarOnly and not (game.GetMap() == "d1_trainstation_01" or game.GetMap() == "d1_trainstation_02" or game.GetMap() == "d1_trainstation_03" or game.GetMap() == "d1_trainstation_04" or game.GetMap() == "d1_trainstation_05") then
-			bonusCoins = 45 * GetConVar("hl2c_difficulty"):GetInt()
-			bonusXP = 75 * GetConVar("hl2c_difficulty"):GetInt()
+			bonusCoins = 45 * GetConVar("hl2cr_difficulty"):GetInt()
+			bonusXP = 75 * GetConVar("hl2cr_difficulty"):GetInt()
 			AddXP(ent, bonusXP)
 			AddCoins(ent, bonusCoins)
 		end
@@ -292,12 +292,22 @@ function ENT:Think()
 		addOne = 1
 	end
 	if timer.Exists("MapTimer") then
-		if GetConVar("hl2c_survivalmode"):GetInt() == 1 then
+		if GetConVar("hl2cr_survivalmode"):GetInt() == 1 then
 			subOne = team.NumPlayers(TEAM_DEAD)
 		end
 	end
 	
-	if team.NumPlayers(TEAM_COMPLETED_MAP) >= team.NumPlayers(TEAM_ALIVE) + addOne - subOne then
+	if team.NumPlayers(TEAM_COMPLETED_MAP) >= team.NumPlayers(TEAM_ALIVE) + addOne - subOne and not (game.GetMap() == "d1_eli_01" or game.GetMap() == "d1_town_05" or game.GetMap() == "d3_citadel_01" or game.GetMap() == "d3_citadel_05" or game.GetMap() == "d3_breen_01") then
+		for k, p in pairs(player.GetAll()) do
+			if not displayOnce then
+				p:ChatPrint("Enough players have completed, changing map in 20 seconds")
+				displayOnce = true
+				net.Start("DisplayMapTimer")
+				net.Broadcast()
+				timer.Create("MapTimer", 20, 0, function() hook.Call("OnChangeLevel") timer.Remove("MapTimer") end)
+			end
+		end
+	elseif team.NumPlayers(TEAM_COMPLETED_MAP) == 1 and (game.GetMap() == "d1_eli_01" or game.GetMap() == "d1_town_05" or game.GetMap() == "d3_citadel_01" or game.GetMap() == "d3_citadel_05" or game.GetMap() == "d3_breen_01") then
 		for k, p in pairs(player.GetAll()) do
 			if not displayOnce then
 				p:ChatPrint("Enough players have completed, changing map in 20 seconds")
@@ -310,3 +320,15 @@ function ENT:Think()
 	end
 end
 
+function EndHL2Game()
+	for k, p in pairs(player.GetAll()) do
+		if not displayOnce then
+			p:ChatPrint("Congratulations on finishing Half-Life 2!, returning to lobby in 35 seconds")
+			displayOnce = true
+			game.SetGlobalState("super_phys_gun", 0)
+			net.Start("DisplayMapTimer")
+			net.Broadcast()
+			timer.Create("MapTimer", 35, 0, function() hook.Call("OnChangeLevel") timer.Remove("MapTimer") end)
+		end
+	end
+end

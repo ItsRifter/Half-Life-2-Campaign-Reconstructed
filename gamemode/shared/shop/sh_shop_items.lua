@@ -13,11 +13,15 @@ local armourItem = createItemBase(BaseSuitArmour, "Suit_Battery_Pack", "Start wi
 armourItem.Cost = 1500
 Register.Armour(armourItem)
 
-local armourItem = createItemBase(BaseSuitArmour, "Mark_VII_Suit", "Better than the last version they had\n20 Armour", "hl2cr/armour_parts/suit")
+local armourItem = createItemBase(BaseSuitArmour, "Pair_Gloves", "Warmer hands right?\n5 Armour", "hl2cr/armour_parts/gloves")
+armourItem.Cost = 3500
+Register.Armour(armourItem)
+
+local armourItem = createItemBase(BaseSuitArmour, "Mark_VII_Suit", "Better than the last version they had\n15 Armour", "hl2cr/armour_parts/suit")
 armourItem.Cost = 25000
 Register.Armour(armourItem)
 
-local armourItem = createItemBase(BaseSuitArmour, "Mark_VII_Helmet", "Protects your head from bumps\n10 Armour", "hl2cr/armour_parts/helmet")
+local armourItem = createItemBase(BaseSuitArmour, "Mark_VII_Helmet", "Protects your head from bumps\n8 Armour", "hl2cr/armour_parts/helmet")
 armourItem.Cost = 17500
 Register.Armour(armourItem)
 

@@ -1,5 +1,11 @@
 BringPet = true
-lobbyVotes = 0
+
+local neededVotes = #player.GetAll() or 1
+local neededVotesRestart = #player.GetAll() / 2
+local lobbyVotes = 1
+local restartVotes = 1
+
+
 hook.Add("PlayerSay", "Commands", function(ply, text)
 	
 	--Worthless secret for worthless achievement hunter
@@ -24,6 +30,7 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 		net.Start("Open_Ach_Menu")
 			net.WriteTable(ply.hl2cPersistent.Achievements)
 			net.WriteTable(ply.hl2cPersistent.Vortexes)
+			net.WriteTable(ply.hl2cPersistent.Lambdas)
 		net.Send(ply)
 		return ""
 	end
@@ -37,7 +44,7 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 	
 	--spawns the players pet unless they already exist or have no access to it
 	if (string.lower(text) == "!petsummon" or string.lower(text) == "!spawnpet" ) then
-		if tonumber(ply.hl2cPersistent.Level) >= 10 then
+		if ply.hl2cPersistent.Level >= 10 then
 			if not ply.petAlive then
 				spawnPet(ply)
 			else
@@ -51,7 +58,7 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 	
 	--CMD for naming pets
 	if string.find(string.lower(text),"!petname ") then
-		ply:ChatPrint("You've change your pets name to" .. string.sub(text,9))
+		ply:ChatPrint("You've changed your pets name to" .. string.sub(text,9))
 		ply.hl2cPersistent.PetName = string.sub(text,9)
 		ply:SetNWString("PetName", ply.hl2cPersistent.PetName)
 		return ""
@@ -60,8 +67,8 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 	--access the difficulty menu
 	if (string.lower(text) == "!diff" or string.lower(text) == "!difficulty" ) then
 		net.Start("Open_Diff_Menu")
-			net.WriteInt(GetConVar("hl2c_difficulty"):GetInt(), 8)
-			net.WriteInt(GetConVar("hl2c_survivalmode"):GetInt(), 8)
+			net.WriteInt(GetConVar("hl2cr_difficulty"):GetInt(), 8)
+			net.WriteInt(GetConVar("hl2cr_survivalmode"):GetInt(), 8)
 		net.Send(ply)
 		return ""
 	end
@@ -86,7 +93,7 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 				BringPet = true
 			end)
 		else
-			ply:ChatPrint("You need to wait " .. math.Round(timer.TimeLeft("BringCooldown")) .. " seconds \nbefore bringing your pet again")
+			ply:ChatPrint("You need to wait " .. math.Round(timer.TimeLeft("BringCooldown")) .. " seconds\nbefore bringing your pet again")
 		end
 		return ""
 	end
@@ -194,6 +201,7 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 					v:ChatPrint(ply:Nick() .. " Has voted to return to the lobby: " .. lobbyVotes .. "/" .. neededVotes)
 				end
 				if lobbyVotes == neededVotes then
+					game.SetGlobalState("super_phys_gun", 0)
 					ply:ChatPrint("Enough players have voted to return the lobby, returning in 10 seconds")
 					timer.Simple(10, function()
 						RunConsoleCommand("changelevel", "hl2c_lobby_remake")
@@ -204,6 +212,28 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 			end
 		else
 			ply:ChatPrint("You are currently in the lobby!")
+		end
+	return ""
+	end
+	if (string.lower(text) == "!restart" or string.lower(text) == "!vrm") then
+		if game.GetMap() != "hl2c_lobby_remake" then
+			if not ply.hasVotedRestart then
+				restartVotes = restartVotes + 1
+				ply.hasVotedLobby = true
+				for k, v in pairs(player.GetAll()) do
+					v:ChatPrint(ply:Nick() .. " has voted to return to restart the map: " .. restartVotes .. "/" .. math.Round(neededVotesRestart, 0))
+				end
+				if restartVotes == neededVotesRestart then
+					ply:ChatPrint("Enough players have voted to restart the map")
+					timer.Simple(10, function()
+						RunConsoleCommand("changelevel", game.GetMap())
+					end)
+				end
+			else
+				ply:ChatPrint("You already voted to return to restart the map!")
+			end
+		else
+			ply:ChatPrint("Why restart in the lobby?")
 		end
 	return ""
 	end
@@ -263,11 +293,6 @@ function SubCryst(ply, amount)
 	ply:SetNWInt("Cryst", math.Round(ply.hl2cPersistent.Cryst))
 end
 
-net.Receive("SurvMode", function(len, ply, survInt)
-	local surv = net.ReadInt(8)
-	GetConVar("hl2c_survivalmode"):SetInt(surv)
-end)
-
 concommand.Add("hl2cr_givexp", function(ply, cmd, args)
 	local int = tonumber(args[1])
 	
@@ -275,7 +300,7 @@ concommand.Add("hl2cr_givexp", function(ply, cmd, args)
 		if int then
 			AddXP(ply, int)
 			ply:PrintMessage(HUD_PRINTCONSOLE, int)
-		elseif not int then
+		else
 			ply:PrintMessage(HUD_PRINTCONSOLE, "Invalid Value")
 		end
 	else
@@ -283,14 +308,14 @@ concommand.Add("hl2cr_givexp", function(ply, cmd, args)
 	end
 end)
 
-concommand.Add("hl2cr_allowsuicide", function(ply, cmd, args)
+concommand.Add("hl2cr_setsuicide", function(ply, cmd, args)
 	local int = tonumber(args[1])
 	if ply:IsAdmin() then
 		if int == 1 then
-			GetConVar("hl2c_allowsuicide"):SetInt(int)
+			GetConVar("hl2cr_allowsuicide"):SetInt(int)
 			ply:PrintMessage(HUD_PRINTCONSOLE, "Suicide enabled")
 		elseif int == 0 then
-			GetConVar("hl2c_allowsuicide"):SetInt(int)
+			GetConVar("hl2cr_allowsuicide"):SetInt(int)
 			ply:PrintMessage(HUD_PRINTCONSOLE, "Suicide disabled")
 		else
 			ply:PrintMessage(HUD_PRINTCONSOLE, "INVALID VALUE")
@@ -368,7 +393,7 @@ concommand.Add("hl2cr_addcrystals", function(ply, cmd, args)
 	end
 end)
 
-concommand.Add("hl2cr_difficulty", function(ply, cmd, args)
+concommand.Add("hl2cr_setdiff", function(ply, cmd, args)
 	local diff = tonumber(args[1])
 	if ply:IsAdmin() then
 		if diff >= 1 and diff <= 3 then

@@ -1,5 +1,6 @@
 AddCSLuaFile() -- Add itself to files to be sent to the clients, as this file is shared
-startingWeapons = {}
+local startingWeapons = {}
+
 hook.Add("PlayerInitialSpawn", "MiscSurv", function(ply)
 	
 	ply:SetNWInt("diffEasy", #player.GetAll())
@@ -7,11 +8,9 @@ hook.Add("PlayerInitialSpawn", "MiscSurv", function(ply)
 	ply:SetNWInt("diffHard", #player.GetAll())
 	ply:SetNWInt("SurvDiff", #player.GetAll())
 	
-	ply:ConCommand("cl_tfa_hud_crosshair_enable_custom", 0)
-	ply:ConCommand("hud_quickinfo", 1)
-	ply:ConCommand("cl_tfa_hud_enabled", 0) 
+	ply:ConCommand("hud_quickinfo 1")
 	
-	if GetConVar("hl2c_survivalmode"):GetInt() == 1 and ply:Alive() and not isAliveSurv then
+	if GetConVar("hl2cr_survivalmode"):GetInt() == 1 and ply:Alive() and not isAliveSurv then
 		isAliveSurv = false
 	end
 	
@@ -27,7 +26,7 @@ hook.Add("PlayerSpawn", "Misc", function(ply)
 	local addStats = 0
 	
 	if string.find(ply.hl2cPersistent.TempUpg, "Health Boost") then
-		addHPUpg = 5
+		addHPUpg = addHPUpg + 5
 	end
 	
 	ply.AllowSpawn = true
@@ -86,6 +85,15 @@ hook.Add("PlayerSpawn", "Misc", function(ply)
 		ply:Give("weapon_physcannon")
 	end
 	
+	if game.GetMap() == "d3_breen_01" then
+		timer.Simple(1, function()
+			local enterPod = ents.FindByName("pod")
+			if enterPod[1]:IsValid() then
+				ply:EnterVehicle(enterPod[1])
+			end
+		end)
+	end
+	
 	for k, curWep in pairs(ply:GetWeapons()) do
 		local wepClass = curWep:GetClass()
 			
@@ -98,6 +106,14 @@ hook.Add("PlayerSpawn", "Misc", function(ply)
 	if #startingWeapons > 0 then
 		for k, wep in pairs(startingWeapons) do
 			ply:Give(wep)
+		end
+	end
+	
+	for k, v in pairs(player.GetAll()) do
+		if v:GetWeapons() != nil and ply:GetWeapons() != v:GetWeapons() and game.GetMap() != "hl2c_lobby_remake" then
+			for k, w in pairs(v:GetWeapons()) do
+				ply:Give(w:GetClass())
+			end	
 		end
 	end
 end)
@@ -123,20 +139,33 @@ hook.Add("PlayerHurt", "PlayerRecover", function(vic, att, hp, dmg)
 	end
 end)
 
+hook.Add("CanExitVehicle", "PodCannotExit", function(veh, ply)
+	if game.GetMap() == "d3_citadel_01" or game.GetMap() == "d3_breen_01" then
+		return false
+	end
+	
+	return true
+end)
+
 hook.Add("CanPlayerSuicide", "DefaultSuicide", function(ply)
 
-	if game.GetMap() == "hl2c_lobby_remake" or game.GetMap() == "d1_trainstation_01" or game.GetMap() == "d1_trainstation_02" or game.GetMap() == "d1_trainstation_03" or game.GetMap() == "d1_trainstation_04" or game.GetMap() == "d1_trainstation_05" then
+	if game.GetMap() == "hl2c_lobby_remake" or game.GetMap() == "d1_trainstation_01" or game.GetMap() == "d1_trainstation_02" or game.GetMap() == "d1_trainstation_03" 
+	or game.GetMap() == "d1_trainstation_04" or game.GetMap() == "d1_trainstation_05" or game.GetMap() == "d3_citadel_01" or game.GetMap() == "d3_citadel_05" or game.GetMap() == "d3_breen_01" then
 		ply:ChatPrint("You can't commit suicide on this map!")
 		return false
-	elseif GetConVar("hl2c_allowsuicide"):GetInt() == 0 then
+		
+	elseif GetConVar("hl2cr_allowsuicide"):GetInt() == 0 then
 		ply:ChatPrint("Suiciding is disabled")
 		return false
+		
 	elseif ply:Team() == TEAM_COMPLETED_MAP then
 		ply:ChatPrint("You cannot suicide once you've completed the map")
 		return false
+		
 	elseif ply:Team() == TEAM_DEAD then
 		ply:ChatPrint("You are already dead")
 		return false
+		
 	end
 end)
 
@@ -158,18 +187,36 @@ hook.Add("PlayerShouldTakeDamage", "DisablePVP", function(ply, attacker)
 	
 end)
 
-function GM:PlayerCanPickupWeapon(ply, weapon) 
+hook.Add("ScalePlayerDamage", "DiffScalingPly", function( ply, hitgroup, dmgInfo )
+	 local attacker = dmgInfo:GetAttacker()	 
+	 local dmg = dmgInfo:GetDamage()
+	 if attacker:IsPlayer() then return end
+	 
+	 local scaleArmour = ply.hl2cPersistent.Armour
+	 
+	 if hitgroup == HITGROUP_HEAD and GetConVar("hl2cr_difficulty"):GetInt() != 1 then
+		dmgInfo:ScaleDamage( 1.25 * GetConVar("hl2cr_difficulty"):GetInt() - (scaleArmour / 2))
+ 	 elseif hitgroup == HITGROUP_CHEST and GetConVar("hl2cr_difficulty"):GetInt() != 1 then
+		dmgInfo:ScaleDamage( 1 * GetConVar("hl2cr_difficulty"):GetInt() - (scaleArmour / 2) )
+	 else
+		dmgInfo:ScaleDamage( 0.75 * GetConVar("hl2cr_difficulty"):GetInt())
+	 end
+end)
+
+local pickedOnce = false
+
+hook.Add("PlayerCanPickupWeapon", "DisableWeaponsPickup", function(ply, weapon) 
 	if ply:Team() != TEAM_ALIVE or weapon:GetClass() == "weapon_stunstick" or (weapon:GetClass() == "weapon_physgun" and not ply:IsAdmin()) then
 		weapon:Remove()
 		return false
 	end
 	
-	if (game.GetMap() == "d3_citadel_03" or game.GetMap() == "d3_citadel_04" or game.GetMap() == "d3_citadel_05" or game.GetMap() == "d3_breen_01") and weapon:GetClass() != "weapon_superphyscannon" then
+	if ply:Team() != TEAM_ALIVE or (game.GetMap() == "d3_citadel_03" or game.GetMap() == "d3_citadel_04" or game.GetMap() == "d3_citadel_05" or game.GetMap() == "d3_breen_01") and weapon:GetClass() != "weapon_physcannon" then
 		weapon:Remove()
 		return false
 	end
 	return true
-end
+end)
 
 function GM:GetFallDamage( ply, speed )
     return ( speed / 16 )
@@ -184,7 +231,7 @@ hook.Add("PlayerLoadout", "StarterWeapons", function(ply)
 		end
 	end
 	
-	if game.GetMap() == "d1_town_02" and file.Exists("hl2c_data/d1_town_02.txt", "DATA") then 
+	if game.GetMap() == "d1_town_02" and file.Exists("hl2cr_data/d1_town_02.txt", "DATA") then 
 		ply:Give("weapon_crowbar")
 		ply:Give("weapon_physcannon")
 		ply:Give("weapon_pistol")
@@ -223,8 +270,10 @@ hook.Add("PlayerLoadout", "StarterWeapons", function(ply)
 end)
 
 hook.Add("WeaponEquip", "WeaponPickedUp", function(weapon, ply)
-	table.insert(startingWeapons, weapon:GetClass())
-	
+	if weapon:GetClass() != "weapon_frag" then 
+		table.insert(startingWeapons, weapon:GetClass())
+	end
+
 	if weapon:GetClass() == "weapon_crowbar" and game.GetMap() == "d1_trainstation_06" then
 		for k, v in pairs(player.GetAll()) do
 			Achievement(v, "Trusty_Hardware", "HL2_Ach_List", 250)
@@ -236,7 +285,7 @@ end)
 function RespawnTimerActive(ply, deaths)
 	ply.hasDiedOnce = true
 	
-	if GetConVar("hl2c_survivalmode"):GetInt() == 1 and game.GetMap() != "hl2c_lobby_remake" then
+	if GetConVar("hl2cr_survivalmode"):GetInt() == 1 and game.GetMap() != "hl2c_lobby_remake" then
 		ply:Lock()
 		ply.isAliveSurv = false
 		local playersAlive = #player.GetAll()
@@ -262,12 +311,12 @@ function RespawnTimerActive(ply, deaths)
 	return
 	end
 
-	if GetConVarNumber("hl2c_respawntime") ~= 0 then
+	if GetConVarNumber("hl2cr_respawntime") ~= 0 then
 		ply:Lock()
 		timer.Simple(5, function()
 			SpectateMode(ply)
 		end)
-		timer.Simple(GetConVarNumber("hl2c_respawntime"), function()
+		timer.Simple(GetConVarNumber("hl2cr_respawntime"), function()
 			ply:UnLock()
 			ply:Spawn()
 		end)
@@ -276,7 +325,7 @@ end
 
 deaths = 0
 hook.Add("PlayerDeath", "RespawnTimer", function(victim, inflictor, attacker)
-	if GetConVar("hl2c_survivalmode"):GetInt() == 1 then
+	if GetConVar("hl2cr_survivalmode"):GetInt() == 1 then
 		deaths = deaths + 1
 	end
 	RespawnTimerActive(victim, deaths)
@@ -285,25 +334,6 @@ end)
 function GM:IsSpawnpointSuitable( ply, spawnpointent, bMakeSuitable )
 	return true
 end
-
-net.Receive("Diff_Vote", function()
-
-	local voter = net.ReadString()
-	local diffVote = net.ReadInt(8)
-	for k, v in pairs(player.GetAll()) do
-		if diffVote == 1 then
-			v:ChatPrint(voter .. " Has voted for 'Easy' Difficulty")
-		elseif diffVote == 2 then
-			v:ChatPrint(voter .. " Has voted for 'Medium' Difficulty")
-		elseif diffVote == 3 then
-			v:ChatPrint(voter .. " Has voted for 'Hard' Difficulty")
-		elseif diffVote == 4 and not survivalMode then
-			v:ChatPrint(voter .. " Has voted to enable 'Survival' Mode")
-		elseif diffVote == 4 and survivalMode then
-			v:ChatPrint(voter .. " Has voted to disable 'Survival' Mode")
-		end
-	end
-end)
 
 if SERVER then
 	hook.Add("Think", "AmmoLimiter", function()
@@ -355,22 +385,11 @@ if SERVER then
 	end)
 end
 
-local neededVotes = #player.GetAll()
-local lobbyVotes = 0
-
-net.Receive("ReturnLobby", function(ply)
-	for k, p in pairs(player.GetAll()) do
-		p:ChatPrint(ply:Nick() .. " has voted to return to the lobby: " .. lobbyVotes .. "/" .. neededVotes)
-	end
-end)
-
 function giveVortex(map, ply)
 	if not string.find(table.ToString(ply.hl2cPersistent.Vortexes), map) then
 	
 		table.insert(ply.hl2cPersistent.Vortexes, map)
-		ply:ChatPrint("You found the vortex in " .. map .. ", 500XP")
-		AddXP(ply, 500)
-		print(ply:Nick() .. " found vortex in " .. map)
+		Special(ply, map, "HL2_Vortex", 250)
 
 		timer.Simple(0.01, function()
 			local effectdata = EffectData()
@@ -380,5 +399,12 @@ function giveVortex(map, ply)
 			util.Effect( "cball_explode", effectdata )
 			ply:EmitSound("ambient/energy/zap7.wav", 100, 100)
 		end)
+	end	
+end
+
+function giveLambda(map, ply)
+	if not string.find(table.ToString(ply.hl2cPersistent.Lambdas), map) then
+		table.insert(ply.hl2cPersistent.Lambdas, map)
+		Special(ply, map, "HL2_Lambda", 250)
 	end	
 end

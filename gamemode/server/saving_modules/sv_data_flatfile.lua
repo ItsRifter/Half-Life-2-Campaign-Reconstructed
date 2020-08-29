@@ -8,8 +8,11 @@ local function InitData(ply)
 	ply.hl2cPersistent.DeathCount = ply.hl2cPersistent.DeathCount or 0
 	ply.hl2cPersistent.KillCount = ply.hl2cPersistent.KillCount or 0
 	
+	--Default Stats
+	
 	ply.hl2cPersistent.XP = ply.hl2cPersistent.XP or 0
 	ply.hl2cPersistent.MaxXP = ply.hl2cPersistent.MaxXP or 500
+	ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour or 0
 	
 	ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins or 0
 	ply.hl2cPersistent.Essence = ply.hl2cPersistent.Essence or 0
@@ -18,9 +21,10 @@ local function InitData(ply)
 	
 	ply.hl2cPersistent.Model = ply.hl2cPersistent.Model or ply:GetModel()
 	
-	-- Default Achievement and vortex settings
+	-- Default Achievement, vortex and lambda settings
 	ply.hl2cPersistent.Achievements = ply.hl2cPersistent.Achievements or {}
 	ply.hl2cPersistent.Vortexes = ply.hl2cPersistent.Vortexes or {}
+	ply.hl2cPersistent.Lambdas = ply.hl2cPersistent.Lambdas or {}
 	
 	-- Default Inventory settings
 	ply.hl2cPersistent.Inventory = ply.hl2cPersistent.Inventory or {}
@@ -51,6 +55,7 @@ local function InitData(ply)
 	ply:SetNWInt("Coins", math.Round(ply.hl2cPersistent.Coins))
 	ply:SetNWInt("Essence", math.Round(ply.hl2cPersistent.Essence))
 	ply:SetNWInt("Cryst", math.Round(ply.hl2cPersistent.Cryst))
+	ply:SetNWInt("Armour", ply.hl2cPersistent.Armour)
 	
 	ply:SetNWInt("XP", math.Round(ply.hl2cPersistent.XP))
 	ply:SetNWInt("MaxXP", ply.hl2cPersistent.MaxXP)
@@ -59,7 +64,6 @@ local function InitData(ply)
 	ply:SetNWString("Vortex", table.concat(ply.hl2cPersistent.Vortexes, " "))
 	ply:SetNWString("TempUpg", ply.hl2cPersistent.TempUpg)
 	
-	ply:SetNWString("Inventory", table.concat(ply.hl2cPersistent.Inventory, " "))
 	ply:SetNWInt("InvSpace", ply.hl2cPersistent.InvSpace)
 	ply:SetNWInt("MaxInvSpace", ply.hl2cPersistent.MaxInvSpace)
 	ply:SetNWString("Model", ply.hl2cPersistent.Model)

@@ -21,7 +21,7 @@ VORTI_FRIENDLY = {
 	"npc_vortigaunt",
 }
 
-hook.Add("EntityTakeDamage", "DisableExplosiveDMG", function(ent, dmgInfo)
+hook.Add("EntityTakeDamage", "FriendOrFoe", function(ent, dmgInfo)
 	friendlyMaps = {
 		"d1_trainstation_01",
 		"d1_trainstation_02",
@@ -96,12 +96,6 @@ hook.Add("EntityTakeDamage", "DisableExplosiveDMG", function(ent, dmgInfo)
 	local attacker = dmgInfo:GetAttacker()
 	local dmg = dmgInfo:GetDamage()
 	
-	if ent:IsPet() and ent:IsValid() and ent.owner then
-		net.Start("UpdatePetsHealthDMG")
-			net.WriteInt(-dmg, 32)
-		net.Send(ent.owner)
-	end
-	
 	if attacker:IsPet() then
 		ent:AddEntityRelationship(attacker, D_HT, 15)
 		local totalDMG = dmg + attacker:GetNWInt("PetStr")
@@ -122,21 +116,22 @@ hook.Add("EntityTakeDamage", "DisableExplosiveDMG", function(ent, dmgInfo)
 	end
 end)
 
-hook.Add("ScaleNPCDamage", "DiffScaling", function(npc, hitGroup, dmgInfo)
+hook.Add("ScaleNPCDamage", "DiffScalingNPC", function(ent, hitGroup, dmgInfo)
 	
 	local inflictor = dmgInfo:GetDamageType()
 	local attacker = dmgInfo:GetAttacker()
 	local dmg = dmgInfo:GetDamage()
+	
+	local dmgMulti = 0
  	
-	if table.HasValue(INVUL_NPCS, npc:GetClass()) or attacker:IsPlayer() and table.HasValue(FRIENDLY_NPCS, npc:GetClass()) and npc:IsPet() then
+	if table.HasValue(INVUL_NPCS, ent:GetClass()) or attacker:IsPlayer() and table.HasValue(FRIENDLY_NPCS, ent:GetClass()) and ent:IsPet() then
 		dmgInfo:SetDamage(0)
 		return
 	else
-		dmgInfo:ScaleDamage(1.65 / GetConVar("hl2c_difficulty"):GetInt())
+		dmgInfo:ScaleDamage(1.25 / GetConVar("hl2cr_difficulty"):GetInt())
 	end
 	
-	--if npc:GetClass() == "npc_combinegunship" then
-	--	attacker.sharedXP = attacker.sharedXP + dmg * GetConVar("hl2c_difficulty"):GetInt()
+	--if ent:GetClass() == "npc_combinegunship" then
+	--	attacker.sharedXP = attacker.sharedXP + dmg * GetConVar("hl2cr_difficulty"):GetInt()
 	--end
-	
 end)

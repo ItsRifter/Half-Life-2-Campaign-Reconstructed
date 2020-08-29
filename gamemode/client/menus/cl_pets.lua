@@ -793,14 +793,9 @@ end)
 
 
 
-function petStats(ply, pet)
-	
-	XP = tonumber(LocalPlayer():GetNWInt("PetXP"))
-	MaxXP = LocalPlayer():GetNWInt("PetMaxXP")
-	
-	
-	local hp = pet:Health()
-	local maxHp = pet:GetMaxHealth()
+function petStats()
+	local hp = LocalPlayer():GetNWInt("PetHP")
+	--local maxHp = pet:GetMaxHealth()
 	
 	petStatFrame = vgui.Create("DFrame")
 	if ScrW() == 3840 and ScrH() == 2160 then
@@ -825,21 +820,19 @@ function petStats(ply, pet)
 	petStatHPLabel:SetFont("Pets_Stats")
 	petStatHPLabel:SetText("HP")
 
-	petStatHealthBar = vgui.Create("DProgress", petStatFrame)
+	petStatHealthBar = vgui.Create("DPanel", petStatFrame)
 	petStatHealthBar:SetPos( 25, 100 )
 	petStatHealthBar:SetSize( 350, 25 )
 	petStatHealthBar.Paint = function(self, w, h)
-		surface.SetDrawColor(75, 75, 75, 255)
-		surface.DrawRect(0,0, maxHp, h)
 		if hp >= 75 then
 			surface.SetDrawColor(0, 255, 0, 255)
-			surface.DrawRect(0,0, hp, h)
+			surface.DrawRect(0, 0, hp, h)
 		elseif hp <= 75 and hp >= 25 then
 			surface.SetDrawColor(255, 255, 0, 255)
-			surface.DrawRect(0,0, hp, h)
+			surface.DrawRect(0, 0, hp, h)
 		elseif hp <= 25 then
 			surface.SetDrawColor(255, 0, 0, 255)
-			surface.DrawRect(0,0, hp, h)
+			surface.DrawRect(0, 0, hp, h)
 		end
 	end
 	
@@ -853,16 +846,16 @@ function petStats(ply, pet)
 	petStatXPBar:SetSize( 350, 25 )
 	petStatXPBar.Paint = function(self, w, h)
 		surface.SetDrawColor(70, 70, 70 , 255)
-		surface.DrawRect(0,0, MaxXP, h)
+		surface.DrawRect(0,0, LocalPlayer():GetNWInt("PetMaxXP"), h)
 		
 		surface.SetDrawColor(50, 165, 255, 255)
-		surface.DrawRect(0,0, XP, h)
+		surface.DrawRect(0,0, LocalPlayer():GetNWInt("PetXP"), h)
 	end
 	
 	petStatXPStatusLabel = vgui.Create("DLabel", petStatFrame)
 	petStatXPStatusLabel:SetPos(petStatXPBar:GetWide() - 315, petStatXPBar:GetTall() + 150)
 	petStatXPStatusLabel:SetFont("Pets_Stats")
-	petStatXPStatusLabel:SetText(XP .. "/" .. MaxXP)
+	petStatXPStatusLabel:SetText(LocalPlayer():GetNWInt("PetXP") .. "/" .. LocalPlayer():GetNWInt("PetMaxXP"))
 	petStatXPStatusLabel:SizeToContents()
 	
 	petStatFrame:Add(petStatLevelLabel)
@@ -876,34 +869,34 @@ function petStats(ply, pet)
 		petStatFrame.Think = function()
 			petStatLevelLabel:SetText("Level: " .. LocalPlayer():GetNWInt("PetLevel"))
 			petStatLevelLabel:SizeToContents()
-			petStatHPLabel:SetText("HP")
 			
 			petStatXPBar.Paint = function(self, w, h)
 				surface.SetDrawColor(70, 70, 70 , 255)
-				surface.DrawRect(0,0, MaxXP, h)
+				surface.DrawRect(0,0, LocalPlayer():GetNWInt("PetMaxXP"), h)
 				
 				surface.SetDrawColor(50, 165, 255, 255)
-				surface.DrawRect(0,0, tonumber(LocalPlayer():GetNWInt("PetXP")), h)
+				surface.DrawRect(0,0, (LocalPlayer():GetNWInt("PetXP")), h)
 			end
 			
-			petStatXPStatusLabel:SetText(tonumber(LocalPlayer():GetNWInt("PetXP")) .. "/" .. MaxXP)
+			petStatXPStatusLabel:SetText(LocalPlayer():GetNWInt("PetXP") .. "/" .. LocalPlayer():GetNWInt("PetMaxXP"))
 			petStatXPStatusLabel:SizeToContents()
-		end
-	end
-	petStatHealthBar.Paint = function(self, w, h)
-		surface.SetDrawColor(75, 75, 75, 255)
-		surface.DrawRect(0,0, maxHp, h)
-			if hp >= 75 then
-				surface.SetDrawColor(0, 255, 0, 255)
-				surface.DrawRect(0,0, hp, h)
-			elseif hp <= 75 and hp >= 25 then
-				surface.SetDrawColor(255, 255, 0, 255)
-				surface.DrawRect(0,0, hp, h)
-			elseif hp <= 25 then
-				surface.SetDrawColor(255, 0, 0, 255)
-				surface.DrawRect(0,0, hp, h)
+			
+			
+			
+			petStatHealthBar.Paint = function(self, w, h)
+				if hp >= 75 then
+					surface.SetDrawColor(0, 255, 0, 255)
+					surface.DrawRect(0,0, LocalPlayer():GetNWInt("PetHP"), h)
+				elseif hp <= 75 and hp >= 25 then
+					surface.SetDrawColor(255, 255, 0, 255)
+					surface.DrawRect(0,0, LocalPlayer():GetNWInt("PetHP"), h)
+				elseif hp <= 25 then
+					surface.SetDrawColor(255, 0, 0, 255)
+					surface.DrawRect(0,0, LocalPlayer():GetNWInt("PetHP"), h)
+				end
 			end
 		end
+	end
 	
 	terminatedLabel = vgui.Create("DLabel", petStatPanel)
 	terminatedLabel:SetText("")
@@ -914,10 +907,6 @@ function petStats(ply, pet)
 	
 	petStatFrame:Add(terminatedLabel)
 end
-
-net.Receive("UpdatePetsHealthDMG", function(len, ply)
-	hp = pet:Health() + net.ReadInt(32)
-end)
 
 function clientClosePets()
 	petStatFrame:MoveTo(-400, ScrH() / 2 - 200, 1, 0, -1, function()
@@ -967,8 +956,5 @@ surface.CreateFont("Pets_Stats_Dead", {
 })
 
 net.Receive("OpenPetStats", function(len, ply)
-	local pet = net.ReadEntity()
-	petStats(ply, pet)
+	petStats()
 end)
-
-

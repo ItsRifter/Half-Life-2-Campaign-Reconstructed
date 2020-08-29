@@ -168,37 +168,28 @@ local shouldDrawTimer = false
 local shouldDrawRestartTimer = false
 net.Receive("DisplayMapTimer", function() shouldDrawTimer = true end)
 
-hook.Add("HUDPaint", "HUDPaint_DrawCPMarker", function()
-	if showNav and checkpointPosition and LocalPlayer():Team() == TEAM_ALIVE then
-		local checkpointDistance = math.Round(LocalPlayer():GetPos():Distance(checkpointPosition) / 39)
-		local checkpointPositionScreen = checkpointPosition:ToScreen()
-		
-		surface.SetDrawColor(255, 255, 255, 255)
-		
-		if checkpointPositionScreen.x > 32 and checkpointPositionScreen.x < w - 43 and checkpointPositionScreen.y > 32 and checkpointPositionScreen.y < h - 38 then
-			surface.SetTexture(surface.GetTextureID("hl2c_nav_marker"))
-			surface.DrawTexturedRect(checkpointPositionScreen.x - 14, checkpointPositionScreen.y - 14, 28, 28)
-			draw.DrawText(tostring(checkpointDistance).." m", "Arial", checkpointPositionScreen.x, checkpointPositionScreen.y + 15, Color(255, 220, 0, 255), 1)
-		else
-			local r = math.Round(centerX / 2)
-			local checkpointPositionRad = math.atan2(checkpointPositionScreen.y - centerY, checkpointPositionScreen.x - centerX)
-			local checkpointPositionDeg = 0 - math.Round(math.deg(checkpointPositionRad))
-			surface.SetTexture(surface.GetTextureID("hl2c_nav_pointer"))
-			surface.DrawTexturedRectRotated(math.cos(checkpointPositionRad) * r + centerX, math.sin(checkpointPositionRad) * r + centerY, 32, 32, checkpointPositionDeg + 90)
-		end
-	end
-end)
-
 net.Receive("SurvAllDead", function() shouldDrawRestartTimer = true end)
 
 hook.Add("HUDPaint", "HUDPaint_DrawTimer", function()
 
-	if shouldDrawTimer and not survivalMode then
+	if shouldDrawTimer and not survivalMode and game.GetMap() != "d3_breen_01" then
 		if not timer.Exists("MapTimer") then
-			timer.Create("MapTimer", 20, 1, function()
-			
-			end)
+			timer.Create("MapTimer", 20, 1, function()	end)
 			surface.PlaySound("npc/overwatch/radiovoice/allunitsapplyforwardpressure.wav")
+		end
+			
+		surface.SetDrawColor(45, 45, 45, 150)
+		if ScrW() == 3840 and ScrH() == 2160 then
+			surface.DrawRect(0, ScrH() / 2 + 700, ScrW(), 175)
+		else
+			surface.DrawRect(0, ScrH() / 2 + 175, ScrW(), 175)
+		end
+		draw.DrawText("Time Left: " .. math.Round(timer.TimeLeft("MapTimer"), 0), "Map_Font", ScrW() / 2, ScrH() - 350, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+	
+	elseif shouldDrawTimer and not survivalMode and game.GetMap() == "d3_breen_01" then
+		if not timer.Exists("MapTimer") then
+			timer.Create("MapTimer", 35, 1, function() end)
+			surface.PlaySound("vo/coast/odessa/male01/nlo_cheer04.wav")
 		end
 			
 		surface.SetDrawColor(45, 45, 45, 150)

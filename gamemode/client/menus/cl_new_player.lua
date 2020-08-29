@@ -49,6 +49,14 @@ surface.CreateFont("Intro_Tab4_Font", {
 	size = 32,
 })
 
+--Skipped tab 5 fonts because not eh
+
+surface.CreateFont("Intro_Tab6_Font", {
+	font = "Arial",
+	size = 34,
+})
+
+
 local exampleModels = {
 	["models/player/Group03/male_06.mdl"] = {},
 	["models/player/police.mdl"] = {},
@@ -112,6 +120,13 @@ function LobbyMenu()
 	LabelDescText:SetText("Please read the rules before beginning!")
 	LabelDescText:SizeToContents()
 	LabelDescText:SetColor(Color(0, 0, 0))
+	
+	LabelVersionText = vgui.Create( "DLabel", PanelTabOne )
+	LabelVersionText:SetPos(PanelTabOne:GetWide() / 2.5, 750)
+	LabelVersionText:SetFont("Intro_Tab1_Font")
+	LabelVersionText:SetText("Version: 0.1.2")
+	LabelVersionText:SizeToContents()
+	LabelVersionText:SetColor(Color(0, 0, 0))
 	
 	TabSheet:AddSheet("Intro", PanelTabOne, nil)
 	
@@ -210,12 +225,19 @@ function LobbyMenu()
 	LabelTabThreeCmdTitle:SizeToContents()
 	LabelTabThreeCmdTitle:SetColor(Color(0, 0, 0))
 	
-	local LabelTabThreeCmds = vgui.Create( "DLabel", PanelTabThree )
-	LabelTabThreeCmds:SetPos(350, 650)
-	LabelTabThreeCmds:SetFont("Intro_Tab3_Font")
-	LabelTabThreeCmds:SetText("!Difficulty\n!pet\n!petduel\n!lobby\n!petsummon\n!petbring\n!seats\n!ach\n!petname")
-	LabelTabThreeCmds:SizeToContents()
-	LabelTabThreeCmds:SetColor(Color(0, 0, 0))
+	local LabelTabThreeCmdsOne = vgui.Create( "DLabel", PanelTabThree )
+	LabelTabThreeCmdsOne:SetPos(100, 650)
+	LabelTabThreeCmdsOne:SetFont("Intro_Tab3_Font")
+	LabelTabThreeCmdsOne:SetText("!Difficulty\n!pet\n!petduel\n!lobby\n!petsummon\n!petbring\n!seats\n!ach\n!petname")
+	LabelTabThreeCmdsOne:SizeToContents()
+	LabelTabThreeCmdsOne:SetColor(Color(0, 0, 0))
+	
+	local LabelTabThreeCmdsTwo = vgui.Create( "DLabel", PanelTabThree )
+	LabelTabThreeCmdsTwo:SetPos(525, 650)
+	LabelTabThreeCmdsTwo:SetFont("Intro_Tab3_Font")
+	LabelTabThreeCmdsTwo:SetText("!petpanic\n!removepet\n!unstuck\n!vrm\nF1 - Open New player Menu \nF2 - Remove vehicle\nF3 - Spawn vehicle\nF4 - Open Menu")
+	LabelTabThreeCmdsTwo:SizeToContents()
+	LabelTabThreeCmdsTwo:SetColor(Color(0, 0, 0))
 	
 	TabSheet:AddSheet("Rules and Commands", PanelTabThree, nil)
 	
@@ -290,6 +312,29 @@ function LobbyMenu()
 	end
 	
 	TabSheet:AddSheet("Begin Playing", PanelTabFive, nil)
+	
+	local PanelTabSix = vgui.Create( "DPanel", frame )
+	PanelTabSix:SetSize(800, 850)
+	PanelTabSix:SetPos(0, 400)
+	PanelTabSix.Paint = function(s, w, h)
+		draw.RoundedBox(0,0,0, w, h, Color(170, 170, 170, 255))
+	end
+	
+	local changelogDateText = vgui.Create("DLabel", PanelTabSix)
+	changelogDateText:SetText("27/08/2020 -")
+	changelogDateText:SetFont("Intro_Tab6_Font")
+	changelogDateText:SetColor(Color(0, 0, 0))
+	changelogDateText:SetPos(25, 50)
+	changelogDateText:SizeToContents()
+	
+	local changelogText = vgui.Create("DLabel", PanelTabSix)
+	changelogText:SetText("Added:\nHL2 lambdas and vortexes\nPopup notifications for lambdas and vortexes\n\nFixes:\nmade checkpoints tp players in important bits\nd1_town_05 doesn't get skipped\nCheckpoint lambdas now display a different material\n")
+	changelogText:SetFont("Intro_Tab6_Font")
+	changelogText:SetColor(Color(0, 0, 0))
+	changelogText:SetPos(25, 125)
+	changelogText:SizeToContents()
+	
+	TabSheet:AddSheet("Changelog", PanelTabSix, nil)
 end
 
 net.Receive("Greetings_new_player", LobbyMenu)

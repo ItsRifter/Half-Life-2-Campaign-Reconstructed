@@ -29,8 +29,8 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 	
 	--Stop players from getting easy XP/Coins from birds
 	if npc:GetClass() != "npc_crow" and npc:GetClass() != "npc_pigeon" and npc:GetClass() != "npc_seagull" then
-		giveXP = math.Rand(1 + bonusXP, (25 + bonusXP) * GetConVar("hl2c_difficulty"):GetInt())
-		giveCoins = math.Rand(1 + bonusCoins, (15 + bonusCoins) * GetConVar("hl2c_difficulty"):GetInt())
+		giveXP = math.Rand(1 + bonusXP, (25 + bonusXP) * GetConVar("hl2cr_difficulty"):GetInt())
+		giveCoins = math.Rand(1 + bonusCoins, (15 + bonusCoins) * GetConVar("hl2cr_difficulty"):GetInt())
 	else
 		giveXP = 0
 		giveCoins = 0
@@ -42,21 +42,9 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 		giveCoins = 0
 		givePetXP = 0
 	end
-	
-	if attacker:IsNPC() and attacker.owner and attacker:GetClass() == "npc_headcrab" then
-		if npc:GetClass() == "npc_zombie" then
-			givePetXP = math.random(10, 30)
-		elseif npc:GetClass() == "npc_fastzombie" then
-			givePetXP = math.random(15, 40)
-		elseif npc:GetClass() == "npc_poisonzombie" then
-			givePetXP = math.random(20, 50)
-		else
-			givePetXP = math.random(15, 40)
-		end
+	if attacker:IsPet() and attacker.owner then
+		givePetXP = math.random(10, 30)
 		addPetXP(attacker.owner, givePetXP)
-		net.Start("UpdatePetsXP")
-			net.WriteInt(givePetXP, 32)
-		net.Send(attacker.owner)
 	end
 	
 	if attacker:IsPlayer() and not npc.owner then

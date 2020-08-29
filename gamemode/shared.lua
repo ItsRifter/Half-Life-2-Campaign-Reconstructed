@@ -47,6 +47,14 @@ function addHevModels(model)
 	table.insert(GM.hev, {model})
 end
 
+function addGmanModels(model)
+	table.insert(GM.gman, {model})
+end
+
+function addRareHevModels(model)
+	table.insert(GM.rareHev, {model})
+end
+
 function addAdminModels(model)
 	table.insert(GM.admin, {model})
 end
@@ -60,6 +68,8 @@ GM.heavySoldier = {}
 GM.eliteSoldier = {}
 GM.captainSoldier = {}
 GM.hev = {}
+GM.gman = {}
+GM.rareHev = {}
 GM.admin = {}
 
 addCitizenModels("models/player/Group01/female_01.mdl")
@@ -120,6 +130,10 @@ addEliteModels("models/hlvr/characters/combine/suppressor/combine_suppressor_hlv
 addCaptainModels("models/hlvr/characters/combine_captain/combine_captain_hlvr_player.mdl")
 
 addHevModels("models/player/SGG/hev_helmet.mdl")
+
+addRareHevModels("models/kaesar/hlalyx/gordon/gordon.mdl")
+
+addGmanModels("models/kaesar/hlalyx/gman/gman.mdl")
 
 addAdminModels("models/humans/hev_mark2.mdl")
 

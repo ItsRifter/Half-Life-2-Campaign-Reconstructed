@@ -23,19 +23,20 @@ include("server/sv_spectate.lua")
 include("server/stats/sv_pets_levels.lua")
 
 
-include("server/config/maps/sv_init_maps.lua")
+include("server/config/maps/sv_hl2_init_maps.lua")
 include("server/config/maps/sv_coop_init_maps.lua")
 include("server/config/maps/sv_vortex.lua")
+include("server/config/maps/sv_lambda.lua")
 
 --HL2C Convars
-CreateConVar("hl2c_allowsuicide", 1, {FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_ARCHIVE}, "Disable kill command", 0, 1) 
-CreateConVar("hl2c_respawntime", 5, {FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_ARCHIVE})
-CreateConVar("hl2c_difficulty", 1, {FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_ARCHIVE}, "Change Difficulty", 1, 3)
-CreateConVar("hl2c_survivalmode", 0, {FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_ARCHIVE}, "Change Difficulty", 0, 1)
+CreateConVar("hl2cr_allowsuicide", 1, {FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_ARCHIVE}, "Disable kill command", 0, 1) 
+CreateConVar("hl2cr_respawntime", 5, {FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_ARCHIVE})
+CreateConVar("hl2cr_difficulty", 1, {FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_ARCHIVE}, "Change Difficulty", 1, 3)
+CreateConVar("hl2cr_survivalmode", 0, {FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_ARCHIVE}, "Change Difficulty", 0, 1)
 
 --Pet Convars
-CreateConVar("hl2c_petrecovertime", 15, FCVAR_NOTIFY, "Change Pets recovering time", 1, 999)
-CreateConVar("hl2c_petrecovery", 10, FCVAR_NOTIFY, "Change Pets recovering time", 1, 999)
+CreateConVar("hl2cr_petrecovertime", 15, FCVAR_NOTIFY, "Change Pets recovering time", 1, 999)
+CreateConVar("hl2cr_petrecovery", 10, FCVAR_NOTIFY, "Change Pets recover HP", 1, 999)
 
 --Ammo Limits
 CreateConVar("max_pistol", 				150, 	{FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_ARCHIVE}, true)
@@ -80,30 +81,10 @@ function meta:IsFriendly()
 		return false
 	end
 end
-neededVotes = #player.GetAll()
-lobbyVotes = 0
 
-function GM:Initialize(ply)
-	if not file.Exists("hl2cr_data/config.txt", "DATA") then
-		print("CONFIG MISSING, CREATING DEFAULT")
-		file.Write("hl2cr_data/config.txt", "WARNING: Unless you know what you're doing, I suggest you leave this file\n")
-		file.Append("hl2cr_data/config.txt", "Difficulty: \n")
-		file.Append("hl2cr_data/config.txt", "1\n")
-		file.Append("hl2cr_data/config.txt", "Survival Mode: \n")
-		file.Append("hl2cr_data/config.txt", "0")
-	end
-	local file = file.Open("hl2cr_data/config.txt", "r", "DATA")
-	file:ReadLine()
-	file:ReadLine()
-	local difficulty = file:ReadLine()
-	file:ReadLine()
-	local survival = file:ReadLine()
-	file:Close()
-	GetConVar("hl2c_difficulty"):SetInt(tonumber(difficulty))
-	GetConVar("hl2c_survivalmode"):SetInt(tonumber(survival))
+function GM:Initialize()
 	isAliveSurv = true
 	pets = false
-	startingWeapons = {}
 	airboatSpawnable = false
 	airboatGunSpawnable = false
 end
@@ -124,6 +105,11 @@ function GM:ShowTeam(ply)
 		ply.spawnAirboat:Remove()
 		ply.AllowSpawn = true
 	end
+	
+	if ply.spawnAirboatGun then
+		ply.spawnAirboatGun:Remove()
+		ply.AllowSpawn = true
+	end
 end
 
 net.Receive("KickUser", function(len, ply)
@@ -132,6 +118,11 @@ net.Receive("KickUser", function(len, ply)
 	RunConsoleCommand("ulx", "ban", ply:Nick(), banTime, reason)
 end)
 
+if game.GetMap() != "hl2c_lobby_remake" then
+	timer.Create("LobbyReturnAuto", 3600, 0, function()
+	RunConsoleCommand("changelevel", "hl2c_lobby_remake")
+	end)
+end
 
 function GM:ShouldCollide( ent1, ent2 )
 
@@ -143,14 +134,12 @@ function GM:ShouldCollide( ent1, ent2 )
 		return false 
 	end
 	
-	if IsValid(ent1) and IsValid(ent2) and ent1:IsPlayer() and ent2:IsPlayer() and (ent1:Team() == TEAM_ALIVE and ent2:Team() == TEAM_COMPLETED_MAP) and ent1:Team() == TEAM_COMPLETED_MAP and ent2:Team() == TEAM_ALIVE then
+	if IsValid(ent1) and IsValid(ent2) and ent1:IsPlayer() and ent2:IsPlayer() and (ent1:Team() == TEAM_ALIVE and ent2:Team() == TEAM_COMPLETED_MAP or ent1:Team() == TEAM_COMPLETED_MAP and ent2:Team() == TEAM_ALIVE) then
 		return false
 	end 
 	
 	if IsValid(ent1) and IsValid(ent2) and ent1:IsPlayer() and ent2:IsPet() then
 		return false
-	else
-		return true
 	end
 	return true
 end
@@ -222,15 +211,16 @@ function GM:ShowSpare1(ply)
 		end
 	elseif game.GetMap() == "d1_canals_11" and airboatGunSpawnable or game.GetMap() == "d1_canals_12" or game.GetMap() == "d1_canals_13" then
 		if ply.AllowSpawn then
-			spawnAirboatGun = ents.Create(airboatGun.Class)
-			spawnAirboatGun:SetModel(airboatGun.Model)
+			ply.spawnAirboatGun = ents.Create(airboatGun.Class)
+			ply.spawnAirboatGun:SetModel(airboatGun.Model)
 			for k, v in pairs(airboatGun.KeyValues) do
-				spawnAirboatGun:SetKeyValue(k, v)
+				ply.spawnAirboatGun:SetKeyValue(k, v)
 			end
-			spawnAirboatGun:SetPos(Vector(ply:EyePos().x, ply:EyePos().y, ply:EyePos().z + 35))
-			spawnAirboatGun:Spawn()
-			spawnAirboatGun:SetOwner(ply)
-			spawnAirboatGun:Fire( "addoutput", "targetname airboat" )
+			ply.spawnAirboatGun:SetPos(Vector(ply:EyePos().x, ply:EyePos().y, ply:EyePos().z + 35))
+			ply.spawnAirboatGun:Spawn()
+			ply.spawnAirboatGun:SetOwner(ply)
+			ply.spawnAirboatGun:Fire( "addoutput", "targetname airboat" )
+			ply.spawnAirboatGun:Activate()
 			ply.AllowSpawn = false
 		end
 	else

@@ -1,23 +1,56 @@
 AchievementLists = {
 	Lobby_Ach_List = {
-		First_Time = {name = "First Time", desc = "Play the gamemode for the first time", mat = "vgui/achievements/hl2_beat_cemetery.png", isRare = false, clientTriggerable = true},
-		Worthless_Secret = {name = "Worthless Secret", desc = "You get this one, but with no XP!", mat = "entities/npc_kleiner.png", isRare = true},
-		Lost_Cause = {name = "Lost Cause", desc = "Find what remains of Leiftiger's HL2C server", mat = "vgui/achievements/hl2_beat_cemetery.png", isRare = false, clientTriggerable = true}
+		First_Time = {name = "First Time", mat = "vgui/achievements/hl2_beat_cemetery.png", isRare = false, clientTriggerable = true},
+		Worthless_Secret = {name = "Worthless Secret", mat = "entities/npc_kleiner.png", isRare = true},
+		Lost_Cause = {name = "Lost Cause", mat = "vgui/achievements/hl2_beat_cemetery.png", isRare = false, clientTriggerable = true}
 	},
 
 	HL2_Ach_List = {
-		A_Red_Letter_Baby = {name = "A Red Letter Baby", desc = "Bring the baby doll to Dr.Kleiner", mat = "vgui/achievements/hl2_beat_game.png", isRare = false},
-		What_Cat = {name = "What cat", desc = "Break the mini-teleporter in Kleiner's lab", mat = "vgui/achievements/hl2_beat_game.png", isRare = false},
-		Trusty_Hardware = {name = "Trusty Hardware", desc = "Acquire the crowbar", mat = "vgui/achievements/hl2_get_crowbar.png", isRare = false},
-		ZeroPoint_Energy = {name = "ZeroPoint Energy", desc = "Acquire the Gravity gun in Black Mesa East", mat = "vgui/achievements/hl2_get_gravitygun.png", isRare = false},
+		A_Red_Letter_Baby = {name = "A Red Letter Baby", mat = "vgui/achievements/hl2_beat_game.png", isRare = false},
+		What_Cat = {name = "What cat", mat = "vgui/achievements/hl2_beat_game.png", isRare = false},
+		Trusty_Hardware = {name = "Trusty Hardware", mat = "vgui/achievements/hl2_get_crowbar.png", isRare = false},
+		ZeroPoint_Energy = {name = "ZeroPoint Energy", mat = "vgui/achievements/hl2_get_gravitygun.png", isRare = false},
 		Rave_Ball = {name = "Rave Ball", desc = "Carry dog's ball through Ravenholm into the mines", mat = "vgui/achievements/hl2_get_gravitygun.png", isRare = false},
-		Keep_off_the_sand = {name = "Keep off the sand", desc = "Cross the antlion beach in d2_coast_11 without touching the sand", mat = "vgui/achievements/hl2_beat_donttouchsand.png", isRare = false},
+		Keep_off_the_sand = {name = "Keep off the sand", mat = "vgui/achievements/hl2_beat_donttouchsand.png", isRare = false},
+		Finish_HL2 = {name = "Singularity Collapse", mat = "vgui/achievements/hl2_beat_game.png", isRare = false},
 	},
 
 	Misc_Ach_List = {
-		Survival_Lost = {name = "A Predictable Failure", desc = "Fail a map on survival with 4 or more players", mat = "vgui/achievements/hl2_find_allgmen.png", isRare = false},
-		Blast_that_little = {name = "Blast that little", desc = "Complete the Zombie evolution tree", mat = "vgui/achievements/hl2_beat_toxictunnel.png", isRare = false, clientTriggerable = true},
-		Born_Survivor = {name = "Born Survivor", desc = "Finish five maps without dying", mat = "vgui/achievements/hl2_followfreeman", isRare = false},
+		Survival_Lost = {name = "A Predictable Failure", mat = "vgui/achievements/hl2_find_allgmen.png", isRare = false},
+		Blast_that_little = {name = "Blast that little", mat = "vgui/achievements/hl2_beat_toxictunnel.png", isRare = false, clientTriggerable = true},
+		Born_Survivor = {name = "Born Survivor", mat = "vgui/achievements/hl2_followfreeman", isRare = false},
+	}
+}
+
+SpecialLists = {
+	HL2_Lambda = {
+		d1_trainstation_05 = {name = "d1_trainstation_05", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+		d1_canals_01 = {name = "d1_canals_01", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+		d1_canals_01a = {name = "d1_canals_01a", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+		d1_canals_02 = {name = "d1_canals_02", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+		d1_canals_03 = {name = "d1_canals_03", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+		d1_canals_05 = {name = "d1_canals_05", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+		d1_canals_06 = {name = "d1_canals_06", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+		d1_canals_07 = {name = "d1_canals_07", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+		d1_canals_08 = {name = "d1_canals_08", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+		d1_canals_09 = {name = "d1_canals_09", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+		d1_canals_10 = {name = "d1_canals_10", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+		d1_canals_12 = {name = "d1_canals_12", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+		d1_eli_01 = {name = "d1_eli_01", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+		d1_town_01 = {name = "d1_town_01", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+		d1_town_01a = {name = "d1_town_01a", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+		d1_town_05 = {name = "d1_town_05", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+		d2_coast_01 = {name = "d2_coast_01", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+		d2_coast_03 = {name = "d2_coast_03", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+		d2_coast_04 = {name = "d2_coast_04", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+		d2_coast_05 = {name = "d2_coast_05", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+		d2_coast_07 = {name = "d2_coast_07", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+	},
+	
+	HL2_Vortex = {
+		d1_trainstation_05 = {name = "d1_trainstation_05", mat = "vgui/achievements/hlx_find_onegman.png"},
+		d1_trainstation_06 = {name = "d1_trainstation_06", mat = "vgui/achievements/hlx_find_onegman.png"},
+		d1_canals_01 = {name = "d1_canals_01", mat = "vgui/achievements/hlx_find_onegman.png"},
 	}
 }
 
@@ -35,10 +68,10 @@ function Achievement(ply, name, list, amt, clientTriggered)
 	if clientTriggered and not achievement.clientTriggerable then return end
 
 	-- Check if the player already got the achievement
-	if ply.hl2cPersistent.Achievements[name] then return end
+	if table.HasValue(ply.hl2cPersistent.Achievements, name) then return end
 
 	-- Give achievement to player
-	ply.hl2cPersistent.Achievements[name] = true
+	table.insert(ply.hl2cPersistent.Achievements, name)
 
 	-- Send space separated achievement list to client
 	ply:SetNWString("Ach", table.concat(ply.hl2cPersistent.Achievements, " "))
@@ -60,15 +93,37 @@ function Achievement(ply, name, list, amt, clientTriggered)
 	end
 
 	-- XP stuff
-	AddXP(ply, amt)
-	ply:ChatPrint(string.format("You got %s XP", amt))
+	if amt != 0 then
+		AddXP(ply, amt)
+		ply:ChatPrint(string.format("You got %s XP", amt))
+	end
+end
+
+function Special(ply, name, list, amt)
+	-- Get special list, or exit if it doesn't exists
+	local specialList = SpecialLists[list]
+	if not specialList then return end
+
+	-- Get special, or exit if it doesn't exists
+	local special = specialList[name]
+	if not special then return end
+	
+	net.Start("Special_Earned")
+		net.WriteString(special.name)
+		net.WriteString(special.mat)
+	net.Send(ply)
+	
+	if amt != 0 then
+		AddXP(ply, amt)
+		ply:ChatPrint(string.format("You got %s XP", amt))
+	end
 end
 
 net.Receive("Achievement", function(len, ply)
 	local name = net.ReadString()
 	local listName = net.ReadString()
 	local amt = 0
-	Achievement(ply, name, listName, amt, true)
+	Achievement(ply, name, listName, amt)
 end)
 
 

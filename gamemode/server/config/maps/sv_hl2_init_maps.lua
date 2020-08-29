@@ -101,15 +101,32 @@ function SetupMap()
 		end
 	end
 	
+	--This map is self-aware
+	if game.GetMap() == "d3_citadel_03" then 
+		for k, fix9 in pairs(ents.FindByClass("info_player_start")) do
+			fix9:SetPos(Vector(7682, -914, 2138))
+			fix9:SetAngles(Angle(0, 90, 0))
+		end
+	end
+	
+	if game.GetMap() == "d3_breen_01" then 
+		for k, fix10 in pairs(ents.FindByClass("info_player_start")) do
+			fix10:SetPos(Vector(-2184, 851, 640))
+			fix10:SetAngles(Angle(0, -90, 0))
+		end
+	end
+	
 	if game.GetMap() == "d1_town_03" and not file.Exists("hl2cr_data/d1_town_02", "DATA") then 
 		file.Write("hl2cr_data/d1_town_02.txt", "Map checker please don't delete this file")
 	end
+	
 	if game.GetMap() == "d1_town_02" and file.Exists("hl2cr_data/d1_town_02.txt", "DATA") then 
 		for k, returnMap in pairs(ents.FindByClass("info_player_start")) do
 			returnMap:SetPos(Vector(-3759, -45, -3435))
 			returnMap:SetAngles(Angle(0, 90, 0))
 		end
 	end
+	
 	if game.GetMap() == "d1_canals_05" then
 		for k, air in pairs(ents.FindByClass("prop_vehicle_airboat")) do
 			air:Fire("AddOutput", "PlayerOn triggerhook:RunPassedCode:hook.Run( 'Airboat' ):0:-1")
@@ -120,9 +137,7 @@ function SetupMap()
 		for k, fix3 in pairs(ents.FindByClass("info_player_start")) do
 			fix3:SetPos(Vector(-5177, -4484, 44))
 		end
-	end
-	
-	if game.GetMap() == "d1_trainstation_03" then
+		
 		for k, pusher in pairs(ents.FindByClass("trigger_push")) do
 			if pusher:EntIndex() == 709 then
 				pusher:Remove()
@@ -130,18 +145,27 @@ function SetupMap()
 		end
 	end
 	
+	--Fix super grav gun
+	if game.GetMap() == "d3_citadel_03" or game.GetMap() == "d3_citadel_04" or game.GetMap() == "d3_citadel_05" or game.GetMap() == "d3_breen_01" then
+		game.SetGlobalState("super_phys_gun", 1)
+	else
+		game.SetGlobalState("super_phys_gun", 0)
+	end
+	
 	--Doll Achievement
 	local dollAch = ents.Create("prop_physics")
-	dollAch:SetModel("models/props_c17/doll01.mdl")
 	if game.GetMap() == "d1_trainstation_03" and file.Exists("hl2cr_data/babydoll.txt", "DATA") then
+		dollAch:SetModel("models/props_c17/doll01.mdl")
 		dollAch:SetPos(Vector(-5177, -4719, 64))
 		dollAch:Spawn()
 		file.Delete("hl2cr_data/babydoll.txt")
 	elseif game.GetMap() == "d1_trainstation_04" and file.Exists("hl2cr_data/babydoll2.txt", "DATA") then
+		dollAch:SetModel("models/props_c17/doll01.mdl")
 		dollAch:SetPos(Vector(-3367, -3410, 628))
 		dollAch:Spawn()
 		file.Delete("hl2cr_data/babydoll2.txt")
 	elseif game.GetMap() == "d1_trainstation_05" and file.Exists("hl2cr_data/babydoll3.txt", "DATA") then
+		dollAch:SetModel("models/props_c17/doll01.mdl")
 		dollAch:SetPos(Vector(-5833, -927, 128))
 		dollAch:Spawn()
 		file.Delete("hl2cr_data/babydoll3.txt")
@@ -149,32 +173,38 @@ function SetupMap()
 	
 	--Ball achievement ravenholm
 	local ballAch = ents.Create("prop_physics")
-	ballAch:SetModel("models/Roller.mdl")
 	if game.GetMap() == "d1_town_01" and file.Exists("hl2cr_data/ravenball1.txt", "DATA") then
+		ballAch:SetModel("models/Roller.mdl")
 		ballAch:SetPos(Vector(4672, -2222, -3718))
 		ballAch:Spawn()
 		file.Delete("hl2cr_data/ravenball1.txt")
 	elseif game.GetMap() == "d1_town_01a" and file.Exists("hl2cr_data/ravenball2.txt", "DATA") then
+		ballAch:SetModel("models/Roller.mdl")
 		ballAch:SetPos(Vector(174, 177, -3263))
 		ballAch:Spawn()
 		file.Delete("hl2cr_data/ravenball2.txt")
 	elseif game.GetMap() == "d1_town_02" and not file.Exists("hl2cr_data/d1_town_02.txt", "DATA") and file.Exists("hl2cr_data/ravenball3.txt", "DATA") then
+		ballAch:SetModel("models/Roller.mdl")
 		ballAch:SetPos(Vector(-955, 884, -3375))
 		ballAch:Spawn()
 		file.Delete("hl2cr_data/ravenball3.txt")
 	elseif game.GetMap() == "d1_town_03" and file.Exists("hl2cr_data/ravenball4.txt", "DATA") then
+		ballAch:SetModel("models/Roller.mdl")
 		ballAch:SetPos(Vector(-3554, -725, -3519))
 		ballAch:Spawn()
 		file.Delete("hl2cr_data/ravenball4.txt")
 	elseif game.GetMap() == "d1_town_02" and file.Exists("hl2cr_data/d1_town_02.txt", "DATA") and file.Exists("hl2cr_data/ravenball5.txt", "DATA") then
+		ballAch:SetModel("models/Roller.mdl")
 		ballAch:SetPos(Vector(-3587, 260, -3391))
 		ballAch:Spawn()
 		file.Delete("hl2cr_data/ravenball5.txt")
 	elseif game.GetMap() == "d1_town_02a" and file.Exists("hl2cr_data/ravenball6.txt", "DATA") then
+		ballAch:SetModel("models/Roller.mdl")
 		ballAch:SetPos(Vector(-5361, 2333, -3218))
 		ballAch:Spawn()
 		file.Delete("hl2cr_data/ravenball6.txt")
 	elseif game.GetMap() == "d1_town_04" and file.Exists("hl2cr_data/ravenball7.txt", "DATA") then
+		ballAch:SetModel("models/Roller.mdl")
 		ballAch:SetPos(Vector(818, -1190, -3583))
 		ballAch:Spawn()
 		file.Delete("hl2cr_data/ravenball7.txt")
@@ -212,12 +242,21 @@ function SetupMap()
 		fixLeap2:PhysicsInit(SOLID_VPHYSICS)
 		fixLeap2:Spawn()
 	end
-	if game.GetMap() == "d3_citadel_03" or game.GetMap() == "d3_citadel_04" or game.GetMap() == "d3_citadel_05" or game.GetMap() == "d3_breen_01" then
-		for k, l in pairs(ents.FindByClass("logic_auto")) do
-			l:Remove()
+	
+	if game.GetMap() == "d3_citadel_03" then
+		timer.Simple(5, function()
+			for k, removeWeaponAmmo in pairs(ents.FindByName("global_newgame_spawner_*")) do
+				removeWeaponAmmo:Remove()
+			end
+		end)
+	end
+	
+	if game.GetMap() == "d3_breen_01" then
+		for m, tele in pairs(ents.FindByName("teleport_end_swap_2")) do
+			tele:Fire("AddOutput", "OnStartTouch triggerhook:RunPassedCode:hook.Run( 'EndHL2' ):0:-1")
 		end
 	end
-
+	
 	SetCheckpointsStage()
 	
 end
@@ -226,7 +265,6 @@ hook.Add("InitPostEntity", "SetupHL2Lua", SetupMap)
 hook.Add("PostCleanupMap", "SetupHL2Lua", SetupMap)
 
 function UpdateBaby()
-	
 	if game.GetMap() == "d1_trainstation_02" then
 		file.Write("hl2cr_data/babydoll.txt", "Please leave this file alone unless you wanna disrupt someones achievement")
 	elseif game.GetMap() == "d1_trainstation_03" then
@@ -287,6 +325,14 @@ hook.Add("GiveGravgun", "GrantGravgun", function()
 		Achievement(v, "ZeroPoint_Energy", "HL2_Ach_List", 250)
 		v:ChatPrint("Gravity gun is now enabled")
 	end
+end)
+
+hook.Add("EndHL2", "FinishedHL2", function()
+	for k, v in pairs(player.GetAll()) do
+		Achievement(v, "Finish_HL2", "HL2_Ach_List", 250)
+	end
+	
+	EndHL2Game()
 end)
 
 hook.Add("GiveLostCause", "GrantLobbyAch", function()
@@ -386,10 +432,6 @@ hook.Add( "OnChangeLevel", "ChangeMap", function()
 	end
 end)
 
-hook.Add("PlayerSpawn", "GiveWeapons", function(ply)
-	ply.givenWeapons = {}
-end)
-
 hook.Add("Think", "MapWeapons", function()
 	for _, p in pairs(player.GetAll()) do
 		if not p:Alive() or p:Team() ~= TEAM_ALIVE then
@@ -413,7 +455,7 @@ function SetCheckpointsStage()
 		TRIGGER_CHECKPOINT = {
 			Vector(-5513, -1985, -18), Vector(-5163, -1933, 142),
 			Vector(-3475, -444, -23), Vector(-3600, -320, 81),
-			Vector(-3288, -111, -17), Vector(-3512, -6, 71),
+			Vector(-3275, -76, -25), Vector(-3512, -6, 71),
 		}
 		local Checkpoint1 = ents.Create("trigger_checkpoint")
 		Checkpoint1.forcePlyTP = true
@@ -435,9 +477,9 @@ function SetCheckpointsStage()
 		
 		local Checkpoint3 = ents.Create("trigger_checkpoint")
 		Checkpoint3.forcePlyTP = true
-		Checkpoint3.Min = Vector(-4170, -589, -13)
+		Checkpoint3.Min = Vector(-3275, -76, -25)
 		Checkpoint3.Max = Vector(-4320, -531, 99)
-		Checkpoint3.Pos = Vector(-4320, -531, 99) - ( ( Vector(-4320, -531, 99) - Vector(-4170, -589, -13)) / 2 )
+		Checkpoint3.Pos = Vector(-4320, -531, 99) - ( ( Vector(-4320, -531, 99) - Vector(-3275, -76, -25)) / 2 )
 		Checkpoint3.Point3 = Vector(-4208, -522, -10)
 		Checkpoint3:SetPos(Checkpoint3.Pos)
 		Checkpoint3:Spawn()
@@ -462,31 +504,31 @@ function SetCheckpointsStage()
 		
 		lambdaModel1 = ents.Create("prop_dynamic")
 		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel1:SetMaterial("models/player/shared/gold_player")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel1:SetPos(Checkpoint1.Pos)
 		lambdaModel1:Spawn()
 		
 		lambdaModel2 = ents.Create("prop_dynamic")
 		lambdaModel2:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel2:SetMaterial("models/player/shared/gold_player")
+		lambdaModel2:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel2:SetPos(Checkpoint2.Pos)
 		lambdaModel2:Spawn()
 		
 		lambdaModel3 = ents.Create("prop_dynamic")
 		lambdaModel3:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel3:SetMaterial("models/player/shared/gold_player")
+		lambdaModel3:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel3:SetPos(Checkpoint3.Pos)
 		lambdaModel3:Spawn()
 		
 		lambdaModel4 = ents.Create("prop_dynamic")
 		lambdaModel4:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel4:SetMaterial("models/player/shared/gold_player")
+		lambdaModel4:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel4:SetPos(Checkpoint4.Pos)
 		lambdaModel4:Spawn()
 		
 		lambdaModel5 = ents.Create("prop_dynamic")
 		lambdaModel5:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel5:SetMaterial("models/player/shared/gold_player")
+		lambdaModel5:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel5:SetPos(Checkpoint5.Pos)
 		lambdaModel5:Spawn()
 
@@ -507,7 +549,7 @@ function SetCheckpointsStage()
 		
 		lambdaModel1 = ents.Create("prop_dynamic")
 		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel1:SetMaterial("models/player/shared/gold_player")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel1:SetPos(Checkpoint1.Pos)
 		lambdaModel1:Spawn()
 	
@@ -547,19 +589,19 @@ function SetCheckpointsStage()
 		
 		lambdaModel1 = ents.Create("prop_dynamic")
 		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel1:SetMaterial("models/player/shared/gold_player")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel1:SetPos(Checkpoint1.Pos)
 		lambdaModel1:Spawn()
 		
 		lambdaModel2 = ents.Create("prop_dynamic")
 		lambdaModel2:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel2:SetMaterial("models/player/shared/gold_player")
+		lambdaModel2:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel2:SetPos(Checkpoint2.Pos)
 		lambdaModel2:Spawn()
 		
 		lambdaModel3 = ents.Create("prop_dynamic")
 		lambdaModel3:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel3:SetMaterial("models/player/shared/gold_player")
+		lambdaModel3:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel3:SetPos(Checkpoint3.Pos)
 		lambdaModel3:Spawn()
 		
@@ -598,19 +640,19 @@ function SetCheckpointsStage()
 		
 		lambdaModel1 = ents.Create("prop_dynamic")
 		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel1:SetMaterial("models/player/shared/gold_player")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel1:SetPos(Checkpoint1.Pos)
 		lambdaModel1:Spawn()
 		
 		lambdaModel2 = ents.Create("prop_dynamic")
 		lambdaModel2:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel2:SetMaterial("models/player/shared/gold_player")
+		lambdaModel2:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel2:SetPos(Checkpoint2.Pos)
 		lambdaModel2:Spawn()
 		
 		lambdaModel3 = ents.Create("prop_dynamic")
 		lambdaModel3:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel3:SetMaterial("models/player/shared/gold_player")
+		lambdaModel3:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel3:SetPos(Checkpoint3.Pos)
 		lambdaModel3:Spawn()
 		
@@ -629,7 +671,7 @@ function SetCheckpointsStage()
 		
 		lambdaModel1 = ents.Create("prop_dynamic")
 		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel1:SetMaterial("models/player/shared/gold_player")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel1:SetPos(Checkpoint1.Pos)
 		lambdaModel1:Spawn()
 		
@@ -638,6 +680,7 @@ function SetCheckpointsStage()
 			 Vector(-2931, 5371, -56), Vector(-3012, 5216, 112),
 		}
 		local Checkpoint1 = ents.Create("trigger_checkpoint")
+		Checkpoint1.forcePlyTP = true
 		Checkpoint1.Min = Vector(-2931, 5371, -56)
 		Checkpoint1.Max = Vector(-3012, 5216, 112)
 		Checkpoint1.Pos = Vector(-3012, 5216, 112) - ( ( Vector(-3012, 5216, 112) - Vector(-2931, 5371, -56)) / 2 )
@@ -647,7 +690,7 @@ function SetCheckpointsStage()
 		
 		lambdaModel1 = ents.Create("prop_dynamic")
 		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel1:SetMaterial("models/player/shared/gold_player")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel1:SetPos(Checkpoint1.Pos)
 		lambdaModel1:Spawn()
 		
@@ -656,6 +699,7 @@ function SetCheckpointsStage()
 			 Vector(-2180, -885, -1028), Vector(-2108, -829, -1076),
 		}
 		local Checkpoint1 = ents.Create("trigger_checkpoint")
+		Checkpoint1.forcePlyTP = true
 		Checkpoint1.Min = Vector(-2180, -885, -1028)
 		Checkpoint1.Max = Vector(-2108, -829, -1076)
 		Checkpoint1.Pos = Vector(-2108, -829, -1076) - ( ( Vector(-2108, -829, -1076) - Vector(-2180, -885, -1028)) / 2 )
@@ -665,7 +709,7 @@ function SetCheckpointsStage()
 		
 		lambdaModel1 = ents.Create("prop_dynamic")
 		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel1:SetMaterial("models/player/shared/gold_player")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel1:SetPos(Checkpoint1.Pos)
 		lambdaModel1:Spawn()
 		
@@ -676,6 +720,7 @@ function SetCheckpointsStage()
 			 Vector(6745, 1598, -446), Vector(6775, 1534, -337),
 		}
 		local Checkpoint1 = ents.Create("trigger_checkpoint")
+		Checkpoint1.forcePlyTP = true
 		Checkpoint1.Min = Vector(4281, 1474, -453)
 		Checkpoint1.Max = Vector(4114, 1549, -294)
 		Checkpoint1.Pos = Vector(4114, 1549, -294) - ( ( Vector(4114, 1549, -294) - Vector(4281, 1474, -453)) / 2 )
@@ -684,6 +729,7 @@ function SetCheckpointsStage()
 		Checkpoint1:Spawn()
 		
 		local Checkpoint2 = ents.Create("trigger_checkpoint")
+		Checkpoint2.forcePlyTP = false
 		Checkpoint2.Min = Vector(6745, 1598, -446)
 		Checkpoint2.Max = Vector(6775, 1534, -337)
 		Checkpoint2.Pos = Vector(6775, 1534, -337) - ( ( Vector(6775, 1534, -337) - Vector(6745, 1598, -446)) / 2 )
@@ -693,21 +739,22 @@ function SetCheckpointsStage()
 		
 		lambdaModel1 = ents.Create("prop_dynamic")
 		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel1:SetMaterial("models/player/shared/gold_player")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel1:SetPos(Checkpoint1.Pos)
 		lambdaModel1:Spawn()
 		
 		lambdaModel2 = ents.Create("prop_dynamic")
 		lambdaModel2:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel2:SetMaterial("models/player/shared/gold_player")
+		lambdaModel2:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel2:SetPos(Checkpoint2.Pos)
 		lambdaModel2:Spawn()
 		
 	elseif game.GetMap() == "d1_canals_07" then
 		TRIGGER_CHECKPOINT = {
-			 Vector(7361, 1410, -251), Vector(7319, 1358, -142),
+			 Vector(7361, 1410, -251), Vector(7319, 1358, -142)
 		}
 		local Checkpoint1 = ents.Create("trigger_checkpoint")
+		Checkpoint1.forcePlyTP = true
 		Checkpoint1.Min = Vector(7361, 1410, -251)
 		Checkpoint1.Max = Vector(7319, 1358, -142)
 		Checkpoint1.Pos = Vector(7319, 1358, -142) - ( ( Vector(7319, 1358, -142) - Vector(7361, 1410, -251)) / 2 )
@@ -717,7 +764,26 @@ function SetCheckpointsStage()
 		
 		lambdaModel1 = ents.Create("prop_dynamic")
 		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel1:SetMaterial("models/player/shared/gold_player")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
+		lambdaModel1:SetPos(Checkpoint1.Pos)
+		lambdaModel1:Spawn()
+		
+	elseif game.GetMap() == "d1_canals_08" then
+		TRIGGER_CHECKPOINT = {
+			 Vector(-2993, -4486, -638), Vector(-2371, -3692, -258)
+		}
+		local Checkpoint1 = ents.Create("trigger_checkpoint")
+		Checkpoint1.forcePlyTP = true
+		Checkpoint1.Min = Vector(-2993, -4486, -638)
+		Checkpoint1.Max = Vector(-2371, -3692, -258)
+		Checkpoint1.Pos = Vector(-2371, -3692, -258) - ( ( Vector(-2371, -3692, -258) - Vector(-2993, -4486, -638)) / 2 )
+		Checkpoint1.Point1 = Vector(-3391, -4081, -549)
+		Checkpoint1:SetPos(Checkpoint1.Pos)
+		Checkpoint1:Spawn()
+		
+		lambdaModel1 = ents.Create("prop_dynamic")
+		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel1:SetPos(Checkpoint1.Pos)
 		lambdaModel1:Spawn()	
 			
@@ -725,9 +791,11 @@ function SetCheckpointsStage()
 		TRIGGER_CHECKPOINT = {
 			 Vector(6228, 5310, -889), Vector(6276, 5247, -777),
 			 Vector(5117, 5052, -945), Vector(4830, 4725, -764),
+			 Vector(2349, -7427, -999), Vector(2066, -8069, -760),
 		}
 		
 		local Checkpoint1 = ents.Create("trigger_checkpoint")
+		Checkpoint1.forcePlyTP = true
 		Checkpoint1.Min = Vector(6228, 5310, -889)
 		Checkpoint1.Max = Vector(6276, 5247, -777)
 		Checkpoint1.Pos = Vector(6276, 5247, -777) - ( ( Vector(6276, 5247, -777) - Vector(6228, 5310, -889)) / 2 )
@@ -736,6 +804,7 @@ function SetCheckpointsStage()
 		Checkpoint1:Spawn()
 		
 		local Checkpoint2 = ents.Create("trigger_checkpoint")
+		Checkpoint2.forcePlyTP = true
 		Checkpoint2.Min = Vector(5117, 5052, -945)
 		Checkpoint2.Max = Vector(4830, 4725, -764)
 		Checkpoint2.Pos = Vector(4830, 4725, -764) - ( ( Vector(4830, 4725, -764) - Vector(5117, 5052, -945)) / 2 )
@@ -743,17 +812,32 @@ function SetCheckpointsStage()
 		Checkpoint2:SetPos(Checkpoint2.Pos)
 		Checkpoint2:Spawn()
 		
+		local Checkpoint3 = ents.Create("trigger_checkpoint")
+		Checkpoint3.forcePlyTP = true
+		Checkpoint3.Min = Vector(2349, -7427, -999)
+		Checkpoint3.Max = Vector(2066, -8069, -760)
+		Checkpoint3.Pos = Vector(2066, -8069, -760) - ( ( Vector(2066, -8069, -760) - Vector(2349, -7427, -999)) / 2 )
+		Checkpoint3.Point3 = Vector(1961, -7257, -863)
+		Checkpoint3:SetPos(Checkpoint3.Pos)
+		Checkpoint3:Spawn()
+		
 		lambdaModel1 = ents.Create("prop_dynamic")
 		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel1:SetMaterial("models/player/shared/gold_player")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel1:SetPos(Checkpoint1.Pos)
 		lambdaModel1:Spawn()
 		
 		lambdaModel2 = ents.Create("prop_dynamic")
 		lambdaModel2:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel2:SetMaterial("models/player/shared/gold_player")
+		lambdaModel2:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel2:SetPos(Checkpoint2.Pos)
 		lambdaModel2:Spawn()
+		
+		lambdaModel3 = ents.Create("prop_dynamic")
+		lambdaModel3:SetModel("models/hl2cr_lambda.mdl")
+		lambdaModel3:SetMaterial("models/props_combine/com_shield001a")
+		lambdaModel3:SetPos(Checkpoint3.Pos)
+		lambdaModel3:Spawn()
 		
 	elseif game.GetMap() == "d1_eli_01" then
 		TRIGGER_CHECKPOINT = {
@@ -763,6 +847,7 @@ function SetCheckpointsStage()
 			 Vector(19, 2075, -2727), Vector(-79, 2181, -2606),
 		}
 		local Checkpoint1 = ents.Create("trigger_checkpoint")
+		Checkpoint1.forcePlyTP = true
 		Checkpoint1.Min = Vector(15, 2847, -1271)
 		Checkpoint1.Max = Vector(-110, 2837, -1180)
 		Checkpoint1.Pos = Vector(-110, 2837, -1180) - ( ( Vector(-110, 2837, -1180) - Vector(15, 2847, -1271)) / 2 )
@@ -771,6 +856,7 @@ function SetCheckpointsStage()
 		Checkpoint1:Spawn()
 		
 		local Checkpoint2 = ents.Create("trigger_checkpoint")
+		Checkpoint2.forcePlyTP = true
 		Checkpoint2.Min = Vector(397, 1716, -1256)
 		Checkpoint2.Max = Vector(510, 1669, -1175)
 		Checkpoint2.Pos = Vector(510, 1669, -1175) - ( ( Vector(510, 1669, -1175) - Vector(397, 1716, -1256)) / 2 )
@@ -779,6 +865,7 @@ function SetCheckpointsStage()
 		Checkpoint2:Spawn()
 		
 		local Checkpoint3 = ents.Create("trigger_checkpoint")
+		Checkpoint3.forcePlyTP = true
 		Checkpoint3.Min = Vector(508, 1770, -2726)
 		Checkpoint3.Max = Vector(383, 1881, -2603)
 		Checkpoint3.Pos = Vector(383, 1881, -2603) - ( ( Vector(383, 1881, -2603) - Vector(508, 1770, -2726)) / 2 )
@@ -787,6 +874,7 @@ function SetCheckpointsStage()
 		Checkpoint3:Spawn()
 		
 		local Checkpoint4 = ents.Create("trigger_checkpoint")
+		Checkpoint4.forcePlyTP = true
 		Checkpoint4.Min = Vector(19, 2075, -2727)
 		Checkpoint4.Max = Vector(-79, 2181, -2606)
 		Checkpoint4.Pos = Vector(-79, 2181, -2606) - ( ( Vector(-79, 2181, -2606) - Vector(19, 2075, -2727)) / 2 )
@@ -796,25 +884,25 @@ function SetCheckpointsStage()
 		
 		lambdaModel1 = ents.Create("prop_dynamic")
 		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel1:SetMaterial("models/player/shared/gold_player")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel1:SetPos(Checkpoint1.Pos)
 		lambdaModel1:Spawn()
 		
 		lambdaModel2 = ents.Create("prop_dynamic")
 		lambdaModel2:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel2:SetMaterial("models/player/shared/gold_player")
+		lambdaModel2:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel2:SetPos(Checkpoint2.Pos)
 		lambdaModel2:Spawn()
 		
 		lambdaModel3 = ents.Create("prop_dynamic")
 		lambdaModel3:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel3:SetMaterial("models/player/shared/gold_player")
+		lambdaModel3:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel3:SetPos(Checkpoint3.Pos)
 		lambdaModel3:Spawn()
 		
 		lambdaModel4 = ents.Create("prop_dynamic")
 		lambdaModel4:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel4:SetMaterial("models/player/shared/gold_player")
+		lambdaModel4:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel4:SetPos(Checkpoint4.Pos)
 		lambdaModel4:Spawn()
 		
@@ -825,6 +913,7 @@ function SetCheckpointsStage()
 			 Vector(-1905, 2007, -2726), Vector(-2056, 1851, -2592),
 		}
 		local Checkpoint1 = ents.Create("trigger_checkpoint")
+		Checkpoint1.forcePlyTP = true
 		Checkpoint1.Min = Vector(-677, 864, -2676)
 		Checkpoint1.Max = Vector(-519, 779, -2566)
 		Checkpoint1.Pos = Vector(-519, 779, -2566) - ( ( Vector(-519, 779, -2566) - Vector(-677, 864, -2676)) / 2 )
@@ -833,6 +922,7 @@ function SetCheckpointsStage()
 		Checkpoint1:Spawn()
 		
 		local Checkpoint2 = ents.Create("trigger_checkpoint")
+		Checkpoint2.forcePlyTP = true
 		Checkpoint2.Min = Vector(-525, 1186, -2681)
 		Checkpoint2.Max = Vector(-681, 1320, -2573)
 		Checkpoint2.Pos = Vector(-681, 1320, -2573) - ( ( Vector(-681, 1320, -2573) - Vector(-525, 1186, -2681)) / 2 )
@@ -841,6 +931,7 @@ function SetCheckpointsStage()
 		Checkpoint2:Spawn()
 		
 		local Checkpoint3 = ents.Create("trigger_checkpoint")
+		Checkpoint3.forcePlyTP = true
 		Checkpoint3.Min = Vector(-1905, 2007, -2726)
 		Checkpoint3.Max = Vector(-2056, 1851, -2592)
 		Checkpoint3.Pos = Vector(-2056, 1851, -2592) - ( ( Vector(-2056, 1851, -2592) - Vector(-1905, 2007, -2726)) / 2 )
@@ -850,19 +941,19 @@ function SetCheckpointsStage()
 		
 		lambdaModel1 = ents.Create("prop_dynamic")
 		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel1:SetMaterial("models/player/shared/gold_player")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel1:SetPos(Checkpoint1.Pos)
 		lambdaModel1:Spawn()
 		
 		lambdaModel2 = ents.Create("prop_dynamic")
 		lambdaModel2:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel2:SetMaterial("models/player/shared/gold_player")
+		lambdaModel2:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel2:SetPos(Checkpoint2.Pos)
 		lambdaModel2:Spawn()
 		
 		lambdaModel3 = ents.Create("prop_dynamic")
 		lambdaModel3:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel3:SetMaterial("models/player/shared/gold_player")
+		lambdaModel3:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel3:SetPos(Checkpoint3.Pos)
 		lambdaModel3:Spawn()
 		
@@ -881,7 +972,7 @@ function SetCheckpointsStage()
 		
 		lambdaModel1 = ents.Create("prop_dynamic")
 		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel1:SetMaterial("models/player/shared/gold_player")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel1:SetPos(Checkpoint1.Pos)
 		lambdaModel1:Spawn()
 		
@@ -900,7 +991,7 @@ function SetCheckpointsStage()
 				
 		lambdaModel1 = ents.Create("prop_dynamic")
 		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel1:SetMaterial("models/player/shared/gold_player")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel1:SetPos(Checkpoint1.Pos)
 		lambdaModel1:Spawn()
 				
@@ -929,13 +1020,13 @@ function SetCheckpointsStage()
 		
 		lambdaModel1 = ents.Create("prop_dynamic")
 		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel1:SetMaterial("models/player/shared/gold_player")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel1:SetPos(Checkpoint1.Pos)
 		lambdaModel1:Spawn()
 		
 		lambdaModel2 = ents.Create("prop_dynamic")
 		lambdaModel2:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel2:SetMaterial("models/player/shared/gold_player")
+		lambdaModel2:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel2:SetPos(Checkpoint2.Pos)
 		lambdaModel2:Spawn()
 		
@@ -973,19 +1064,19 @@ function SetCheckpointsStage()
 		
 		lambdaModel1 = ents.Create("prop_dynamic")
 		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel1:SetMaterial("models/player/shared/gold_player")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel1:SetPos(Checkpoint1.Pos)
 		lambdaModel1:Spawn()
 		
 		lambdaModel2 = ents.Create("prop_dynamic")
 		lambdaModel2:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel2:SetMaterial("models/player/shared/gold_player")
+		lambdaModel2:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel2:SetPos(Checkpoint2.Pos)
 		lambdaModel2:Spawn()
 		
 		lambdaModel3 = ents.Create("prop_dynamic")
 		lambdaModel3:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel3:SetMaterial("models/player/shared/gold_player")
+		lambdaModel3:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel3:SetPos(Checkpoint3.Pos)
 		lambdaModel3:Spawn()
 		
@@ -1004,7 +1095,7 @@ function SetCheckpointsStage()
 		
 		lambdaModel1 = ents.Create("prop_dynamic")
 		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel1:SetMaterial("models/player/shared/gold_player")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel1:SetPos(Checkpoint1.Pos)
 		lambdaModel1:Spawn()
 		
@@ -1023,7 +1114,7 @@ function SetCheckpointsStage()
 		
 		lambdaModel1 = ents.Create("prop_dynamic")
 		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel1:SetMaterial("models/player/shared/gold_player")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel1:SetPos(Checkpoint1.Pos)
 		lambdaModel1:Spawn()
 		
@@ -1042,7 +1133,7 @@ function SetCheckpointsStage()
 		
 		lambdaModel1 = ents.Create("prop_dynamic")
 		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel1:SetMaterial("models/player/shared/gold_player")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel1:SetPos(Checkpoint1.Pos)
 		lambdaModel1:Spawn()
 		
@@ -1061,7 +1152,7 @@ function SetCheckpointsStage()
 		
 		lambdaModel1 = ents.Create("prop_dynamic")
 		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel1:SetMaterial("models/player/shared/gold_player")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel1:SetPos(Checkpoint1.Pos)
 		lambdaModel1:Spawn()
 		
@@ -1100,19 +1191,19 @@ function SetCheckpointsStage()
 		
 		lambdaModel1 = ents.Create("prop_dynamic")
 		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel1:SetMaterial("models/player/shared/gold_player")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel1:SetPos(Checkpoint1.Pos)
 		lambdaModel1:Spawn()
 		
 		lambdaModel2 = ents.Create("prop_dynamic")
 		lambdaModel2:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel2:SetMaterial("models/player/shared/gold_player")
+		lambdaModel2:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel2:SetPos(Checkpoint2.Pos)
 		lambdaModel2:Spawn()
 		
 		lambdaModel3 = ents.Create("prop_dynamic")
 		lambdaModel3:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel3:SetMaterial("models/player/shared/gold_player")
+		lambdaModel3:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel3:SetPos(Checkpoint3.Pos)
 		lambdaModel3:Spawn()
 		
@@ -1141,13 +1232,13 @@ function SetCheckpointsStage()
 		
 		lambdaModel1 = ents.Create("prop_dynamic")
 		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel1:SetMaterial("models/player/shared/gold_player")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel1:SetPos(Checkpoint1.Pos)
 		lambdaModel1:Spawn()
 		
 		lambdaModel2 = ents.Create("prop_dynamic")
 		lambdaModel2:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel2:SetMaterial("models/player/shared/gold_player")
+		lambdaModel2:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel2:SetPos(Checkpoint2.Pos)
 		lambdaModel2:Spawn()
 		
@@ -1186,19 +1277,19 @@ function SetCheckpointsStage()
 		
 		lambdaModel1 = ents.Create("prop_dynamic")
 		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel1:SetMaterial("models/player/shared/gold_player")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel1:SetPos(Checkpoint1.Pos)
 		lambdaModel1:Spawn()
 		
 		lambdaModel2 = ents.Create("prop_dynamic")
 		lambdaModel2:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel2:SetMaterial("models/player/shared/gold_player")
+		lambdaModel2:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel2:SetPos(Checkpoint2.Pos)
 		lambdaModel2:Spawn()
 		
 		lambdaModel3 = ents.Create("prop_dynamic")
 		lambdaModel3:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel3:SetMaterial("models/player/shared/gold_player")
+		lambdaModel3:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel3:SetPos(Checkpoint3.Pos)
 		lambdaModel3:Spawn()
 		
@@ -1227,13 +1318,13 @@ function SetCheckpointsStage()
 		
 		lambdaModel1 = ents.Create("prop_dynamic")
 		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel1:SetMaterial("models/player/shared/gold_player")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel1:SetPos(Checkpoint1.Pos)
 		lambdaModel1:Spawn()
 		
 		lambdaModel2 = ents.Create("prop_dynamic")
 		lambdaModel2:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel2:SetMaterial("models/player/shared/gold_player")
+		lambdaModel2:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel2:SetPos(Checkpoint2.Pos)
 		lambdaModel2:Spawn()
 		
@@ -1252,7 +1343,7 @@ function SetCheckpointsStage()
 		
 		lambdaModel1 = ents.Create("prop_dynamic")
 		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel1:SetMaterial("models/player/shared/gold_player")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel1:SetPos(Checkpoint1.Pos)
 		lambdaModel1:Spawn()
 		
@@ -1271,7 +1362,7 @@ function SetCheckpointsStage()
 		
 		lambdaModel1 = ents.Create("prop_dynamic")
 		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel1:SetMaterial("models/player/shared/gold_player")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel1:SetPos(Checkpoint1.Pos)
 		lambdaModel1:Spawn()
 		
@@ -1300,19 +1391,19 @@ function SetCheckpointsStage()
 		
 		lambdaModel1 = ents.Create("prop_dynamic")
 		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel1:SetMaterial("models/player/shared/gold_player")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel1:SetPos(Checkpoint1.Pos)
 		lambdaModel1:Spawn()
 		
 		lambdaModel2 = ents.Create("prop_dynamic")
 		lambdaModel2:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel2:SetMaterial("models/player/shared/gold_player")
+		lambdaModel2:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel2:SetPos(Checkpoint2.Pos)
 		lambdaModel2:Spawn()
 		
 	elseif game.GetMap() == "d3_c17_08" then
 		TRIGGER_CHECKPOINT = {
-			 Vector(1310, -754, -320), Vector(1220, -682, -225),
+			Vector(1310, -754, -320), Vector(1220, -682, -225),
 		}
 		local Checkpoint1 = ents.Create("trigger_checkpoint")
 		Checkpoint1.forcePlyTP = true
@@ -1325,7 +1416,8 @@ function SetCheckpointsStage()
 	
 	elseif game.GetMap() == "d3_c17_10a" then
 		TRIGGER_CHECKPOINT = {
-			 Vector(-2451, 8321, 130), Vector(-2579, 8441, 245),
+			Vector(2795, -1019, 258), Vector(2512, -858, 472),
+			Vector(-2451, 8321, 130), Vector(-2579, 8441, 245)
 		}
 		local Checkpoint1 = ents.Create("trigger_checkpoint")
 		Checkpoint1.forcePlyTP = true
@@ -1338,13 +1430,48 @@ function SetCheckpointsStage()
 		
 		lambdaModel1 = ents.Create("prop_dynamic")
 		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel1:SetMaterial("models/player/shared/gold_player")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel1:SetPos(Checkpoint1.Pos)
 		lambdaModel1:Spawn()
+	elseif game.GetMap() == "d3_c17_10b" then
+		TRIGGER_CHECKPOINT = {
+			Vector(2836, -956, 276), Vector(2512, -858, 472),
+			Vector(2718, 1083, 263), Vector(2668, 1004, 362)
+		}
+		local Checkpoint1 = ents.Create("trigger_checkpoint")
+		Checkpoint1.forcePlyTP = true
+		Checkpoint1.Min = Vector(2836, -956, 276)
+		Checkpoint1.Max = Vector(2512, -858, 472)
+		Checkpoint1.Pos = Vector(2512, -858, 472) - ( ( Vector(2512, -858, 472) - Vector(2836, -956, 276)) / 2 )
+		Checkpoint1.Point1 = Vector(2424, -943, 320)
+		Checkpoint1:SetPos(Checkpoint1.Pos)
+		Checkpoint1:Spawn()
+		
+		local Checkpoint2 = ents.Create("trigger_checkpoint")
+		Checkpoint2.forcePlyTP = true
+		Checkpoint2.Min = Vector(2718, 1083, 263)
+		Checkpoint2.Max = Vector(2668, 1004, 362)
+		Checkpoint2.Pos = Vector(2668, 1004, 362) - ( ( Vector(2668, 1004, 362) - Vector(2718, 1083, 263)) / 2 )
+		Checkpoint2.Point2 = Vector(2802, 1015, 320)
+		Checkpoint2:SetPos(Checkpoint2.Pos)
+		Checkpoint2:Spawn()
+
+
+		lambdaModel1 = ents.Create("prop_dynamic")
+		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
+		lambdaModel1:SetPos(Checkpoint1.Pos)
+		lambdaModel1:Spawn()
+		
+		lambdaModel2 = ents.Create("prop_dynamic")
+		lambdaModel2:SetModel("models/hl2cr_lambda.mdl")
+		lambdaModel2:SetMaterial("models/props_combine/com_shield001a")
+		lambdaModel2:SetPos(Checkpoint2.Pos)
+		lambdaModel2:Spawn()
 
 	elseif game.GetMap() == "d3_c17_13" then
 		TRIGGER_CHECKPOINT = {
-			 Vector(5009, 255, 258), Vector(5207, 338, 419),
+			Vector(5009, 255, 258), Vector(5207, 338, 419),
 		}
 		local Checkpoint1 = ents.Create("trigger_checkpoint")
 		Checkpoint1.forcePlyTP = true
@@ -1357,13 +1484,13 @@ function SetCheckpointsStage()
 		
 		lambdaModel1 = ents.Create("prop_dynamic")
 		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel1:SetMaterial("models/player/shared/gold_player")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel1:SetPos(Checkpoint1.Pos)
 		lambdaModel1:Spawn()
 		
 	elseif game.GetMap() == "d3_citadel_01" then
 		TRIGGER_CHECKPOINT = {
-			 Vector(10545, 4302, -1774), Vector(10484, 4156, -1603),
+			Vector(10545, 4302, -1774), Vector(10484, 4156, -1603),
 		}
 		local Checkpoint1 = ents.Create("trigger_checkpoint")
 		Checkpoint1.forcePlyTP = true
@@ -1376,15 +1503,15 @@ function SetCheckpointsStage()
 		
 		lambdaModel1 = ents.Create("prop_dynamic")
 		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel1:SetMaterial("models/player/shared/gold_player")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel1:SetPos(Checkpoint1.Pos)
 		lambdaModel1:Spawn()
 		
 	elseif game.GetMap() == "d3_citadel_04" then
 		TRIGGER_CHECKPOINT = {
-			 Vector(435, 640, 2793), Vector(68, 974, 3087),
-			 Vector(459, 639, 4123), Vector(74, 1016, 4600),
-			 Vector(445, 252, 6403), Vector(72, 31, 6655),
+			Vector(435, 640, 2793), Vector(68, 974, 3087),
+			Vector(459, 639, 4123), Vector(74, 1016, 4600),
+			Vector(445, 252, 6403), Vector(72, 31, 6655),
 		}
 		local Checkpoint1 = ents.Create("trigger_checkpoint")
 		Checkpoint1.forcePlyTP = true
@@ -1415,19 +1542,69 @@ function SetCheckpointsStage()
 		
 		lambdaModel1 = ents.Create("prop_dynamic")
 		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel1:SetMaterial("models/player/shared/gold_player")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel1:SetPos(Checkpoint1.Pos)
 		lambdaModel1:Spawn()
 		
 		lambdaModel2 = ents.Create("prop_dynamic")
 		lambdaModel2:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel2:SetMaterial("models/player/shared/gold_player")
+		lambdaModel2:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel2:SetPos(Checkpoint2.Pos)
 		lambdaModel2:Spawn()
 		
 		lambdaModel3 = ents.Create("prop_dynamic")
 		lambdaModel3:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel3:SetMaterial("models/player/shared/gold_player")
+		lambdaModel3:SetMaterial("models/props_combine/com_shield001a")
+		lambdaModel3:SetPos(Checkpoint3.Pos)
+		lambdaModel3:Spawn()
+		
+	elseif game.GetMap() == "d3_breen_01" then
+		TRIGGER_CHECKPOINT = {
+			Vector(-899, 125, -252), Vector(-1160, -83, -88),
+			Vector(-762, -470, 1285), Vector(-519, -276, 1479)
+		}
+		local Checkpoint1 = ents.Create("trigger_checkpoint")
+		Checkpoint1.forcePlyTP = true
+		Checkpoint1.Min = Vector(-899, 125, -252)
+		Checkpoint1.Max = Vector(-1160, -83, -88)
+		Checkpoint1.Pos = Vector(-1160, -83, -88) - ( ( Vector(-1160, -83, -88) - Vector(-899, 125, -252)) / 2 )
+		Checkpoint1.Point1 = Vector(-649, 16, -244)
+		Checkpoint1:SetPos(Checkpoint1.Pos)
+		Checkpoint1:Spawn()
+		
+		local Checkpoint2 = ents.Create("trigger_checkpoint")
+		Checkpoint2.forcePlyTP = true
+		Checkpoint2.Min = Vector(-762, -470, 1285)
+		Checkpoint2.Max = Vector(-519, -276, 1479)
+		Checkpoint2.Pos = Vector(-519, -276, 1479) - ( ( Vector(-519, -276, 1479) - Vector(-762, -470, 1285)) / 2 )
+		Checkpoint2.Point2 = Vector(-692, 1, 1311)
+		Checkpoint2:SetPos(Checkpoint2.Pos)
+		Checkpoint2:Spawn()
+		
+		local Checkpoint3 = ents.Create("trigger_checkpoint")
+		Checkpoint3.forcePlyTP = false
+		Checkpoint3.Min = Vector(445, 252, 6403)
+		Checkpoint3.Max = Vector(72, 31, 6655)
+		Checkpoint3.Pos = Vector(72, 31, 6655) - ( ( Vector(72, 31, 6655) - Vector(445, 252, 6403)) / 2 )
+		Checkpoint3.Point3 = Vector(236, -245, 6422)
+		Checkpoint3:SetPos(Checkpoint3.Pos)
+		Checkpoint3:Spawn()
+		
+		lambdaModel1 = ents.Create("prop_dynamic")
+		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
+		lambdaModel1:SetPos(Checkpoint1.Pos)
+		lambdaModel1:Spawn()
+		
+		lambdaModel2 = ents.Create("prop_dynamic")
+		lambdaModel2:SetModel("models/hl2cr_lambda.mdl")
+		lambdaModel2:SetMaterial("models/props_combine/com_shield001a")
+		lambdaModel2:SetPos(Checkpoint2.Pos)
+		lambdaModel2:Spawn()
+		
+		lambdaModel3 = ents.Create("prop_dynamic")
+		lambdaModel3:SetModel("models/hl2cr_lambda.mdl")
+		lambdaModel3:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel3:SetPos(Checkpoint3.Pos)
 		lambdaModel3:Spawn()
 		

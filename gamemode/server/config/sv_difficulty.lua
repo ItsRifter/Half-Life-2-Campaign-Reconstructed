@@ -1,13 +1,5 @@
-local diff = 1
-local surv = 0
-
 function SetDiffMode(diff)
-	GetConVar("hl2c_difficulty"):SetInt(diff)
-	file.Write("hl2c_data/config.txt", "WARNING: Unless you know what you're doing, I suggest you leave this file\n")
-	file.Append("hl2c_data/config.txt", "Difficulty: \n")
-	file.Append("hl2c_data/config.txt", diff .. "\n")
-	file.Append("hl2c_data/config.txt", "Survival Mode: \n")
-	file.Append("hl2c_data/config.txt", GetConVar("hl2c_survivalmode"):GetInt() .. "\n")
+	GetConVar("hl2cr_difficulty"):SetInt(diff)
 end
 
 net.Receive("Diff_Vote", function(len, ply)
@@ -23,39 +15,24 @@ net.Receive("Diff_Vote", function(len, ply)
 			p:ChatPrint(voter .. " Has voted for 'Medium' difficulty: " .. votes .. "/" .. requiredVotes)
 		elseif diffMode == 3 then
 			p:ChatPrint(voter .. " Has voted for 'Hard' difficulty: " .. votes .. "/" .. requiredVotes)
-		elseif diffMode == 4 and GetConVar("hl2c_survivalmode"):GetInt() == 0 then
+		elseif diffMode == 4 and GetConVar("hl2cr_survivalmode"):GetInt() == 0 then
 			p:ChatPrint(voter .. " Has voted to enable 'Survival' mode: " .. votes .. "/" .. requiredVotes)
-		elseif diffMode == 4 and GetConVar("hl2c_survivalmode"):GetInt() == 1 then
+		elseif diffMode == 4 and GetConVar("hl2cr_survivalmode"):GetInt() == 1 then
 			p:ChatPrint(voter .. " Has voted to disable 'Survival' mode: " .. votes .. "/" .. requiredVotes)
 		end
 	end
 end)
 
 net.Receive("Diff_Change", function() 
-	diff = net.ReadInt(8)
-	GetConVar("hl2c_difficulty"):SetInt(diff)
-	file.Write("hl2c_data/config.txt", "WARNING: Unless you know what you're doing, I suggest you leave this file\n")
-	file.Append("hl2c_data/config.txt", "Difficulty: \n")
-	file.Append("hl2c_data/config.txt", diff .. "\n")
-	file.Append("hl2c_data/config.txt", "Survival Mode: \n")
-	file.Append("hl2c_data/config.txt", GetConVar("hl2c_survivalmode"):GetInt() .. "\n")
+	local diff = net.ReadInt(8)
+	GetConVar("hl2cr_difficulty"):SetInt(diff)
 end)
 
 net.Receive("Survival", function()
-	surv = net.ReadInt(8)
-	GetConVar("hl2c_survivalmode"):SetInt(surv)
-	file.Write("hl2c_data/config.txt", "WARNING: Unless you know what you're doing, I suggest you leave this file\n")
-	file.Append("hl2c_data/config.txt", "Difficulty:\n")
-	file.Append("hl2c_data/config.txt", GetConVar("hl2c_difficulty"):GetInt() .. "\n")
-	file.Append("hl2c_data/config.txt", "Survival Mode:\n")
-	file.Append("hl2c_data/config.txt", surv)
+	local surv = net.ReadInt(8)
+	GetConVar("hl2cr_survivalmode"):SetInt(surv)
 end)
 
 function SetSurvMode(surv)
-	GetConVar("hl2c_survivalmode"):SetInt(surv)
-	file.Write("hl2c_data/config.txt", "WARNING: Unless you know what you're doing, I suggest you leave this file\n")
-	file.Append("hl2c_data/config.txt", "Difficulty:\n")
-	file.Append("hl2c_data/config.txt", GetConVar("hl2c_difficulty"):GetInt() .. "\n")
-	file.Append("hl2c_data/config.txt", "Survival Mode:\n")
-	file.Append("hl2c_data/config.txt", surv)
+	GetConVar("hl2cr_survivalmode"):SetInt(surv)
 end
