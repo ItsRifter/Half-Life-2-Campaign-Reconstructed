@@ -12,6 +12,7 @@ HL2_Ach_List = {
 	[5] = {name = "Rave_Ball", desc = "Carry dog's ball through\nRavenholm\ninto the mines", mat = "vgui/achievements/hl2_get_gravitygun.png", isRare = false},
 	[6] = {name = "Keep_off_the_sand", desc = "Cross the antlion beach\nin d2_coast_11 without\ntouching the sand", mat = "vgui/achievements/hl2_beat_donttouchsand.png", isRare = false},
 	[7] = {name = "Singularity_Collapse", desc = "Destroy the Citadel's reactor core", mat = "vgui/achievements/hl2_beat_game.png", isRare = false},
+	[8] = {name = "Lambda Locator", desc = "Locate all the Lambda cache's", mat = "vgui/achievements/hl2_find_alllambdas.png", isRare = true},
 }
 
 Misc_Ach_List = {
@@ -42,6 +43,19 @@ HL2_Lambda_List = {
 	[19] = {name = "d2_coast_04", mat = "vgui/achievements/hl2_find_alllambdas.png"},
 	[20] = {name = "d2_coast_05", mat = "vgui/achievements/hl2_find_alllambdas.png"},
 	[21] = {name = "d2_coast_07", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+	[22] = {name = "d2_coast_09", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+	[23] = {name = "d2_coast_11", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+	[24] = {name = "d2_prison_02", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+	[25] = {name = "d2_prison_03", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+	[26] = {name = "d2_prison_05", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+	[27] = {name = "d2_prison_06", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+	[28] = {name = "d3_c17_02", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+	[29] = {name = "d3_c17_04", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+	[30] = {name = "d3_c17_05", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+	[31] = {name = "d3_c17_06a", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+	[32] = {name = "d3_c17_06b", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+	[33] = {name = "d3_c17_08", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+	[34] = {name = "d3_c17_12b", mat = "vgui/achievements/hl2_find_alllambdas.png"},
 }
 
 HL2_Vortex_List = {
@@ -63,7 +77,7 @@ HL2_Vortex_List = {
 function AchievementMenu(achievement, vortexes, lambdas)
 
 	local achFrame = vgui.Create("DFrame")
-	achFrame:SetSize(820, 600)
+	achFrame:SetSize(850, 600)
 	achFrame:Center()
 	achFrame:SetDraggable(false)
 	achFrame:ShowCloseButton(true)
@@ -87,8 +101,6 @@ function AchievementMenu(achievement, vortexes, lambdas)
 	iconListLobby:Dock(FILL)
 	iconListLobby:SetSpaceY(5)
 	iconListLobby:SetSpaceX(5)
-	
-	PrintTable(achievement)
 	
 	for i = 1, #Lobby_Ach_List do
 		
@@ -247,7 +259,7 @@ function AchievementMenu(achievement, vortexes, lambdas)
 	local ScrollHL2Lambda = vgui.Create("DScrollPanel", PanelHL2Lambda)
 	ScrollHL2Lambda:Dock(FILL)
 	
-	local iconListHL2Lambda = vgui.Create("DIconLayout", PanelHL2Lambda)
+	local iconListHL2Lambda = vgui.Create("DIconLayout", ScrollHL2Lambda)
 	iconListHL2Lambda:Dock(FILL)
 	iconListHL2Lambda:SetSpaceY(5)
 	iconListHL2Lambda:SetSpaceX(5)

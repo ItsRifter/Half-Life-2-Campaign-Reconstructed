@@ -160,7 +160,7 @@ function ToggleBoard(toggle)
 				if IsValid(v) then
 					if v:IsBot() then
 						draw.SimpleText("BOT", "Scoreboard_Stats_font", 750, h / 2, Color(255, 255, 0, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)	
-					elseif v:Ping() > 1 and v:Ping() < 100 then
+					elseif v:Ping() >= 1 and v:Ping() <= 100 then
 						draw.SimpleText(playerPing, "Scoreboard_Stats_font", 750, h / 2, Color(40, 255, 25, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 					elseif v:Ping() > 100 and v:Ping() < 200 then
 						draw.SimpleText(playerPing, "Scoreboard_Stats_font", 750, h / 2, Color(255, 255, 0, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)

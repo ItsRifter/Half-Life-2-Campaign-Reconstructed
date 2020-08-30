@@ -13,6 +13,7 @@ AchievementLists = {
 		Rave_Ball = {name = "Rave Ball", desc = "Carry dog's ball through Ravenholm into the mines", mat = "vgui/achievements/hl2_get_gravitygun.png", isRare = false},
 		Keep_off_the_sand = {name = "Keep off the sand", mat = "vgui/achievements/hl2_beat_donttouchsand.png", isRare = false},
 		Finish_HL2 = {name = "Singularity Collapse", mat = "vgui/achievements/hl2_beat_game.png", isRare = false},
+		Lambda_Locator = {name = "Lambda Locator", mat = "vgui/achievements/hl2_find_alllambdas.png", isRare = true},
 	},
 
 	Misc_Ach_List = {
@@ -45,12 +46,34 @@ SpecialLists = {
 		d2_coast_04 = {name = "d2_coast_04", mat = "vgui/achievements/hl2_find_alllambdas.png"},
 		d2_coast_05 = {name = "d2_coast_05", mat = "vgui/achievements/hl2_find_alllambdas.png"},
 		d2_coast_07 = {name = "d2_coast_07", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+		d2_coast_09 = {name = "d2_coast_09", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+		d2_coast_11 = {name = "d2_coast_11", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+		d2_prison_02 = {name = "d2_prison_02", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+		d2_prison_03 = {name = "d2_prison_03", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+		d2_prison_05 = {name = "d2_prison_05", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+		d2_prison_06 = {name = "d2_prison_06", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+		d3_c17_02 = {name = "d3_c17_02", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+		d3_c17_04 = {name = "d3_c17_04", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+		d3_c17_05 = {name = "d3_c17_05", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+		d3_c17_06a = {name = "d3_c17_06a", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+		d3_c17_06b = {name = "d3_c17_06b", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+		d3_c17_08 = {name = "d3_c17_08", mat = "vgui/achievements/hl2_find_alllambdas.png"},
+		d3_c17_12b = {name = "d3_c17_12b", mat = "vgui/achievements/hl2_find_alllambdas.png"},
 	},
 	
 	HL2_Vortex = {
 		d1_trainstation_05 = {name = "d1_trainstation_05", mat = "vgui/achievements/hlx_find_onegman.png"},
 		d1_trainstation_06 = {name = "d1_trainstation_06", mat = "vgui/achievements/hlx_find_onegman.png"},
 		d1_canals_01 = {name = "d1_canals_01", mat = "vgui/achievements/hlx_find_onegman.png"},
+		d1_canals_02 = {name = "d1_canals_02", mat = "vgui/achievements/hlx_find_onegman.png"},
+		d1_canals_05 = {name = "d1_canals_05", mat = "vgui/achievements/hlx_find_onegman.png"},
+		d1_eli_01 = {name = "d1_eli_01", mat = "vgui/achievements/hlx_find_onegman.png"},
+		d1_eli_02 = {name = "d1_eli_02", mat = "vgui/achievements/hlx_find_onegman.png"},
+		d1_town_02 = {name = "d1_town_02", mat = "vgui/achievements/hlx_find_onegman.png"},
+		d1_town_03 = {name = "d1_town_03", mat = "vgui/achievements/hlx_find_onegman.png"},
+		d1_town_02 = {name = "d1_town_02a", mat = "vgui/achievements/hlx_find_onegman.png"},
+		d1_town_05 = {name = "d1_town_05", mat = "vgui/achievements/hlx_find_onegman.png"},
+		d2_coast_01 = {name = "d2_coast_01", mat = "vgui/achievements/hlx_find_onegman.png"},
 	}
 }
 

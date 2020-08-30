@@ -76,6 +76,66 @@ function placeLambda()
 		LAMBDA_POSITION = { 
 			Vector(2196, 6545, 1170), Vector(2224, 6670, 1233), 
 		}
+	elseif game.GetMap() == "d2_coast_05" then
+		LAMBDA_POSITION = { 
+			Vector(-3276, 1267, 1098), Vector(-3472, 1363, 1208), 
+		}
+	elseif game.GetMap() == "d2_coast_07" then
+		LAMBDA_POSITION = { 
+			Vector(1706, 9426, 1684), Vector(1808, 9320, 1860), 
+		}
+	elseif game.GetMap() == "d2_coast_09" then
+		LAMBDA_POSITION = { 
+			Vector(11171, 8763, -42), Vector(11085, 8858, 8), 
+		}
+	elseif game.GetMap() == "d2_coast_11" then
+		LAMBDA_POSITION = { 
+			Vector(3390, 745, 821), Vector(3290, 885, 938),
+		}
+	elseif game.GetMap() == "d2_prison_02" then
+		LAMBDA_POSITION = { 
+			Vector(-2260, 1652, 516), Vector(-2330, 1711, 646),
+		}
+	elseif game.GetMap() == "d2_prison_03" then
+		LAMBDA_POSITION = { 
+			Vector(-3595, 4140, 130), Vector(-3482, 4100, 273),
+		}
+	elseif game.GetMap() == "d2_prison_05" then
+		LAMBDA_POSITION = { 
+			Vector(-1348, 580, 388), Vector(-1461, 564, 499),
+		}
+	elseif game.GetMap() == "d2_prison_06" then
+		LAMBDA_POSITION = { 
+			Vector(720, -789, 98), Vector(699, -819, 124),
+		}
+	elseif game.GetMap() == "d3_c17_02" then
+		LAMBDA_POSITION = { 
+			Vector(-10176, -6164, 69), Vector(-10228, -6248, 160),
+		}
+	elseif game.GetMap() == "d3_c17_04" then
+		LAMBDA_POSITION = { 
+			Vector(-1031, -4975, 326), Vector(-1076, -4874, 439),
+		}
+	elseif game.GetMap() == "d3_c17_05" then
+		LAMBDA_POSITION = { 
+			Vector(2556, -4099, 132), Vector(2441, -4190, 264),
+		}
+	elseif game.GetMap() == "d3_c17_06a" then
+		LAMBDA_POSITION = { 
+			Vector(3828, -1945, -322), Vector(3553, -1700, -179),
+		}
+	elseif game.GetMap() == "d3_c17_06b" then
+		LAMBDA_POSITION = { 
+			Vector(4651, 1960, 386), Vector(4441, 2052, 518),
+		}
+	elseif game.GetMap() == "d3_c17_08" then
+		LAMBDA_POSITION = { 
+			Vector(2484, -951, -521), Vector(2567, -1019, -419),
+		}
+	elseif game.GetMap() == "d3_c17_12b" then
+		LAMBDA_POSITION = { 
+			Vector(-4335, 503, 107), Vector(-4260, 673, 219),
+		}
 	end
 	
 	

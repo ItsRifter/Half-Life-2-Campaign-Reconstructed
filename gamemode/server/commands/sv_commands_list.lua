@@ -2,8 +2,8 @@ BringPet = true
 
 local neededVotes = #player.GetAll() or 1
 local neededVotesRestart = #player.GetAll() / 2
-local lobbyVotes = 1
-local restartVotes = 1
+local lobbyVotes = 0
+local restartVotes = 0
 
 
 hook.Add("PlayerSay", "Commands", function(ply, text)

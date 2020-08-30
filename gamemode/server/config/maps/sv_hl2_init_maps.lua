@@ -432,23 +432,6 @@ hook.Add( "OnChangeLevel", "ChangeMap", function()
 	end
 end)
 
-hook.Add("Think", "MapWeapons", function()
-	for _, p in pairs(player.GetAll()) do
-		if not p:Alive() or p:Team() ~= TEAM_ALIVE then
-			return
-		end
-		
-		for _, pl2 in pairs(player.GetAll()) do
-			if p ~= pl2 and pl2:Alive() and not p:InVehicle() and not pl2:InVehicle() and pl2:GetActiveWeapon():IsValid()
-			and not p:HasWeapon(pl2:GetActiveWeapon():GetClass()) 
-			and not table.HasValue(p.givenWeapons, pl2:GetActiveWeapon():GetClass()) and pl2:GetActiveWeapon():GetClass() ~= "weapon_physgun" then
-				p:Give(pl2:GetActiveWeapon():GetClass())
-				table.insert(p.givenWeapons, pl2:GetActiveWeapon():GetClass())
-			end
-		end
-	end
-end)
-
 function SetCheckpointsStage()
 	
 	if game.GetMap() == "d1_trainstation_01" then
