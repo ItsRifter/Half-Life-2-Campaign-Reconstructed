@@ -5,11 +5,6 @@ local mediumVotes = 0
 local hardVotes = 0
 local survVotes = 0
 
-local easyRequired = math.ceil(#player.GetAll() / 2)
-local mediumRequired = math.ceil(#player.GetAll() / 2)
-local hardRequired = math.ceil(#player.GetAll() / 2)
-local survRequired = #player.GetAll()
-
 surface.CreateFont("Diff_Font", {
 	font = "Arial",
 	size = 22,
@@ -61,11 +56,10 @@ function OpenDiffMenu(diff, surv)
 			easyVotes = easyVotes + 1	
 			net.Start("Diff_Vote")
 				net.WriteInt(easyVotes, 8)
-				net.WriteInt(easyRequired, 8)
 				net.WriteInt(1, 8)
 				net.WriteString(LocalPlayer():Nick())
 			net.SendToServer()
-			if easyVotes >= math.Round(easyRequired) then
+			if easyVotes >= LocalPlayer():GetNWInt("EasyVotes") then
 				net.Start("Diff_Change")
 					net.WriteInt(1, 8)
 				net.SendToServer()
@@ -97,11 +91,10 @@ function OpenDiffMenu(diff, surv)
 			mediumVotes = mediumVotes + 1	
 			net.Start("Diff_Vote")
 				net.WriteInt(mediumVotes, 8)
-				net.WriteInt(mediumRequired, 8)
 				net.WriteInt(2, 8)
 				net.WriteString(LocalPlayer():Nick())
 			net.SendToServer()
-			if mediumVotes >= math.Round(mediumRequired) then
+			if mediumVotes >= LocalPlayer():GetNWInt("MediumVotes") then
 				net.Start("Diff_Change")
 					net.WriteInt(2, 8)
 				net.SendToServer()
@@ -132,11 +125,10 @@ function OpenDiffMenu(diff, surv)
 			hardVotes = hardVotes + 1
 			net.Start("Diff_Vote")
 				net.WriteInt(hardVotes, 8)
-				net.WriteInt(hardRequired, 8)
 				net.WriteInt(3, 8)
 				net.WriteString(LocalPlayer():Nick())
 			net.SendToServer()
-			if hardVotes >= math.Round(hardRequired) then
+			if hardVotes >= LocalPlayer():GetNWInt("HardVotes") then
 				net.Start("Diff_Change")
 					net.WriteInt(3, 8)
 				net.SendToServer()
@@ -179,15 +171,14 @@ function OpenDiffMenu(diff, surv)
 			survVotes = survVotes + 1
 			net.Start("Diff_Vote")
 				net.WriteInt(survVotes, 8)
-				net.WriteInt(survRequired, 8)
 				net.WriteInt(4, 8)
 				net.WriteString(LocalPlayer():Nick())
 			net.SendToServer()
-			if survVotes >= math.Round(survRequired) and not surv then
+			if survVotes >= LocalPlayer():GetNWInt("SurvVotes") and not surv then
 				net.Start("Survival")
 					net.WriteInt(1, 8)
 				net.SendToServer()
-			elseif survVotes >= math.Round(survRequired) and surv then
+			elseif survVotes >= LocalPlayer():GetNWInt("SurvVotes") and surv then
 				net.Start("Survival")
 					net.WriteInt(0, 8)
 				net.SendToServer()

@@ -189,7 +189,7 @@ function GM:ShowSpare1(ply)
 			for k, v in pairs( jeep.KeyValues ) do
 				ply.spawnJeep:SetKeyValue(k, v)
 			end
-			ply.spawnJeep:SetPos(Vector(ply:EyePos().x, ply:EyePos().y, ply:EyePos().z + 35))
+			ply.spawnJeep:SetPos(Vector(ply:EyePos().x, ply:EyePos().y, ply:EyePos().z - 35))
 			ply.spawnJeep:Spawn()
 			ply.spawnJeep:SetOwner(ply)
 			ply.spawnJeep:Fire( "addoutput", "targetname jeep" )
@@ -203,7 +203,7 @@ function GM:ShowSpare1(ply)
 			for k, v in pairs( airboat.KeyValues ) do
 				ply.spawnAirboat:SetKeyValue(k, v)
 			end
-			ply.spawnAirboat:SetPos(Vector(ply:EyePos().x, ply:EyePos().y, ply:EyePos().z + 35))
+			ply.spawnAirboat:SetPos(Vector(ply:EyePos().x, ply:EyePos().y, ply:EyePos().z - 15))
 			ply.spawnAirboat:Spawn()
 			ply.spawnAirboat:SetOwner(ply)
 			ply.spawnAirboat:Fire( "addoutput", "targetname airboat" )
@@ -216,7 +216,7 @@ function GM:ShowSpare1(ply)
 			for k, v in pairs(airboatGun.KeyValues) do
 				ply.spawnAirboatGun:SetKeyValue(k, v)
 			end
-			ply.spawnAirboatGun:SetPos(Vector(ply:EyePos().x, ply:EyePos().y, ply:EyePos().z + 35))
+			ply.spawnAirboatGun:SetPos(Vector(ply:EyePos().x, ply:EyePos().y, ply:EyePos().z - 15))
 			ply.spawnAirboatGun:Spawn()
 			ply.spawnAirboatGun:SetOwner(ply)
 			ply.spawnAirboatGun:Fire( "addoutput", "targetname airboat" )
@@ -230,7 +230,17 @@ function GM:ShowSpare1(ply)
 end
 
 function GM:CanPlayerEnterVehicle(ply)
-	return true
+	if not ply.spawnJeep then
+		return true
+	end
+	
+	if ply.spawnJeep:GetOwner():IsValid() and ply.spawnJeep:GetOwner() == ply then
+		return true
+	end
+	
+	
+	
+	return false
 end
 function GM:ShowSpare2(ply)
 	net.Start("Open_F4_Menu")

@@ -199,21 +199,22 @@ function GM:GetFallDamage( ply, speed )
     return ( speed / 16 )
 end
 
+hook.Add("Think", "HasWeaponThink", function()
+	for k, curWep in pairs(startingWeapons) do
+		for k, v in pairs(player.GetAll()) do
+			if not v:HasWeapon(curWep) then
+				v:Give(curWep)
+			end
+		end
+	end
+end)
+
 hook.Add("PlayerLoadout", "StarterWeapons", function(ply)
 	if (game.GetMap() == "hl2c_lobby_remake") then
 		ply:Give("weapon_crowbar")
 		ply:Give("weapon_physcannon")
 		if ply:IsAdmin() then
 			ply:Give("weapon_physgun")
-		end
-	end
-	
-	for k, curWep in pairs(ply:GetWeapons()) do
-		local wepClass = curWep:GetClass()
-			
-		if ply[wepClass] then
-			ply:GiveAmmo(tonumber(ply.info.loadout[wepClass][1]), curWep:GetPrimaryAmmoType())
-			ply:GiveAmmo(tonumber(ply.info.loadout[wepClass][2]), curWep:GetSecondaryAmmoType())
 		end
 	end
 	
@@ -334,71 +335,121 @@ function GM:IsSpawnpointSuitable( ply, spawnpointent, bMakeSuitable )
 	return true
 end
 
+if SERVER then
+	hook.Add("Think", "AmmoLimiter", function()
+		for k, p in pairs(player.GetAll()) do
+			
+			if p:GetAmmoCount("357") > GetConVar("max_357"):GetInt() then		
+				p:RemoveAmmo( p:GetAmmoCount("357") -GetConVar("max_357"):GetInt(), "357" )
+			end
+
+			if p:GetAmmoCount("AR2") > GetConVar("max_AR2"):GetInt() then		
+				p:RemoveAmmo( p:GetAmmoCount("AR2") -GetConVar("max_AR2"):GetInt(), "AR2" )
+			end
+
+			if p:GetAmmoCount("AR2AltFire") > GetConVar("max_ar2_ball"):GetInt() then		
+				p:RemoveAmmo( p:GetAmmoCount("AR2AltFire") -GetConVar("max_ar2_ball"):GetInt(), "AR2AltFire" )
+			end
+
+			if p:GetAmmoCount("Buckshot") > GetConVar("max_Buckshot"):GetInt() then		
+				p:RemoveAmmo( p:GetAmmoCount("Buckshot") -GetConVar("max_Buckshot"):GetInt(), "Buckshot" )
+			end
+
+			if p:GetAmmoCount("XBowBolt") > GetConVar("max_crossbowbolt"):GetInt() then		
+				p:RemoveAmmo( p:GetAmmoCount("XBowBolt") -GetConVar("max_crossbowbolt"):GetInt(), "XBowBolt" )
+			end
+			
+			if p:GetAmmoCount("Grenade") > GetConVar("max_grenade"):GetInt() then		
+				p:RemoveAmmo( p:GetAmmoCount("Grenade") -GetConVar("max_grenade"):GetInt(), "Grenade" )
+			end
+				if p:GetAmmoCount("slam") > GetConVar("max_slam"):GetInt() then		
+				p:RemoveAmmo( p:GetAmmoCount("slam") -GetConVar("max_slam"):GetInt(), "slam" )
+			end
+
+			if p:GetAmmoCount("Pistol") > GetConVar("max_Pistol"):GetInt() then		
+				p:RemoveAmmo( p:GetAmmoCount("Pistol") -GetConVar("max_Pistol"):GetInt(), "Pistol" )
+			end
+
+			if p:GetAmmoCount("RPG_Round") > GetConVar("max_RPG_Round"):GetInt() then		
+				p:RemoveAmmo( p:GetAmmoCount("RPG_Round") -GetConVar("max_RPG_Round"):GetInt(), "RPG_Round" )
+			end
+
+			if p:GetAmmoCount("SMG1") > GetConVar("max_SMG1"):GetInt() then		
+				p:RemoveAmmo( p:GetAmmoCount("SMG1") -GetConVar("max_SMG1"):GetInt(), "SMG1" )
+			end
+
+			if p:GetAmmoCount("SMG1_Grenade") > GetConVar("max_SMG1_Grenade"):GetInt() then		
+				p:RemoveAmmo( p:GetAmmoCount("SMG1_Grenade") - GetConVar("max_SMG1_Grenade"):GetInt(), "SMG1_Grenade" )
+			end
+		end
+	end)
+end
+
 hook.Add("PlayerCanPickupItem", "AmmoPickup", function(ply, item)
-	if ply:GetAmmoCount("357") >= GetConVar("max_357"):GetInt() then
+	if item:GetClass() == "item_ammo_357" and ply:GetAmmoCount("357") >= GetConVar("max_357"):GetInt() then
 		ply:RemoveAmmo( ply:GetAmmoCount("357") -GetConVar("max_357"):GetInt(), "357" )
 		return false
 	end
 	
-	if ply:GetAmmoCount("AR2") >= GetConVar("max_AR2"):GetInt() then		
+	if item:GetClass() == "item_ammo_ar2" and ply:GetAmmoCount("AR2") >= GetConVar("max_AR2"):GetInt() then		
 		ply:RemoveAmmo( ply:GetAmmoCount("AR2") -GetConVar("max_AR2"):GetInt(), "AR2" )
 		return false
 	end
 	
-	if ply:GetAmmoCount("AR2AltFire") >= GetConVar("max_ar2_ball"):GetInt() then		
+	if item:GetClass() == "item_ammo_ar2_altfire" and ply:GetAmmoCount("AR2AltFire") >= GetConVar("max_ar2_ball"):GetInt() then		
 		ply:RemoveAmmo( ply:GetAmmoCount("AR2AltFire") -GetConVar("max_ar2_ball"):GetInt(), "AR2AltFire" )
 		return false
 	end
 	
-	if ply:GetAmmoCount("Buckshot") >= GetConVar("max_Buckshot"):GetInt() then		
+	if item:GetClass() == "item_box_buckshot" and ply:GetAmmoCount("Buckshot") >= GetConVar("max_Buckshot"):GetInt() then		
 		ply:RemoveAmmo( ply:GetAmmoCount("Buckshot") -GetConVar("max_Buckshot"):GetInt(), "Buckshot" )
 		return false
 	end
 	
-	if ply:GetAmmoCount("XBowBolt") >= GetConVar("max_crossbowbolt"):GetInt() then		
+	if item:GetClass() == "item_ammo_crossbow" and ply:GetAmmoCount("XBowBolt") >= GetConVar("max_crossbowbolt"):GetInt() then		
 		ply:RemoveAmmo( ply:GetAmmoCount("XBowBolt") -GetConVar("max_crossbowbolt"):GetInt(), "XBowBolt" )
 		return false
 	end
 
-	if ply:GetAmmoCount("Grenade") >= GetConVar("max_grenade"):GetInt() then		
+	if item:GetClass() == "waepon_frag" and ply:GetAmmoCount("Grenade") >= GetConVar("max_grenade"):GetInt() then		
 		ply:RemoveAmmo( ply:GetAmmoCount("Grenade") -GetConVar("max_grenade"):GetInt(), "Grenade" )
 		return false
 	end
 
-	if ply:GetAmmoCount("slam") >= GetConVar("max_slam"):GetInt() then		
+	if item:GetClass() == "weapon_slam" and ply:GetAmmoCount("slam") >= GetConVar("max_slam"):GetInt() then		
 		ply:RemoveAmmo( ply:GetAmmoCount("slam") -GetConVar("max_slam"):GetInt(), "slam" )
 		return false
 	end
 	
-	if ply:GetAmmoCount("Pistol") >= GetConVar("max_Pistol"):GetInt() then		
+	if item:GetClass() == "item_ammo_pistol" and ply:GetAmmoCount("Pistol") >= GetConVar("max_Pistol"):GetInt() then		
 		ply:RemoveAmmo( ply:GetAmmoCount("Pistol") -GetConVar("max_Pistol"):GetInt(), "Pistol" )
 		return false
 	end
 	
-	if ply:GetAmmoCount("RPG_Round") >= GetConVar("max_RPG_Round"):GetInt() then		
+	if item:GetClass() == "item_rpg_round" and ply:GetAmmoCount("RPG_Round") >= GetConVar("max_RPG_Round"):GetInt() then		
 		ply:RemoveAmmo( ply:GetAmmoCount("RPG_Round") -GetConVar("max_RPG_Round"):GetInt(), "RPG_Round" )
 		return false
 	end
 	
-	if ply:GetAmmoCount("SMG1") >= GetConVar("max_SMG1"):GetInt() then		
+	if item:GetClass() == "item_ammo_smg1" and ply:GetAmmoCount("SMG1") >= GetConVar("max_SMG1"):GetInt() then		
 		ply:RemoveAmmo( ply:GetAmmoCount("SMG1") -GetConVar("max_SMG1"):GetInt(), "SMG1" )
 		return false
 	end
 	
-	if ply:GetAmmoCount("SMG1_Grenade") >= GetConVar("max_SMG1_Grenade"):GetInt() then		
+	if item:GetClass() == "item_ammo_smg1_grenade" and ply:GetAmmoCount("SMG1_Grenade") >= GetConVar("max_SMG1_Grenade"):GetInt() then		
 		ply:RemoveAmmo( ply:GetAmmoCount("SMG1_Grenade") - GetConVar("max_SMG1_Grenade"):GetInt(), "SMG1_Grenade" )
 		return false
 	end
 	
-	if item == "item_battery" then
+	if item:GetClass() == "item_battery" then
 		return true
 	end
 	
-	if item == "item_healthvial" then
+	if item:GetClass() == "item_healthvial" then
 		return true
 	end
 	
-	if item == "item_healthkit" then
+	if item:GetClass() == "item_healthkit" then
 		return true
 	end
 end)

@@ -147,6 +147,10 @@ function ENT:StartTouch(ent)
 			lambdaModel5:Remove()
 		end
 		
+		if blocker and blocker:IsValid() then
+			blocker:Remove()
+		end
+		
 		if game.GetMap() == "d3_citadel_04" and (point1 or point2) then
 			local train = ents.FindByName("citadel_train_lift01_1")
 			

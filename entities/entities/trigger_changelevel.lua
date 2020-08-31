@@ -108,9 +108,9 @@ elseif game.GetMap() == "d2_coast_05" then
 elseif game.GetMap() == "d2_coast_07" and not file.Exists("hl2cr_data/d2_coast_07.txt", "DATA") then
 	ENT.PointA = Vector(3356, 5183, 1542)
 	ENT.PointB = Vector(3297, 5140, 1661)
-elseif game.GetMap() == "d2_coast_08" and disableField then
-	ENT.PointA = Vector(3352, 1550, 1544)
-	ENT.PointB = Vector(3306, 1597, 1659)
+elseif game.GetMap() == "d2_coast_08" then
+	ENT.PointA = Vector(3074, 1598, 1537)
+	ENT.PointB = Vector(3186, 1787, 1663)
 elseif game.GetMap() == "d2_coast_09" then
 	ENT.PointA = Vector(10931, -1079, -190)
 	ENT.PointB = Vector(10577, -1439, -6)
@@ -224,7 +224,6 @@ function ENT:StartTouch(ent)
 		ent:Remove()
 		if game.GetMap() == "d1_trainstation_02" then
 			UpdateBaby()
-			print("Babies?")
 		elseif game.GetMap() == "d1_trainstation_03" then
 			UpdateBaby()
 		elseif game.GetMap() == "d1_trainstation_04" then

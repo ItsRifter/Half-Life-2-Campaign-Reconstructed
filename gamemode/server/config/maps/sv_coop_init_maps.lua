@@ -70,6 +70,7 @@ hook.Add("OnChangeLevel", "NextCoop01Map", function()
 		"level05_diehard",
 		"level06_base",
 		"level07_scary_house",
+		"hl2c_lobby_remake"
 	}
 	
 	for k = 1, #Coop01 do

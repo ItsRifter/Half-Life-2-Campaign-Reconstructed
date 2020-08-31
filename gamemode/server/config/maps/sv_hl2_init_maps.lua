@@ -39,14 +39,20 @@ function SetupMap()
 		end
 	end
 	
-	disableField = false
 	if game.GetMap() == "d1_canals_10" then 
 		for k, fix1 in pairs(ents.FindByClass("info_player_start")) do
 			fix1:SetPos(Vector(11808, -12450, -475))
 		end
 	end
 	
-	if game.GetMap() == "d2_coast_08" then 
+	if game.GetMap() == "d2_coast_08" then
+		blocker = ents.Create("prop_dynamic")
+		blocker:SetModel("models/props_doors/door03_slotted_left.mdl")
+		blocker:SetPos(Vector(3305, 1542, 1588))
+		blocker:SetAngles(Angle(0, -90, 0))
+		blocker:PhysicsInit(SOLID_VPHYSICS)
+		blocker:Spawn()
+	
 		for k, fix2 in pairs(ents.FindByClass("info_player_start")) do
 			fix2:SetPos(Vector(3330, 1471, 1600))
 			fix2:SetAngles(Angle(0, -90, 0))
@@ -241,6 +247,12 @@ function SetupMap()
 		fixLeap2:SetModel("models/props_wasteland/cargo_container01.mdl")
 		fixLeap2:PhysicsInit(SOLID_VPHYSICS)
 		fixLeap2:Spawn()
+	end
+	
+	if game.GetMap() == "d2_coast_11" then
+		for k, sand in pairs(ents.FindByClass("env_player_surface_trigger")) do
+			sand:Fire("AddOutput", "OnSurfaceChangedToTarget triggerhook:RunPassedCode:hook.Run( 'FailSand' ):0:-1")
+		end
 	end
 	
 	if game.GetMap() == "d3_citadel_03" then
@@ -445,7 +457,7 @@ function SetCheckpointsStage()
 		Checkpoint1.Min = Vector(-9533, -2564, 22)
 		Checkpoint1.Max = Vector(-9343, -2405, 121)
 		Checkpoint1.Pos = Vector(-9343, -2405, 121) - ( ( Vector(-9343, -2405, 121) - Vector(-9533, -2564, 22)) / 2 )
-		Checkpoint1.Point1 = Vector( -8954, -2316, 50)
+		Checkpoint1.Point1 = Vector(-3596, 12, 3)
 		Checkpoint1:SetPos(Checkpoint1.Pos)
 		Checkpoint1:Spawn()
 		
@@ -716,7 +728,7 @@ function SetCheckpointsStage()
 		Checkpoint2.Min = Vector(6745, 1598, -446)
 		Checkpoint2.Max = Vector(6775, 1534, -337)
 		Checkpoint2.Pos = Vector(6775, 1534, -337) - ( ( Vector(6775, 1534, -337) - Vector(6745, 1598, -446)) / 2 )
-		Checkpoint2.Point1 = Vector(7261, 1608, -383)
+		Checkpoint2.Point2 = Vector(7261, 1608, -383)
 		Checkpoint2:SetPos(Checkpoint2.Pos)
 		Checkpoint2:Spawn()
 		
@@ -1012,13 +1024,34 @@ function SetCheckpointsStage()
 		lambdaModel2:SetMaterial("models/props_combine/com_shield001a")
 		lambdaModel2:SetPos(Checkpoint2.Pos)
 		lambdaModel2:Spawn()
+	
+	elseif game.GetMap() == "d2_coast_08" then
+		TRIGGER_CHECKPOINT = {
+			 Vector(3060, -6922, 1923), Vector(2972, -6988, 2034),
+		}
 		
+		local Checkpoint1 = ents.Create("trigger_checkpoint")
+		Checkpoint1.forcePlyTP = true
+		Checkpoint1.Min = Vector(3060, -6922, 1923)
+		Checkpoint1.Max = Vector(2972, -6988, 2034)
+		Checkpoint1.Pos = Vector(2972, -6988, 2034) - ( ( Vector(2972, -6988, 2034) - Vector(3060, -6922, 1923)) / 2 )
+		Checkpoint1.Point1 = Vector(2954, -7059, 1937)
+		Checkpoint1:SetPos(Checkpoint1.Pos)
+		Checkpoint1:Spawn()
+		
+		lambdaModel1 = ents.Create("prop_dynamic")
+		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
+		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
+		lambdaModel1:SetPos(Checkpoint1.Pos)
+		lambdaModel1:Spawn()
+
 	elseif game.GetMap() == "d2_coast_11" then
 		TRIGGER_CHECKPOINT = {
 			 Vector(4548, 6434, 580), Vector(4145, 6676, 818),
 			 Vector(5038, 10047, 172), Vector(4856, 9808, 314),
 			 Vector(815, 11598, 507), Vector(755, 11476, 652),
 		}
+		
 		local Checkpoint1 = ents.Create("trigger_checkpoint")
 		Checkpoint1.forcePlyTP = true
 		Checkpoint1.Min = Vector(4548, 6434, 580)
