@@ -114,6 +114,24 @@ local function LoadData(ply)
 	
 	-- Init player model and other stuff
 	ply:SetModel(ply.hl2cPersistent.Model)
+	
+	local easyRequired = math.ceil(#player.GetAll() / 2)
+	local mediumRequired = math.ceil(#player.GetAll() / 2)
+	local hardRequired = math.ceil(#player.GetAll() / 2)
+
+	local survRequired = #player.GetAll()
+	local neededVotes = #player.GetAll()
+	local neededVotesRestart = #player.GetAll()
+
+	for k, v in pairs(player.GetAll()) do
+		v:SetNWInt("EasyVotes", easyRequired)
+		v:SetNWInt("MediumVotes", mediumRequired)
+		v:SetNWInt("HardVotes", hardRequired)
+		v:SetNWInt("SurvVotes", survRequired)
+		
+		v:SetNWInt("RestartVotes", neededVotesRestart)
+		v:SetNWInt("LobbyVotes", neededVotes)
+	end
 
 	return true -- Return true to signal that the settings could be loaded
 end
@@ -144,6 +162,24 @@ hook.Add("PlayerDisconnected", "SavePlayerDataDisconnect", function(ply)
 	ply.hl2cPersistent.TempUpg = ""
 	ply:SetNWString("TempUpg", "")
 	SaveData(ply)
+	
+	local easyRequired = math.ceil(#player.GetAll() / 2)
+	local mediumRequired = math.ceil(#player.GetAll() / 2)
+	local hardRequired = math.ceil(#player.GetAll() / 2)
+
+	local survRequired = #player.GetAll()
+	local neededVotes = #player.GetAll()
+	local neededVotesRestart = #player.GetAll()
+
+	for k, v in pairs(player.GetAll()) do
+		v:SetNWInt("EasyVotes", easyRequired)
+		v:SetNWInt("MediumVotes", mediumRequired)
+		v:SetNWInt("HardVotes", hardRequired)
+		v:SetNWInt("SurvVotes", survRequired)
+		
+		v:SetNWInt("RestartVotes", neededVotesRestart)
+		v:SetNWInt("LobbyVotes", neededVotes)
+	end
 end)
 
 

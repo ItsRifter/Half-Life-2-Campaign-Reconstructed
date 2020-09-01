@@ -32,8 +32,6 @@ function ENT:StartTouch(ent)
 		self.triggered = true
 		local ang = ent:GetAngles()
 		
-		--forceTP teleports the player to the checkpoint
-		local forceTP = self.forcePlyTP
 		--Checkpoint points
 		local point1 = self.Point1
 		local point2 = self.Point2
@@ -91,46 +89,16 @@ function ENT:StartTouch(ent)
 						p:ExitVehicle()
 					end
 					
-					if forceTP then
-						if point1 then
-							if p != ent then
-								p:SetPos(point1)
-							end
-							spawn:SetPos(point1)
-						elseif point2 then
-							if p != ent then
-								p:SetPos(point2)
-							end
-							spawn:SetPos(point2)
-						elseif point3 then
-							if p != ent then
-								p:SetPos(point3)
-							end
-							spawn:SetPos(point3)
-						elseif point4 then
-							if p != ent then
-								p:SetPos(point4)
-							end
-							spawn:SetPos(point4)
-						elseif point5 then
-							if p != ent then
-								p:SetPos(point5)
-							end
-							spawn:SetPos(point5)
-						end
-						p:SetAngles(ang)	
-					elseif not forceTP then
-						if point1 then
-							spawn:SetPos(point1)
-						elseif point2 then
-							spawn:SetPos(point2)
-						elseif point3 then
-							spawn:SetPos(point3)
-						elseif point4 then
-							spawn:SetPos(point4)
-						elseif point5 then
-							spawn:SetPos(point5)
-						end
+					if point1 then
+						spawn:SetPos(point1)
+					elseif point2 then
+						spawn:SetPos(point2)
+					elseif point3 then
+						spawn:SetPos(point3)
+					elseif point4 then
+						spawn:SetPos(point4)
+					elseif point5 then
+						spawn:SetPos(point5)
 					end
 				end
 			end

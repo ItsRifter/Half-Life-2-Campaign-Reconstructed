@@ -1,11 +1,10 @@
 BringPet = true
 
 local lobbyVotes = 0
-local restartVotes = 0
-
+local restartVotes = 0 
 
 hook.Add("PlayerSay", "Commands", function(ply, text)
-	
+
 	--Worthless secret for worthless achievement hunter
 	if (string.lower(text) == "!gimmeasecret") then
 		Achievement(ply, "Worthless_Secret", "Lobby_Ach_List", 0)
@@ -67,6 +66,10 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 		net.Start("Open_Diff_Menu")
 			net.WriteInt(GetConVar("hl2cr_difficulty"):GetInt(), 8)
 			net.WriteInt(GetConVar("hl2cr_survivalmode"):GetInt(), 8)
+			net.WriteInt(ply:GetNWInt("EasyVotes"), 8)
+			net.WriteInt(ply:GetNWInt("MediumVotes"), 8)
+			net.WriteInt(ply:GetNWInt("HardVotes"), 8)
+			net.WriteInt(ply:GetNWInt("SurvVotes"), 8)
 		net.Send(ply)
 		return ""
 	end
@@ -194,6 +197,7 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 		if game.GetMap() != "hl2c_lobby_remake" then
 			if not ply.hasVotedLobby then
 				lobbyVotes = lobbyVotes + 1
+				ply:SetNWInt("PlayerVotesLobby", lobbyVotes)
 				ply.hasVotedLobby = true
 				for k, v in pairs(player.GetAll()) do
 					v:ChatPrint(ply:Nick() .. " Has voted to return to the lobby: " .. lobbyVotes .. "/" .. ply:GetNWInt("LobbyVotes") )
@@ -217,6 +221,7 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 		if game.GetMap() != "hl2c_lobby_remake" then
 			if not ply.hasVotedRestart then
 				restartVotes = restartVotes + 1
+				ply:SetNWInt("PlayerVotesRestart", restartVotes)
 				ply.hasVotedLobby = true
 				for k, v in pairs(player.GetAll()) do
 					v:ChatPrint(ply:Nick() .. " has voted to return to restart the map: " .. restartVotes .. "/" .. ply:GetNWInt("RestartVotes"))

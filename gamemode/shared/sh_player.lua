@@ -157,7 +157,7 @@ hook.Add("EntityTakeDamage", "DisableAR2DMG", function(ent, dmgInfo)
 end)
 
 hook.Add("PlayerShouldTakeDamage", "DisablePVP", function(ply, attacker)
-	if ply:Team() != TEAM_ALIVE or (attacker:IsPlayer() and attacker != ply) then
+	if ply:Team() != TEAM_ALIVE or (attacker:IsPlayer() and attacker != ply) or (attacker:IsPlayer() and attacker:InVehicle()) or (game.GetMap() == "d1_eli_01" and attacker == "npc_rollermine") then
 		return false
 	end
 	return true

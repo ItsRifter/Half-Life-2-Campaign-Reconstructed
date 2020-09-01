@@ -71,7 +71,8 @@ SpecialLists = {
 		d1_eli_02 = {name = "d1_eli_02", mat = "vgui/achievements/hlx_find_onegman.png"},
 		d1_town_02 = {name = "d1_town_02", mat = "vgui/achievements/hlx_find_onegman.png"},
 		d1_town_03 = {name = "d1_town_03", mat = "vgui/achievements/hlx_find_onegman.png"},
-		d1_town_02 = {name = "d1_town_02a", mat = "vgui/achievements/hlx_find_onegman.png"},
+		d1_town_02a = {name = "d1_town_02a", mat = "vgui/achievements/hlx_find_onegman.png"},
+		d1_town_04 = {name = "d1_town_04", mat = "vgui/achievements/hlx_find_onegman.png"},
 		d1_town_05 = {name = "d1_town_05", mat = "vgui/achievements/hlx_find_onegman.png"},
 		d2_coast_01 = {name = "d2_coast_01", mat = "vgui/achievements/hlx_find_onegman.png"},
 	}

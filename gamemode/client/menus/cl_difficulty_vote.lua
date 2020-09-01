@@ -20,7 +20,7 @@ surface.CreateFont("Diff_Warning_Font", {
 	size = 30,
 })
 
-function OpenDiffMenu(diff, surv)
+function OpenDiffMenu(diff, surv, easyReq, medReq, hardReq, survReq)
 
 	local diffFrame = vgui.Create("DFrame")
 	diffFrame:SetSize(450, 750)
@@ -59,11 +59,6 @@ function OpenDiffMenu(diff, surv)
 				net.WriteInt(1, 8)
 				net.WriteString(LocalPlayer():Nick())
 			net.SendToServer()
-			if easyVotes >= LocalPlayer():GetNWInt("EasyVotes") then
-				net.Start("Diff_Change")
-					net.WriteInt(1, 8)
-				net.SendToServer()
-			end
 			timer.Create("VoteTimer", 300, 1, function()
 				LocalPlayer().hasUserVoted = false
 				timer.Remove("VoteTimer")
@@ -94,11 +89,6 @@ function OpenDiffMenu(diff, surv)
 				net.WriteInt(2, 8)
 				net.WriteString(LocalPlayer():Nick())
 			net.SendToServer()
-			if mediumVotes >= LocalPlayer():GetNWInt("MediumVotes") then
-				net.Start("Diff_Change")
-					net.WriteInt(2, 8)
-				net.SendToServer()
-			end
 			timer.Create("VoteTimer", 300, 1, function()
 					LocalPlayer().hasUserVoted = false
 					timer.Remove("VoteTimer")
@@ -128,11 +118,6 @@ function OpenDiffMenu(diff, surv)
 				net.WriteInt(3, 8)
 				net.WriteString(LocalPlayer():Nick())
 			net.SendToServer()
-			if hardVotes >= LocalPlayer():GetNWInt("HardVotes") then
-				net.Start("Diff_Change")
-					net.WriteInt(3, 8)
-				net.SendToServer()
-			end
 			timer.Create("VoteTimer", 300, 1, function()
 				LocalPlayer().hasUserVoted = false
 				timer.Remove("VoteTimer")
@@ -174,15 +159,6 @@ function OpenDiffMenu(diff, surv)
 				net.WriteInt(4, 8)
 				net.WriteString(LocalPlayer():Nick())
 			net.SendToServer()
-			if survVotes >= LocalPlayer():GetNWInt("SurvVotes") and not surv then
-				net.Start("Survival")
-					net.WriteInt(1, 8)
-				net.SendToServer()
-			elseif survVotes >= LocalPlayer():GetNWInt("SurvVotes") and surv then
-				net.Start("Survival")
-					net.WriteInt(0, 8)
-				net.SendToServer()
-			end
 			if not timer.Exists("VoteTimer") then
 			timer.Create("VoteTimer", 300, 1, function()
 				LocalPlayer().hasUserVoted = false
@@ -200,5 +176,10 @@ end
 net.Receive("Open_Diff_Menu", function()
 	local diff = net.ReadInt(8)
 	local surv = net.ReadInt(8)
-	OpenDiffMenu(diff, surv)
+	local easyReq = net.ReadInt(8)
+	local medReq = net.ReadInt(8)
+	local hardReq = net.ReadInt(8)
+	local survReq = net.ReadInt(8)
+	
+	OpenDiffMenu(diff, surv, easyReq, medReq, hardReq, survReq)
 end)
