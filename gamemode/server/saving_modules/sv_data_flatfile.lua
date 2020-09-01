@@ -115,18 +115,6 @@ local function LoadData(ply)
 	-- Init player model and other stuff
 	ply:SetModel(ply.hl2cPersistent.Model)
 
-	local easyRequired = math.ceil(#player.GetAll() / 2)
-	ply:SetNWInt("EasyVotes", easyRequired)
-	
-	local mediumRequired = math.ceil(#player.GetAll() / 2)
-	ply:SetNWInt("MediumVotes", mediumRequired)
-	
-	local hardRequired = math.ceil(#player.GetAll() / 2)
-	ply:SetNWInt("HardVotes", hardRequired)
-	
-	local survRequired = #player.GetAll()
-	ply:SetNWInt("SurvVotes", survRequired)
-
 	return true -- Return true to signal that the settings could be loaded
 end
 

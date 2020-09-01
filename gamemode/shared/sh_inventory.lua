@@ -28,6 +28,11 @@ end)
 net.Receive("Exchange", function(len, ply)
 	local exchangeAmt = net.ReadInt(32)
 	
+	if exchangeAmt <= 0 then
+		ply:ChatPrint("Nice try human")
+		return
+	end
+	
 	ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins -(exchangeAmt * 500)
 	ply.hl2cPersistent.Essence = ply.hl2cPersistent.Essence + exchangeAmt
 	

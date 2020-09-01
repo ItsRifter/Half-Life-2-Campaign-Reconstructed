@@ -229,6 +229,28 @@ function GM:ShowSpare1(ply)
 	
 end
 
+hook.Add("Think", "voteThink", function()
+	for k, v in pairs(player.GetAll()) do
+		local easyRequired = math.ceil(#player.GetAll() / 2)
+		v:SetNWInt("EasyVotes", easyRequired)
+		
+		local mediumRequired = math.ceil(#player.GetAll() / 2)
+		v:SetNWInt("MediumVotes", mediumRequired)
+		
+		local hardRequired = math.ceil(#player.GetAll() / 2)
+		v:SetNWInt("HardVotes", hardRequired)
+		
+		local survRequired = #player.GetAll()
+		v:SetNWInt("SurvVotes", survRequired)
+		
+		local neededVotesRestart = math.ceil(#player.GetAll() / 2)
+		v:SetNWInt("RestartVotes", neededVotesRestart)
+		
+		local neededVotes = #player.GetAll()
+		v:SetNWInt("LobbyVotes", neededVotes)
+	end
+end)
+
 function GM:CanPlayerEnterVehicle(ply)
 	if not ply.spawnJeep then
 		return true
@@ -237,8 +259,6 @@ function GM:CanPlayerEnterVehicle(ply)
 	if ply.spawnJeep:GetOwner():IsValid() and ply.spawnJeep:GetOwner() == ply then
 		return true
 	end
-	
-	
 	
 	return false
 end

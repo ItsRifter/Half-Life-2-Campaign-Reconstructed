@@ -183,6 +183,35 @@ end)
 local pickedOnce = false
 
 hook.Add("PlayerCanPickupWeapon", "DisableWeaponsPickup", function(ply, weapon) 
+	if weapon:GetClass() == "weapon_357" and ply:GetAmmoCount("357") >= GetConVar("max_357"):GetInt() then
+		return false
+	end
+	
+	if weapon:GetClass() == "weapon_ar2" and ply:GetAmmoCount("AR2") >= GetConVar("max_AR2"):GetInt() then
+		return false
+	end
+	
+	if weapon:GetClass() == "weapon_shotgun" and ply:GetAmmoCount("Buckshot") >= GetConVar("max_Buckshot"):GetInt() then
+		return false
+	end
+	
+	if weapon:GetClass() == "weapon_crossbow" and ply:GetAmmoCount("XBowBolt") >= GetConVar("max_crossbowbolt"):GetInt() then
+		return false
+	end
+	
+	if weapon:GetClass() == "weapon_pistol" and ply:GetAmmoCount("Pistol") >= GetConVar("max_Pistol"):GetInt() then
+		return false
+	end
+	
+	if weapon:GetClass() == "weapon_rpg" and ply:GetAmmoCount("RPG_Round") >= GetConVar("max_RPG_Round"):GetInt() then
+		return false
+	end
+	
+	if weapon:GetClass() == "weapon_smg1" and ply:GetAmmoCount("SMG1") >= GetConVar("max_SMG1"):GetInt() then
+		return false
+	end
+	
+	
 	if ply:Team() != TEAM_ALIVE or weapon:GetClass() == "weapon_stunstick" or (weapon:GetClass() == "weapon_physgun" and not ply:IsAdmin()) then
 		weapon:Remove()
 		return false

@@ -1,7 +1,5 @@
 BringPet = true
 
-local neededVotes = #player.GetAll() or 1
-local neededVotesRestart = #player.GetAll() / 2
 local lobbyVotes = 0
 local restartVotes = 0
 
@@ -198,9 +196,9 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 				lobbyVotes = lobbyVotes + 1
 				ply.hasVotedLobby = true
 				for k, v in pairs(player.GetAll()) do
-					v:ChatPrint(ply:Nick() .. " Has voted to return to the lobby: " .. lobbyVotes .. "/" .. neededVotes)
+					v:ChatPrint(ply:Nick() .. " Has voted to return to the lobby: " .. lobbyVotes .. "/" .. ply:GetNWInt("LobbyVotes") )
 				end
-				if lobbyVotes == neededVotes then
+				if lobbyVotes == ply:GetNWInt("LobbyVotes") then
 					game.SetGlobalState("super_phys_gun", 0)
 					ply:ChatPrint("Enough players have voted to return the lobby, returning in 10 seconds")
 					timer.Simple(10, function()
@@ -221,9 +219,9 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 				restartVotes = restartVotes + 1
 				ply.hasVotedLobby = true
 				for k, v in pairs(player.GetAll()) do
-					v:ChatPrint(ply:Nick() .. " has voted to return to restart the map: " .. restartVotes .. "/" .. math.Round(neededVotesRestart, 0))
+					v:ChatPrint(ply:Nick() .. " has voted to return to restart the map: " .. restartVotes .. "/" .. ply:GetNWInt("RestartVotes"))
 				end
-				if restartVotes == neededVotesRestart then
+				if restartVotes == ply:GetNWInt("RestartVotes") then
 					ply:ChatPrint("Enough players have voted to restart the map")
 					timer.Simple(10, function()
 						RunConsoleCommand("changelevel", game.GetMap())

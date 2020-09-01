@@ -192,8 +192,8 @@ function OpenDiffMenu(diff, surv)
 		end
 		else
 			LocalPlayer():ChatPrint("You have already voted for a difficulty, please wait " .. math.ceil(timer.TimeLeft("VoteTimer")) .. " Seconds")
-			diffFrame:Close()
 		end
+		diffFrame:Close()
 	end
 end
 

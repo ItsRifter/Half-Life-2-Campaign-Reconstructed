@@ -1177,6 +1177,7 @@ function SetCheckpointsStage()
 			 Vector(1614, 749, -186), Vector(1487, 609, -67),
 			 Vector(428, 49, 2), Vector(506, 172, 130),
 			 Vector(357, -132, 6), Vector(357, -132, 6),
+			 Vector(634, -839, 4), Vector(492, -1083, 130),
 		}
 		local Checkpoint1 = ents.Create("trigger_checkpoint")
 		Checkpoint1.forcePlyTP = true
@@ -1205,6 +1206,15 @@ function SetCheckpointsStage()
 		Checkpoint3:SetPos(Checkpoint3.Pos)
 		Checkpoint3:Spawn()
 		
+		local Checkpoint4 = ents.Create("trigger_checkpoint")
+		Checkpoint4.forcePlyTP = true
+		Checkpoint4.Min = Vector(634, -839, 4)
+		Checkpoint4.Max = Vector(492, -1083, 130)
+		Checkpoint4.Pos = Vector(492, -1083, 130) - ( ( Vector(492, -1083, 130) - Vector(634, -839, 4)) / 2 )
+		Checkpoint4.Point4 = Vector(717, -918, 9)
+		Checkpoint4:SetPos(Checkpoint4.Pos)
+		Checkpoint4:Spawn()
+		
 		lambdaModel1 = ents.Create("prop_dynamic")
 		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
 		lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
@@ -1223,28 +1233,44 @@ function SetCheckpointsStage()
 		lambdaModel3:SetPos(Checkpoint3.Pos)
 		lambdaModel3:Spawn()
 		
+		lambdaModel4 = ents.Create("prop_dynamic")
+		lambdaModel4:SetModel("models/hl2cr_lambda.mdl")
+		lambdaModel4:SetMaterial("models/props_combine/com_shield001a")
+		lambdaModel4:SetPos(Checkpoint4.Pos)
+		lambdaModel4:Spawn()
+		
 	elseif game.GetMap() == "d2_prison_07" then
 		TRIGGER_CHECKPOINT = {
+			 Vector(-345, -2957, -238), Vector(-532, -2794, -110),
 			 Vector(1604, -3354, -678), Vector(1434, -3268, -493),
 			 Vector(4333, -3907, -539), Vector(3988, -4088, -418),
 		}
 		local Checkpoint1 = ents.Create("trigger_checkpoint")
-		Checkpoint1.forcePlyTP = false
-		Checkpoint1.Min = Vector(1604, -3354, -678)
-		Checkpoint1.Max = Vector(1434, -3268, -493)
-		Checkpoint1.Pos = Vector(1434, -3268, -493) - ( ( Vector(1434, -3268, -493) - Vector(1604, -3354, -678)) / 2 )
-		Checkpoint1.Point1 = Vector(1727, -3308, -663)
+		Checkpoint1.forcePlyTP = true
+		Checkpoint1.Min = Vector(-345, -2957, -238)
+		Checkpoint1.Max = Vector(-532, -2794, -110)
+		Checkpoint1.Pos = Vector(-532, -2794, -110) - ( ( Vector(-532, -2794, -110) - Vector(-345, -2957, -238)) / 2 )
+		Checkpoint1.Point1 = Vector(-439, -2879, -228)
 		Checkpoint1:SetPos(Checkpoint1.Pos)
 		Checkpoint1:Spawn()
 		
 		local Checkpoint2 = ents.Create("trigger_checkpoint")
-		Checkpoint2.forcePlyTP = true
-		Checkpoint2.Min = Vector(4333, -3907, -539)
-		Checkpoint2.Max = Vector(3988, -4088, -418)
-		Checkpoint2.Pos = Vector(3988, -4088, -418) - ( ( Vector(3988, -4088, -418) - Vector(4333, -3907, -539)) / 2 )
-		Checkpoint2.Point2 = Vector(4153, -3977, -528)
+		Checkpoint2.forcePlyTP = false
+		Checkpoint2.Min = Vector(1604, -3354, -678)
+		Checkpoint2.Max = Vector(1434, -3268, -493)
+		Checkpoint2.Pos = Vector(1434, -3268, -493) - ( ( Vector(1434, -3268, -493) - Vector(1604, -3354, -678)) / 2 )
+		Checkpoint2.Point2 = Vector(1727, -3308, -663)
 		Checkpoint2:SetPos(Checkpoint2.Pos)
-		Checkpoint2:Spawn()	
+		Checkpoint2:Spawn()
+		
+		local Checkpoint3 = ents.Create("trigger_checkpoint")
+		Checkpoint3.forcePlyTP = true
+		Checkpoint3.Min = Vector(4333, -3907, -539)
+		Checkpoint3.Max = Vector(3988, -4088, -418)
+		Checkpoint3.Pos = Vector(3988, -4088, -418) - ( ( Vector(3988, -4088, -418) - Vector(4333, -3907, -539)) / 2 )
+		Checkpoint3.Point3 = Vector(4153, -3977, -528)
+		Checkpoint3:SetPos(Checkpoint3.Pos)
+		Checkpoint3:Spawn()	
 		
 		lambdaModel1 = ents.Create("prop_dynamic")
 		lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
@@ -1312,7 +1338,7 @@ function SetCheckpointsStage()
 	elseif game.GetMap() == "d3_c17_01" then
 		TRIGGER_CHECKPOINT = {
 			 Vector(-7047, -1500, 9), Vector(-7028, -1295, 123),
-			 Vector(-6543, -1079, 6), Vector(-6366, -925, 164),
+			 Vector(-6354, -1053, 3), Vector(-6366, -925, 164),
 		}
 		local Checkpoint1 = ents.Create("trigger_checkpoint")
 		Checkpoint1.forcePlyTP = true
@@ -1325,9 +1351,9 @@ function SetCheckpointsStage()
 		
 		local Checkpoint2 = ents.Create("trigger_checkpoint")
 		Checkpoint2.forcePlyTP = true
-		Checkpoint2.Min = Vector(-6543, -1079, 6)
+		Checkpoint2.Min = Vector(-6354, -1053, 3)
 		Checkpoint2.Max = Vector(-6366, -925, 164)
-		Checkpoint2.Pos = Vector(-6366, -925, 164) - ( ( Vector(-6366, -925, 164) - Vector(-6543, -1079, 6)) / 2 )
+		Checkpoint2.Pos = Vector(-6366, -925, 164) - ( ( Vector(-6366, -925, 164) - Vector(-6354, -1053, 3)) / 2 )
 		Checkpoint2.Point2 = Vector(-6476, -918, 11)
 		Checkpoint2:SetPos(Checkpoint2.Pos)
 		Checkpoint2:Spawn()
