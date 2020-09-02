@@ -32,6 +32,68 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 		return ""
 	end
 	
+	--If the player inputs no name for the new squad
+	if string.lower(text) == "!squadcreate" or string.lower(text) == "!createsquad" then
+		ply:ChatPrint("You need a name for your squad!")
+		return ""
+	end
+	
+	--If the player decides to create a squad with a name
+	if string.find(string.lower(text), "!squadcreate ") or string.find(string.lower(text), "!createsquad ") then
+		local squadNewName = string.sub(text, 13)
+
+		if ply:GetNWString("SquadLeader") != ply:Nick() then
+			
+			ply:SetNWString("SquadLeader", ply:Nick())
+			ply:SetNWString("TeamName", squadNewName)
+			
+			ply:ChatPrint("You have created a squad with name:" .. squadNewName)
+			net.Start("Squad_Created")
+				net.WriteString(ply:Nick())
+				net.WriteString(squadNewName)
+			net.Send(ply)
+		elseif ply:GetNWString("SquadLeader") == ply:Nick() then
+			ply:ChatPrint("You already have a squad!")
+		end
+		return ""
+	end
+	
+	if string.lower(text) == "!squadjoin" or string.lower(text) == "!joinsquad" then
+		ply:ChatPrint("You need to specify a name for the squad you're joining!")
+		return ""
+	end
+	
+	if string.find(string.lower(text), "!squadjoin ") or string.find(string.lower(text), "!joinsquad ") then
+		local squadName = string.sub(text, 11)
+			for k, user in pairs(player.GetAll()) do
+				print(user:Nick())
+				if (string.find(squadName, user:Nick()) and user:GetNWString("SquadLeader")) and ply:GetNWString("SquadLeader") != ply:Nick() and 
+				not ply:GetNWBool("InTeam") then
+					ply:ChatPrint("You have joined " .. squadName)
+					ply:SetNWString("Team", squadName)
+					ply:SetNWBool("InTeam", true)
+				elseif ply:GetNWString("SquadLeader") == ply:Nick() then
+					ply:ChatPrint("You must disband your squad before joining another")
+				else
+					ply:ChatPrint("No squad exists with that name")
+				end
+			end
+		return ""
+	end
+	
+	if (string.lower(text) == "!squaddisband" or string.lower(text) == "!disbandsquad") then
+		if ply:GetNWString("SquadLeader") then
+			ply:SetNWString("SquadLeader", nil)
+			ply:SetNWString("TeamName", "")
+			ply:ChatPrint("You have dismissed your squad")
+			net.Start("Squad_Disband")
+			net.Send(ply)
+		else
+			ply:ChatPrint("You have no squad!")
+		end
+		return ""
+	end
+	
 	--if pets don't go as intended, force close it
 	if (string.lower(text) == "!petpanic" or string.lower(text) == "!panicpet") then
 		net.Start("PetPanic")
@@ -50,6 +112,11 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 		else
 			ply:ChatPrint("You don't have access to pets")
 		end
+		return ""
+	end
+	
+	if (string.lower(text) == "!petname") then
+		ply:ChatPrint("You can't name your pet like that")
 		return ""
 	end
 	
@@ -99,7 +166,7 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 		return ""
 	end
 	if (string.lower(text) == "!removepet" or string.lower(text) == "!petremove") then
-		if not ply.pet:IsValid() then
+		if not ply.pet or not ply.pet:IsValid() then
 			ply:ChatPrint("Your pet doesn't exist!")
 			return ""		
 		elseif duel then

@@ -269,7 +269,7 @@ function SetupMap()
 		end
 	end
 	
-	if game.GetMap() != "hl2c_lobby_remake" then
+	if game.GetMap() != "hl2c_lobby_remake" and not TRIGGER_CHECKPOINT then
 		SetCheckpointsStage()
 	end
 end
@@ -608,6 +608,14 @@ function SetCheckpointsStage()
 		TRIGGER_SPAWNPOINT = {
 			Vector(2954, -7059, 1937)
 		}
+	
+	elseif game.GetMap() == "d2_coast_09" then
+		TRIGGER_CHECKPOINT = {
+			 Vector(10870, 8391, -185), Vector(11160, 8727, -45),
+		}
+		TRIGGER_SPAWNPOINT = {
+			Vector(10968, 8648, -163)
+		}
 
 	elseif game.GetMap() == "d2_coast_11" then
 		TRIGGER_CHECKPOINT = {
@@ -657,12 +665,12 @@ function SetCheckpointsStage()
 		TRIGGER_CHECKPOINT = {
 			 Vector(1614, 749, -186), Vector(1487, 609, -67),
 			 Vector(428, 49, 2), Vector(506, 172, 130),
-			 Vector(357, -132, 6), Vector(357, -132, 6),
+			 Vector(252, -333, -57), Vector(347, -472, 121),
 			 Vector(634, -839, 4), Vector(492, -1083, 130),
 		}
 		TRIGGER_SPAWNPOINT = {
 			Vector(1563, 673, -176), Vector(569, 99, 16),
-			Vector(315, -433, 0), Vector(717, -918, 9)
+			Vector(311, -525, -38), Vector(717, -918, 9)
 		}
 		
 	elseif game.GetMap() == "d2_prison_07" then
@@ -679,8 +687,7 @@ function SetCheckpointsStage()
 	elseif game.GetMap() == "d2_prison_08" then
 		TRIGGER_CHECKPOINT = {
 			 Vector(-467, 685, 933), Vector(-371, 603, 1081),
-			 Vector(-253, 645, 929), Vector(-168, 453, 1138),
-			 Vector(97, 23, 1181), Vector(150, -18, 1229),
+			 Vector(436, 396, 994), Vector(-82, 102, 1154),
 		}
 		TRIGGER_SPAWNPOINT = {
 			Vector(-474, 518, 941), Vector(131, 300, 1003),
@@ -767,7 +774,7 @@ function SetCheckpointsStage()
 		
 	elseif game.GetMap() == "d3_breen_01" then
 		TRIGGER_CHECKPOINT = {
-			Vector(-899, 125, -252), Vector(-1160, -83, -88),
+			Vector(-769, 123, -250), Vector(-672, -130, -54),
 			Vector(-762, -470, 1285), Vector(-519, -276, 1479)
 		}
 		TRIGGER_SPAWNPOINT = {
@@ -816,23 +823,6 @@ function SetCheckpointsStage()
 		Checkpoint3.Max = Vector(TRIGGER_CHECKPOINT[6])
 		Checkpoint3.Pos = Vector(TRIGGER_CHECKPOINT[6]) - ( ( Vector(TRIGGER_CHECKPOINT[6]) - Vector(TRIGGER_CHECKPOINT[5])) / 2 )
 		Checkpoint3.Point3 = Vector(TRIGGER_SPAWNPOINT[3])
-		Checkpoint3:SetPos(Checkpoint3.Pos)
-		Checkpoint3:Spawn()
-		
-		lambdaModel3 = ents.Create("prop_dynamic")
-		lambdaModel3:SetModel("models/hl2cr_lambda.mdl")
-		lambdaModel3:SetMaterial("models/props_combine/com_shield001a")
-		lambdaModel3:SetPos(Checkpoint3.Pos)
-		lambdaModel3:Spawn()
-	end
-	
-	if TRIGGER_CHECKPOINT[7] and TRIGGER_CHECKPOINT[8] then
-		local Checkpoint3 = ents.Create("trigger_checkpoint")
-		Checkpoint3.forcePlyTP = true
-		Checkpoint3.Min = Vector(TRIGGER_CHECKPOINT[7])
-		Checkpoint3.Max = Vector(TRIGGER_CHECKPOINT[8])
-		Checkpoint3.Pos = Vector(TRIGGER_CHECKPOINT[8]) - ( ( Vector(TRIGGER_CHECKPOINT[8]) - Vector(TRIGGER_CHECKPOINT[7])) / 2 )
-		Checkpoint3.Point3 = Vector(TRIGGER_SPAWNPOINT[4])
 		Checkpoint3:SetPos(Checkpoint3.Pos)
 		Checkpoint3:Spawn()
 		

@@ -73,32 +73,38 @@ function ENT:StartTouch(ent)
 				p:Spawn()
 				p:UnLock()
 				p:UnSpectate()
+				DisableSpec()
 				p.isAliveSurv = true
 				deaths = deaths - deaths
 			end
 			
 			for l, spawn in pairs(ents.FindByClass("info_player_start")) do
-				if p and IsValid(p) and p:Team() == TEAM_ALIVE then
+				if p and IsValid(p) and p:Team() == TEAM_ALIVE and p != ent then
 					if (game.GetMap() != "d1_trainstation_01" or game.GetMap() != "d1_trainstation_02" or game.GetMap() != "d1_trainstation_03" or 
 					game.GetMap() != "d1_trainstation_04" or game.GetMap() != "d1_trainstation_05") then 
 						p.CPTP = true
 						ent.CPTP = false
 					end
 
-					if p:GetVehicle() and p:GetVehicle():IsValid() then
+					if not (ent:GetVehicle() and ent:GetVehicle():IsValid()) and (p:GetVehicle() and p:GetVehicle():IsValid()) then
 						p:ExitVehicle()
 					end
 					
 					if point1 then
 						spawn:SetPos(point1)
+						p:SetPos(point1)
 					elseif point2 then
 						spawn:SetPos(point2)
+						p:SetPos(point2)
 					elseif point3 then
 						spawn:SetPos(point3)
+						p:SetPos(point3)
 					elseif point4 then
 						spawn:SetPos(point4)
+						p:SetPos(point4)
 					elseif point5 then
 						spawn:SetPos(point5)
+						p:SetPos(point5)
 					end
 				end
 			end

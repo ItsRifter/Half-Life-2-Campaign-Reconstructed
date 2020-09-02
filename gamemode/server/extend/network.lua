@@ -57,5 +57,10 @@ util.AddNetworkString("SellItemSlot")
 --Inventory
 util.AddNetworkString("AddArmour")
 
+--Squads and Combine Loyals
+util.AddNetworkString("Squad_Created")
+util.AddNetworkString("Squad_Disband")
+util.AddNetworkString("Squad_XPUpdate")
+
 --End map
 util.AddNetworkString("ShowEndStats")

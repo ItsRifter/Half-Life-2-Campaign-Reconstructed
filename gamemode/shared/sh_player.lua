@@ -3,15 +3,8 @@ local startingWeapons = {}
 
 hook.Add("PlayerInitialSpawn", "MiscSurv", function(ply)
 	
-	ply:SetNWInt("diffEasy", #player.GetAll())
-	ply:SetNWInt("diffMed", #player.GetAll())
-	ply:SetNWInt("diffHard", #player.GetAll())
-	ply:SetNWInt("SurvDiff", #player.GetAll())
-	
-	ply:ConCommand("hud_quickinfo 1")
-	
-	if GetConVar("hl2cr_survivalmode"):GetInt() == 1 and ply:Alive() and not isAliveSurv then
-		isAliveSurv = false
+	if GetConVar("hl2cr_survivalmode"):GetInt() == 1 and ply:Alive() and not ply.isAliveSurv then
+		ply.isAliveSurv = false
 	end
 	
 	ply.hasDiedOnce = false
@@ -157,11 +150,15 @@ hook.Add("EntityTakeDamage", "DisableAR2DMG", function(ent, dmgInfo)
 end)
 
 hook.Add("PlayerShouldTakeDamage", "DisablePVP", function(ply, attacker)
-	if ply:Team() != TEAM_ALIVE or (attacker:IsPlayer() and attacker != ply) or (attacker:IsPlayer() and attacker:InVehicle()) or (game.GetMap() == "d1_eli_01" and attacker == "npc_rollermine") then
+	if ply:Team() != TEAM_ALIVE or (attacker:IsPlayer() and attacker != ply) or (attacker:IsPlayer() and attacker:InVehicle()) then
 		return false
 	end
-	return true
 	
+	if attacker:GetClass() == "npc_rollermine" and game.GetMap() == "d1_eli_02" then
+		return false
+	end
+	
+	return true
 end)
 
 hook.Add("ScalePlayerDamage", "DiffScalingPly", function( ply, hitgroup, dmgInfo )
@@ -311,19 +308,24 @@ hook.Add("WeaponEquip", "WeaponPickedUp", function(weapon, ply)
 	end
 end)
 
+hook.Add("PlayerDeathThink", "SpecThink", function(ply)	
+	return false
+end)
+
 function RespawnTimerActive(ply, deaths)
 	ply.hasDiedOnce = true
 	
+	timer.Simple(5, function()
+		SpectateMode(ply)
+	end)
+	
 	if GetConVar("hl2cr_survivalmode"):GetInt() == 1 and game.GetMap() != "hl2c_lobby_remake" then
-		ply:Lock()
 		ply.isAliveSurv = false
 		local playersAlive = #player.GetAll()
 		local playerDeaths = deaths
 		
 		ply:ChatPrint("You have died, awaiting next checkpoint")
-		timer.Simple(5, function()
-			SpectateMode(ply)
-		end)
+		
 		if playerDeaths == playersAlive then	
 			if playerDeaths >= 4 then
 				for k, v in pairs(player.GetAll()) do
@@ -340,14 +342,12 @@ function RespawnTimerActive(ply, deaths)
 		return
 	end
 
-	if GetConVarNumber("hl2cr_respawntime") ~= 0 then
-		ply:Lock()
-		timer.Simple(5, function()
-			SpectateMode(ply)
-		end)
-		timer.Simple(GetConVarNumber("hl2cr_respawntime"), function()
-			ply:UnLock()
+	if GetConVarNumber("hl2cr_respawntime") ~= 0 and not timer.Exists("ResTime") then
+
+		timer.Create("ResTime", GetConVarNumber("hl2cr_respawntime") * GetConVarNumber("hl2cr_difficulty"), 0, function()
 			ply:Spawn()
+			DisableSpec()
+			timer.Remove("ResTime")
 		end)
 	end
 end
@@ -508,6 +508,6 @@ function giveLambda(map, ply)
 	end
 	
 	if table.Count(ply.hl2cPersistent.Lambdas) == 34 then
-		Achievement(ply, Lambda_Locator, "HL2_Ach_List", 5000)
+		Achievement(ply, "Lambda_Locator", "HL2_Ach_List", 5000)
 	end
 end

@@ -12,7 +12,7 @@ HL2_Ach_List = {
 	[5] = {name = "Rave_Ball", desc = "Carry dog's ball through\nRavenholm\ninto the mines", mat = "vgui/achievements/hl2_get_gravitygun.png", isRare = false},
 	[6] = {name = "Keep_off_the_sand", desc = "Cross the antlion beach\nin d2_coast_11 without\ntouching the sand", mat = "vgui/achievements/hl2_beat_donttouchsand.png", isRare = false},
 	[7] = {name = "Singularity_Collapse", desc = "Destroy the Citadel's reactor core", mat = "vgui/achievements/hl2_beat_game.png", isRare = false},
-	[8] = {name = "Lambda Locator", desc = "Locate all the Lambda cache's", mat = "vgui/achievements/hl2_find_alllambdas.png", isRare = true},
+	[8] = {name = "Lambda_Locator", desc = "Locate all\nthe Lambda caches", mat = "vgui/achievements/hl2_find_alllambdas.png", isRare = true},
 }
 
 Misc_Ach_List = {

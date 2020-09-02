@@ -163,6 +163,9 @@ hook.Add("PlayerDisconnected", "SavePlayerDataDisconnect", function(ply)
 	ply:SetNWString("TempUpg", "")
 	SaveData(ply)
 	
+	ply:SetNWString("SquadLeader", nil)
+	ply:SetNWString("TeamName", "")
+	
 	local easyRequired = math.ceil(#player.GetAll() / 2)
 	local mediumRequired = math.ceil(#player.GetAll() / 2)
 	local hardRequired = math.ceil(#player.GetAll() / 2)

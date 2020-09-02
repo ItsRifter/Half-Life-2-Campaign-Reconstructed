@@ -9,6 +9,7 @@ AddCSLuaFile("client/cl_hud.lua")
 AddCSLuaFile("client/menus/cl_f4_menu.lua")
 AddCSLuaFile("client/menus/cl_pets.lua")
 AddCSLuaFile("client/menus/cl_new_player.lua")
+AddCSLuaFile("client/menus/cl_squads.lua")
 
 -- Server side files only
 include("server/commands/sv_commands_list.lua")
@@ -30,7 +31,7 @@ include("server/config/maps/sv_lambda.lua")
 
 --HL2C Convars
 CreateConVar("hl2cr_allowsuicide", 1, {FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_ARCHIVE}, "Disable kill command", 0, 1) 
-CreateConVar("hl2cr_respawntime", 5, {FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_ARCHIVE})
+CreateConVar("hl2cr_respawntime", 10, {FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_ARCHIVE})
 CreateConVar("hl2cr_difficulty", 1, {FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_ARCHIVE}, "Change Difficulty", 1, 3)
 CreateConVar("hl2cr_survivalmode", 0, {FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_ARCHIVE}, "Change Difficulty", 0, 1)
 

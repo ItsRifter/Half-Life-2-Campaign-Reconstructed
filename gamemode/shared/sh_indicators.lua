@@ -6,7 +6,8 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 	local bonusXP = 0
 	local bonusCoins = 0
 	local givePetXP = 0
-
+	local totalXPSquad = 0
+	
 	if npc:IsPet() and attacker:IsPet() then
 		local npcOwner = npc.owner
 		local attackerOwner = attacker.owner
@@ -37,7 +38,8 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 	end
 	
 	--Prevent antlion farming
-	if npc:GetClass() == "npc_antlion" and (game.GetMap() == "d2_coast_01" or game.GetMap() == "d2_coast_03" or game.GetMap() == "d2_coast_04" or game.GetMap() == "d2_coast_11" or game.GetMap() == "d2_coast_12" or game.GetMap() == "d2_prison_01" or game.GetMap() == "d2_prison_02" or game.GetMap() == "d2_prison_03" or game.GetMap() == "d2_prison_04" or game.GetMap() == "d2_prison_05") then
+	if npc:GetClass() == "npc_antlion" and (game.GetMap() == "d2_coast_01" or game.GetMap() == "d2_coast_03" or game.GetMap() == "d2_coast_04" or game.GetMap() == "d2_coast_11" or game.GetMap() == "d2_coast_12" or game.GetMap() == "d2_prison_01" or game.GetMap() == "d2_prison_02" or game.GetMap() == "d2_prison_03" or game.GetMap() == "d2_prison_04" or game.GetMap() == "d2_prison_05") 
+		and ( attacker:IsPlayer() or attacker:IsPet() ) then
 		giveXP = 0
 		giveCoins = 0
 		givePetXP = 0
@@ -52,19 +54,21 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 		AddXP(attacker, giveXP)
 		AddCoins(attacker, giveCoins)
 		Spawn(giveXP, giveCoins, npc:GetPos(), npc, attacker)
-				
-	elseif npc.owner != attacker and attacker:IsPlayer() then
-		npc.owner.petAlive = false
-		net.Start("WarningPetKill")
-			net.WriteInt(1, 8)
-		net.Send(attacker)
 	end
 	
 	--Crowbar bonus if the player beats the map using only the crowbar
 	if attacker:IsPlayer() and attacker:GetActiveWeapon():GetClass() != "weapon_crowbar" and attacker.crowbarOnly then
 		attacker.crowbarOnly = false
-		print(attacker:Nick() .. " Failed Crowbar")
 	end
+	--[[
+	if attacker:IsPlayer() and (attacker:GetNWString("SquadLeader") == attacker:Nick() or attacker:GetNWString("Team")) then
+		totalXPSquad = totalXPSquad + giveXP
+		net.Start("Squad_XPUpdate")
+			net.WriteInt(totalXPSquad, 32)
+		net.Send(attacker)
+		attacker:SetNWInt("TotalSquadXP", totalXPSquad) 
+	end
+	--]]
 end)
 
 function Spawn(xpAmt, coinAmt, pos, target, reciever)

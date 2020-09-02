@@ -102,6 +102,11 @@ hook.Add("EntityTakeDamage", "FriendOrFoe", function(ent, dmgInfo)
 		dmgInfo:SetDamage(totalDMG)
 	end
 	
+	if ent:IsPet() and attacker:IsNPC() then
+		attacker:AddEntityRelationship(ent, D_LI, 99)
+		dmgInfo:SetDamage(0)
+	end
+	
 	if table.HasValue(INVUL_NPCS, ent:GetClass()) or (attacker:IsPlayer() and table.HasValue(FRIENDLY_NPCS, ent:GetClass())) then
 		dmgInfo:SetDamage(0)
 		return
@@ -121,12 +126,12 @@ hook.Add("ScaleNPCDamage", "DiffScalingNPC", function(ent, hitGroup, dmgInfo)
 	local inflictor = dmgInfo:GetDamageType()
 	local attacker = dmgInfo:GetAttacker()
 	local dmg = dmgInfo:GetDamage()
-	
-	local dmgMulti = 0
  	
 	if table.HasValue(INVUL_NPCS, ent:GetClass()) or attacker:IsPlayer() and table.HasValue(FRIENDLY_NPCS, ent:GetClass()) and ent:IsPet() then
 		dmgInfo:SetDamage(0)
 		return
+	elseif attacker:IsPlayer() and attacker:GetActiveWeapon():GetClass() == "weapon_crowbar" then
+		dmgInfo:ScaleDamage(1.50 / GetConVar("hl2cr_difficulty"):GetInt())
 	else
 		dmgInfo:ScaleDamage(1.25 / GetConVar("hl2cr_difficulty"):GetInt())
 	end

@@ -86,7 +86,7 @@ function placeLambda()
 		}
 	elseif game.GetMap() == "d2_coast_09" then
 		LAMBDA_POSITION = { 
-			Vector(11171, 8763, -42), Vector(11085, 8858, 8), 
+			Vector(11083, 8856, -42), Vector(11169, 8762, -1), 
 		}
 	elseif game.GetMap() == "d2_coast_11" then
 		LAMBDA_POSITION = { 
@@ -94,7 +94,7 @@ function placeLambda()
 		}
 	elseif game.GetMap() == "d2_prison_02" then
 		LAMBDA_POSITION = { 
-			Vector(-2260, 1652, 516), Vector(-2330, 1711, 646),
+			Vector(-2259, 1720, 514), Vector(-2370, 1611, 672),
 		}
 	elseif game.GetMap() == "d2_prison_03" then
 		LAMBDA_POSITION = { 
