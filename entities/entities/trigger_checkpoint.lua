@@ -87,7 +87,7 @@ function ENT:StartTouch(ent)
 					end
 
 					if not (ent:GetVehicle() and ent:GetVehicle():IsValid()) and (p:GetVehicle() and p:GetVehicle():IsValid()) then
-						p:ExitVehicle()
+						p:Remove()
 					end
 					
 					if point1 then

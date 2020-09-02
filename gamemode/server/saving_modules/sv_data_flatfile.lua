@@ -19,7 +19,7 @@ local function InitData(ply)
 	ply.hl2cPersistent.Cryst = ply.hl2cPersistent.Cryst or 0
 	ply.hl2cPersistent.TempUpg = ply.hl2cPersistent.TempUpg or ""
 	
-	ply.hl2cPersistent.Model = ply.hl2cPersistent.Model or ply:GetModel()
+	ply.hl2cPersistent.Model = ply.hl2cPersistent.Model or "models/player/Group01/male_07.mdl"
 	
 	-- Default Achievement, vortex and lambda settings
 	ply.hl2cPersistent.Achievements = ply.hl2cPersistent.Achievements or {}
@@ -132,6 +132,11 @@ local function LoadData(ply)
 		v:SetNWInt("RestartVotes", neededVotesRestart)
 		v:SetNWInt("LobbyVotes", neededVotes)
 	end
+	
+	ply.squads = ply.squads or {}
+	ply.squads.members = ply.squads.members or 0
+	ply.squads.leader = ply.squads.leader or ""
+	ply.squads.membername = ply.squads.membername or {}
 
 	return true -- Return true to signal that the settings could be loaded
 end
@@ -145,6 +150,13 @@ local function SaveData(ply)
 
 	-- Store all persistent data as JSON
 	file.Write("hl2cr_data/" .. PlayerID .. ".txt", util.TableToJSON(ply.hl2cPersistent, true))
+	
+	--Squads
+	ply.squads = ply.squads or {}
+	ply.squads.leader = ply.squads.leader or ""
+	ply.squads.teamname = ply.squads.teamname or ""
+	ply.squads.members = ply.squads.members or 0
+	ply.squads.membername = ply.squads.membername or {}
 	
 end
 
@@ -183,6 +195,16 @@ hook.Add("PlayerDisconnected", "SavePlayerDataDisconnect", function(ply)
 		v:SetNWInt("RestartVotes", neededVotesRestart)
 		v:SetNWInt("LobbyVotes", neededVotes)
 	end
+	
+	if ply.squads.leader != "" then
+		print("Squad leader left, booting all members")
+		ply.squads.members = 0
+		ply.squads.leader = ""
+	end
+	
+	net.Start("Squad_Disband")
+	net.Send(ply)
+	
 end)
 
 

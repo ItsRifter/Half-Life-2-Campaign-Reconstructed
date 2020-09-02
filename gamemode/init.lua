@@ -62,7 +62,7 @@ TEAM_DEAD = 3
 team.SetUp(TEAM_DEAD, "Terminated", Color(81, 124, 199, 255))
 
 TEAM_LOYAL = 4
-team.SetUp(TEAM_LOYAL, "Combine", Color(0, 225, 255, 255))
+team.SetUp(TEAM_LOYAL, "Loyal Combine", Color(0, 225, 255, 255))
 
 local meta = FindMetaTable( "Entity" )
 if not meta then return end
@@ -88,7 +88,9 @@ function GM:Initialize()
 	pets = false
 	airboatSpawnable = false
 	airboatGunSpawnable = false
+	canBecomeLoyal = false
 end
+
 
 function GM:ShowHelp(ply)
 	net.Start("Greetings_new_player")

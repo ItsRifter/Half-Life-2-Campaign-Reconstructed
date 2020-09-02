@@ -147,6 +147,8 @@ function ToggleBoard(toggle)
 						draw.SimpleText("Alive", "Scoreboard_Stats_font", 555, h / 2, Color(40, 255, 25, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 					elseif playerTeam == 2 then
 						draw.SimpleText("Completed", "Scoreboard_Stats_font", 555, h / 2, Color(255, 255, 40, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+					elseif playerTeam == 4 then
+						draw.SimpleText("Loyal Combine", "Scoreboard_Stats_font", 555, h / 2, Color(0, 225, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 					else
 						draw.SimpleText("Terminated", "Scoreboard_Stats_font", 555, h / 2, Color(255, 0, 0, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 					end

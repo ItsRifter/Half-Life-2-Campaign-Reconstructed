@@ -146,10 +146,20 @@ function OpenDiffMenu(diff, surv, easyReq, medReq, hardReq, survReq)
 	warningMessage:SizeToContents()
 	warningMessage:SetPos(35, 450)
 	
+	local survivalEnabled = vgui.Create("DLabel", diffFrame)
+	survivalEnabled:SetFont("Diff_Warning_Font")
+	if surv == 0 then
+		survivalEnabled:SetText("'Survival Disabled'")
+	elseif surv == 1 then
+		survivalEnabled:SetText("'Survival Enabled'")
+	end
+	survivalEnabled:SizeToContents()
+	survivalEnabled:SetPos(125, 625)
+	
 	local survivalButton = vgui.Create("DButton", diffFrame)
 	survivalButton:SetText("Survival")
 	survivalButton:SetSize(125, 50)
-	survivalButton:SetPos(165, 625)
+	survivalButton:SetPos(165, 675)
 	survivalButton.DoClick = function()
 		if not LocalPlayer().hasUserVoted then
 			LocalPlayer().hasUserVoted = true

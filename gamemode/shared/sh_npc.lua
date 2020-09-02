@@ -102,7 +102,7 @@ hook.Add("EntityTakeDamage", "FriendOrFoe", function(ent, dmgInfo)
 		dmgInfo:SetDamage(totalDMG)
 	end
 	
-	if ent:IsPet() and attacker:IsNPC() then
+	if ent:IsPet() and (attacker:IsNPC() and table.HasValue(INVUL_NPCS, attacker:GetClass())) then
 		attacker:AddEntityRelationship(ent, D_LI, 99)
 		dmgInfo:SetDamage(0)
 	end
@@ -118,6 +118,11 @@ hook.Add("EntityTakeDamage", "FriendOrFoe", function(ent, dmgInfo)
 				return
 			end
 		end
+	end
+	
+	if ent:IsPlayer() and ent:Team() == TEAM_LOYAL and attacker:IsValid() then
+		attacker:AddEntityRelationship(ent, D_LI, 99)
+		dmgInfo:SetDamage(0)
 	end
 end)
 

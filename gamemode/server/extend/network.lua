@@ -61,6 +61,8 @@ util.AddNetworkString("AddArmour")
 util.AddNetworkString("Squad_Created")
 util.AddNetworkString("Squad_Disband")
 util.AddNetworkString("Squad_XPUpdate")
+util.AddNetworkString("Squad_Joined")
+util.AddNetworkString("Squad_Left")
 
 --End map
 util.AddNetworkString("ShowEndStats")

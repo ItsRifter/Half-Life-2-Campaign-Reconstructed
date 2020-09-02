@@ -18,6 +18,12 @@ hook.Add("PlayerSpawn", "Misc", function(ply)
 	local armourBoost = 0
 	local addStats = 0
 	
+	if ply.loyal then
+		ply:SetModel("models/player/combine_soldier.mdl")
+	else
+		ply:SetModel(ply.hl2cPersistent.Model)
+	end
+	
 	if string.find(ply.hl2cPersistent.TempUpg, "Health Boost") then
 		addHPUpg = addHPUpg + 5
 	end
@@ -44,10 +50,16 @@ hook.Add("PlayerSpawn", "Misc", function(ply)
 	ply:SetMaxHealth(maxHP)
 	ply:SetHealth(maxHP)
 	ply:SetArmor(starterArmour)
-	
-	ply:SetTeam(TEAM_ALIVE)
-	ply:SetCustomCollisionCheck(true)
-	ply:SetupHands()
+
+	if ply.loyal then
+		ply:SetTeam(TEAM_LOYAL)
+		ply:SetCustomCollisionCheck(false)
+		ply:SetupHands()
+	else
+		ply:SetTeam(TEAM_ALIVE)
+		ply:SetCustomCollisionCheck(true)
+		ply:SetupHands()
+	end
 	
 	if game.GetMap() == "d1_trainstation_01" or game.GetMap() == "d1_trainstation_02" or game.GetMap() == "d1_trainstation_03" or
 	game.GetMap() == "d1_trainstation_04" then
@@ -158,28 +170,45 @@ hook.Add("PlayerShouldTakeDamage", "DisablePVP", function(ply, attacker)
 		return false
 	end
 	
+	if attacker:IsPlayer() and attacker:Team() == TEAM_LOYAL then
+		return true
+	end
+	
 	return true
 end)
 
 hook.Add("ScalePlayerDamage", "DiffScalingPly", function( ply, hitgroup, dmgInfo )
-	 local attacker = dmgInfo:GetAttacker()	 
-	 local dmg = dmgInfo:GetDamage()
-	 if attacker:IsPlayer() then return end
+	local attacker = dmgInfo:GetAttacker()	 
+	local dmg = dmgInfo:GetDamage()
+	
 	 
-	 local scaleArmour = ply.hl2cPersistent.Armour
-	 
-	 if hitgroup == HITGROUP_HEAD and GetConVar("hl2cr_difficulty"):GetInt() != 1 then
-		dmgInfo:ScaleDamage( 1.25 * GetConVar("hl2cr_difficulty"):GetInt() - (scaleArmour / 2))
- 	 elseif hitgroup == HITGROUP_CHEST and GetConVar("hl2cr_difficulty"):GetInt() != 1 then
-		dmgInfo:ScaleDamage( 1 * GetConVar("hl2cr_difficulty"):GetInt() - (scaleArmour / 2) )
-	 else
+	if attacker:IsPlayer() and attacker:Team() == TEAM_LOYAL then 
+		dmgInfo:ScaleDamage(1.35)
+		return
+	else
+		dmgInfo:SetDamage(0)
+		return 
+	end
+	
+	if hitgroup == HITGROUP_HEAD and GetConVar("hl2cr_difficulty"):GetInt() != 1 then
+		dmgInfo:ScaleDamage( 1.25 * GetConVar("hl2cr_difficulty"):GetInt())
+		return
+	elseif hitgroup == HITGROUP_CHEST and GetConVar("hl2cr_difficulty"):GetInt() != 1 then
+		dmgInfo:ScaleDamage( 1 * GetConVar("hl2cr_difficulty"):GetInt())
+		return
+	else
 		dmgInfo:ScaleDamage( 0.75 * GetConVar("hl2cr_difficulty"):GetInt())
-	 end
+		return
+	end
 end)
 
 local pickedOnce = false
 
 hook.Add("PlayerCanPickupWeapon", "DisableWeaponsPickup", function(ply, weapon) 
+	if ply:Team() == TEAM_LOYAL then
+		return true
+	end
+	
 	if weapon:GetClass() == "weapon_357" and ply:GetAmmoCount("357") >= GetConVar("max_357"):GetInt() then
 		return false
 	end
@@ -218,6 +247,7 @@ hook.Add("PlayerCanPickupWeapon", "DisableWeaponsPickup", function(ply, weapon)
 		weapon:Remove()
 		return false
 	end
+
 	return true
 end)
 
@@ -256,6 +286,10 @@ hook.Add("PlayerLoadout", "StarterWeapons", function(ply)
 				ply:Give(w:GetClass())
 			end	
 		end
+	end
+	
+	if ply.loyal then
+		ply:Give("weapon_stunstick")
 	end
 	
 	if game.GetMap() == "d1_town_02" and file.Exists("hl2cr_data/d1_town_02.txt", "DATA") then 

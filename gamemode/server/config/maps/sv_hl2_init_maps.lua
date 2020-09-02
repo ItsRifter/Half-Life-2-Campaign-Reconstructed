@@ -158,6 +158,11 @@ function SetupMap()
 		game.SetGlobalState("super_phys_gun", 0)
 	end
 	
+	if game.GetMap() == "d1_trainstation_01" and game.GetMap() == "d1_trainstation_02" and game.GetMap() == "d1_trainstation_03" then 
+		game.SetGlobalState("gordon_invulnerable", 1)
+	else
+		game.SetGlobalState("gordon_invulnerable", 0)
+	end
 	--Doll Achievement
 	local dollAch = ents.Create("prop_physics")
 	if game.GetMap() == "d1_trainstation_03" and file.Exists("hl2cr_data/babydoll.txt", "DATA") then
@@ -269,7 +274,7 @@ function SetupMap()
 		end
 	end
 	
-	if game.GetMap() != "hl2c_lobby_remake" and not TRIGGER_CHECKPOINT then
+	if game.GetMap() != "hl2c_lobby_remake" then
 		SetCheckpointsStage()
 	end
 end
@@ -686,8 +691,9 @@ function SetCheckpointsStage()
 		
 	elseif game.GetMap() == "d2_prison_08" then
 		TRIGGER_CHECKPOINT = {
-			 Vector(-467, 685, 933), Vector(-371, 603, 1081),
-			 Vector(436, 396, 994), Vector(-82, 102, 1154),
+			Vector(-467, 685, 933), Vector(-371, 603, 1081),
+			Vector(436, 396, 994), Vector(-82, 102, 1154),
+			Vector(97, 23, 1181), Vector(150, -18, 1229),
 		}
 		TRIGGER_SPAWNPOINT = {
 			Vector(-474, 518, 941), Vector(131, 300, 1003),
@@ -696,8 +702,8 @@ function SetCheckpointsStage()
 		
 	elseif game.GetMap() == "d3_c17_01" then
 		TRIGGER_CHECKPOINT = {
-			 Vector(-7047, -1500, 9), Vector(-7028, -1295, 123),
-			 Vector(-6354, -1053, 3), Vector(-6366, -925, 164),
+			 Vector(-6993, -1223, 6), Vector(-6923, -1619, 98),
+			 Vector(-6841, -1384, 13), Vector(-6413, -777, 140),
 		}
 		TRIGGER_SPAWNPOINT = {
 			Vector(-6841, -1384, 13), Vector(-6476, -918, 11)

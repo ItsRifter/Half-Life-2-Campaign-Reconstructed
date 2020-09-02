@@ -808,19 +808,27 @@ function petStats()
 	petStatFrame:SetDraggable(false)
 	petStatFrame:ShowCloseButton(false)
 	petStatFrame:SetTitle("")
+	petStatFrame.Paint = function()
+		draw.RoundedBox( 8, 0, 0, 0, 0, Color( 0, 0, 0, 150 ) )
+	end
 		
-	petStatLevelLabel = vgui.Create("DLabel", petStatFrame)
+	petStatPanel = vgui.Create("DPanel", petStatFrame)
+	petStatPanel:SetSize(400, 250)
+	petStatPanel:SetBackgroundColor(Color(0, 0, 0, 175))
+	
+	
+	petStatLevelLabel = vgui.Create("DLabel", petStatPanel)
 	petStatLevelLabel:SetPos(150, 25)
 	petStatLevelLabel:SetFont("Pets_Stats")
 	petStatLevelLabel:SetText("Level " .. LocalPlayer():GetNWInt("PetLevel"))
 	petStatLevelLabel:SizeToContents()
 			
-	petStatHPLabel = vgui.Create("DLabel", petStatFrame)
+	petStatHPLabel = vgui.Create("DLabel", petStatPanel)
 	petStatHPLabel:SetPos(25, 75)
 	petStatHPLabel:SetFont("Pets_Stats")
 	petStatHPLabel:SetText("HP")
 
-	petStatHealthBar = vgui.Create("DPanel", petStatFrame)
+	petStatHealthBar = vgui.Create("DPanel", petStatPanel)
 	petStatHealthBar:SetPos( 25, 100 )
 	petStatHealthBar:SetSize( 350, 25 )
 	petStatHealthBar.Paint = function(self, w, h)
@@ -836,12 +844,12 @@ function petStats()
 		end
 	end
 	
-	petStatXPLabel = vgui.Create("DLabel", petStatFrame)
+	petStatXPLabel = vgui.Create("DLabel", petStatPanel)
 	petStatXPLabel:SetPos(25, 150)
 	petStatXPLabel:SetFont("Pets_Stats")
 	petStatXPLabel:SetText("XP")
 	
-	petStatXPBar = vgui.Create("DPanel", petStatFrame)
+	petStatXPBar = vgui.Create("DPanel", petStatPanel)
 	petStatXPBar:SetPos( 25, 175 )
 	petStatXPBar:SetSize( 350, 25 )
 	petStatXPBar.Paint = function(self, w, h)
@@ -852,17 +860,13 @@ function petStats()
 		surface.DrawRect(0,0, LocalPlayer():GetNWInt("PetXP"), h)
 	end
 	
-	petStatXPStatusLabel = vgui.Create("DLabel", petStatFrame)
+	petStatXPStatusLabel = vgui.Create("DLabel", petStatPanel)
 	petStatXPStatusLabel:SetPos(petStatXPBar:GetWide() - 315, petStatXPBar:GetTall() + 150)
 	petStatXPStatusLabel:SetFont("Pets_Stats")
 	petStatXPStatusLabel:SetText(LocalPlayer():GetNWInt("PetXP") .. "/" .. LocalPlayer():GetNWInt("PetMaxXP"))
 	petStatXPStatusLabel:SizeToContents()
 	
-	petStatFrame:Add(petStatLevelLabel)
-	petStatFrame:Add(petStatHealthBar)
-	petStatFrame:Add(petStatHPLabel)
-	petStatFrame:Add(petStatXPLabel)
-	petStatFrame:Add(petStatXPBar)
+	petStatFrame:Add(petStatPanel)
 	
 	petStatFrame:MoveTo(0, ScrH() / 2 - 200 , 1, 0, -1)
 	if pet then
@@ -921,7 +925,7 @@ net.Receive("ClosePets", function()
 end)
 
 net.Receive("PetDead", function()
-	terminatedLabel = vgui.Create("DLabel", petStatPanel)
+	terminatedLabel = vgui.Create("DLabel", petStatFrame)
 	terminatedLabel:SetText("TERMINATED")
 	terminatedLabel:SetPos(65, 85)
 	terminatedLabel:SetFont("Pets_Stats_Dead")
@@ -942,7 +946,9 @@ end)
 
 net.Receive("PetPanic", function()
 	petStatFrame:ShowCloseButton(true)
-	petStatPanel:Close()
+	for k, v in pairs(petStatFrame) do
+		v:Close()
+	end
 end)
 
 surface.CreateFont("Pets_Stats", {
