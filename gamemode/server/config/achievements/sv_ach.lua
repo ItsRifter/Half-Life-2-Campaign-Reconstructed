@@ -7,7 +7,7 @@ AchievementLists = {
 
 	HL2_Ach_List = {
 		A_Red_Letter_Baby = {name = "A Red Letter Baby", mat = "vgui/achievements/hl2_beat_game.png", isRare = false},
-		What_Cat = {name = "What cat", mat = "vgui/achievements/hl2_beat_game.png", isRare = false},
+		What_Cat = {name = "What Cat", mat = "vgui/achievements/hl2_beat_game.png", isRare = false},
 		Trusty_Hardware = {name = "Trusty Hardware", mat = "vgui/achievements/hl2_get_crowbar.png", isRare = false},
 		ZeroPoint_Energy = {name = "ZeroPoint Energy", mat = "vgui/achievements/hl2_get_gravitygun.png", isRare = false},
 		Rave_Ball = {name = "Rave Ball", desc = "Carry dog's ball through Ravenholm into the mines", mat = "vgui/achievements/hl2_get_gravitygun.png", isRare = false},
@@ -19,7 +19,6 @@ AchievementLists = {
 	Misc_Ach_List = {
 		Survival_Lost = {name = "A Predictable Failure", mat = "vgui/achievements/hl2_find_allgmen.png", isRare = false},
 		Blast_that_little = {name = "Blast that little", mat = "vgui/achievements/hl2_beat_toxictunnel.png", isRare = false, clientTriggerable = true},
-		Born_Survivor = {name = "Born Survivor", mat = "vgui/achievements/hl2_followfreeman", isRare = false},
 	}
 }
 

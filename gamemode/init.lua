@@ -22,6 +22,8 @@ include("server/sv_unstuck.lua")
 include("server/config/sv_difficulty.lua")
 include("server/sv_spectate.lua")
 include("server/stats/sv_pets_levels.lua")
+include("server/config/maps/sv_loyal.lua")
+include("server/sv_afkhandler.lua")
 
 
 include("server/config/maps/sv_hl2_init_maps.lua")
@@ -76,7 +78,7 @@ function meta:IsPet()
 end
 
 function meta:IsFriendly()
-	if self:IsValid() and self:IsNPC() and (self:GetClass() == "npc_kleiner" or self:GetClass() == "npc_alyx" or self:GetClass() == "npc_barney" or self:GetClass() == "npc_citizen") then
+	if self:IsValid() and self:IsNPC() and (self:GetClass() == "npc_kleiner" or self:GetClass() == "npc_monk" or self:GetClass() == "npc_alyx" or self:GetClass() == "npc_barney" or self:GetClass() == "npc_citizen") then
 		return true
 	else
 		return false
@@ -88,7 +90,6 @@ function GM:Initialize()
 	pets = false
 	airboatSpawnable = false
 	airboatGunSpawnable = false
-	canBecomeLoyal = false
 end
 
 
@@ -115,12 +116,6 @@ function GM:ShowTeam(ply)
 	end
 end
 
-net.Receive("KickUser", function(len, ply)
-	local banTime = net.ReadInt(32)
-	local reason = net.ReadString()
-	RunConsoleCommand("ulx", "ban", ply:Nick(), banTime, reason)
-end)
-
 if game.GetMap() != "hl2c_lobby_remake" then
 	timer.Create("LobbyReturnAuto", 3600, 0, function()
 	RunConsoleCommand("changelevel", "hl2c_lobby_remake")
@@ -144,8 +139,15 @@ function GM:ShouldCollide( ent1, ent2 )
 	if IsValid(ent1) and IsValid(ent2) and ent1:IsPlayer() and ent2:IsPet() then
 		return false
 	end
+	
+	if IsValid(ent1) and IsValid(ent2) and ent1:IsPlayer() and (ent2:GetClass() == "prop_vehicle_jeep" or ent2:GetClass() == "prop_vehicle_airboat") then
+
+		return false
+	end
 	return true
 end
+
+lockedSpawn = false
 
 function GM:ShowSpare1(ply)
 	local jeep = {
@@ -185,7 +187,9 @@ function GM:ShowSpare1(ply)
 	
 	list.Set( "Vehicles", "AirboatGun", airboatGun )
 	
-	if game.GetMap() == "d2_coast_01" or game.GetMap() == "d2_coast_03" or game.GetMap() == "d2_coast_04" or game.GetMap() == "d2_coast_05" or game.GetMap() == "d2_coast_06" or game.GetMap() == "d2_coast_07" or game.GetMap() == "d2_coast_09" or game.GetMap() == "d2_coast_10" then
+	if ply.loyal then return end
+	
+	if game.GetMap() == "d2_coast_01" or game.GetMap() == "d2_coast_03" or game.GetMap() == "d2_coast_04" or game.GetMap() == "d2_coast_05" or game.GetMap() == "d2_coast_06" or game.GetMap() == "d2_coast_07" or game.GetMap() == "d2_coast_09" or (game.GetMap() == "d2_coast_10" and not lockedSpawn) then
 		if ply.AllowSpawn then
 			ply.spawnJeep = ents.Create(jeep.Class)
 			ply.spawnJeep:SetModel(jeep.Model)
@@ -212,7 +216,7 @@ function GM:ShowSpare1(ply)
 			ply.spawnAirboat:Fire( "addoutput", "targetname airboat" )
 			ply.AllowSpawn = false
 		end
-	elseif game.GetMap() == "d1_canals_11" and airboatGunSpawnable or game.GetMap() == "d1_canals_12" or game.GetMap() == "d1_canals_13" then
+	elseif (game.GetMap() == "d1_canals_11" and airboatGunSpawnable) or game.GetMap() == "d1_canals_12" or game.GetMap() == "d1_canals_13" then
 		if ply.AllowSpawn then
 			ply.spawnAirboatGun = ents.Create(airboatGun.Class)
 			ply.spawnAirboatGun:SetModel(airboatGun.Model)
@@ -244,7 +248,17 @@ function GM:CanPlayerEnterVehicle(ply)
 	return false
 end
 function GM:ShowSpare2(ply)
-	net.Start("Open_F4_Menu")
-		net.WriteTable(ply.hl2cPersistent.Inventory)
-	net.Send(ply)
+	if ply.loyal then
+		ply:ChatPrint("You cannot access the F4 menu while a loyal player")
+	else
+		net.Start("Open_F4_Menu")
+			net.WriteTable(ply.hl2cPersistent.Inventory)
+		net.Send(ply)
+	end
 end
+
+hook.Add( "PrePACEditorOpen", "RestrictToSuperadmin", function( ply )
+	if not ply:IsSuperAdmin( ) then
+		return false
+	end
+end)

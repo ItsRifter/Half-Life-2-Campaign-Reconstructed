@@ -1,27 +1,27 @@
 AddCSLuaFile() -- Add itself to files to be sent to the clients, as this file is shared
 
 -- Armour items - Shop
-local armourItem = createItemBase(BaseSuitArmour, "Health_Module_MK1", "Improves your life expectancy\n+10HP", "hl2cr/armour_parts/health")
+local armourItem = createItemBase(BaseSuitArmour, "Health_Module_MK1", "Improves your life expectancy", "hl2cr/armour_parts/health")
 armourItem.Cost = 1000
 Register.Armour(armourItem)
 
-local armourItem = createItemBase(BaseSuitArmour, "Health_Module_MK2", "Improves your life expectancy\n+15HP", "hl2cr/armour_parts/healthmk2")
+local armourItem = createItemBase(BaseSuitArmour, "Health_Module_MK2", "Improves your life expectancy", "hl2cr/armour_parts/healthmk2")
 armourItem.Cost = 1500
 Register.Armour(armourItem)
 
-local armourItem = createItemBase(BaseSuitArmour, "Suit_Battery_Pack", "Start with more suit power\n+5 Power", "hl2cr/armour_parts/battery")
+local armourItem = createItemBase(BaseSuitArmour, "Suit_Battery_Pack", "Start with more suit power", "hl2cr/armour_parts/battery")
 armourItem.Cost = 1500
 Register.Armour(armourItem)
 
-local armourItem = createItemBase(BaseSuitArmour, "Pair_Gloves", "Warmer hands right?\n5 Armour", "hl2cr/armour_parts/gloves")
+local armourItem = createItemBase(BaseSuitArmour, "Pair_Gloves", "Warmer hands right?", "hl2cr/armour_parts/gloves")
 armourItem.Cost = 3500
 Register.Armour(armourItem)
 
-local armourItem = createItemBase(BaseSuitArmour, "Mark_VII_Suit", "Better than the last version they had\n15 Armour", "hl2cr/armour_parts/suit")
+local armourItem = createItemBase(BaseSuitArmour, "Mark_VII_Suit", "Better than the last version they had", "hl2cr/armour_parts/suit")
 armourItem.Cost = 25000
 Register.Armour(armourItem)
 
-local armourItem = createItemBase(BaseSuitArmour, "Mark_VII_Helmet", "Protects your head from bumps\n8 Armour", "hl2cr/armour_parts/helmet")
+local armourItem = createItemBase(BaseSuitArmour, "Mark_VII_Helmet", "Protects your head from bumps", "hl2cr/armour_parts/helmet")
 armourItem.Cost = 17500
 Register.Armour(armourItem)
 

@@ -46,7 +46,7 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 	if string.find(string.lower(text), "!squadcreate ") or string.find(string.lower(text), "!createsquad ") then
 		local squadNewName = string.sub(text, 13)
 
-		if ply.squads.leader != ply:Nick() and not inSquad then
+		if ply.squads.leader != ply:Nick() and not ply.inSquad then
 			
 			ply.squads.leader = ply:Nick()
 			ply.squads.teamname = squadNewName
@@ -60,25 +60,27 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 			net.Send(ply)
 		elseif ply.squads.leader == ply:Nick() then
 			ply:ChatPrint("You already have a squad!")
-		elseif inSquad then
+		elseif ply.inSquad then
 			ply:ChatPrint("You can't create a squad while in another")
 		end
 		return ""
 	end
 	
 	if string.lower(text) == "!squadleave" or string.lower(text) == "!leavesquad" then
-		if ply.squads.leader and ply.squads.leader != ply:Nick() then
+		if ply.inSquad and ply.squads.leader != ply:Nick() then
 			ply:ChatPrint("You have left " .. ply.squads.leader .. "'s Squad")
 			ply.squads.teamname = ""
 			ply.squads.leader = ""
 			ply:SetNWString("TeamName", ply.squads.teamname)
 			ply:SetNWString("SquadLeader", ply.squads.leader)
-			inSquad = false
+			ply.inSquad = false
 			net.Start("Squad_Left")
 				net.WriteString(ply:Nick())
-			net.Send(ply)
-		else
+			net.Broadcast()
+		elseif ply.squads.leader == ply:Nick() then
 			ply:ChatPrint("You can't leave your own squad without disbanding it")
+		else
+			ply:ChatPrint("You aren't in a squad")
 		end
 		return ""
 	end
@@ -90,32 +92,44 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 	
 	if string.find(string.lower(text), "!squadjoin ") or string.find(string.lower(text), "!joinsquad ") then
 		local targetName = string.sub(text, 12)
+			ply:ChatPrint(targetName)
 			for k, v in pairs(player.GetAll()) do
-				if string.find(string.lower(v:Nick()), string.lower(targetName)) then
-					ply:ChatPrint(v:Nick())
-					playerFound = true
-					ply.squads.teamname = v:GetNWString("TeamName")
-					ply.squads.leader = v:GetNWString("SquadLeader")
-					inSquad = true
-					net.Start("Squad_Joined")
-						net.WriteString(ply:Nick())
-						net.WriteString(v:GetNWString("SquadLeader"))
-						net.WriteString(ply.squads.teamname)
-					net.Send(ply)
+				if v != ply then
+					if string.find(string.lower(v:Nick()), targetName) then
+						local leaderName = v:GetNWString("SquadLeader")
+						local teamName = v:GetNWString("TeamName")
+						playerFound = true
+					end
 				end
+			end
+			if not ply.inSquad and (teamName and leaderName) and not string.find(string.lower(ply.squads.leader), string.lower(ply:Nick())) then
+				ply.squads.teamname = teamName
+				ply.squads.leader = leaderName
+				ply.inSquad = true
+				net.Start("Squad_Joined")
+					net.WriteString(ply:Nick())
+					net.WriteString(ply.squads.leader)
+					net.WriteString(ply.squads.teamname)
+				net.Broadcast()
+			elseif ply.inSquad then
+				ply:ChatPrint("You are currently in a squad, leave to join another")
+			elseif string.find(string.lower(ply.squads.leader), string.lower(ply:Nick())) then
+				ply:ChatPrint("You can't join yourself")
 			end
 		return ""
 	end
 	
 	if (string.lower(text) == "!squaddisband" or string.lower(text) == "!disbandsquad") then
 		if ply.squads.leader != "" then
+			net.Start("Squad_Disband")
+				net.WriteString(ply.squads.leader)
+			net.Broadcast()
 			ply.squads.leader = ""
 			ply.squads.teamname = ""
 			ply:SetNWString("SquadLeader", ply.squads.leader)
 			ply:SetNWString("TeamName", ply.squads.teamname)
 			ply:ChatPrint("You have dismissed your squad")
-			net.Start("Squad_Disband")
-			net.Send(ply)
+			ply.inSquad = false
 		else
 			ply:ChatPrint("You have no squad!")
 		end
@@ -151,13 +165,55 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 	--Loyal Combine
 	
 	if (string.lower(text) == "!loyal") then
-		oldModel = ply:GetModel()
-		print(oldModel)
-		if canBecomeLoyal and not ply.loyal then
-			ply:Spawn()
+		if ply.canBecomeLoyal and not ply.loyal then
+			ply.oldModel = ply:GetModel()
 			ply:SetModel("models/player/combine_soldier.mdl")
 			ply.loyal = true
 			ply:SetTeam(TEAM_LOYAL)
+			ply:Spawn()
+			ply:StripWeapons()
+			local weaponsRand = math.random(1, 3)
+			local statsRand = math.random(1, 3)
+			
+			ply:Give("weapon_stunstick")
+			if weaponsRand == 1 then
+				ply:Give("weapon_smg1")
+				ply:GiveAmmo(225, "SMG1", true)
+				ply:GiveAmmo(3, "weapon_frag", true)
+			elseif weaponsRand == 2 then
+				ply:Give("weapon_ar2")
+				ply:GiveAmmo(60, "AR2", true)
+				ply:GiveAmmo(3, "weapon_frag", true)
+			elseif weaponsRand == 3 then
+				ply:Give("weapon_shotgun")
+				ply:GiveAmmo(30, "Buckshot", true)
+				ply:GiveAmmo(3, "weapon_frag", true)
+			end
+			
+			if statsRand == 1 then
+				ply:SetMaxHealth(125)
+				ply:SetHealth(125)
+				ply:SetArmor(35)
+			elseif statsRand == 2 then
+				ply:SetMaxHealth(150)
+				ply:SetHealth(150)
+				ply:SetArmor(65)
+			elseif statsRand == 3 then
+				ply:SetMaxHealth(200)
+				ply:SetHealth(200)
+				ply:SetArmor(100)
+			end
+			
+			if game.GetMap() == "d2_coast_10" then
+				local randSpot = math.random(1, 3)
+				if randSpot == 1 then
+					ply:SetPos(Vector(6111, 208, 941))
+				elseif randSpot == 2 then
+					ply:SetPos(Vector(8226, 1486, 1235))
+				elseif randSpot == 3 then
+					ply:SetPos(Vector(5362, 1026, 1078))
+				end
+			end
 		elseif ply.loyal then
 			ply:ChatPrint("You are already a loyal combine!")
 		else
@@ -424,6 +480,14 @@ concommand.Add("hl2cr_givexp", function(ply, cmd, args)
 	end
 end)
 
+concommand.Add("hl2cr_cp", function(ply, cmd, args)
+	if ply:IsAdmin() then
+		SetupMap()
+	else
+		ply:PrintMessage(HUD_PRINTCONSOLE, "You do not have access to this command")
+	end
+end)
+
 concommand.Add("hl2cr_setsuicide", function(ply, cmd, args)
 	local int = tonumber(args[1])
 	if ply:IsAdmin() then
@@ -549,6 +613,44 @@ concommand.Add("hl2cr_petsummon", function(ply, cmd, args)
 	end
 end)
 
+concommand.Add("hl2cr_petbring", function(ply, cmd, args)
+	if not ply.pet:IsValid() then
+		ply:ChatPrint("Your pet doesn't exist!")
+		return ""
+	end
+	if duel then
+		ply:ChatPrint("You can't bring your pet while in a duel!")
+	end
+	
+	if BringPet then -- This is a global variable shared between all players, i doubt it does what it is supposed to do!
+		ply.pet:SetPos(ply:GetPos())
+		BringPet = false
+		timer.Create("BringCooldown", 7, 0, function()
+			BringPet = true
+		end)
+	else
+		ply:ChatPrint("You need to wait " .. math.Round(timer.TimeLeft("BringCooldown")) .. " seconds\nbefore bringing your pet again")
+	end
+end)
+
+concommand.Add("hl2cr_petremove", function(ply, cmd, args)
+	if not ply.pet or not ply.pet:IsValid() then
+		ply:ChatPrint("Your pet doesn't exist!")		
+	elseif duel then
+		ply:ChatPrint("You can't remove your pet in a duel!")
+	end
+
+	if ply.pet:Health() == ply.pet:GetMaxHealth() then
+		ply.pet:Remove()
+		net.Start("ClosePets")
+		net.Send(ply)
+		ply.petAlive = false
+		ply:SetNWBool("PetActive", false)
+	else
+		ply:ChatPrint("Your pet needs to be at full health to be removed")
+	end
+end)
+
 concommand.Add("hl2cr_petpoints", function(ply, cmd, args)
 	local petPoints = tonumber(args[1])
 	print(tonumber(args[1]))
@@ -584,6 +686,36 @@ end)
 concommand.Add("hl2cr_petresetskills", function(ply, cmd, args)
 	if ply:IsAdmin() then
 		ply.hl2cPersistent.PetSkills = 0
+	else
+		ply:ChatPrint("You don't have access to this command")
+	end
+end)
+
+concommand.Add("hl2cr_loyal", function(ply, cmd, args)
+	if ply:IsAdmin() then
+		beginLoyal()
+	else
+		ply:ChatPrint("You don't have access to this command")
+	end
+end)
+
+concommand.Add("hl2cr_endloyal", function(ply, cmd, args)
+	if ply:IsAdmin() then
+		endLoyal()
+	else
+		ply:ChatPrint("You don't have access to this command")
+	end
+end)
+
+concommand.Add("hl2cr_fixloyal", function(ply, cmd, args)
+	if ply:IsAdmin() then
+		if ply.loyal then
+			ply:SetModel(oldModel)
+			ply:SetTeam(TEAM_ALIVE)
+			ply.loyal = false
+		else
+			ply:ChatPrint("You aren't a loyal combine")
+		end
 	else
 		ply:ChatPrint("You don't have access to this command")
 	end

@@ -59,6 +59,10 @@ function addAdminModels(model)
 	table.insert(GM.admin, {model})
 end
 
+function addDonatorCitizenModels(model)
+	table.insert(GM.donateCitizen, {model})
+end
+
 GM.citizens = {}
 GM.rebels = {}
 GM.medics = {}
@@ -71,6 +75,7 @@ GM.hev = {}
 GM.gman = {}
 GM.rareHev = {}
 GM.admin = {}
+GM.donateCitizen = {}
 
 addCitizenModels("models/player/Group01/female_01.mdl")
 addCitizenModels("models/player/Group01/female_02.mdl")
@@ -136,6 +141,8 @@ addRareHevModels("models/kaesar/hlalyx/gordon/gordon.mdl")
 addGmanModels("models/kaesar/hlalyx/gman/gman.mdl")
 
 addAdminModels("models/humans/hev_mark2.mdl")
+
+addDonatorCitizenModels("models/hlvr/characters/russell/russell_player.mdl")
 
 Register = {}
 GM.ArmourItem = {}

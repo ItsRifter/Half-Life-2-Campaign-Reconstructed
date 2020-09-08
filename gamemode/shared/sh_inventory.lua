@@ -74,14 +74,16 @@ function giveRewards(ply)
 		randXP = math.random(1, 50)
 		ply.hl2cPersistent.XP = ply.hl2cPersistent.XP + randXP
 	end
-	
-	net.Start("ShowEndStats")
-		net.WriteInt(randCoins, 32)
-		net.WriteInt(randXP, 32)
-		net.WriteBool(neverDiedBonus)
-		net.WriteBool(ply.crowbarOnly)
-		net.WriteInt(GetConVar("hl2cr_difficulty"):GetInt(), 8)
-	net.Send(ply)
+	if game.GetMap() != "d1_trainstation_01" or game.GetMap() != "d1_trainstation_02" or game.GetMap() != "d1_trainstation_03" or
+	game.GetMap() != "d1_trainstation_04" or game.GetMap() != "d1_trainstation_05" then
+		net.Start("ShowEndStats")
+			net.WriteInt(randCoins, 32)
+			net.WriteInt(randXP, 32)
+			net.WriteBool(neverDiedBonus)
+			net.WriteBool(ply.crowbarOnly)
+			net.WriteInt(GetConVar("hl2cr_difficulty"):GetInt(), 8)
+		net.Send(ply)
+	end
 end
 
 if CLIENT then
@@ -128,7 +130,7 @@ net.Receive("AddArmour", function(len, ply)
 		ply.hl2cPersistent.Suit = slotToFill
 		ply:SetNWString("SuitSlot", slotToFill)
 	
-		ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour + 15
+		ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour + 10
 	
 	--Helmet
 	elseif slotToFill == "hl2cr/armour_parts/helmet" then
@@ -138,7 +140,7 @@ net.Receive("AddArmour", function(len, ply)
 		ply.hl2cPersistent.Helmet = slotToFill
 		ply:SetNWString("HelmetSlot", slotToFill)
 		
-		ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour + 8
+		ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour + 5
 		
 	--Arm
 	elseif slotToFill == "hl2cr/armour_parts/health" then
@@ -272,7 +274,7 @@ net.Receive("SellItemSlot", function(len, ply)
 		
 		ply.hl2cPersistent.Helmet = ""
 		ply:SetNWString("HelmetSlot", ply.hl2cPersistent.Helmet)
-		ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour - 1
+		ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour - 5
 	end
 	--Items in the suit slot
 	if readItem == "hl2cr/armour_parts/suit" then
@@ -281,7 +283,7 @@ net.Receive("SellItemSlot", function(len, ply)
 		ply.hl2cPersistent.Suit = ""
 		ply:SetNWString("SuitSlot", ply.hl2cPersistent.Suit)
 	
-		ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour - 2
+		ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour - 10
 	end
 	
 	ply:SetNWInt("Armour", ply.hl2cPersistent.Armour)

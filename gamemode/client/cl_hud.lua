@@ -173,8 +173,8 @@ net.Receive("SurvAllDead", function() shouldDrawRestartTimer = true end)
 hook.Add("HUDPaint", "HUDPaint_DrawTimer", function()
 
 	if shouldDrawTimer and not survivalMode and game.GetMap() != "d3_breen_01" then
-		if not timer.Exists("MapTimer") then
-			timer.Create("MapTimer", 20, 1, function()	end)
+		if not timer.Exists("MapTimerClient") then
+			timer.Create("MapTimerClient", 20, 1, function() timer.Remove("MapTimerClient")	end)
 			surface.PlaySound("npc/overwatch/radiovoice/allunitsapplyforwardpressure.wav")
 		end
 			
@@ -184,7 +184,7 @@ hook.Add("HUDPaint", "HUDPaint_DrawTimer", function()
 		else
 			surface.DrawRect(0, ScrH() / 2 + 175, ScrW(), 175)
 		end
-		draw.DrawText("Time Left: " .. math.Round(timer.TimeLeft("MapTimer"), 0), "Map_Font", ScrW() / 2, ScrH() - 350, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		draw.DrawText("Time Left: " .. math.Round(timer.TimeLeft("MapTimerClient"), 0), "Map_Font", ScrW() / 2, ScrH() - 350, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	
 	elseif shouldDrawTimer and not survivalMode and game.GetMap() == "d3_breen_01" then
 		if not timer.Exists("MapTimer") then
@@ -204,7 +204,7 @@ hook.Add("HUDPaint", "HUDPaint_DrawTimer", function()
 	if shouldDrawRestartTimer then
 		if not timer.Exists("RestartTimer") then
 			timer.Create("RestartTimer", 15, 1, function()
-			
+				timer.Remove("RestartTimer")
 			end)
 			surface.PlaySound("music/hl2_song23_suitsong3.mp3")
 		end
@@ -242,32 +242,15 @@ net.Receive("PlaySoundLevelUp", function()
 	
 	chat.AddText(Color(255, 230, 0), "You are now at level ", tostring(levels))
 	if levels == 5 then
-		chat.AddText(Color(235, 195, 50), "Your body becomes more bearable to pain: ", Color(235, 50, 50), "Max Health Increased!")
 		chat.AddText(Color(255, 230, 0), "You've been hired by the resistance, they grant you ", Color(132, 255, 0), "rebellion suits!")
 	elseif levels == 10 then
-		chat.AddText(Color(255, 190, 0), "You have unlocked pets, type !pet")
-		chat.AddText(Color(235, 195, 50), "Your body becomes more bearable to pain: ", Color(235, 50, 50), "Max Health Increased!")
 	elseif levels == 15 then
-		chat.AddText(Color(235, 195, 50), "Your body becomes more bearable to pain: ", Color(235, 50, 50), "Max Health Increased!")
 		chat.AddText(Color(255, 230, 0), "Your help to the resistance has granted you ", Color(255, 0, 0), "medic suits!")
 	elseif levels == 20 then
-		chat.AddText(Color(235, 195, 50), "Your body becomes more bearable to pain: ", Color(235, 50, 50), "Max Health Increased!")
 		chat.AddText(Color(255, 230, 0), "You found a ", Color(0, 106, 255), "Civil Protection Suit", Color(255, 230, 0), ", luckily it's unbonded")
-	elseif levels == 25 then
-		chat.AddText(Color(235, 195, 50), "Your body becomes more bearable to pain: ", Color(235, 50, 50), "Max Health Increased!")
-	elseif levels == 30 then
-		chat.AddText(Color(235, 195, 50), "Your body becomes more bearable to pain: ", Color(235, 50, 50), "Max Health Increased!")
 	elseif levels == 35 then
-		chat.AddText(Color(235, 195, 50), "Your body becomes more bearable to pain: ", Color(235, 50, 50), "Max Health Increased!")
 		chat.AddText(Color(255, 230, 0), "You found a ", Color(60, 140, 255), "Combine Grunt Suit", Color(255, 230, 0), ", thankfully it won't hurt to put it on")
-	elseif levels == 35 then
-		chat.AddText(Color(235, 195, 50), "Your body becomes more bearable to pain: ", Color(235, 50, 50), "Max Health Increased!")
-	elseif levels == 40 then
-		chat.AddText(Color(235, 195, 50), "Your body becomes more bearable to pain: ", Color(235, 50, 50), "Max Health Increased!")
-	elseif levels == 45 then
-		chat.AddText(Color(235, 195, 50), "Your body becomes more bearable to pain: ", Color(235, 50, 50), "Max Health Increased!")
 	elseif levels == 50 then
-		chat.AddText(Color(235, 195, 50), "Your body becomes more bearable to pain: ", Color(235, 50, 50), "Max Health Increased!")
 		chat.AddText(Color(255, 230, 0), "You found a ", Color(60, 140, 255), "Combine Heavy Grunt Suit", Color(255, 230, 0), ", thankfully it won't hurt to put it on")
 	elseif levels == 65 then
 		chat.AddText(Color(255, 230, 0), "You found a ", Color(230, 230, 230), "Combine Suppressor Suit", Color(255, 230, 0), ", yet again it's unbonded")	
@@ -277,17 +260,6 @@ net.Receive("PlaySoundLevelUp", function()
 		chat.AddText(Color(255, 230, 0), "Dr.Kleiner has offered you the ", Color(255, 160, 0), "Mark 5 H.E.V Suit ", Color(255, 230, 0), "for your fantastic support to the resistance!")
 		
 	end
-end)
-local kickAmount = 0
-net.Receive("WarningPetKill", function(len, ply)
-	kickAmount = kickAmount + net.ReadInt(8)
-	if kickAmount >= 3 then
-		net.Start("KickUser")
-			net.WriteInt(3600, 32)
-			net.WriteString("Pet Killing")
-		net.SendToServer()
-	end
-	chat.AddText(Color(255, 0, 0), "DON'T KILL OTHER PLAYERS PETS")
 end)
 
 surface.CreateFont("Pet_Font_User", {

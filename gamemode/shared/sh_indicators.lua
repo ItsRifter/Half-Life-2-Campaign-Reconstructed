@@ -8,6 +8,8 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 	local givePetXP = 0
 	local totalXPSquad = 0
 	
+	
+	
 	if npc:IsPet() and attacker:IsPet() then
 		local npcOwner = npc.owner
 		local attackerOwner = attacker.owner
@@ -30,8 +32,8 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 	
 	--Stop players from getting easy XP/Coins from birds
 	if npc:GetClass() != "npc_crow" and npc:GetClass() != "npc_pigeon" and npc:GetClass() != "npc_seagull" then
-		giveXP = math.Rand(1 + bonusXP, (25 + bonusXP) * GetConVar("hl2cr_difficulty"):GetInt())
-		giveCoins = math.Rand(1 + bonusCoins, (15 + bonusCoins) * GetConVar("hl2cr_difficulty"):GetInt())
+		giveXP = math.random(1 + bonusXP, (25 + bonusXP) * GetConVar("hl2cr_difficulty"):GetInt())
+		giveCoins = math.random(1 + bonusCoins, (15 + bonusCoins) * GetConVar("hl2cr_difficulty"):GetInt())
 	else
 		giveXP = 0
 		giveCoins = 0
@@ -60,15 +62,14 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 	if attacker:IsPlayer() and attacker:GetActiveWeapon():GetClass() != "weapon_crowbar" and attacker.crowbarOnly then
 		attacker.crowbarOnly = false
 	end
-	--[[
-	if attacker:IsPlayer() and (attacker:GetNWString("SquadLeader") == attacker:Nick() or attacker:GetNWString("Team")) then
+	
+	if attacker:IsPlayer() and (attacker.squads.leader == attacker:Nick() or string.find(table.ToString(attacker.squads.membername), attacker:Nick())) then
 		totalXPSquad = totalXPSquad + giveXP
 		net.Start("Squad_XPUpdate")
 			net.WriteInt(totalXPSquad, 32)
-		net.Send(attacker)
-		attacker:SetNWInt("TotalSquadXP", totalXPSquad) 
-	end
-	--]]
+			net.WriteString(attacker:Nick())
+		net.Broadcast()
+	end	
 end)
 
 function Spawn(xpAmt, coinAmt, pos, target, reciever)

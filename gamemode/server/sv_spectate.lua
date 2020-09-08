@@ -1,21 +1,18 @@
 local alive = team.GetPlayers(TEAM_ALIVE)
-local isSpec = false
+isSpec = false
 local specEnt = 1
 function SpectateMode(ply)
 	isSpec = true
-	ply:StripWeapons()
 	ply:SetNoTarget(true)
-	if ply:IsValid() and (ply:Team() == TEAM_DEAD or ply:Team() == TEAM_COMPLETED_MAP) then
-		if #alive <= 0 then
-			ply:Spectate(OBS_MODE_ROAMING)
-		else
-			ply:Spectate(OBS_MODE_CHASE)
-		end
+	if ply:IsValid() and (ply:Team() == TEAM_DEAD or ply:Team() == TEAM_COMPLETED_MAP) and alive != 0 then
+		ply:StripWeapons()
+		ply:Spectate(5)
 	end
 end
 
-function DisableSpec()
-	isSpec = false
+function DisableSpec(ply)
+	ply:UnSpectate()
+	ply.isSpec = false
 end
 
 hook.Add("KeyPress", "SpecKey", function(ply, key)

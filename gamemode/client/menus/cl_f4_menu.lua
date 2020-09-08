@@ -277,6 +277,21 @@ function OpenMenu(inventoryItems)
 		end
 	end
 	
+	--Donators
+	for k, tier1 in pairs(GAMEMODE.donateCitizen) do
+		if LocalPlayer():GetUserGroup() == "donator_citizen" or LocalPlayer():IsAdmin() then
+			local tier1Model = selectModelLayout:Add("SpawnIcon")
+			tier1Model:SetModel(tier1[1])
+			tier1Model.OnMousePressed = function()
+				net.Start("Update_Model")
+					net.WriteString(tier1Model:GetModelName())
+				net.SendToServer()
+				getModel = tier1Model:GetModelName()
+			end
+			selectPMScrollPanel:AddPanel(tier1Model)
+		end
+	end
+	
 	local helmetPanelReceiver = vgui.Create("DPanel", pmPanel)
 	helmetPanelReceiver:SetPos(250, 50)
 	helmetPanelReceiver:SetSize(75, 75)

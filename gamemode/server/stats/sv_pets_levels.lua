@@ -57,6 +57,7 @@ function spawnPet(ply, pos)
 		ply.pet:SetNWEntity("PetEntity", ply.pet)
 		timer.Simple(1, function()
 			net.Start("OpenPetStats")
+				net.WriteEntity(ply.pet)
 			net.Send(ply)
 		end)
 		
@@ -80,8 +81,6 @@ function spawnPet(ply, pos)
 					ply.pet:AddEntityRelationship(v, D_HT, 99)
 				end
 			end
-			net.Start("IndicPetSpawn")
-			net.Send(ply)
 		end
 	end
 end
@@ -191,32 +190,24 @@ hook.Add("EntityTakeDamage", "PetHurtAndDamage", function(pet, dmgInfo)
 	if pet:IsPlayer() or not pet:IsPet() then return end
 	local ply = pet.owner 
 		
-	local healthChange = ply.hl2cPersistent.PetHP
+	local healthChange = pet:Health()
+	if not attacker:IsPlayer() then
 	
-	if pet:IsPet() and not attacker:IsPlayer() then 
-		healthChange = healthChange - dmg 
-		ply:SetNWInt("PetHP", healthChange)
-		if not timer.Exists("PetRecoveryTimer") then
-			timer.Create("PetRecoveryTimer", GetConVar("hl2cr_petrecovertime"):GetInt(), 0, function()
-				if pet:IsValid() and pet:Health() <= pet:GetMaxHealth() then
-					pet:SetHealth(pet:Health() + GetConVar("hl2cr_petrecovertime"):GetInt() + pet:GetNWInt("PetRegen"))
-					
-					local regen = tonumber(pet:GetNWInt("PetRegen"))
-					healthChange = healthChange + regen 
-						ply:SetNWInt("PetHP", healthChange)
-					if pet:Health() >= pet:GetMaxHealth() then
-						pet:SetHealth(pet:GetMaxHealth())
-						timer.Remove("PetRecoveryTimer")
-					end
-				end
-			end)
-		end
-	elseif attacker:IsPlayer() and pet:IsPet() then
+		timer.Create("PetRecoveryTimer", GetConVar("hl2cr_petrecovertime"):GetInt(), 0, function()
+			pet:SetHealth(pet:Health() + (GetConVar("hl2cr_petrecovery"):GetInt() + ply:GetNWInt("PetRegen")))
+			if pet:Health() >= pet:GetMaxHealth() then
+				pet:SetHealth(pet:GetMaxHealth())
+				timer.Remove("PetRecoveryTimer")
+			end
+			
+		end)
+	elseif attacker:IsPlayer() then
 		dmgInfo:SetDamage(0)
 	end
 	
 	if not pet:IsValid() then
 		pet.owner.petAlive = false
+		timer.Remove("PetRecoveryTimer")
 	end
 end)
 

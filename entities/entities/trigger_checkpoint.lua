@@ -2,6 +2,10 @@ ENT.Base = "base_brush"
 ENT.Type = "brush"
 
 function ENT:Initialize()
+	
+	if not TRIGGER_CHECKPOINT then
+		return
+	end
 
 	--Set width, length and height of the checkpoint
 	local w = TRIGGER_CHECKPOINT[2].x - TRIGGER_CHECKPOINT[1].x
@@ -51,19 +55,12 @@ function ENT:StartTouch(ent)
 			end
 		end
 		
-		--Achievement if the sand hasn't been touched and point1 hasn't been triggered
-		if game.GetMap() == "d2_coast_11" then
-			for k, sand in pairs(ents.FindByClass("env_player_surface_trigger")) do
-				sand:Fire("AddOutput", "OnSurfaceChangedToTarget triggerhook:RunPassedCode:hook.Run( 'FailSand' ):0:-1" )
-			end
-			sandAchEarnable = true
-		end
-		
 		--If point1 triggered and sand achievement is achievable
 		if point1 and game.GetMap() == "d2_coast_11" and sandAchEarnable then
 			for k, v in pairs(player.GetAll()) do
 				Achievement(v, "Keep_off_the_sand", "HL2_Ach_List", 4000)
 			end
+			surpassSand = true
 		end
 				
 		--Chat print to all players and enable their one time command use
@@ -73,7 +70,7 @@ function ENT:StartTouch(ent)
 				p:Spawn()
 				p:UnLock()
 				p:UnSpectate()
-				DisableSpec()
+				DisableSpec(p)
 				p.isAliveSurv = true
 				deaths = deaths - deaths
 			end
@@ -87,7 +84,8 @@ function ENT:StartTouch(ent)
 					end
 
 					if not (ent:GetVehicle() and ent:GetVehicle():IsValid()) and (p:GetVehicle() and p:GetVehicle():IsValid()) then
-						p:Remove()
+						p.AllowSpawn = true
+						p:ExitVehicle()
 					end
 					
 					if point1 then
@@ -105,6 +103,18 @@ function ENT:StartTouch(ent)
 					elseif point5 then
 						spawn:SetPos(point5)
 						p:SetPos(point5)
+					end
+				elseif p == ent then
+					if point1 then
+						spawn:SetPos(point1)
+					elseif point2 then
+						spawn:SetPos(point2)
+					elseif point3 then
+						spawn:SetPos(point3)
+					elseif point4 then
+						spawn:SetPos(point4)
+					elseif point5 then
+						spawn:SetPos(point5)
 					end
 				end
 			end
@@ -125,6 +135,20 @@ function ENT:StartTouch(ent)
 			blocker:Remove()
 		end
 		
+		if game.GetMap() == "d2_coast_10" and point1 then
+			for k, v in pairs(player.GetAll()) do
+				if v.spawnJeep then
+					v.spawnJeep:Remove()
+				end
+			end
+			lockedSpawn = true
+			if GetConVar("hl2cr_survivalmode"):GetInt() == 0 then
+				beginLoyal()
+			end
+		elseif game.GetMap() == "d2_coast_10" and point2 then
+			endLoyal()
+		end
+		
 		if game.GetMap() == "d3_citadel_04" and (point1 or point2) then
 			local train = ents.FindByName("citadel_train_lift01_1")
 			
@@ -136,7 +160,6 @@ function ENT:StartTouch(ent)
 				resetSpawn:SetParent(nil)
 			end
 		end
-		
 		self:EmitSound("hl1/ambience/port_suckin1.wav", 100, 100)
 		self:Remove()
 	end

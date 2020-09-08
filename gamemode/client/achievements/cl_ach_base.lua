@@ -6,7 +6,7 @@ Lobby_Ach_List = {
 
 HL2_Ach_List = {
 	[1] = {name = "A_Red_Letter_Baby", desc = "Bring the baby\ndoll to Dr.Kleiner", mat = "vgui/achievements/hl2_beat_game.png", isRare = false},
-	[2] = {name = "What_cat", desc = "Break the mini-teleporter\nin Kleiner's lab", mat = "vgui/achievements/hl2_break_miniteleporter.png", isRare = false},
+	[2] = {name = "What_Cat", desc = "Break the mini-teleporter\nin Kleiner's lab", mat = "vgui/achievements/hl2_break_miniteleporter.png", isRare = false},
 	[3] = {name = "Trusty_Hardware", desc = "Acquire the crowbar", mat = "vgui/achievements/hl2_get_crowbar.png", isRare = false},
 	[4] = {name = "ZeroPoint_Energy", desc = "Acquire the Gravity gun\nin Black Mesa East", mat = "vgui/achievements/hl2_get_gravitygun.png", isRare = false},
 	[5] = {name = "Rave_Ball", desc = "Carry dog's ball through\nRavenholm\ninto the mines", mat = "vgui/achievements/hl2_get_gravitygun.png", isRare = false},
@@ -18,7 +18,6 @@ HL2_Ach_List = {
 Misc_Ach_List = {
 	[1] = {name = "A_Predictable_Failure", desc = "Fail a map on survival with 4 or more players", mat = "vgui/achievements/hl2_find_allgmen.png", isRare = false},
 	[2] = {name = "Blast_that_little", desc = "Complete the Zombie evolution tree", mat = "vgui/achievements/hl2_beat_toxictunnel.png", isRare = false},
-	[3] = {name = "Born_Survivor", desc = "Finish five maps without dying", mat = "vgui/achievements/hl2_followfreeman", isRare = false},
 }
 
 HL2_Lambda_List = {

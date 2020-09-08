@@ -26,7 +26,7 @@ function placeLambda()
 		}
 	elseif game.GetMap() == "d1_canals_06" then
 		LAMBDA_POSITION = { 
-			Vector(7929, 9024, -229), Vector(7871, 9097, -84), 
+			Vector(7878, 9030, -228), Vector(7929, 9078, -109), 
 		}
 	elseif game.GetMap() == "d1_canals_07" then
 		LAMBDA_POSITION = { 

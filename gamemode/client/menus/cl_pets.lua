@@ -793,8 +793,8 @@ end)
 
 
 
-function petStats()
-	local hp = LocalPlayer():GetNWInt("PetHP")
+function petStats(entPet)
+	local hp = entPet:Health()
 	--local maxHp = pet:GetMaxHealth()
 	
 	petStatFrame = vgui.Create("DFrame")
@@ -869,8 +869,8 @@ function petStats()
 	petStatFrame:Add(petStatPanel)
 	
 	petStatFrame:MoveTo(0, ScrH() / 2 - 200 , 1, 0, -1)
-	if pet then
-		petStatFrame.Think = function()
+	petStatPanel.Think = function()
+		if entPet:IsValid() then
 			petStatLevelLabel:SetText("Level: " .. LocalPlayer():GetNWInt("PetLevel"))
 			petStatLevelLabel:SizeToContents()
 			
@@ -884,21 +884,25 @@ function petStats()
 			
 			petStatXPStatusLabel:SetText(LocalPlayer():GetNWInt("PetXP") .. "/" .. LocalPlayer():GetNWInt("PetMaxXP"))
 			petStatXPStatusLabel:SizeToContents()
-			
-			
-			
+
 			petStatHealthBar.Paint = function(self, w, h)
-				if hp >= 75 then
+				if entPet:Health() >= 75 then
 					surface.SetDrawColor(0, 255, 0, 255)
-					surface.DrawRect(0,0, LocalPlayer():GetNWInt("PetHP"), h)
-				elseif hp <= 75 and hp >= 25 then
+					surface.DrawRect(0, 0, entPet:Health(), h)
+				elseif entPet:Health() <= 75 and entPet:Health() >= 25 then
 					surface.SetDrawColor(255, 255, 0, 255)
-					surface.DrawRect(0,0, LocalPlayer():GetNWInt("PetHP"), h)
-				elseif hp <= 25 then
+					surface.DrawRect(0, 0, entPet:Health(), h)
+				elseif entPet:Health() <= 25 then
 					surface.SetDrawColor(255, 0, 0, 255)
-					surface.DrawRect(0,0, LocalPlayer():GetNWInt("PetHP"), h)
+					surface.DrawRect(0, 0, entPet:Health(), h)
 				end
 			end
+		else
+			petStatHealthBar.Paint = function(self, w, h)
+			end
+			petStatXPBar.Paint = function(self, w, h)
+			end
+			
 		end
 	end
 	
@@ -913,6 +917,8 @@ function petStats()
 end
 
 function clientClosePets()
+	petStatPanel:Close()
+	
 	petStatFrame:MoveTo(-400, ScrH() / 2 - 200, 1, 0, -1, function()
 		petStatFrame:Close()
 	end)
@@ -962,5 +968,6 @@ surface.CreateFont("Pets_Stats_Dead", {
 })
 
 net.Receive("OpenPetStats", function(len, ply)
-	petStats()
+	local pet = net.ReadEntity()
+	petStats(pet)
 end)

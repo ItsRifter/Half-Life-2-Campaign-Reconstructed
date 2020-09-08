@@ -86,6 +86,13 @@ local function InitData(ply)
 	ply:SetNWInt("PetStage", ply.hl2cPersistent.PetStage)
 	
 	ply:SetNWInt("PetSkill", ply.hl2cPersistent.PetSkills)
+	
+	--Init squads
+	ply.squads = ply.squads or {}
+	ply.squads.leader = ply.squads.leader or ""
+	ply.squads.teamname = ply.squads.teamname or ""
+	ply.squads.members = ply.squads.members or 0
+	ply.squads.membername = ply.squads.membername or {}
 end
 
 local function CreateData(ply)
@@ -197,7 +204,6 @@ hook.Add("PlayerDisconnected", "SavePlayerDataDisconnect", function(ply)
 	end
 	
 	if ply.squads.leader != "" then
-		print("Squad leader left, booting all members")
 		ply.squads.members = 0
 		ply.squads.leader = ""
 	end
