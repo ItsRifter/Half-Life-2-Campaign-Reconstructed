@@ -58,7 +58,7 @@ function ENT:StartTouch(ent)
 		--If point1 triggered and sand achievement is achievable
 		if point1 and game.GetMap() == "d2_coast_11" and sandAchEarnable then
 			for k, v in pairs(player.GetAll()) do
-				Achievement(v, "Keep_off_the_sand", "HL2_Ach_List", 4000)
+				Achievement(v, "Keep_off_the_sand", "HL2_Ach_List", 7500)
 			end
 			surpassSand = true
 		end
@@ -147,6 +147,12 @@ function ENT:StartTouch(ent)
 			end
 		elseif game.GetMap() == "d2_coast_10" and point2 then
 			endLoyal()
+		end
+		
+		if game.GetMap() == "d3_c17_10a" then
+			for k, v in pairs(ents.FindByClass("npc_barney")) do
+				v:SetPos(point1)
+			end
 		end
 		
 		if game.GetMap() == "d3_citadel_04" and (point1 or point2) then

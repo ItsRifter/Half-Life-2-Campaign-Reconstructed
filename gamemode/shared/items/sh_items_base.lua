@@ -21,22 +21,16 @@ function createItemBase(tableItem, itemName, itemDesc, iconMat)
 end
 
 itemBase = {}
-itemBase.Name = "default"
+itemBase.Name = "N/A"
 itemBase.Desc = "No Description"
-itemBase.Icon = "icons/junk_metalcan1"
+itemBase.Icon = ""
 itemBase.Cost = 1
 
-BaseEquipment = DeriveTable(itemBase)
-BaseEquipment.ReqLevel = 1
-BaseEquipment.Buffs = {}
-BaseEquipment.DeBuffs = {}
-
-BaseSuitArmour = DeriveTable(BaseEquipment)
-BaseSuitArmour.Armour = 1
+BaseSuitArmour = DeriveTable(itemBase)
+BaseSuitArmour.ArmourPoints = 0
+BaseSuitArmour.HPBoost = 0
+BaseSuitArmour.BatteryBoost = 0
 
 BaseTempUpg = DeriveTable(itemBase)
 BaseTempUpg.UpgBuffs = {}
 BaseTempUpg.EssenceCost = 1
-
-BaseWeapon = DeriveTable(BaseEquipment)
-BaseWeapon.Damage = 2

@@ -63,3 +63,5 @@ util.AddNetworkString("Squad_Left")
 
 --End map
 util.AddNetworkString("ShowEndStats")
+
+util.AddNetworkString("DisplayDeathTimer")

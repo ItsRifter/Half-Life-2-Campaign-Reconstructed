@@ -4,7 +4,7 @@ local specEnt = 1
 function SpectateMode(ply)
 	isSpec = true
 	ply:SetNoTarget(true)
-	if ply:IsValid() and (ply:Team() == TEAM_DEAD or ply:Team() == TEAM_COMPLETED_MAP) and alive != 0 then
+	if ply:IsValid() then
 		ply:StripWeapons()
 		ply:Spectate(5)
 	end

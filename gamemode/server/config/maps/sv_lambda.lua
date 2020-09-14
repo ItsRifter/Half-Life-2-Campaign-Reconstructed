@@ -97,8 +97,8 @@ function placeLambda()
 			Vector(-2259, 1720, 514), Vector(-2370, 1611, 672),
 		}
 	elseif game.GetMap() == "d2_prison_03" then
-		LAMBDA_POSITION = { 
-			Vector(-3595, 4140, 130), Vector(-3482, 4100, 273),
+		LAMBDA_POSITION = {
+			Vector(-3616, 4214, 238), Vector(-3482, 4100, 273),
 		}
 	elseif game.GetMap() == "d2_prison_05" then
 		LAMBDA_POSITION = { 

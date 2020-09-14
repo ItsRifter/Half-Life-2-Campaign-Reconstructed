@@ -1,23 +1,13 @@
-function SetupMap()
+function SetupHL2Map()
 	sandAchEarnable = false
 	surpassSand = false
 	CHECKPOINTS = CHECKPOINTS or {}
+	game.SetGlobalState("friendly_encounter", 0)
 
 	--Create the lua entity
 	MapLua = ents.Create("lua_run")
 	MapLua:SetName("triggerhook")
 	MapLua:Spawn()
-
-	if game.GetMap() == "hl2c_lobby_remake" then
-		for k, door in pairs(ents.FindByName("hl2_door")) do
-			door:Fire("Open")
-		end
-		
-		--Lost cause achievement trigger
-		for a, LCAch in pairs(ents.FindByName("trigger_achievement_lostcause")) do
-			LCAch:Fire("AddOutput", "OnTrigger triggerhook:RunPassedCode:hook.Run( 'GiveLostCause' ):0:-1" )
-		end
-	end
 	
 	if game.GetMap() == "d1_trainstation_05" then
 		for a, catAch in pairs(ents.FindByName("kill_mtport_rl_1")) do
@@ -26,22 +16,13 @@ function SetupMap()
 		end
 	end
 	
-	--Remove the old checkpoints and changelevels
-	for k, oldCheck in pairs(ents.FindByClass("trigger_checkpoint")) do
-		oldCheck:Remove()
-	end
-	
-	for k, oldChange in pairs(ents.FindByClass("trigger_changelevel")) do
-		oldChange:Remove()
-	end
-	
-	--Fixes the spawnpoints
+	--Fix the spawnpoints
 	if game.GetMap() == "d1_trainstation_02" then 
 		for k, reset1 in pairs(ents.FindByClass("info_player_start")) do
 			reset1:SetPos(Vector(-4315, -215, 0))
 		end
 	end
-	
+		
 	if game.GetMap() == "d1_trainstation_06" then 
 		for k, reset2 in pairs(ents.FindByClass("info_player_start")) do
 			reset2:SetPos(Vector(-9946, -3660, 384))
@@ -270,6 +251,13 @@ function SetupMap()
 		fixLeap:SetModel("models/props_wasteland/cargo_container01.mdl")
 		fixLeap:PhysicsInit(SOLID_VPHYSICS)
 		fixLeap:Spawn()
+		
+		local fixLeap2 = ents.Create("prop_dynamic")
+		fixLeap2:SetPos(Vector(-8477, 476, 961))
+		fixLeap2:SetAngles(Angle(0, 180, 0))
+		fixLeap2:SetModel("models/props_wasteland/cargo_container01.mdl")
+		fixLeap2:PhysicsInit(SOLID_VPHYSICS)
+		fixLeap2:Spawn()
 	end
 	
 	if game.GetMap() == "d2_coast_04" then
@@ -312,19 +300,7 @@ function SetupMap()
 	if game.GetMap() != "hl2c_lobby_remake" then
 		SetCheckpointsStage()
 	end
-	
-	if game.GetMap() == "hl2c_lobby_remake" then
-		if file.Exists("hl2cr_data/d1_town_02", "DATA") then
-			file.Delete("hl2cr_data/d1_town_02.txt")
-		elseif file.Exists("hl2cr_data/d2_coast_07", "DATA") then
-			file.Delete("hl2cr_data/d2_coast_07.txt")
-		end
-	end
-	
 end
-
-hook.Add("InitPostEntity", "SetupHL2Lua", SetupMap)
-hook.Add("PostCleanupMap", "SetupHL2Lua", SetupMap)
 
 function UpdateBaby()
 	if game.GetMap() == "d1_trainstation_02" then
@@ -371,6 +347,13 @@ hook.Add("Airboat", "AllowAirboat", function()
 		end
 	end
 end)
+
+hook.Add("FixBarney", "TeleportBarney", function()
+	for k, barneyNPC in pairs(ents.FindByClass("npc_barney")) do
+		barneyNPC:SetPos(Vector(-2867, 6474, 532))
+	end
+end)
+
 hook.Add("FailSand", "FailureSandAch", function()	
 	if sandAchEarnable and not surpassSand then 
 		for k, v in pairs(player.GetAll()) do
@@ -384,23 +367,17 @@ end)
 hook.Add("GiveGravgun", "GrantGravgun", function()
 	for k, v in pairs(player.GetAll()) do
 		v:Give("weapon_physcannon")
-		Achievement(v, "ZeroPoint_Energy", "HL2_Ach_List", 250)
+		Achievement(v, "ZeroPoint_Energy", "HL2_Ach_List", 500)
 		v:ChatPrint("Gravity gun is now enabled")
 	end
 end)
 
 hook.Add("EndHL2", "FinishedHL2", function()
 	for k, v in pairs(player.GetAll()) do
-		Achievement(v, "Finish_HL2", "HL2_Ach_List", 250)
+		Achievement(v, "Finish_HL2", "HL2_Ach_List", 2500)
 	end
 	
 	EndHL2Game()
-end)
-
-hook.Add("GiveLostCause", "GrantLobbyAch", function()
-	local activator, caller = ACTIVATOR, CALLER
-	
-	Achievement(activator, "Lost_Cause", "Lobby_Ach_List", 500)
 end)
 
 hook.Add("GiveWhatCat", "GrantCatAch", function()
@@ -486,16 +463,39 @@ hook.Add( "OnChangeLevel", "ChangeMap", function()
 		if map == HL2[k] then
 			if not file.Exists("hl2cr_data/d1_town_02.txt", "DATA") and not file.Exists("hl2cr_data/d2_coast_07.txt", "DATA") then
 				RunConsoleCommand("changelevel", HL2[k+1])
-			elseif file.Exists("hl2cr_data/d1_town_02.txt", "DATA") and not file.Exists("hl2cr_data/d2_coast_07.txt", "DATA") then
+			elseif file.Exists("hl2cr_data/d1_town_02.txt", "DATA") and game.GetMap() == "d1_town_03" then
+				RunConsoleCommand("changelevel", "d1_town_02")
+			elseif game.GetMap() == "d2_coast_08" and file.Exists("hl2cr_data/d2_coast_07.txt", "DATA") then
+				RunConsoleCommand("changelevel", "d2_coast_07")
+			end
+			
+			if game.GetMap() == "d1_town_02" and file.Exists("hl2cr_data/d1_town_02.txt", "DATA") then
 				RunConsoleCommand("changelevel", "d1_town_02a")
-			elseif not file.Exists("hl2cr_data/d1_town_02.txt", "DATA") and file.Exists("hl2cr_data/d2_coast_07.txt", "DATA") then
+			end
+			if game.GetMap() == "d2_coast_07" and file.Exists("hl2cr_data/d2_coast_07.txt", "DATA") then
 				RunConsoleCommand("changelevel", "d2_coast_09")
 			end
 		end
 	end
 end)
 
+hook.Add("GravGunOnPickedUp", "PastPickup", function(ply, ent)
+	print(ent)
+	if ent:EntIndex() == 564 then
+		Achievement(ply, "Blast_from_the_Past", "HL2_Ach_List", 2500)
+	end
+end)
+
 function SetCheckpointsStage()
+	
+	--Remove the old checkpoints and changelevels
+	for k, oldCheck in pairs(ents.FindByClass("trigger_checkpoint")) do
+		oldCheck:Remove()
+	end
+	
+	for k, oldChange in pairs(ents.FindByClass("trigger_changelevel")) do
+		oldChange:Remove()
+	end
 	
 	if game.GetMap() == "d1_trainstation_01" then
 		TRIGGER_CHANGELEVEL = {
@@ -520,7 +520,7 @@ function SetCheckpointsStage()
 
 	elseif game.GetMap() == "d1_trainstation_03" then
 		TRIGGER_CHANGELEVEL = {
-			Vector(-5179, -4855, 567), Vector(-5256, -4810, 675)
+			Vector(-5205, -4870, 578), Vector(-5262, -4742, 688)
 		}
 		TRIGGER_CHECKPOINT = {
 			Vector( -4558, -4653, 386 ), Vector( -4448, -4588, 494 ), 
@@ -591,10 +591,11 @@ function SetCheckpointsStage()
 			Vector(-3406, -124, -1062),	Vector(-3532, -44, -966)
 		}
 		TRIGGER_CHECKPOINT = {
+			 Vector(-1044, -34, -1023), Vector(-1006, -110, -892),
 			 Vector(-2180, -885, -1028), Vector(-2108, -829, -1076),
 		}
 		TRIGGER_SPAWNPOINT = {
-			Vector(-2073, -871, -1167),
+			Vector(-881, 16, -1032),	Vector(-2073, -871, -1167)
 		}		
 	
 	elseif game.GetMap() == "d1_canals_05" then
@@ -813,7 +814,7 @@ function SetCheckpointsStage()
 		TRIGGER_CHECKPOINT = {
 			 Vector(4548, 6434, 580), Vector(4145, 6676, 818),
 			 Vector(5038, 10047, 172), Vector(4856, 9808, 314),
-			 Vector(815, 11598, 507), Vector(755, 11476, 652),
+			 Vector(432, 11717, 431), Vector(718, 11597, 620),
 		}
 		TRIGGER_SPAWNPOINT = {
 			Vector(4406, 6555, 655), Vector(4967, 9917, 233),
@@ -918,7 +919,7 @@ function SetCheckpointsStage()
 		}
 		TRIGGER_CHECKPOINT = {
 			 Vector(-6993, -1223, 6), Vector(-6923, -1619, 98),
-			 Vector(-6841, -1384, 13), Vector(-6413, -777, 140),
+			 Vector(-6354, -1019, 3), Vector(-6564, -743, 147),
 		}
 		TRIGGER_SPAWNPOINT = {
 			Vector(-6841, -1384, 13), Vector(-6476, -918, 11)
@@ -967,7 +968,7 @@ function SetCheckpointsStage()
 		}
 		TRIGGER_CHECKPOINT = {
 			 Vector(5520, 1383, 0), Vector(5525, 1432, 109),
-			 Vector(7275, 1282, 3), Vector(7499, 1788, 270),
+			 Vector(7292, 1282, 3), Vector(7313, 1788, 125),
 		}
 		TRIGGER_SPAWNPOINT = {
 			Vector(6585, 1531, 19), Vector(7840, 1531, 6)
@@ -991,6 +992,15 @@ function SetCheckpointsStage()
 		TRIGGER_CHANGELEVEL = {
 			Vector(493, 4973, 259),	Vector(308, 4803, 429)
 		}
+		
+		TRIGGER_CHECKPOINT = {
+			Vector(-2625, 6533, 514),	Vector(-2785, 6418, 604)
+		}
+		
+		TRIGGER_SPAWNPOINT = {
+			Vector(-3007, 6475, 528)
+		}
+
 	elseif game.GetMap() == "d3_c17_10b" then
 		TRIGGER_CHANGELEVEL = {
 			Vector(2658, 1246, 833),	Vector(2720, 1182, 999)
@@ -1014,15 +1024,22 @@ function SetCheckpointsStage()
 		TRIGGER_CHANGELEVEL = {
 			Vector(-4363, 747, -28),	Vector(-4517, 866, 85)
 		}
+		TRIGGER_CHECKPOINT = {
+			Vector(-8078, -1230, -235),  Vector(-7594, -605, -60)
+		}
+		TRIGGER_SPAWNPOINT = {
+			Vector(-7458, -906, -236)
+		}
 	elseif game.GetMap() == "d3_c17_13" then
 		TRIGGER_CHANGELEVEL = {
 			Vector(8327, 1835, -427),	Vector(8460, 1983, -276)
 		}
 		TRIGGER_CHECKPOINT = {
 			Vector(5009, 255, 258), Vector(5207, 338, 419),
+			Vector(8445, 963, -196), Vector(8321, 1086, -120),
 		}
 		TRIGGER_SPAWNPOINT = {
-			Vector(5179, 1042, 20)
+			Vector(5144, 450, 14),	Vector(8379, 1044, -353)
 		}
 	elseif game.GetMap() == "d3_citadel_01" then
 		TRIGGER_CHANGELEVEL = {
@@ -1060,11 +1077,13 @@ function SetCheckpointsStage()
 			Vector(14000, 14944, 14956),	Vector(14096, 14891, 15094)
 		}
 		TRIGGER_CHECKPOINT = {
+			Vector(-2029, 61, 1377), Vector(-1906, -61, 1241),
 			Vector(-769, 123, -250), Vector(-672, -130, -54),
 			Vector(-762, -470, 1285), Vector(-519, -276, 1479)
 		}
 		TRIGGER_SPAWNPOINT = {
-			Vector(-649, 16, -244), Vector(-692, 1, 1311)
+			Vector(-1803, -0, 1363),	Vector(-649, 16, -244), 
+			Vector(-692, 1, 1311)
 		}	
 	end
 	
@@ -1090,7 +1109,7 @@ function SetCheckpointsStage()
 				
 			lambdaModel1 = ents.Create("prop_dynamic")
 			lambdaModel1:SetModel("models/hl2cr_lambda.mdl")
-			lambdaModel1:SetMaterial("models/props_combine/com_shield001a")
+			lambdaModel1:SetMaterial("editor/orange")
 			lambdaModel1:SetPos(Checkpoint1.Pos)
 			lambdaModel1:Spawn()
 		end
@@ -1107,7 +1126,7 @@ function SetCheckpointsStage()
 			
 			lambdaModel2 = ents.Create("prop_dynamic")
 			lambdaModel2:SetModel("models/hl2cr_lambda.mdl")
-			lambdaModel2:SetMaterial("models/props_combine/com_shield001a")
+			lambdaModel2:SetMaterial("editor/orange")
 			lambdaModel2:SetPos(Checkpoint2.Pos)
 			lambdaModel2:Spawn()
 		end
@@ -1124,7 +1143,7 @@ function SetCheckpointsStage()
 			
 			lambdaModel3 = ents.Create("prop_dynamic")
 			lambdaModel3:SetModel("models/hl2cr_lambda.mdl")
-			lambdaModel3:SetMaterial("models/props_combine/com_shield001a")
+			lambdaModel3:SetMaterial("editor/orange")
 			lambdaModel3:SetPos(Checkpoint3.Pos)
 			lambdaModel3:Spawn()
 		end
@@ -1141,7 +1160,7 @@ function SetCheckpointsStage()
 			
 			lambdaModel4 = ents.Create("prop_dynamic")
 			lambdaModel4:SetModel("models/hl2cr_lambda.mdl")
-			lambdaModel4:SetMaterial("models/props_combine/com_shield001a")
+			lambdaModel4:SetMaterial("editor/orange")
 			lambdaModel4:SetPos(Checkpoint4.Pos)
 			lambdaModel4:Spawn()
 		end

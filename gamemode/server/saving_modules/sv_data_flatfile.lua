@@ -30,14 +30,23 @@ local function InitData(ply)
 	ply.hl2cPersistent.Inventory = ply.hl2cPersistent.Inventory or {}
 	ply.hl2cPersistent.InvSpace = ply.hl2cPersistent.InvSpace or 0
 	ply.hl2cPersistent.MaxInvSpace = ply.hl2cPersistent.MaxInvSpace or 16
-	ply.hl2cPersistent.Suit = ply.hl2cPersistent.Suit or ""
+	
 	ply.hl2cPersistent.Helmet = ply.hl2cPersistent.Helmet or ""
+	ply.hl2cPersistent.Suit = ply.hl2cPersistent.Suit or ""
 	ply.hl2cPersistent.Arm = ply.hl2cPersistent.Arm or ""
+	ply.hl2cPersistent.Hands = ply.hl2cPersistent.Hands or ""
+	ply.hl2cPersistent.Boot = ply.hl2cPersistent.Boot or ""
+	
+	ply.hl2cPersistent.HelmetImage = ply.hl2cPersistent.HelmetImage or ""
+	ply.hl2cPersistent.SuitImage = ply.hl2cPersistent.SuitImage or ""
+	ply.hl2cPersistent.ArmImage = ply.hl2cPersistent.ArmImage or ""
+	ply.hl2cPersistent.HandsImage = ply.hl2cPersistent.HandsImage or ""
+	ply.hl2cPersistent.BootImage = ply.hl2cPersistent.BootImage or ""
 	
 	-- Default pet settings
 	ply.hl2cPersistent.PetName = ply.hl2cPersistent.PetName or ""
 	ply.hl2cPersistent.PetXP = ply.hl2cPersistent.PetXP or 0
-	ply.hl2cPersistent.PetMaxXP = ply.hl2cPersistent.PetMaxXP or 100
+	ply.hl2cPersistent.PetMaxXP = ply.hl2cPersistent.PetMaxXP or 50
 	ply.hl2cPersistent.PetLevel = ply.hl2cPersistent.PetLevel or 1
 	ply.hl2cPersistent.PetPoints = ply.hl2cPersistent.PetPoints or 0
 	ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP or 100
@@ -70,9 +79,11 @@ local function InitData(ply)
 	ply:SetNWInt("Kills", ply.hl2cPersistent.KillCount)
 	ply:SetNWInt("Deaths", ply.hl2cPersistent.DeathCount)
 	
-	ply:SetNWString("SuitSlot", ply.hl2cPersistent.Suit)
-	ply:SetNWString("HelmetSlot", ply.hl2cPersistent.Helmet)
-	ply:SetNWString("ArmSlot", ply.hl2cPersistent.Arm)
+	ply:SetNWString("HelmetSlot", ply.hl2cPersistent.HelmetImage)
+	ply:SetNWString("SuitSlot", ply.hl2cPersistent.SuitImage)
+	ply:SetNWString("ArmSlot", ply.hl2cPersistent.ArmImage)
+	ply:SetNWString("HandSlot", ply.hl2cPersistent.HandsImage)
+	ply:SetNWString("BootSlot", ply.hl2cPersistent.BootImage)
 	
 	ply:SetNWInt("PetLevel", ply.hl2cPersistent.PetLevel)
 	ply:SetNWString("PetName", ply.hl2cPersistent.PetName)
@@ -122,24 +133,7 @@ local function LoadData(ply)
 	-- Init player model and other stuff
 	ply:SetModel(ply.hl2cPersistent.Model)
 	
-	local easyRequired = math.ceil(#player.GetAll() / 2)
-	local mediumRequired = math.ceil(#player.GetAll() / 2)
-	local hardRequired = math.ceil(#player.GetAll() / 2)
-
-	local survRequired = #player.GetAll()
-	local neededVotes = #player.GetAll()
-	local neededVotesRestart = #player.GetAll()
-
-	for k, v in pairs(player.GetAll()) do
-		v:SetNWInt("EasyVotes", easyRequired)
-		v:SetNWInt("MediumVotes", mediumRequired)
-		v:SetNWInt("HardVotes", hardRequired)
-		v:SetNWInt("SurvVotes", survRequired)
-		
-		v:SetNWInt("RestartVotes", neededVotesRestart)
-		v:SetNWInt("LobbyVotes", neededVotes)
-	end
-	
+	--Init Squads
 	ply.squads = ply.squads or {}
 	ply.squads.members = ply.squads.members or 0
 	ply.squads.leader = ply.squads.leader or ""
@@ -184,28 +178,15 @@ hook.Add("PlayerDisconnected", "SavePlayerDataDisconnect", function(ply)
 	
 	ply:SetNWString("SquadLeader", nil)
 	ply:SetNWString("TeamName", "")
-	
-	local easyRequired = math.ceil(#player.GetAll() / 2)
-	local mediumRequired = math.ceil(#player.GetAll() / 2)
-	local hardRequired = math.ceil(#player.GetAll() / 2)
 
-	local survRequired = #player.GetAll()
-	local neededVotes = #player.GetAll()
-	local neededVotesRestart = #player.GetAll()
-
-	for k, v in pairs(player.GetAll()) do
-		v:SetNWInt("EasyVotes", easyRequired)
-		v:SetNWInt("MediumVotes", mediumRequired)
-		v:SetNWInt("HardVotes", hardRequired)
-		v:SetNWInt("SurvVotes", survRequired)
-		
-		v:SetNWInt("RestartVotes", neededVotesRestart)
-		v:SetNWInt("LobbyVotes", neededVotes)
-	end
-	
+	--Reset Squads
 	if ply.squads.leader != "" then
 		ply.squads.members = 0
 		ply.squads.leader = ""
+	end
+	
+	if ply.pet then
+		ply.pet:Remove()
 	end
 	
 	net.Start("Squad_Disband")

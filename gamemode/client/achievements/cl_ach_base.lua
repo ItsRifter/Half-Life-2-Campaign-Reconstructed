@@ -11,13 +11,16 @@ HL2_Ach_List = {
 	[4] = {name = "ZeroPoint_Energy", desc = "Acquire the Gravity gun\nin Black Mesa East", mat = "vgui/achievements/hl2_get_gravitygun.png", isRare = false},
 	[5] = {name = "Rave_Ball", desc = "Carry dog's ball through\nRavenholm\ninto the mines", mat = "vgui/achievements/hl2_get_gravitygun.png", isRare = false},
 	[6] = {name = "Keep_off_the_sand", desc = "Cross the antlion beach\nin d2_coast_11 without\ntouching the sand", mat = "vgui/achievements/hl2_beat_donttouchsand.png", isRare = false},
-	[7] = {name = "Singularity_Collapse", desc = "Destroy the Citadel's reactor core", mat = "vgui/achievements/hl2_beat_game.png", isRare = false},
+	[7] = {name = "Finish_HL2", desc = "Destroy the Citadel's\nreactor core", mat = "vgui/achievements/hl2_beat_game.png", isRare = false},
 	[8] = {name = "Lambda_Locator", desc = "Locate all\nthe Lambda caches", mat = "vgui/achievements/hl2_find_alllambdas.png", isRare = true},
+	[9] = {name = "Flushed", desc = "Kill an enemy with a toilet", mat = "vgui/achievements/hl2_kill_enemy_withtoilet.png", isRare = true},
+	[10] = {name = "Vortex Locator", desc = "Locate all the\nvortexes", mat = "vgui/achievements/hl2_find_alllambdas.png", isRare = true},
 }
 
 Misc_Ach_List = {
 	[1] = {name = "A_Predictable_Failure", desc = "Fail a map on survival with 4 or more players", mat = "vgui/achievements/hl2_find_allgmen.png", isRare = false},
-	[2] = {name = "Blast_that_little", desc = "Complete the Zombie evolution tree", mat = "vgui/achievements/hl2_beat_toxictunnel.png", isRare = false},
+	[2] = {name = "Blast_that_little", desc = "Complete the Zombie\nevolution tree", mat = "vgui/achievements/hl2_beat_toxictunnel.png", isRare = false},
+	[3] = {name = "Fast_Climber", desc = "Complete the Fast Zombie\nevolution tree", mat = "vgui/achievements/hl2_beat_toxictunnel.png", isRare = false},
 }
 
 HL2_Lambda_List = {
@@ -63,14 +66,25 @@ HL2_Vortex_List = {
 	[3] = {name = "d1_canals_01", mat = "vgui/achievements/hlx_find_onegman.png"},
 	[4] = {name = "d1_canals_02", mat = "vgui/achievements/hlx_find_onegman.png"},
 	[5] = {name = "d1_canals_05", mat = "vgui/achievements/hlx_find_onegman.png"},
-	[6] = {name = "d1_eli_01", mat = "vgui/achievements/hlx_find_onegman.png"},
-	[7] = {name = "d1_eli_02", mat = "vgui/achievements/hlx_find_onegman.png"},
-	[8] = {name = "d1_town_02", mat = "vgui/achievements/hlx_find_onegman.png"},
-	[9] = {name = "d1_town_03", mat = "vgui/achievements/hlx_find_onegman.png"},
-	[10] = {name = "d1_town_02a", mat = "vgui/achievements/hlx_find_onegman.png"},
-	[11] = {name = "d1_town_04", mat = "vgui/achievements/hlx_find_onegman.png"},
-	[12] = {name = "d1_town_05", mat = "vgui/achievements/hlx_find_onegman.png"},
-	[13] = {name = "d2_coast_01", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[6] = {name = "d1_canals_07", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[7] = {name = "d1_canals_08", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[8] = {name = "d1_canals_09", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[9] = {name = "d1_eli_01", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[10] = {name = "d1_eli_02", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[11] = {name = "d1_town_02", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[12] = {name = "d1_town_03", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[13] = {name = "d1_town_02a", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[14] = {name = "d1_town_04", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[15] = {name = "d1_town_05", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[16] = {name = "d2_coast_01", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[17] = {name = "d2_coast_04", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[18] = {name = "d2_coast_08", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[19] = {name = "d2_coast_11", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[20] = {name = "d2_prison_07", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[21] = {name = "d3_c17_03", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[22] = {name = "d3_c17_07", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[23] = {name = "d3_c17_12b", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[24] = {name = "d3_c17_13", mat = "vgui/achievements/hlx_find_onegman.png"},
 }
 
 function AchievementMenu(achievement, vortexes, lambdas)

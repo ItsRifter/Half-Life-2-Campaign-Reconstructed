@@ -95,8 +95,7 @@ hook.Add("EntityTakeDamage", "FriendOrFoe", function(ent, dmgInfo)
 	
 	local attacker = dmgInfo:GetAttacker()
 	local dmg = dmgInfo:GetDamage()
-	
-	if attacker:IsPet() then
+	if attacker:IsPet() and ent:IsNPC() then
 		ent:AddEntityRelationship(attacker, D_HT, 15)
 		local totalDMG = dmg + attacker:GetNWInt("PetStr")
 		dmgInfo:SetDamage(totalDMG)
@@ -123,45 +122,97 @@ hook.Add("EntityTakeDamage", "FriendOrFoe", function(ent, dmgInfo)
 	if ent:IsPet() and ent.owner:IsValid() and attacker:IsNPC() then
 		ent:SetHealth(ent:Health() - dmg)
 	end
+	
+	if attacker:IsPet() and attacker.owner then
+		local totalPetDMG = math.Round((attacker.owner.hl2cPersistent.PetStr * dmg) / (GetConVar("hl2cr_difficulty"):GetInt() + 2))
+		dmgInfo:SetDamage(totalPetDMG)
+	end
 end)
-
-hook.Add("Think", "NPCThinkRelation", function()
-	for k, v in pairs(player.GetAll()) do
-		if v:Team() == TEAM_LOYAL then
-			for i, cits in pairs(ents.FindByClass("npc_citizen")) do
-				cits:AddEntityRelationship(v, D_HT, 99)
-			end
-			for i, combine in pairs(ents.FindByClass("npc_combine_s")) do
-				combine:AddEntityRelationship(v, D_LI, 99)
+if SERVER then
+	hook.Add("Think", "NPCThinkRelation", function()
+		for k, v in pairs(player.GetAll()) do
+			if v:Team() == TEAM_LOYAL then
+				for i, cits in pairs(ents.FindByClass("npc_citizen")) do
+					cits:AddEntityRelationship(v, D_HT, 99)
+				end
+				for i, combine in pairs(ents.FindByClass("npc_combine_s")) do
+					combine:AddEntityRelationship(v, D_LI, 99)
+				end
+			else
+				for i, cits in pairs(ents.FindByClass("npc_citizen")) do
+					cits:AddEntityRelationship(v, D_LI, 99)
+				end
+				for i, combine in pairs(ents.FindByClass("npc_combine_s")) do
+					combine:AddEntityRelationship(v, D_HT, 99)
+				end
 			end
 		end
-	end
-	
-	if game.GetMap() == "d2_coast_10" then
-		for k, gunship in pairs(ents.FindByClass("npc_combinegunship")) do
-			if gunship:IsValid() and gunship:Health() <= 0 then
-				endLoyal()
+		
+		if game.GetMap() == "d1_trainstation_01" or game.GetMap() == "d1_trainstation_02" or (game.GetMap() == "d1_trainstation_03" and not activateHostility) then
+			for k, pl in pairs(player.GetAll()) do
+				for i, cits in pairs(ents.FindByClass("npc_citizen")) do
+					cits:AddEntityRelationship(pl, D_NU, 99)
+					for m, combine in pairs(ents.FindByClass("npc_metropolice")) do
+						combine:AddEntityRelationship(pl, D_NU, 99)
+						combine:AddEntityRelationship(cits, D_NU, 99)
+						cits:AddEntityRelationship(combine, D_NU, 99)
+					end
+				end
+			end
+		else
+			for k, pl in pairs(player.GetAll()) do
+				for i, cits in pairs(ents.FindByClass("npc_citizen")) do
+					cits:AddEntityRelationship(pl, D_LI, 99)
+					for m, combine in pairs(ents.FindByClass("npc_metropolice")) do
+						combine:AddEntityRelationship(pl, D_HT, 99)
+						combine:AddEntityRelationship(cits, D_HT, 99)
+						cits:AddEntityRelationship(combine, D_HT, 99)
+					end
+				end
 			end
 		end
-	end
-end)
+		
+		if game.GetMap() == "d2_coast_10" then
+			for k, gunship in pairs(ents.FindByClass("npc_combinegunship")) do
+				if gunship:IsValid() and gunship:Health() <= 0 then
+					endLoyal()
+				end
+			end
+		end
+		
+		for k, npc in pairs(ents.FindByClass("npc_*")) do
+			for n, pet in pairs(ents.FindByClass("npc_*")) do
+				if npc:IsFriendly() and pet:IsPet() then
+					npc:AddEntityRelationship(pet, D_LI, 99)
+					pet:AddEntityRelationship(npc, D_LI, 99)
+				end
+			end
+		end
+	end)
 
-hook.Add("ScaleNPCDamage", "DiffScalingNPC", function(ent, hitGroup, dmgInfo)
-	
-	local inflictor = dmgInfo:GetDamageType()
-	local attacker = dmgInfo:GetAttacker()
-	local dmg = dmgInfo:GetDamage()
- 	
-	if table.HasValue(INVUL_NPCS, ent:GetClass()) or attacker:IsPlayer() and table.HasValue(FRIENDLY_NPCS, ent:GetClass()) and ent:IsPet() then
-		dmgInfo:SetDamage(0)
-		return
-	elseif attacker:IsPlayer() and attacker:GetActiveWeapon():GetClass() == "weapon_crowbar" then
-		dmgInfo:ScaleDamage(1.75 / GetConVar("hl2cr_difficulty"):GetInt())
-	else
-		dmgInfo:ScaleDamage(1.55 / GetConVar("hl2cr_difficulty"):GetInt())
-	end
-	
-	--if ent:GetClass() == "npc_combinegunship" then
-	--	attacker.sharedXP = attacker.sharedXP + dmg * GetConVar("hl2cr_difficulty"):GetInt()
-	--end
-end)
+	hook.Add("ScaleNPCDamage", "DiffScalingNPC", function(ent, hitGroup, dmgInfo)
+		
+		local inflictor = dmgInfo:GetDamageType()
+		local attacker = dmgInfo:GetAttacker()
+		local dmg = dmgInfo:GetDamage()
+		local upgDmg = 0
+		if attacker:IsPlayer() and string.find(attacker.hl2cPersistent.TempUpg, "Shotgun_Blaster") then
+			upgDmg = 0.25
+		end
+		
+		if table.HasValue(INVUL_NPCS, ent:GetClass()) or attacker:IsPlayer() and table.HasValue(FRIENDLY_NPCS, ent:GetClass()) and ent:IsPet() then
+			dmgInfo:SetDamage(0)
+			return
+		elseif attacker:IsPlayer() and attacker:GetActiveWeapon():GetClass() == "weapon_crowbar" then
+			dmgInfo:ScaleDamage(1.75 / GetConVar("hl2cr_difficulty"):GetInt())
+		elseif attacker:IsPlayer() and attacker:GetActiveWeapon():GetClass() == "weapon_shotgun" then
+			dmgInfo:ScaleDamage(upgDmg + 1.55 / GetConVar("hl2cr_difficulty"):GetInt())
+		else 
+			dmgInfo:ScaleDamage(1.55 / GetConVar("hl2cr_difficulty"):GetInt())
+		end
+		
+		--if ent:GetClass() == "npc_combinegunship" then
+		--	attacker.sharedXP = attacker.sharedXP + dmg * GetConVar("hl2cr_difficulty"):GetInt()
+		--end
+	end)
+end

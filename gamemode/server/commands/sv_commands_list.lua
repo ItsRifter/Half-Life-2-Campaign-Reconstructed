@@ -1,12 +1,21 @@
-BringPet = true
-
 local lobbyVotes = 0
 local restartVotes = 0 
 oldModel = ""
 local playerFound = false
 local inSquad = false
-hook.Add("PlayerSay", "Commands", function(ply, text)
 
+local timer = 3600 + CurTime()
+local petbringTime = 0
+
+hook.Add("Think", "LobbyTimer", function()
+	if game.GetMap() != "hl2c_lobby_remake" then
+		if timer <= CurTime() then
+			RunConsoleCommand("changelevel", "hl2c_lobby_remake")
+		end
+	end
+end)
+
+hook.Add("PlayerSay", "Commands", function(ply, text)
 	--Worthless secret for worthless achievement hunter
 	if (string.lower(text) == "!gimmeasecret") then
 		Achievement(ply, "Worthless_Secret", "Lobby_Ach_List", 0)
@@ -92,7 +101,6 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 	
 	if string.find(string.lower(text), "!squadjoin ") or string.find(string.lower(text), "!joinsquad ") then
 		local targetName = string.sub(text, 12)
-			ply:ChatPrint(targetName)
 			for k, v in pairs(player.GetAll()) do
 				if v != ply then
 					if string.find(string.lower(v:Nick()), targetName) then
@@ -142,7 +150,19 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 		net.Send(ply)
 		return ""
 	end
-	
+	--[[
+	--Make the pet follow the player
+	if (string.lower(text) == "!petfollow") then
+		if ply.pet:IsValid() then
+			ply:ChatPrint("Your pet is now following you")
+			
+			
+		else
+			ply:ChatPrint("Your pet doesn't exist!")
+		end
+		return ""
+	end
+	--]]
 	--spawns the players pet unless they already exist or have no access to it
 	if (string.lower(text) == "!petsummon" or string.lower(text) == "!spawnpet" ) then
 		if ply.hl2cPersistent.Level >= 10 then
@@ -256,16 +276,16 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 			return ""
 		end
 		
-		if BringPet then -- This is a global variable shared between all players, i doubt it does what it is supposed to do!
+		if ply.BringPet then -- This is a global variable shared between all players, i doubt it does what it is supposed to do!
 			ply.pet:SetPos(ply:GetPos())
-			BringPet = false
-			timer.Create("BringCooldown", 7, 0, function()
-				BringPet = true
-			end)
+			ply.pet:SetAngles(ply:GetAngles())
+			beginPetBringTimer(ply)
+			return ""
 		else
-			ply:ChatPrint("You need to wait " .. math.Round(timer.TimeLeft("BringCooldown")) .. " seconds\nbefore bringing your pet again")
+			showTimerPet(ply)
+			return ""
 		end
-		return ""
+	return ""
 	end
 	if (string.lower(text) == "!removepet" or string.lower(text) == "!petremove") then
 		if not ply.pet or not ply.pet:IsValid() then
@@ -351,15 +371,12 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 	end
 	
 	if (string.lower(text) == "!unstuck") then
-	ply:ChatPrint("Checking if you are stuck...")
-		timer.Simple(5, function()
-			if not ply:IsOnGround() and ply:GetSequence() ~= 199 and ply:GetSequence() ~= 122 then
-				ply:ChatPrint("You appear to be stuck, Unstucking...")
-				IsStuck(ply)
-			else
-				ply:ChatPrint("You don't appear to be stuck, if you really are ask an admin or commit suicide")
-			end
-		end)
+		if not ply:IsOnGround() and ply:GetSequence() != 199 and ply:GetSequence() != 122 then
+			ply:ChatPrint("You appear to be stuck, Unstucking...")
+			IsStuck(ply)
+		else
+			ply:ChatPrint("You don't appear to be stuck, if you really are ask an admin or commit suicide")
+		end
 		return ""
 	end
 	if (string.lower(text) == "!lobby") then
@@ -374,9 +391,7 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 				if lobbyVotes == ply:GetNWInt("LobbyVotes") then
 					game.SetGlobalState("super_phys_gun", 0)
 					ply:ChatPrint("Enough players have voted to return the lobby, returning in 10 seconds")
-					timer.Simple(10, function()
-						RunConsoleCommand("changelevel", "hl2c_lobby_remake")
-					end)
+					RunConsoleCommand("changelevel", "hl2c_lobby_remake")
 				end
 			else
 				ply:ChatPrint("You already voted to return to the lobby!")
@@ -390,16 +405,13 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 		if game.GetMap() != "hl2c_lobby_remake" then
 			if not ply.hasVotedRestart then
 				restartVotes = restartVotes + 1
-				ply:SetNWInt("PlayerVotesRestart", restartVotes)
-				ply.hasVotedLobby = true
+				ply.hasVotedRestart = true
 				for k, v in pairs(player.GetAll()) do
 					v:ChatPrint(ply:Nick() .. " has voted to return to restart the map: " .. restartVotes .. "/" .. ply:GetNWInt("RestartVotes"))
 				end
-				if restartVotes == ply:GetNWInt("RestartVotes") then
+				if restartVotes >= ply:GetNWInt("RestartVotes") then
 					ply:ChatPrint("Enough players have voted to restart the map")
-					timer.Simple(10, function()
-						RunConsoleCommand("changelevel", game.GetMap())
-					end)
+					RunConsoleCommand("changelevel", game.GetMap()) 
 				end
 			else
 				ply:ChatPrint("You already voted to return to restart the map!")
@@ -410,13 +422,23 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 	return ""
 	end
 	
+	if (string.lower(text) == "!time") then
+		if game.GetMap() == "hl2c_lobby_remake" then
+			ply:ChatPrint("Time is infinite while in the lobby")
+		else
+			ply:ChatPrint(math.Round(3600 - CurTime(), 0) .. " seconds left before returning to lobby")
+		end
+		return ""
+	end
+	
 	if (string.lower(text) == "!seats") then
 		if ply:InVehicle() and not ply.hasSeat then
 			local vehicle = ply:GetVehicle()
+			if not vehicle:GetClass() == "prop_vehicle_jeep" then return end
 			local seat = ents.Create("prop_vehicle_prisoner_pod")
-			seat:SetPos(vehicle:LocalToWorld( Vector( 21, -32, 18 ) ))
+			seat:SetPos(vehicle:LocalToWorld( Vector( 31, -32, 18 ) ))
 			seat:SetModel("models/nova/jeep_seat.mdl")
-			seat:SetAngles(vehicle:LocalToWorldAngles(Angle(0,-3.5, 0) ))
+			seat:SetAngles(vehicle:LocalToWorldAngles(Angle(0, -3.5, 0) ))
 			seat:Spawn()
 			seat:SetOwner(nil)
 			seat:SetKeyValue("limitview", "1")
@@ -434,6 +456,20 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 	return ""
 	end
 end)
+
+function beginPetBringTimer(ply)
+	ply.petbringTime = 7 + CurTime()
+	if not ply then return end
+	hook.Add("Think", "petTimer", function()
+		if ply.petbringTime <= CurTime() and ply:IsValid() then
+			ply.BringPet = true
+		end
+	end)
+end
+
+local function showTimerPet(ply)
+	ply:ChatPrint("You need to wait " .. math.Round(ply.petbringTime - CurTime()) .. " before bringing again")
+end
 
 function AddCoins(ply, amount)
 	ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins + amount
@@ -465,13 +501,43 @@ function SubCryst(ply, amount)
 	ply:SetNWInt("Cryst", math.Round(ply.hl2cPersistent.Cryst))
 end
 
-concommand.Add("hl2cr_givexp", function(ply, cmd, args)
+concommand.Add("hl2cr_wipeinv", function(ply, cmd, args, argStr)
+	local target = string.sub(args[1], 0)
+	if ply:IsAdmin() then
+		for k, v in pairs(player.GetAll()) do
+			if v != ply and target != "" then
+				if string.find(string.lower(v:Nick()), string.lower(target)) then
+					target = v
+				end
+			else
+				target = ply
+			end
+		end
+		if target then
+			table.Empty(target.hl2cPersistent.Inventory)
+			target:ChatPrint("Your inventory has been wiped by an admin")
+		end
+	else
+		ply:PrintMessage(HUD_PRINTCONSOLE, "You do not have access to this command")
+	end
+end)
+concommand.Add("hl2cr_givexp", function(ply, cmd, args, argStr)
 	local int = tonumber(args[1])
+	local target = ""
+	if args[2] then
+		target = string.sub(args[2], 0)
+	end
 	
 	if ply:IsAdmin() then
-		if int then
-			AddXP(ply, int)
-			ply:PrintMessage(HUD_PRINTCONSOLE, int)
+		for k, v in pairs(player.GetAll()) do
+			if string.match(string.lower(v:Nick()), tostring(target)) then
+				target = v
+			end
+		end
+		
+		if target and int then
+			AddXP(target, int)
+			target:ChatPrint("You have been given " .. int .. "xp by an admin")
 		else
 			ply:PrintMessage(HUD_PRINTCONSOLE, "Invalid Value")
 		end
@@ -482,7 +548,7 @@ end)
 
 concommand.Add("hl2cr_cp", function(ply, cmd, args)
 	if ply:IsAdmin() then
-		SetupMap()
+		SetUpMap()
 	else
 		ply:PrintMessage(HUD_PRINTCONSOLE, "You do not have access to this command")
 	end
@@ -519,13 +585,25 @@ concommand.Add("hl2cr_setmaxxp", function(ply, cmd, args)
 	end
 end)
 
-concommand.Add("hl2cr_setlevel", function(ply, cmd, args)
+concommand.Add("hl2cr_setlevel", function(ply, cmd, args, argStr)
 	local level = tonumber(args[1])
+	local target = ""
+	if args[2] then
+		target = string.sub(args[2], 0)
+	end
+	
 	if ply:IsAdmin() then
+		for k, v in pairs(player.GetAll()) do
+			if string.match(string.lower(v:Nick()), tostring(target)) then
+				target = v
+			end
+		end
+	
 		if level > 0 then
-			ply.hl2cPersistent.Level = level
-			ply.hl2cPersistent.XP = 0
-			ply:SetNWInt("Level", ply.hl2cPersistent.Level)
+			target.hl2cPersistent.Level = level
+			target.hl2cPersistent.XP = 0
+			target:SetNWInt("Level", target.hl2cPersistent.Level)
+			target:ChatPrint("Your level has changed to " .. level .. " by an admin") 
 		else
 			ply:PrintMessage(HUD_PRINTCONSOLE, "Invalid Value")
 		end
@@ -536,9 +614,45 @@ end)
 
 concommand.Add("hl2cr_addcoins", function(ply, cmd, args)
 	local coins = tonumber(args[1])
+	local target = ""
+	if args[2] then
+		target = string.sub(args[2], 0)
+	end
+	
 	if ply:IsAdmin() then
-		if coins >= 0 then
-			AddCoins(ply, coins)
+		for k, v in pairs(player.GetAll()) do
+			if string.match(string.lower(v:Nick()), tostring(target)) then
+				target = v
+			end
+		end
+		
+		if coins >= 0 and target then
+			AddCoins(target, coins)
+			target:ChatPrint("You have been given " .. coins .. " lambda coins by an admin")
+		else
+			ply:PrintMessage(HUD_PRINTCONSOLE, "Invalid Value")
+		end
+	else
+		ply:PrintMessage(HUD_PRINTCONSOLE, "You do not have access to this command")
+	end
+end)
+
+concommand.Add("hl2cr_subcoins", function(ply, cmd, args)
+	local coins = tonumber(args[1])
+	local target = ""
+	if args[2] then
+		target = string.sub(args[2], 0)
+	end
+	
+	if ply:IsAdmin() then
+		for k, v in pairs(player.GetAll()) do
+			if string.match(string.lower(v:Nick()), tostring(target)) then
+				target = v
+			end
+		end
+		if coins >= 0 and target then
+			SubCoins(target, coins)
+			target:ChatPrint("Your " .. coins .. " lambda coins were deducted by an admin")
 		else
 			ply:PrintMessage(HUD_PRINTCONSOLE, "Invalid Value")
 		end
@@ -622,14 +736,13 @@ concommand.Add("hl2cr_petbring", function(ply, cmd, args)
 		ply:ChatPrint("You can't bring your pet while in a duel!")
 	end
 	
-	if BringPet then -- This is a global variable shared between all players, i doubt it does what it is supposed to do!
+	if ply.BringPet then
 		ply.pet:SetPos(ply:GetPos())
-		BringPet = false
-		timer.Create("BringCooldown", 7, 0, function()
-			BringPet = true
-		end)
+		ply.pet:SetAngles(ply:GetAngles())
+		ply.BringPet = false
+		beginPetBringTimer(ply)
 	else
-		ply:ChatPrint("You need to wait " .. math.Round(timer.TimeLeft("BringCooldown")) .. " seconds\nbefore bringing your pet again")
+		showTimerPet(ply)
 	end
 end)
 
@@ -653,7 +766,6 @@ end)
 
 concommand.Add("hl2cr_petpoints", function(ply, cmd, args)
 	local petPoints = tonumber(args[1])
-	print(tonumber(args[1]))
 	if ply:IsAdmin() then
 		ply.hl2cPersistent.PetPoints = ply.hl2cPersistent.PetPoints + petPoints
 	else
@@ -663,7 +775,6 @@ end)
 
 concommand.Add("hl2cr_petlevel", function(ply, cmd, args)
 	local newLevel = tonumber(args[1])
-	print(tonumber(args[1]))
 	if ply:IsAdmin() then
 		ply.hl2cPersistent.PetLevel = newLevel
 		ply:SetNWInt("PetLevel", ply.hl2cPersistent.PetLevel)
@@ -674,7 +785,6 @@ end)
 
 concommand.Add("hl2cr_petstage", function(ply, cmd, args)
 	local newStage = tonumber(args[1])
-	print(tonumber(args[1]))
 	if ply:IsAdmin() then
 		ply.hl2cPersistent.PetStage = newStage
 		ply:SetNWInt("PetStage", ply.hl2cPersistent.PetStage)

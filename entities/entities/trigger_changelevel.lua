@@ -62,6 +62,11 @@ function ENT:StartTouch(ent)
 	if ent and ent:IsValid() and ent:IsPlayer() and ent:Team() == TEAM_ALIVE then
 		ent:SetTeam(TEAM_COMPLETED_MAP)
 		SpectateMode(ent)
+		if ent.pet then
+			ent.pet:Remove()
+			net.Start("ClosePets")
+			net.Send(ent)
+		end
 		if game.GetMap() != "d1_trainstation_01" or game.GetMap() != "d1_trainstation_02" or game.GetMap() != "d1_trainstation_03" or
 		game.GetMap() != "d1_trainstation_04" or game.GetMap() != "d1_trainstation_05" then
 			giveRewards(ent)

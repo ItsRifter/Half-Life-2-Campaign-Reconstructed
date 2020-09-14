@@ -131,7 +131,7 @@ function LobbyMenu()
 	LabelVersionText = vgui.Create( "DLabel", PanelTabOne )
 	LabelVersionText:SetPos(PanelTabOne:GetWide() / 2.5, 750)
 	LabelVersionText:SetFont("Intro_Tab1_Font")
-	LabelVersionText:SetText("Version: 0.1.4.1")
+	LabelVersionText:SetText("Version: 0.1.7")
 	LabelVersionText:SizeToContents()
 	LabelVersionText:SetColor(Color(0, 0, 0))
 	
@@ -242,7 +242,7 @@ function LobbyMenu()
 	local LabelTabThreeCmdsTwo = vgui.Create( "DLabel", PanelTabThree )
 	LabelTabThreeCmdsTwo:SetPos(525, 650)
 	LabelTabThreeCmdsTwo:SetFont("Intro_Tab3_Font")
-	LabelTabThreeCmdsTwo:SetText("!petpanic\n!removepet\n!unstuck\n!vrm\nF1 - Open New player Menu \nF2 - Remove vehicle\nF3 - Spawn vehicle\nF4 - Open Menu")
+	LabelTabThreeCmdsTwo:SetText("!petpanic\n!removepet\n!unstuck\n!vrm\nF1 - Open New player Menu \nF2 - Remove vehicle\nF3 - Spawn vehicle\nF4 - Open Menu\n!time\n!loyal")
 	LabelTabThreeCmdsTwo:SizeToContents()
 	LabelTabThreeCmdsTwo:SetColor(Color(0, 0, 0))
 	
@@ -319,29 +319,6 @@ function LobbyMenu()
 	end
 	
 	TabSheet:AddSheet("Begin Playing", PanelTabFive, nil)
-	
-	local PanelTabSix = vgui.Create( "DPanel", frame )
-	PanelTabSix:SetSize(800, 850)
-	PanelTabSix:SetPos(0, 400)
-	PanelTabSix.Paint = function(s, w, h)
-		draw.RoundedBox(0, 0, 0, w, h, Color(170, 170, 170, 255))
-	end
-	
-	local changelogDateText = vgui.Create("DLabel", PanelTabSix)
-	changelogDateText:SetText("Squads and Loyalites\n - 01/09/2020 -")
-	changelogDateText:SetFont("Intro_Tab6_Font")
-	changelogDateText:SetColor(Color(0, 0, 0))
-	changelogDateText:SetPos(25, 50)
-	changelogDateText:SizeToContents()
-	
-	local changelogText = vgui.Create("DLabel", PanelTabSix)
-	changelogText:SetText("Fixes:fixed checkpoints not working as intended 'again'") 
-	changelogText:SetFont("Intro_Tab6_Font")
-	changelogText:SetColor(Color(0, 0, 0))
-	changelogText:SetPos(25, 125)
-	changelogText:SizeToContents()
-	
-	TabSheet:AddSheet("Changelog", PanelTabSix, nil)
 end
 
 net.Receive("Greetings_new_player", LobbyMenu)

@@ -12,13 +12,17 @@ AchievementLists = {
 		ZeroPoint_Energy = {name = "ZeroPoint Energy", mat = "vgui/achievements/hl2_get_gravitygun.png", isRare = false},
 		Rave_Ball = {name = "Rave Ball", desc = "Carry dog's ball through Ravenholm into the mines", mat = "vgui/achievements/hl2_get_gravitygun.png", isRare = false},
 		Keep_off_the_sand = {name = "Keep off the sand", mat = "vgui/achievements/hl2_beat_donttouchsand.png", isRare = false},
-		Finish_HL2 = {name = "Singularity Collapse", mat = "vgui/achievements/hl2_beat_game.png", isRare = false},
+		Finish_HL2 = {name = "Finish HL2", mat = "vgui/achievements/hl2_beat_game.png", isRare = false},
 		Lambda_Locator = {name = "Lambda Locator", mat = "vgui/achievements/hl2_find_alllambdas.png", isRare = true},
+		Flushed = {name = "Flushed", mat = "vgui/achievements/hl2_kill_enemy_withtoilet.png", isRare = false},
+		Blast_from_the_Past = {name = "Blast from the Past", mat = "vgui/achievements/hl2_find_hevfaceplate.png", isRare = false},
+		Vortex_Locator = {name = "Vortex Locator", mat = "vgui/achievements/hl2_find_alllambdas.png", isRare = true},
 	},
 
 	Misc_Ach_List = {
 		Survival_Lost = {name = "A Predictable Failure", mat = "vgui/achievements/hl2_find_allgmen.png", isRare = false},
 		Blast_that_little = {name = "Blast that little", mat = "vgui/achievements/hl2_beat_toxictunnel.png", isRare = false, clientTriggerable = true},
+		Fast_Climber = {name = "Fast Climber", mat = "vgui/achievements/hl2_beat_toxictunnel.png", isRare = false, clientTriggerable = true},
 	}
 }
 
@@ -66,6 +70,9 @@ SpecialLists = {
 		d1_canals_01 = {name = "d1_canals_01", mat = "vgui/achievements/hlx_find_onegman.png"},
 		d1_canals_02 = {name = "d1_canals_02", mat = "vgui/achievements/hlx_find_onegman.png"},
 		d1_canals_05 = {name = "d1_canals_05", mat = "vgui/achievements/hlx_find_onegman.png"},
+		d1_canals_07 = {name = "d1_canals_07", mat = "vgui/achievements/hlx_find_onegman.png"},
+		d1_canals_08 = {name = "d1_canals_08", mat = "vgui/achievements/hlx_find_onegman.png"},
+		d1_canals_09 = {name = "d1_canals_09", mat = "vgui/achievements/hlx_find_onegman.png"},
 		d1_eli_01 = {name = "d1_eli_01", mat = "vgui/achievements/hlx_find_onegman.png"},
 		d1_eli_02 = {name = "d1_eli_02", mat = "vgui/achievements/hlx_find_onegman.png"},
 		d1_town_02 = {name = "d1_town_02", mat = "vgui/achievements/hlx_find_onegman.png"},
@@ -74,6 +81,14 @@ SpecialLists = {
 		d1_town_04 = {name = "d1_town_04", mat = "vgui/achievements/hlx_find_onegman.png"},
 		d1_town_05 = {name = "d1_town_05", mat = "vgui/achievements/hlx_find_onegman.png"},
 		d2_coast_01 = {name = "d2_coast_01", mat = "vgui/achievements/hlx_find_onegman.png"},
+		d2_coast_04 = {name = "d2_coast_04", mat = "vgui/achievements/hlx_find_onegman.png"},
+		d2_coast_08 = {name = "d2_coast_08", mat = "vgui/achievements/hlx_find_onegman.png"},
+		d2_coast_11 = {name = "d2_coast_11", mat = "vgui/achievements/hlx_find_onegman.png"},
+		d2_prison_07 = {name = "d2_prison_07", mat = "vgui/achievements/hlx_find_onegman.png"},
+		d3_c17_03 = {name = "d3_c17_03", mat = "vgui/achievements/hlx_find_onegman.png"},
+		d3_c17_07 = {name = "d3_c17_07", mat = "vgui/achievements/hlx_find_onegman.png"},
+		d3_c17_12b = {name = "d3_c17_12b", mat = "vgui/achievements/hlx_find_onegman.png"},
+		d3_c17_13 = {name = "d3_c17_13", mat = "vgui/achievements/hlx_find_onegman.png"},
 	}
 }
 
@@ -145,7 +160,7 @@ end
 net.Receive("Achievement", function(len, ply)
 	local name = net.ReadString()
 	local listName = net.ReadString()
-	local amt = 0
+	local amt = net.ReadInt(32)
 	Achievement(ply, name, listName, amt)
 end)
 

@@ -2,20 +2,10 @@ AddCSLuaFile()
 
 net.Receive("Purchase", function(len, ply)
 	local itemName = net.ReadString()
-	
-	if itemName == "Health_Module_MK1" then
-		SubCoins(ply, 1000)
-	elseif itemName == "Health_Module_MK2" then
-		SubCoins(ply, 1500)
-	elseif itemName == "Suit_Battery_Pack" then
-		SubCoins(ply, 1500)
-	elseif itemName == "Pair_Gloves" then
-		SubCoins(ply, 3500)
-	elseif itemName == "Mark_VII_Suit" then
-		SubCoins(ply, 25000)
-	elseif itemName == "Mark_VII_Helmet" then
-		SubCoins(ply, 17500)
-	end
+	local itemCost = net.ReadInt(32)
+
+	if not ply then return end
+	SubCoins(ply, itemCost)
 	
 	ply.hl2cPersistent.InvSpace = ply.hl2cPersistent.InvSpace + 1
 	ply:SetNWInt("InvSpace", ply.hl2cPersistent.InvSpace)
@@ -43,13 +33,11 @@ end)
 
 net.Receive("Upgrade", function(len, ply)
 	local UpgName = net.ReadString()
+	local UpgCost = net.ReadInt(16)
 	
-	if UpgName == "Self Healing" then
-		SubEssen(ply, 10)
-	elseif UpgName == "Health Boost" then
-		SubEssen(ply, 5)
-		ply:SetHealth(ply:Health() + 5)
-	end
+	if not ply then return end
+	
+	SubEssen(ply, UpgCost)
 	
 	ply.hl2cPersistent.TempUpg = ply.hl2cPersistent.TempUpg .. UpgName .. " "
 	ply:SetNWString("TempUpg", ply.hl2cPersistent.TempUpg .. UpgName .. " ")
@@ -100,207 +88,151 @@ end
 
 net.Receive("AddArmour", function(len, ply)
 	local slotToFill = net.ReadString()
+	local slotImage = net.ReadString()
+	local slot = net.ReadString()
+	local shieldPoints = net.ReadInt(16)
 	
-	--If the player has an item in the 'ARM' slot, put the item back into their inventory
-	if ply:GetNWString("ArmSlot") == "hl2cr/armour_parts/health" and slotToFill == ply:GetNWString("ArmSlot") then
-		table.insert(ply.hl2cPersistent.Inventory, "Health_Module_MK1")
-	elseif ply:GetNWString("ArmSlot") == "hl2cr/armour_parts/healthmk2" and slotToFill == ply:GetNWString("ArmSlot") then
-		table.insert(ply.hl2cPersistent.Inventory, "Health_Module_MK2")
-	elseif ply:GetNWString("ArmSlot") == "hl2cr/armour_parts/battery" and slotToFill == ply:GetNWString("ArmSlot") then
-		table.insert(ply.hl2cPersistent.Inventory, "Suit_Battery_Pack")
-	elseif ply:GetNWString("ArmSlot") == "hl2cr/armour_parts/gloves" and slotToFill == ply:GetNWString("ArmSlot") then
-		table.insert(ply.hl2cPersistent.Inventory, "Pair_Gloves")
+	if not ply then return end
+
+	ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour + shieldPoints
+
+	
+	if ply.hl2cPersistent.Helmet != "" and slot == "Helmet" then
+		table.insert(ply.hl2cPersistent.Inventory, ply.hl2cPersistent.Helmet)
+		ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour - ply:GetNWInt("OldArmourHelmet")
 	end
 	
-	--If the player has an item in the 'HEAD' slot, put the item back into their inventory
-	if ply:GetNWString("HelmetSlot") == "hl2cr/armour_parts/helmet" and slotToFill == ply:GetNWString("HelmetSlot") then
-		table.insert(ply.hl2cPersistent.Inventory, "Mark_VII_Helmet")
+	if ply.hl2cPersistent.Suit != "" and slot == "Suit" then
+		table.insert(ply.hl2cPersistent.Inventory, ply.hl2cPersistent.Suit)
+		ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour - ply:GetNWInt("OldArmourSuit")
 	end
 	
-	--If the player has an item in the 'SUIT' slot, put the item back into their inventory
-	if ply:GetNWString("SuitSlot") == "hl2cr/armour_parts/suit" and slotToFill == ply:GetNWString("SuitSlot") then
-		table.insert(ply.hl2cPersistent.Inventory, "Mark_VII_Suit")
+	if ply.hl2cPersistent.Arm != "" and slot == "Arm" then
+		table.insert(ply.hl2cPersistent.Inventory, ply.hl2cPersistent.Arm)
+		ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour - ply:GetNWInt("OldArmourArm")
 	end
 	
-	--Suit
-	if slotToFill == "hl2cr/armour_parts/suit" then
-		
-		table.RemoveByValue(ply.hl2cPersistent.Inventory, "Mark_VII_Suit")
-		
-		ply.hl2cPersistent.Suit = slotToFill
-		ply:SetNWString("SuitSlot", slotToFill)
+	if ply.hl2cPersistent.Hands != "" and slot == "Hands" then
+		table.insert(ply.hl2cPersistent.Inventory, ply.hl2cPersistent.Hands)
+		ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour - ply:GetNWInt("OldArmourHand")
+	end
 	
-		ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour + 10
+	if ply.hl2cPersistent.Boot != "" and slot == "Boots" then
+		table.insert(ply.hl2cPersistent.Inventory, ply.hl2cPersistent.Boot)
+		ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour - ply:GetNWInt("OldArmourBoot")
+	end
 	
-	--Helmet
-	elseif slotToFill == "hl2cr/armour_parts/helmet" then
-		
-		table.RemoveByValue(ply.hl2cPersistent.Inventory, "Mark_VII_Helmet")
-		
+	table.RemoveByValue(ply.hl2cPersistent.Inventory, slotToFill)
+	
+	if slot == "Helmet" then
 		ply.hl2cPersistent.Helmet = slotToFill
-		ply:SetNWString("HelmetSlot", slotToFill)
+		ply.hl2cPersistent.HelmetImage = slotImage
+		ply:SetNWString("HelmetSlot", ply.hl2cPersistent.HelmetImage)
+		ply:SetNWInt("OldArmourHelmet", shieldPoints)
 		
-		ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour + 5
+	elseif slot == "Suit" then
+		ply.hl2cPersistent.Suit = slotToFill
+		ply.hl2cPersistent.SuitImage = slotImage
+		ply:SetNWString("SuitSlot", ply.hl2cPersistent.SuitImage)
+		ply:SetNWInt("OldArmourSuit", shieldPoints)
 		
-	--Arm
-	elseif slotToFill == "hl2cr/armour_parts/health" then
-		
-		table.RemoveByValue(ply.hl2cPersistent.Inventory, "Health_Module_MK1")
-		
+	elseif slot == "Arm" then
 		ply.hl2cPersistent.Arm = slotToFill
-		ply:SetNWString("ArmSlot", slotToFill)
+		ply.hl2cPersistent.ArmImage = slotImage
+		ply:SetNWString("ArmSlot", ply.hl2cPersistent.ArmImage)
+		ply:SetNWInt("OldArmourArm", shieldPoints)
 		
-		AddStats("health", 10, ply)
+	elseif slot == "Hands" then
+		ply.hl2cPersistent.Hands = slotToFill
+		ply.hl2cPersistent.HandImage = slotImage
+		ply:SetNWString("HandSlot", ply.hl2cPersistent.HandImage)
+		ply:SetNWInt("OldArmourHand", shieldPoints)
 		
-	elseif slotToFill == "hl2cr/armour_parts/healthmk2" then
-	
-		table.RemoveByValue(ply.hl2cPersistent.Inventory, "Health_Module_MK2")
-		
-		ply.hl2cPersistent.Arm = slotToFill
-		ply:SetNWString("ArmSlot", slotToFill)
-		
-		AddStats("health", 15, ply)
-	elseif slotToFill == "hl2cr/armour_parts/battery" then
-		
-		table.RemoveByValue(ply.hl2cPersistent.Inventory, "Suit_Battery_Pack")
-		
-		ply.hl2cPersistent.Arm = slotToFill
-		ply:SetNWString("ArmSlot", slotToFill)
-	elseif slotToFill == "hl2cr/armour_parts/gloves" then
-		
-		table.RemoveByValue(ply.hl2cPersistent.Inventory, "Pair_Gloves")
-		
-		ply.hl2cPersistent.Arm = slotToFill
-		ply:SetNWString("ArmSlot", slotToFill)
-		
-		ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour + 1
+	elseif slot == "Boots" then
+		ply.hl2cPersistent.Boot = slotToFill
+		ply.hl2cPersistent.BootImage = slotImage
+		ply:SetNWString("BootSlot", ply.hl2cPersistent.BootImage)
+		ply:SetNWInt("OldArmourBoot", shieldPoints)
 	end
 	
-	ply.hl2cPersistent.InvSpace = ply.hl2cPersistent.InvSpace - 1
+	ply.hl2cPersistent.InvSpace = ply.hl2cPersistent.InvSpace - 1 
 	ply:SetNWInt("InvSpace", ply.hl2cPersistent.InvSpace)
 	ply:SetNWInt("Armour", ply.hl2cPersistent.Armour)
+	
 	
 end)
 
 net.Receive("SellItem", function(len, ply)
 	local readItem = net.ReadString()
+	local sellReturn = net.ReadInt(32)
 	
-	if readItem == "hl2cr/armour_parts/health" and table.HasValue(ply.hl2cPersistent.Inventory, "Health_Module_MK1") then
-		ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins + 250
+	if not ply then return end
 	
-		table.RemoveByValue(ply.hl2cPersistent.Inventory, "Health_Module_MK1")
-		
-		ply.hl2cPersistent.InvSpace = ply.hl2cPersistent.InvSpace - 1
-		ply:SetNWInt("InvSpace", ply.hl2cPersistent.InvSpace)
-		
-	elseif readItem == "hl2cr/armour_parts/healthmk2" and table.HasValue(ply.hl2cPersistent.Inventory, "Health_Module_MK2") then
-		ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins + 500
+	sellReturn = math.Round(sellReturn / 3, 0)
 	
-		table.RemoveByValue(ply.hl2cPersistent.Inventory, "Health_Module_MK2")
-		
-		ply.hl2cPersistent.InvSpace = ply.hl2cPersistent.InvSpace - 1
-		ply:SetNWInt("InvSpace", ply.hl2cPersistent.InvSpace)
+	if table.HasValue(ply.hl2cPersistent.Inventory, readItem) then
 	
-	elseif readItem == "hl2cr/armour_parts/battery" and table.HasValue(ply.hl2cPersistent.Inventory, "Suit_Battery_Pack") then
-		ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins + 500
-	
-		table.RemoveByValue(ply.hl2cPersistent.Inventory, "Suit_Battery_Pack")
-		
-		ply.hl2cPersistent.InvSpace = ply.hl2cPersistent.InvSpace - 1
-		ply:SetNWInt("InvSpace", ply.hl2cPersistent.InvSpace)
-		
-	elseif readItem == "hl2cr/armour_parts/gloves" and table.HasValue(ply.hl2cPersistent.Inventory, "Pair_Gloves") then
-		ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins + 1166
-	
-		table.RemoveByValue(ply.hl2cPersistent.Inventory, "Pair_Gloves")
-		
-		ply.hl2cPersistent.InvSpace = ply.hl2cPersistent.InvSpace - 1
-		ply:SetNWInt("InvSpace", ply.hl2cPersistent.InvSpace)
-		
-	elseif readItem == "hl2cr/armour_parts/helmet" and table.HasValue(ply.hl2cPersistent.Inventory, "Mark_VII_Helmet") then
-		ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins + 500
-	
-		table.RemoveByValue(ply.hl2cPersistent.Inventory, "Mark_VII_Helmet")
-		
-		ply.hl2cPersistent.InvSpace = ply.hl2cPersistent.InvSpace - 1
-		ply:SetNWInt("InvSpace", ply.hl2cPersistent.InvSpace)
-		
-	elseif readItem == "hl2cr/armour_parts/suit" and table.HasValue(ply.hl2cPersistent.Inventory, "Mark_VII_Suit") then
-		ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins + 8333
-	
-		table.RemoveByValue(ply.hl2cPersistent.Inventory, "Mark_VII_Suit")
+		table.RemoveByValue(ply.hl2cPersistent.Inventory, readItem)
 		
 		ply.hl2cPersistent.InvSpace = ply.hl2cPersistent.InvSpace - 1
 		ply:SetNWInt("InvSpace", ply.hl2cPersistent.InvSpace)
 		
 	end
 	
-	ply:SetNWInt("Coins", math.Round(ply.hl2cPersistent.Coins), 0)
+	ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins + sellReturn
+	ply:SetNWInt("Coins", ply.hl2cPersistent.Coins)
 	
 end)
 
 net.Receive("SellItemSlot", function(len, ply)
-
 	local readItem = net.ReadString()
-
+	local sellReturn = net.ReadInt(32)
+	local removePoints = net.ReadInt(16)
+	
+	if not ply then return end
+	
+	sellReturn = math.Round(sellReturn / 3)
+	
+	--Items in the head slot
+	if string.find(ply.hl2cPersistent.Helmet, readItem) then
+		ply.hl2cPersistent.Helmet = ""
+		ply.hl2cPersistent.HelmetImage = ""
+		ply:SetNWString("HelmetSlot", "")
+	end
+	
+	--Items in the suit slot
+	if string.find(ply.hl2cPersistent.Suit, readItem) then
+		ply.hl2cPersistent.Suit = ""
+		ply.hl2cPersistent.SuitImage = ""
+		ply:SetNWString("SuitSlot", "")
+	end
+	
 	--Items in the arm slot
-	if readItem == "hl2cr/armour_parts/health" then
-		ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins + 250
-		
+	if string.find(ply.hl2cPersistent.Arm, readItem) then
 		ply.hl2cPersistent.Arm = ""
-		ply:SetNWString("ArmSlot", ply.hl2cPersistent.Arm)
-		
-	elseif readItem == "hl2cr/armour_parts/healthmk2" then
-		ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins + 500
-		
-		ply.hl2cPersistent.Arm = ""
-		ply:SetNWString("ArmSlot", ply.hl2cPersistent.Arm)
-	elseif readItem == "hl2cr/armour_parts/healthmk2" then
-		ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins + 500
-		
-		ply.hl2cPersistent.Arm = ""
-		ply:SetNWString("ArmSlot", ply.hl2cPersistent.Arm)
-	elseif readItem == "hl2cr/armour_parts/gloves" then
-		ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins + 1166
-		
-		ply.hl2cPersistent.Arm = ""
-		ply:SetNWString("ArmSlot", ply.hl2cPersistent.Arm)
-		ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour - 1
+		ply.hl2cPersistent.ArmImage = ""
+		ply:SetNWString("ArmSlot", "")
+	end
+	
+	if string.find(ply.hl2cPersistent.Boot, readItem) then
+		ply.hl2cPersistent.Boot = ""
+		ply.hl2cPersistent.BootImage = ""
+		ply:SetNWString("BootSlot", "")
 	end
 	
 	--Items in the head slot
-	if readItem == "hl2cr/armour_parts/helmet" then
-		ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins + 5833
-		
-		ply.hl2cPersistent.Helmet = ""
-		ply:SetNWString("HelmetSlot", ply.hl2cPersistent.Helmet)
-		ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour - 5
+	if string.find(ply.hl2cPersistent.Hands, readItem) then
+		ply.hl2cPersistent.Hands = ""
+		ply:SetNWString("HandSlot", "")
 	end
-	--Items in the suit slot
-	if readItem == "hl2cr/armour_parts/suit" then
-		ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins + 8333
-		
-		ply.hl2cPersistent.Suit = ""
-		ply:SetNWString("SuitSlot", ply.hl2cPersistent.Suit)
-	
-		ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour - 10
-	end
-	
-	ply:SetNWInt("Armour", ply.hl2cPersistent.Armour)
-	ply:SetNWInt("Coins", math.Round(ply.hl2cPersistent.Coins), 0)
-end)
 
-function AddStats(statToAdd, amt, ply)
-	ply:SetMaxHealth(100)
-	
-	if statToAdd == "health" then
-		ply:SetMaxHealth(ply:GetMaxHealth() + amt)
-		
-		if ply:Health() > ply:GetMaxHealth() then
-			ply:SetHealth(ply:GetMaxHealth())
-		end
+	if removePoints then
+		ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour - removePoints
 	end
-end
+	ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins + sellReturn
+	ply:SetNWInt("Armour", ply.hl2cPersistent.Armour)
+	ply:SetNWInt("Coins", ply.hl2cPersistent.Coins)
+end)
 
 net.Receive("ShowEndStats", function()
 	

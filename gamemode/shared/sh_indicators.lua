@@ -8,7 +8,12 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 	local givePetXP = 0
 	local totalXPSquad = 0
 	
+	print(attacker)
+	print(inflictor)
 	
+	if npc:IsNPC() and attacker:IsPlayer() and inflictor:EntIndex() == 111 then
+		Achievement(attacker, "Flushed", "HL2_Ach_List", 2500)
+	end
 	
 	if npc:IsPet() and attacker:IsPet() then
 		local npcOwner = npc.owner
@@ -45,10 +50,10 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 		giveXP = 0
 		giveCoins = 0
 		givePetXP = 0
-	end
-	if attacker:IsPet() and attacker.owner then
-		givePetXP = math.random(10, 30)
+	elseif attacker:IsPet() and attacker.owner then
+		givePetXP = math.random(1, 10 * GetConVar("hl2cr_difficulty"):GetInt())
 		addPetXP(attacker.owner, givePetXP)
+		Spawn(givePetXP, 0, npc:GetPos(), npc, attacker.owner)
 	end
 	
 	if attacker:IsPlayer() and not npc.owner then
@@ -69,7 +74,7 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 			net.WriteInt(totalXPSquad, 32)
 			net.WriteString(attacker:Nick())
 		net.Broadcast()
-	end	
+	end
 end)
 
 function Spawn(xpAmt, coinAmt, pos, target, reciever)

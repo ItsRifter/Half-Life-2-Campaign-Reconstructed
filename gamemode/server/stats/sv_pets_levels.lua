@@ -1,18 +1,3 @@
-PetAILike = {
-	[1] = ents.FindByClass("npc_kleiner"),
-	[2] = ents.FindByClass("npc_alyx"),
-	[3] = ents.FindByClass("npc_barny"),
-	[4] = ents.FindByClass("npc_citizen"),
-	[5] = ents.FindByClass("npc_monk"),
-}
-PetAIHate = {
-	[1] = ents.FindByClass("npc_zombie"),
-	[2] = ents.FindByClass("npc_fastzombie"),
-	[3] = ents.FindByClass("npc_poisonzombie"),
-	[4] = ents.FindByClass("npc_citizen"),
-	[5] = ents.FindByClass("npc_monk"),
-}
-
 function spawnPet(ply, pos)
 
 	if ply:IsValid() and ply:Team() == TEAM_ALIVE and not ply.petAlive then
@@ -24,16 +9,16 @@ function spawnPet(ply, pos)
 		
 			if tonumber(ply:GetNWInt("PetStage")) <= 0 then
 				ply.pet = ents.Create("npc_headcrab")
-				ply.pet:AddRelationship("npc_zombie D_HT 99")
-				ply.pet:AddRelationship("npc_headcrab D_HT 99")
 			elseif tonumber(ply:GetNWInt("PetStage")) == 1 then
 				ply.pet = ents.Create("npc_zombie_torso")
-				ply.pet:AddRelationship("npc_zombie D_HT 99")
-				ply.pet:AddRelationship("npc_headcrab D_HT 99")
 			elseif tonumber(ply:GetNWInt("PetStage")) == 2 then
-				ply.pet = ents.Create("npc_zombie")			
-				ply.pet:AddRelationship("npc_zombie D_HT 99")
-				ply.pet:AddRelationship("npc_headcrab D_HT 99")
+				ply.pet = ents.Create("npc_zombie")	
+			elseif tonumber(ply:GetNWInt("PetStage")) == 3 then
+				ply.pet = ents.Create("npc_headcrab_fast")
+			elseif tonumber(ply:GetNWInt("PetStage")) == 4 then
+				ply.pet = ents.Create("npc_fastzombie_torso")
+			elseif tonumber(ply:GetNWInt("PetStage")) == 5 then
+				ply.pet = ents.Create("npc_fastzombie")	
 			end
 		end
 		if not pos then
@@ -60,31 +45,28 @@ function spawnPet(ply, pos)
 				net.WriteEntity(ply.pet)
 			net.Send(ply)
 		end)
-		
+		beginRelationThink(ply)
 		ply.pet:SetNWInt("PetStr", ply.hl2cPersistent.PetStr)
 		ply.pet:SetNWInt("PetRegen", ply.hl2cPersistent.PetRegen)
-		
-		for k, v in pairs( ents.FindByClass( "npc_*" ) ) do
-			if IsValid(v) and v:IsPet() then
-				v:AddEntityRelationship(ply.pet, D_LI, 99)
-				ply.pet:AddEntityRelationship(v, D_LI, 99)
-			end
-			
-			for k, v in pairs( ents.FindByClass( "npc_*" ) ) do
-				if v:IsValid() and v:IsPet() then
-					v:AddEntityRelationship(ply.pet, D_LI, 99)
-					ply.pet:AddEntityRelationship(v, D_LI, 99)
-				elseif v:IsFriendly() then
-					v:AddEntityRelationship(ply.pet, D_LI, 99)
-					ply.pet:AddEntityRelationship(v, D_LI, 99)
-				else
-					ply.pet:AddEntityRelationship(v, D_HT, 99)
-				end
-			end
-		end
 	end
 end
 
+
+function beginRelationThink(ply)
+	if ply:IsValid() then
+		hook.Add("Think", "PetRelationThink", function()
+			if ply:IsValid() and ply.pet:IsValid() then
+				for k, v in pairs( ents.FindByClass( "npc_*" ) ) do
+					if (v:IsValid() and v:IsFriendly()) or v:IsPet() then
+						ply.pet:AddEntityRelationship(v, D_LI, 99)
+					elseif (v:IsValid() and not v:IsFriendly()) and not v:IsPet() then
+						ply.pet:AddEntityRelationship(v, D_HT, 99)
+					end
+				end
+			end
+		end)
+	end
+end
 -- Registry of all duels, accepted or not
 duelRegistry = {}
 
@@ -182,6 +164,8 @@ function PetDuelBegin(ply1, ply2, bet)
 	end
 end
 
+local healingTime = 0
+
 hook.Add("EntityTakeDamage", "PetHurtAndDamage", function(pet, dmgInfo)
 	local attacker = dmgInfo:GetAttacker()
 	local inflictor = dmgInfo:GetInflictor()
@@ -189,18 +173,14 @@ hook.Add("EntityTakeDamage", "PetHurtAndDamage", function(pet, dmgInfo)
 	
 	if pet:IsPlayer() or not pet:IsPet() then return end
 	local ply = pet.owner 
-		
-	local healthChange = pet:Health()
-	if not attacker:IsPlayer() then
 	
-		timer.Create("PetRecoveryTimer", GetConVar("hl2cr_petrecovertime"):GetInt(), 0, function()
-			pet:SetHealth(pet:Health() + (GetConVar("hl2cr_petrecovery"):GetInt() + ply:GetNWInt("PetRegen")))
-			if pet:Health() >= pet:GetMaxHealth() then
-				pet:SetHealth(pet:GetMaxHealth())
-				timer.Remove("PetRecoveryTimer")
-			end
-			
-		end)
+	if attacker == "env_fire" then
+		pet:Extinguish()
+	end
+	
+	if not attacker:IsPlayer() then
+		healingTime = GetConVar("hl2cr_petrecovertime"):GetInt() + CurTime()
+		runHealTime(ply, pet)
 	elseif attacker:IsPlayer() then
 		dmgInfo:SetDamage(0)
 	end
@@ -210,6 +190,20 @@ hook.Add("EntityTakeDamage", "PetHurtAndDamage", function(pet, dmgInfo)
 		timer.Remove("PetRecoveryTimer")
 	end
 end)
+
+function runHealTime(ply, pet)
+	hook.Add("Think", "petHealingThink", function()
+		if healingTime <= CurTime() then
+			if not pet:IsValid() then return end
+			pet:SetHealth(pet:Health() + (GetConVar("hl2cr_petrecovery"):GetInt() + ply:GetNWInt("PetRegen")))
+			healingTime = GetConVar("hl2cr_petrecovertime"):GetInt() + CurTime()
+			if pet:Health() >= pet:GetMaxHealth() and pet:IsValid() then
+				pet:SetHealth(pet:GetMaxHealth())
+				timer.Remove("PetRecoveryTimer")
+			end
+		end
+	end)
+end
 
 net.Receive("SpawnPetConCommand", function(len, ply)
 	if not ply.petAlive then
@@ -221,110 +215,197 @@ net.Receive("SpawnPetConCommand", function(len, ply)
 end)
 
 net.Receive("UpdateSkills", function(len, ply)
-	local skillUpdate = net.ReadInt(16)
+	
+	if not ply then return end
+	
 	ply.hl2cPersistent.PetPoints = ply.hl2cPersistent.PetPoints - 1
+	ply.hl2cPersistent.PetSkills = ply.hl2cPersistent.PetSkills + 1
 	
 	if ply.hl2cPersistent.PetStage == 0 then
-		if skillUpdate == 1 then
+		if ply.hl2cPersistent.PetSkills == 1 then
 			ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP + 10
-			ply:SetNWInt("PetHP", ply.hl2cPersistent.PetHP)
-			ply.hl2cPersistent.PetSkills = 1
 			
-		elseif skillUpdate == 2 then
-			ply.hl2cPersistent.PetSkills = 2
+		elseif ply.hl2cPersistent.PetSkills == 2 then
 			ply.hl2cPersistent.PetRegen = ply.hl2cPersistent.PetRegen + 5
-			ply:SetNWInt("PetRegen", ply.hl2cPersistent.PetRegen)
 			
-		elseif skillUpdate == 3 then
+		elseif ply.hl2cPersistent.PetSkills == 3 then
 			ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 1
-			ply:SetNWInt("StrBoost", ply.hl2cPersistent.PetStr)
-			ply.hl2cPersistent.PetSkills = 3
 			
-		elseif skillUpdate == 4 then
+		elseif ply.hl2cPersistent.PetSkills == 4 then
 			ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 1
-			ply:SetNWInt("StrBoost", ply.hl2cPersistent.PetStr)
-			ply.hl2cPersistent.PetSkills = 4
 			
-		elseif skillUpdate == 5 then
-			ply.hl2cPersistent.PetSkills = 5
+		elseif ply.hl2cPersistent.PetSkills == 5 then
 			ply.hl2cPersistent.PetRegen = ply.hl2cPersistent.PetRegen + 5
-			ply:SetNWInt("PetRegen", ply.hl2cPersistent.PetRegen)
 		end
 	elseif ply.hl2cPersistent.PetStage == 1 then
-			if skillUpdate == 1 then
-				ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP + 10
-				ply:SetNWInt("PetHP", ply.hl2cPersistent.PetHP)
-				ply.hl2cPersistent.PetSkills = 1
-		
-			elseif skillUpdate == 2 then
-				ply.hl2cPersistent.PetSkills = 2
-				ply.hl2cPersistent.PetRegen = ply.hl2cPersistent.PetRegen + 5
-				ply:SetNWInt("PetRegen", ply.hl2cPersistent.PetRegen)
-				
-			elseif skillUpdate == 3 then
-				ply.hl2cPersistent.PetSkills = 3	
-				ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 1
-				ply:SetNWInt("PetStr", ply.hl2cPersistent.PetStr)
-				
-			elseif skillUpdate == 4 then
-				ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 2
-				ply:SetNWInt("PetStr", ply.hl2cPersistent.PetStr)
-				ply.hl2cPersistent.PetSkills = 4
-				
-			elseif skillUpdate == 5 then
-				ply.hl2cPersistent.PetSkills = 5
-				ply.hl2cPersistent.PetRegen = ply.hl2cPersistent.PetRegen + 5
-				ply:SetNWInt("PetRegen", ply.hl2cPersistent.PetRegen)
-				
-			elseif skillUpdate == 6 then
-				ply.hl2cPersistent.PetSkills = 6
-				ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 1
-				ply:SetNWInt("PetStr", ply.hl2cPersistent.PetStr)
-				
-			elseif skillUpdate == 7 then
-				ply.hl2cPersistent.PetSkills = 7
-				ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 1
-				ply:SetNWInt("PetStr", ply.hl2cPersistent.PetStr)
-			end
+		if ply.hl2cPersistent.PetSkills == 1 then
+			ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP + 10
+	
+		elseif ply.hl2cPersistent.PetSkills == 2 then
+			ply.hl2cPersistent.PetRegen = ply.hl2cPersistent.PetRegen + 5
 			
-	elseif ply.hl2cPersistent.PetStage == 2 then
-			if skillUpdate == 1 then
-				ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP + 5
-				ply:SetNWInt("PetHP", ply.hl2cPersistent.PetHP)
-				ply.hl2cPersistent.PetSkills = 1
-		
-			elseif skillUpdate == 2 then
-				ply.hl2cPersistent.PetSkills = 2
-				ply.hl2cPersistent.PetRegen = ply.hl2cPersistent.PetRegen + 5
-				ply:SetNWInt("PetRegen", ply.hl2cPersistent.PetRegen)
-				
-			elseif skillUpdate == 3 then
-				ply.hl2cPersistent.PetSkills = 3	
-				ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP + 5
-				ply:SetNWInt("PetHP", ply.hl2cPersistent.PetHP)
-				
-			elseif skillUpdate == 4 then
-				ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 1
-				ply:SetNWInt("PetStr", ply.hl2cPersistent.PetStr)
-				ply.hl2cPersistent.PetSkills = 4
-				
-			elseif skillUpdate == 5 then
-				ply.hl2cPersistent.PetSkills = 5
-				ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP + 5
-				ply:SetNWInt("PetHP", ply.hl2cPersistent.PetHP)
-				
-			elseif skillUpdate == 6 then
-				ply.hl2cPersistent.PetSkills = 6
-				ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 1
-				ply:SetNWInt("PetStr", ply.hl2cPersistent.PetStr)
-				
-			elseif skillUpdate == 7 then
-				ply.hl2cPersistent.PetSkills = 7
-				ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 2
-				ply:SetNWInt("PetStr", ply.hl2cPersistent.PetStr)
-			end
+		elseif ply.hl2cPersistent.PetSkills == 3 then	
+			ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 1
+			
+		elseif ply.hl2cPersistent.PetSkills == 4 then
+			ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 2
+			
+		elseif ply.hl2cPersistent.PetSkills == 5 then
+			ply.hl2cPersistent.PetRegen = ply.hl2cPersistent.PetRegen + 5
+			ply:SetNWInt("PetRegen", ply.hl2cPersistent.PetRegen)
+			
+		elseif ply.hl2cPersistent.PetSkills == 6 then
+			ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 1
+			
+		elseif ply.hl2cPersistent.PetSkills == 7 then
+			ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 1
 		end
-	ply:SetNWInt("PetSkillPoints", removePoint)
+		
+	elseif ply.hl2cPersistent.PetStage == 2 then
+		if ply.hl2cPersistent.PetSkills == 1 then
+			ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP + 5
+	
+		elseif ply.hl2cPersistent.PetSkills == 2 then
+			ply.hl2cPersistent.PetRegen = ply.hl2cPersistent.PetRegen + 5
+			
+		elseif ply.hl2cPersistent.PetSkills == 3 then
+			ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP + 5
+			
+		elseif ply.hl2cPersistent.PetSkills == 4 then
+			ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 1
+			
+		elseif ply.hl2cPersistent.PetSkills == 5 then
+			ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP + 5
+			
+		elseif ply.hl2cPersistent.PetSkills == 6 then
+			ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 1
+			
+		elseif ply.hl2cPersistent.PetSkills == 7 then
+			ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 2
+		end
+	elseif ply.hl2cPersistent.PetStage == 3 then
+		if ply.hl2cPersistent.PetSkills == 1 then
+			ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 1
+			
+		elseif ply.hl2cPersistent.PetSkills == 2 then
+			ply.hl2cPersistent.PetRegen = ply.hl2cPersistent.PetRegen + 5
+			
+		elseif ply.hl2cPersistent.PetSkills == 3 then
+			ply.hl2cPersistent.PetRegen = ply.hl2cPersistent.PetRegen + 5
+		
+		elseif ply.hl2cPersistent.PetSkills == 4 then
+			ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP + 5
+		
+		elseif ply.hl2cPersistent.PetSkills == 5 then
+			ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 1
+		
+		elseif ply.hl2cPersistent.PetSkills == 6 then
+			ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 1
+			
+		elseif ply.hl2cPersistent.PetSkills == 7 then
+			ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 1
+			
+		end	
+	elseif ply.hl2cPersistent.PetStage == 4 then
+		if ply.hl2cPersistent.PetSkills == 1 then
+			ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP + 10
+			
+		elseif ply.hl2cPersistent.PetSkills == 2 then
+			ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP + 15
+			
+		elseif ply.hl2cPersistent.PetSkills == 3 then
+			ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP + 20
+			
+		elseif ply.hl2cPersistent.PetSkills == 4 then
+			ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 1
+			
+		elseif ply.hl2cPersistent.PetSkills == 5 then
+			ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 2
+			
+		elseif ply.hl2cPersistent.PetSkills == 6 then
+			ply.hl2cPersistent.PetRegen = ply.hl2cPersistent.PetRegen + 5
+			
+		elseif ply.hl2cPersistent.PetSkills == 7 then
+			ply.hl2cPersistent.PetRegen = ply.hl2cPersistent.PetRegen + 10
+			
+		elseif ply.hl2cPersistent.PetSkills == 8 then
+			ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 2
+		elseif ply.hl2cPersistent.PetSkills == 9 then
+			ply.hl2cPersistent.PetRegen = ply.hl2cPersistent.PetRegen + 10
+		end
+	elseif ply.hl2cPersistent.PetStage == 5 then
+		if ply.hl2cPersistent.PetSkills == 1 then
+			ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 2
+			
+		elseif ply.hl2cPersistent.PetSkills == 2 then
+			ply.hl2cPersistent.PetRegen = ply.hl2cPersistent.PetRegen + 10
+			
+		elseif ply.hl2cPersistent.PetSkills == 3 then
+			ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP + 15
+			
+		elseif ply.hl2cPersistent.PetSkills == 4 then
+			ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP + 25
+			
+		elseif ply.hl2cPersistent.PetSkills == 5 then
+			ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 2
+		
+		elseif ply.hl2cPersistent.PetSkills == 6 then
+			ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 3
+			
+		elseif ply.hl2cPersistent.PetSkills == 7 then
+			ply.hl2cPersistent.PetRegen = ply.hl2cPersistent.PetRegen + 15
+			
+		elseif ply.hl2cPersistent.PetSkills == 8 then
+			ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP + 25
+		
+		elseif ply.hl2cPersistent.PetSkills == 9 then
+			ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP + 25
+		
+		elseif ply.hl2cPersistent.PetSkills == 10 then
+		
+		
+		elseif ply.hl2cPersistent.PetSkills == 11 then
+		
+		end
+	end
+	ply:SetNWInt("PetSkillPoints", ply.hl2cPersistent.PetPoints)
+end)
+
+net.Receive("NewPet", function(len, ply)
+	local newPet = net.ReadString()
+	
+	if not ply then return end
+	
+	if newPet == "hl2cr_fastzombie_pet" then
+		ply.hl2cPersistent.PetMaxXP = 300
+		ply.hl2cPersistent.PetHP = 125
+		ply.hl2cPersistent.PetLevel = 1
+		
+		ply.hl2cPersistent.PetMaxLvl = 8
+		
+		ply.hl2cPersistent.PetStage = 3
+		
+		ply.hl2cPersistent.PetRegen = 0
+		ply.hl2cPersistent.PetSkills = 0
+		ply.hl2cPersistent.PetStr = 1
+		
+		if ply.pet:IsValid() then
+			ply.pet:Remove()
+		end
+		
+		ply:ChatPrint("You've adopted a fast headcrab, Congratulations!")
+		ply.petAlive = false
+		
+		ply:SetNWInt("PetSkill", ply.hl2cPersistent.PetLevel)
+	
+		ply:SetNWInt("PetStr", ply.hl2cPersistent.PetStr)
+		ply:SetNWInt("PetHP", ply.hl2cPersistent.PetHP)
+		ply:SetNWInt("PetRegen", ply.hl2cPersistent.PetRegen)
+		
+		ply:SetNWInt("PetStage", ply.hl2cPersistent.PetStage)
+		ply:SetNWInt("PetLevel", ply.hl2cPersistent.PetLevel)
+		ply:SetNWInt("PetMaxXP", ply.hl2cPersistent.PetMaxXP)
+	end
 end)
 
 net.Receive("Evolving", function(len, ply)
@@ -348,16 +429,22 @@ net.Receive("Evolving", function(len, ply)
 	ply:SetNWInt("PetHP", ply.hl2cPersistent.PetHP)
 	ply:SetNWInt("PetRegen", ply.hl2cPersistent.PetRegen)
 	
-	ply.hl2cPersistent.PetMaxXP = 200 + (ply.hl2cPersistent.PetMaxXP + 100)
+	ply.hl2cPersistent.PetMaxXP = 100 + (ply.hl2cPersistent.PetMaxXP + 50)
 	ply.hl2cPersistent.PetStage = ply.hl2cPersistent.PetStage + 1
 	ply:SetNWInt("PetStage", ply.hl2cPersistent.PetStage)
 	ply:SetNWInt("PetLevel", ply.hl2cPersistent.PetLevel)
 	ply:SetNWInt("PetMaxXP", ply.hl2cPersistent.PetMaxXP)
 	
 	if ply.hl2cPersistent.PetStage == 1 then
-		ply.hl2cPersistent.PetMaxLvl = 11
+		ply.hl2cPersistent.PetMaxLvl = 7
 	elseif ply.hl2cPersistent.PetStage == 2 then
-		ply.hl2cPersistent.PetMaxLvl = 13
+		ply.hl2cPersistent.PetMaxLvl = 6
+	end
+	
+	if ply.hl2cPersistent.PetStage == 4 then
+		ply.hl2cPersistent.PetMaxLvl = 10
+	elseif ply.hl2cPersistent.PetStage == 5 then
+		ply.hl2cPersistent.PetMaxLvl = 11
 	end
 	
 	timer.Simple(5, function()
@@ -387,7 +474,7 @@ function addPetXP(ply, amt)
 
 	if ply.hl2cPersistent.PetXP >= ply.hl2cPersistent.PetMaxXP then
 		ply.hl2cPersistent.PetXP = 0
-		ply.hl2cPersistent.PetMaxXP = ply.hl2cPersistent.PetMaxXP + 50
+		ply.hl2cPersistent.PetMaxXP = ply.hl2cPersistent.PetMaxXP + 25
 		ply.hl2cPersistent.PetLevel = ply.hl2cPersistent.PetLevel + 1
 		ply.hl2cPersistent.PetPoints = ply.hl2cPersistent.PetPoints + 1
 		

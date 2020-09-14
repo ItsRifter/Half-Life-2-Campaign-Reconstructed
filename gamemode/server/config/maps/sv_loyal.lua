@@ -11,12 +11,16 @@ function beginLoyal()
 	
 	if playerCount > 4 and playerCount <= 8 then
 		loyalPlayers = 2
-	end	
+	else
+		loyalPlayers = 0
+	end
 	
 	--Assign the chance table to each player
 	for k, v in pairs(player.GetAll()) do
-		local chosen = math.random(playerCount)
-		chance[k] = v
+		if loyalPlayers != 0 then
+			local chosen = math.random(playerCount)
+			chance[k] = v
+		end
 	end
 	
 	--For how many can become loyal, loop through each player and see if they

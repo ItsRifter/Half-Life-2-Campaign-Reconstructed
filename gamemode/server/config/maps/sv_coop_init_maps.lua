@@ -55,7 +55,7 @@ hook.Add( "NextMap", "ChangeMap", function()
 	
 	net.Start("DisplayMapTimer")
 	net.Broadcast()
-	timer.Create("MapTimer", 20, 0, function() hook.Call("OnChangeLevel") timer.Remove("MapTimer") end)
+	timer.Create("MapTimer", 20, 1, function() hook.Call("OnChangeLevel") timer.Remove("MapTimer") end)
 	
 end)
 

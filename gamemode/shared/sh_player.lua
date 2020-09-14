@@ -2,13 +2,15 @@ AddCSLuaFile() -- Add itself to files to be sent to the clients, as this file is
 local startingWeapons = {}
 
 hook.Add("PlayerInitialSpawn", "MiscSurv", function(ply)
-		
+	
 	if GetConVar("hl2cr_survivalmode"):GetInt() == 1 and ply:Alive() and not ply.isAliveSurv then
 		ply.isAliveSurv = false
 	end
 	ply.respawnTimer = 0
 	ply.hasDiedOnce = false
 	ply.crowbarOnly = true
+	
+	ply.BringPet = true
 	
 	ply.inSquad = false
 	ply.canBecomeLoyal = false
@@ -17,7 +19,7 @@ end)
 
 
 hook.Add("PlayerSpawn", "Misc", function(ply)
-
+	
 	--Give spawning items to player first
 	for i, w in pairs(ents.FindByName("player_spawn_items")) do
 		w:SetPos(ply:GetPos())
@@ -28,9 +30,9 @@ hook.Add("PlayerSpawn", "Misc", function(ply)
 	local addHPUpg = 0
 	local levelHPBoost = ply.hl2cPersistent.Level - 1
 	local armourBoost = 0
-	local addStats = 0
+	local addStatsHP = 0
 	
-	if string.find(ply.hl2cPersistent.TempUpg, "Health Boost") then
+	if string.find(ply.hl2cPersistent.TempUpg, "Health_Boost") then
 		addHPUpg = addHPUpg + 5
 	end
 	
@@ -42,20 +44,33 @@ hook.Add("PlayerSpawn", "Misc", function(ply)
 		ply:ChatPrint("Nice try, don't do that next time")
 		ply:Spectate(5)
 	end
-	
-	if ply.hl2cPersistent.Arm == "hl2cr/armour_parts/health" then
-		addStats = 10
-	elseif ply.hl2cPersistent.Arm == "hl2cr/armour_parts/healthmk2" then
-		addStats = 15
-	elseif ply.hl2cPersistent.Arm == "hl2cr/armour_parts/battery" then
-		armourBoost = 5
+	for i, armSet in pairs(GAMEMODE.ArmourItem) do
+		if ply.hl2cPersistent.Arm == "Health_Module_MK1" then
+			addStatsHP = 5
+			
+		elseif ply.hl2cPersistent.Arm == "Health_Module_MK2" then
+			addStatsHP = 10
+			
+		elseif ply.hl2cPersistent.Arm == "Health_Module_MK3" then
+			addStatsHP = 15
+
+		elseif ply.hl2cPersistent.Arm == "Suit_Battery_Pack_MK1" then
+			armourBoost = 5
+			
+		elseif ply.hl2cPersistent.Arm == "Suit_Battery_Pack_MK2" then
+			armourBoost = 10
+			
+		elseif ply.hl2cPersistent.Arm == "Suit_Battery_Pack_MK3" then
+			armourBoost = 15
+		end
 	end
 	
-	local maxHP = 100 + levelHPBoost + addHPUpg + addStats
-	local starterArmour = armourBoost
+	
+	local maxHP = 100 + levelHPBoost + addHPUpg + addStatsHP
+	
 	ply:SetMaxHealth(maxHP)
 	ply:SetHealth(maxHP)
-	ply:SetArmor(starterArmour)
+	ply:SetArmor(armourBoost)
 
 	if not ply.loyal then
 		ply:SetTeam(TEAM_ALIVE)
@@ -105,23 +120,49 @@ end)
 function GM:DoPlayerDeath(ply, attacker, dmgInfo)
 	ply:CreateRagdoll()
 	ply:SetTeam(TEAM_DEAD)
+	
+	net.Start("DisplayDeathTimer")
+	net.WriteInt(GetConVar("hl2cr_difficulty"):GetInt() * GetConVar("hl2cr_respawntime"):GetInt(), 16)
+	net.Send(ply)
 end
 
-hook.Add("PlayerHurt", "PlayerRecover", function(vic, att, hp, dmg)
-	if string.find(vic.hl2cPersistent.TempUpg, "Self Healing") then
-		if not timer.Exists("HealingTimer") then
-			timer.Create("HealingTimer", 30, 0, function()
-				if vic:Health() <= vic:GetMaxHealth() then
-					vic:SetHealth(vic:Health() + 5)
-					if vic:Health() >= vic:GetMaxHealth() then
-						vic:SetHealth(vic:GetMaxHealth())
-						timer.Remove("HealingTimer")
-					end
-				end
-			end)
-		end
-	end
+local tempUpgHealTime = 0
+
+hook.Add("PlayerHurt", "PlayerRecover", function(vic, att, hp, dmg)	
+	tempUpgHealTime = 60 + CurTime()
+	beginHealingTimer(vic)
 end)
+
+function beginHealingTimer(ply)
+	local healthBoost = 0
+	
+	if not ply then return end
+	
+	if string.find(ply.hl2cPersistent.TempUpg, "Self_Healing") then
+		healthBoost = healthBoost + 5
+	end
+	
+	if string.find(ply.hl2cPersistent.TempUpg, "Self_Healing_2") then 
+		healthBoost = healthBoost + 10
+	end
+	
+	if string.find(ply.hl2cPersistent.TempUpg, "Self_Healing_3") then 
+		healthBoost = healthBoost + 15
+	end
+	
+	if healthBoost == 0 then return end
+	hook.Add("Think", "healingThink", function()
+		if tempUpgHealTime <= CurTime() then
+			if ply:Health() <= ply:GetMaxHealth() and ply:IsValid() then
+				ply:SetHealth(ply:Health() + healthBoost)
+				if ply:Health() >= ply:GetMaxHealth() then
+					ply:SetHealth(ply:GetMaxHealth())
+				end
+				tempUpgHealTime = 60 + CurTime() 
+			end
+		end
+	end)
+end
 
 hook.Add("CanExitVehicle", "PodCannotExit", function(veh, ply)
 	if game.GetMap() == "d3_citadel_01" or game.GetMap() == "d3_breen_01" then
@@ -153,31 +194,52 @@ hook.Add("CanPlayerSuicide", "DefaultSuicide", function(ply)
 	end
 end)
 
-hook.Add("EntityTakeDamage", "DisableAR2DMG", function(ent, dmgInfo)
+hook.Add("EntityTakeDamage", "BlastResist", function(ent, dmgInfo)
 	local attacker = dmgInfo:GetAttacker()
 	local dmg = dmgInfo:GetDamage()
+	local dmgType = dmgInfo:GetDamageType()
+	local expResist = 0
+	
+	
+	if ent:IsPlayer() then 
+		if string.find(ent.hl2cPersistent.TempUpg, "Blast_Resistance") then
+			expResist = 50
+		end
+	end
+	
 	if attacker and ent:IsPlayer() and ent:IsPet() then
 		dmgInfo:SetDamage(0)
 	elseif not ent:IsPlayer() then
 		dmgInfo:SetDamage(dmg)
 	end
+	
+	if ent:IsPlayer() and dmgType == DMG_BLAST then
+		dmgInfo:SetDamage(dmg - expResist)
+	end
+	
 end)
 
-hook.Add("PlayerShouldTakeDamage", "DisablePVP", function(ply, attacker)
-	if not attacker:IsPlayer() then return true end
-	
-	if (ply:Team() == TEAM_ALIVE and attacker:Team() == TEAM_ALIVE) then
-		return false
-	end
-	
-	if (ply:Team() == TEAM_LOYAL and attacker:Team() == TEAM_LOYAL) then
-		return false
-	end
-	
-	if ply != attacker then
+hook.Add("PlayerShouldTakeDamage", "DisablePVP", function(ply, attacker)	
+	if attacker == ply then
 		return true
 	end
 	
+	if attacker:IsPlayer() and attacker:Team() == TEAM_ALIVE then
+		return false
+	end
+	
+	if attacker:IsNPC() then 
+		return true 
+	end
+	
+	if not attacker:IsPlayer() and attacker:EntIndex() == 0 then
+		return true
+	end
+	
+	if ply:Team() == TEAM_LOYAL and attacker:Team() == TEAM_LOYAL then
+		return false
+	end
+		
 	if attacker:GetClass() == "npc_rollermine" and game.GetMap() == "d1_eli_02" then
 		return false
 	end
@@ -186,9 +248,11 @@ hook.Add("PlayerShouldTakeDamage", "DisablePVP", function(ply, attacker)
 end)
 
 hook.Add("ScalePlayerDamage", "DiffScalingPly", function( ply, hitgroup, dmgInfo )
-	local attacker = dmgInfo:GetAttacker()	 
+	local attacker = dmgInfo:GetAttacker()	
+	local inflictor = dmgInfo:GetInflictor()
 	local dmg = dmgInfo:GetDamage()
-	
+	local scaling = 0
+
 	if attacker:IsPlayer() and attacker:Team() == TEAM_LOYAL then
 		if (ply:IsPlayer() and ply:Team() == TEAM_ALIVE) and (attacker:IsPlayer() and attacker:Team() == TEAM_LOYAL) then
 			if hitgroup == HITGROUP_HEAD then
@@ -200,21 +264,22 @@ hook.Add("ScalePlayerDamage", "DiffScalingPly", function( ply, hitgroup, dmgInfo
 			dmgInfo:ScaleDamage(0.75)
 		end
 	elseif not attacker:IsPlayer() then
+		local armour = ply.hl2cPersistent.Armour / 36
 		if hitgroup == HITGROUP_HEAD and GetConVar("hl2cr_difficulty"):GetInt() != 1 then
-			dmgInfo:ScaleDamage( 1.25 * GetConVar("hl2cr_difficulty"):GetInt())
+			dmgInfo:ScaleDamage((1.25 * GetConVar("hl2cr_difficulty"):GetInt()) - (armour + expResist))
 			return
 		elseif hitgroup == HITGROUP_CHEST and GetConVar("hl2cr_difficulty"):GetInt() != 1 then
-			dmgInfo:ScaleDamage( 1 * GetConVar("hl2cr_difficulty"):GetInt())
+			dmgInfo:ScaleDamage((1 * GetConVar("hl2cr_difficulty"):GetInt()) - (armour + expResist))
 			return
 		end
 	end
+	
+	
 end)
-
-local pickedOnce = false
 
 hook.Add("PlayerCanPickupWeapon", "DisableWeaponsPickup", function(ply, weapon) 
 	if ply:Team() == TEAM_LOYAL then
-		return true
+		return false
 	end
 	
 	if weapon:GetClass() == "weapon_357" and ply:GetAmmoCount("357") >= GetConVar("max_357"):GetInt() then
@@ -375,7 +440,7 @@ hook.Add("PlayerLoadout", "StarterWeapons", function(ply)
 		ply:Give("weapon_rpg")
 		ply:Give("weapon_frag")
 	end
-	
+
 	if game.GetMap() == "d2_prison_05" then
 		ply:Give("weapon_crowbar")
 		ply:Give("weapon_physcannon")
@@ -398,7 +463,7 @@ hook.Add("WeaponEquip", "WeaponPickedUp", function(weapon, ply)
 
 	if weapon:GetClass() == "weapon_crowbar" and game.GetMap() == "d1_trainstation_06" then
 		for k, v in pairs(player.GetAll()) do
-			Achievement(v, "Trusty_Hardware", "HL2_Ach_List", 250)
+			Achievement(v, "Trusty_Hardware", "HL2_Ach_List", 500)
 		end
 	end
 end)
@@ -441,11 +506,9 @@ function RespawnTimerActive(ply, deaths)
 		return
 	end
 
-	if GetConVarNumber("hl2cr_respawntime") ~= 0 then
-		if ply:Team() == TEAM_ALIVE then
+	if GetConVarNumber("hl2cr_respawntime") != 0 then
+		if ply:Team() != TEAM_ALIVE then
 			ply.respawnTimer = (GetConVarNumber("hl2cr_respawntime") * GetConVarNumber("hl2cr_difficulty")) + CurTime()
-		else
-			ply.respawnTimer = 5 + CurTime()
 		end
 	end
 end
@@ -606,7 +669,7 @@ function giveVortex(map, ply)
 	if not string.find(table.ToString(ply.hl2cPersistent.Vortexes), map) then
 	
 		table.insert(ply.hl2cPersistent.Vortexes, map)
-		Special(ply, map, "HL2_Vortex", 250)
+		Special(ply, map, "HL2_Vortex", 750)
 
 		timer.Simple(0.01, function()
 			local effectdata = EffectData()
@@ -616,16 +679,20 @@ function giveVortex(map, ply)
 			util.Effect( "cball_explode", effectdata )
 			ply:EmitSound("ambient/energy/zap7.wav", 100, 100)
 		end)
-	end	
+	end
+	
+	if table.Count(ply.hl2cPersistent.Vortexes) == 24 then
+		Achievement(ply, "Vortex_Locator", "HL2_Ach_List", 30000)
+	end
 end
 
 function giveLambda(map, ply)
 	if not string.find(table.ToString(ply.hl2cPersistent.Lambdas), map) then
 		table.insert(ply.hl2cPersistent.Lambdas, map)
-		Special(ply, map, "HL2_Lambda", 250)
+		Special(ply, map, "HL2_Lambda", 500)
 	end
 	
 	if table.Count(ply.hl2cPersistent.Lambdas) == 34 then
-		Achievement(ply, "Lambda_Locator", "HL2_Ach_List", 5000)
+		Achievement(ply, "Lambda_Locator", "HL2_Ach_List", 15000)
 	end
 end

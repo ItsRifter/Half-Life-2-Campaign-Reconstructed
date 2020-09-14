@@ -58,7 +58,7 @@ function StartSquad(leaderName, teamName)
 		end
 		if XPTotal != 0 and not timer.Exists("SquadTimer") then
 			print("Timer Created")
-			timer.Create("SquadTimer", 10, 0, function()
+			timer.Create("SquadTimer", 10, 1, function()
 				
 				
 				print("Timer Expired")
@@ -88,7 +88,7 @@ function JoinSquad(leaderName, teamName)
 		end
 		if XPTotal != 0 and not timer.Exists("SquadTimer") then
 			print("Timer Created")
-			timer.Create("SquadTimer", 5, 0, function()
+			timer.Create("SquadTimer", 5, 1, function()
 				
 				
 				print("Timer Expired")

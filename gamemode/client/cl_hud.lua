@@ -19,16 +19,17 @@ net.Receive("IndicSpawn", function()
 
 	local xpDisplay = net.ReadInt(16)
 	local coinsDisplay = net.ReadInt(16)
+	
 	local position = net.ReadVector()
 	
-	local colorCoins = Color(255, 140, 0)
-	local colorXP = Color(100, 190, 255)
+	local colorCoins = Color(100, 190, 255)
+	local colorXP = Color(255, 140, 0)
 	
 	local txt1 = tostring("XP " .. xpDisplay)
 	local txt2 = tostring("λ" .. coinsDisplay)
 	
-	SpawnCoins(txt1, colorXP, position, 1)
-	SpawnXP(txt2, colorCoins, position, 1)
+	SpawnCoins(txt1, colorCoins, position, 1)
+	SpawnXP(txt2, colorXP, position, 1)
 end)
 
 function SpawnXP(xpTxt, col, pos, ttl)
@@ -166,7 +167,14 @@ end)
 
 local shouldDrawTimer = false
 local shouldDrawRestartTimer = false
+local shouldDrawDeathTimer = false
+local deathSeconds = 0
 net.Receive("DisplayMapTimer", function() shouldDrawTimer = true end)
+
+net.Receive("DisplayDeathTimer", function() 
+	shouldDrawDeathTimer = true 
+	deathSeconds = net.ReadInt(16)
+end)
 
 net.Receive("SurvAllDead", function() shouldDrawRestartTimer = true end)
 
@@ -217,6 +225,22 @@ hook.Add("HUDPaint", "HUDPaint_DrawTimer", function()
 		end
 		draw.DrawText("Restarting in " .. math.Round(timer.TimeLeft("RestartTimer"), 0), "Map_Font", ScrW() / 2, ScrH() - 350, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	end
+	
+	if shouldDrawDeathTimer then
+		if not timer.Exists("DeathTimer") then
+			timer.Create("DeathTimer", deathSeconds, 1, function()
+				timer.Remove("DeathTimer")
+				shouldDrawDeathTimer = false
+			end)
+		end
+		surface.SetDrawColor(45, 45, 45, 150)
+		if ScrW() == 3840 and ScrH() == 2160 then
+			surface.DrawRect(0, ScrH() / 2 + 700, ScrW(), 175)
+		else
+			surface.DrawRect(0, ScrH() / 2 + 175, ScrW(), 175)
+		end
+		draw.DrawText("You will respawn in " .. math.Round(timer.TimeLeft("DeathTimer"), 0) .. " seconds", "Map_Font", ScrW() / 2, ScrH() - 350, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+	end
 end)
 
 net.Receive("DisplayRewards", function()
@@ -236,7 +260,7 @@ net.Receive("PlaySoundLevelUp", function()
 			surface.PlaySound("items/battery_pickup.wav")
 		end)
 	end
-	timer.Create("EarRapeRemover", 2, 0, function()
+	timer.Create("EarRapeRemover", 2, 1, function()
 		timer.Remove("EarRapeRemover")
 	end)
 	

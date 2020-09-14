@@ -149,8 +149,8 @@ GM.ArmourItem = {}
 GM.PetItem = {}
 GM.TempUpgItem = {}
 
-function Register.Armour(armItem) 
-	GM.ArmourItem[armItem.Name] = armItem
+function Register.Armour(armourItem) 
+	GM.ArmourItem[armourItem.Name] = armourItem
 end	
 
 function Register.Pet(petItem) 

@@ -24,10 +24,9 @@ include("server/sv_spectate.lua")
 include("server/stats/sv_pets_levels.lua")
 include("server/config/maps/sv_loyal.lua")
 include("server/sv_afkhandler.lua")
-
-
 include("server/config/maps/sv_hl2_init_maps.lua")
 include("server/config/maps/sv_coop_init_maps.lua")
+include("server/config/maps/sv_lobby_init_maps.lua")
 include("server/config/maps/sv_vortex.lua")
 include("server/config/maps/sv_lambda.lua")
 
@@ -92,7 +91,6 @@ function GM:Initialize()
 	airboatGunSpawnable = false
 end
 
-
 function GM:ShowHelp(ply)
 	net.Start("Greetings_new_player")
 	net.Send(ply)
@@ -114,12 +112,6 @@ function GM:ShowTeam(ply)
 		ply.spawnAirboatGun:Remove()
 		ply.AllowSpawn = true
 	end
-end
-
-if game.GetMap() != "hl2c_lobby_remake" then
-	timer.Create("LobbyReturnAuto", 3600, 0, function()
-	RunConsoleCommand("changelevel", "hl2c_lobby_remake")
-	end)
 end
 
 function GM:ShouldCollide( ent1, ent2 )
@@ -241,7 +233,7 @@ function GM:CanPlayerEnterVehicle(ply)
 		return true
 	end
 	
-	if ply.spawnJeep:GetOwner():IsValid() and ply.spawnJeep:GetOwner() == ply then
+	if ply.spawnJeep:GetOwner() == ply and ply.spawnJeep:GetOwner():IsValid() then
 		return true
 	end
 	
@@ -256,9 +248,52 @@ function GM:ShowSpare2(ply)
 		net.Send(ply)
 	end
 end
+hook.Add("Think", "votingThink", function()
+	local easyRequired = math.ceil(#player.GetAll() / 2)
+	local mediumRequired = math.ceil(#player.GetAll() / 2)
+	local hardRequired = math.ceil(#player.GetAll() / 2)
+
+	local survRequired = #player.GetAll()
+	local neededVotes = #player.GetAll()
+	local neededVotesRestart = #player.GetAll()
+
+	for k, v in pairs(player.GetAll()) do
+		v:SetNWInt("EasyVotes", easyRequired)
+		v:SetNWInt("MediumVotes", mediumRequired)
+		v:SetNWInt("HardVotes", hardRequired)
+		v:SetNWInt("SurvVotes", survRequired)
+		
+		v:SetNWInt("RestartVotes", neededVotesRestart)
+		v:SetNWInt("LobbyVotes", neededVotes)
+	end
+end)
+
+gameevent.Listen("player_disconnect")
+hook.Add("player_disconnect", "playerDisconnect", function(data)
+	local name = data.name
+	local steamid = data.networkid
+	local id = data.userid
+	local bot = data.bot
+	local reason = data.reason
+	
+	PrintMessage( HUD_PRINTTALK, steamid .. ": " .. name .. " has disconnected from the server, Reason: " .. reason)
+	
+end)
 
 hook.Add( "PrePACEditorOpen", "RestrictToSuperadmin", function( ply )
 	if not ply:IsSuperAdmin( ) then
 		return false
 	end
 end)
+
+function SetUpMap()
+	if game.GetMap() == "hl2c_lobby_remake" then
+		SetupLobbyMap()
+	elseif string.match(game.GetMap(), "d1_") or string.match(game.GetMap(), "d2_") 
+	or string.match(game.GetMap(), "d3_") then
+		SetupHL2Map()
+	end
+end
+
+hook.Add("InitPostEntity", "SetupHL2Lua", SetUpMap)
+hook.Add("PostCleanupMap", "SetupHL2Lua", SetUpMap)
