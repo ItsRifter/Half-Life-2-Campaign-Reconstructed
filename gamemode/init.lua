@@ -76,9 +76,15 @@ function meta:IsPet()
 		return false
 	end
 end
-
+local FRIENDLY_NPCS = {
+	["npc_kleiner"] = true,
+	["npc_monk"] = true,
+	["npc_alyx"] = true,
+	["npc_barney"] = true,
+	["npc_citizen"] = true
+}
 function meta:IsFriendly()
-	if self:IsValid() and self:IsNPC() and (self:GetClass() == "npc_kleiner" or self:GetClass() == "npc_monk" or self:GetClass() == "npc_alyx" or self:GetClass() == "npc_barney" or self:GetClass() == "npc_citizen") then
+	if self:IsValid() and self:IsNPC() and FRIENDLY_NPCS[self:GetClass()] then
 		return true
 	else
 		return false
@@ -105,42 +111,36 @@ function GM:ShowTeam(ply)
 		ply.AllowSpawn = true
 		ply.hasSeat = false
 	end
-	
+
 	if ply.spawnAirboat then
 		ply.spawnAirboat:Remove()
 		ply.AllowSpawn = true
 	end
-	
+
 	if ply.spawnAirboatGun then
 		ply.spawnAirboatGun:Remove()
 		ply.AllowSpawn = true
 	end
 end
+local VEHICLES = {
+	["prop_vehicle_airboat"] = true,
+	["prop_vehicle_jeep"] = true
+}
+hook.Add( "ShouldCollide", "hl2crShouldCollide", function( ent1, ent2 )
 
-function GM:ShouldCollide( ent1, ent2 )
+	if ent1:IsPlayer( ) and ent2:IsPlayer( ) and ent2:Team( ) == ent1:Team( ) then return false; end
+	if ent1:IsPlayer( ) and ent2:IsPlayer( ) and ent2:Team( ) ~= ent1:Team( ) then return true; end
+	-- Set Up Pets Collision with Players
+	if ent1:IsPet( ) and ent2:IsPlayer( ) then return false; end
+	if ent2:IsPet( ) and ent1:IsPlayer( ) then return false; end
 
-    if IsValid(ent1) and IsValid(ent2) and ent1:IsPlayer() and ent2:IsPlayer() and ent1:Team() == TEAM_ALIVE and ent2:Team() == TEAM_ALIVE then
-		return false 
-	end
-	
-	if IsValid(ent1) and IsValid(ent2) and ent1:IsPlayer() and ent2:IsPlayer() and (ent1:Team() == TEAM_COMPLETED_MAP and ent2:Team() == TEAM_COMPLETED_MAP) then
-		return false 
-	end
-	
-	if IsValid(ent1) and IsValid(ent2) and ent1:IsPlayer() and ent2:IsPlayer() and (ent1:Team() == TEAM_ALIVE and ent2:Team() == TEAM_COMPLETED_MAP or ent1:Team() == TEAM_COMPLETED_MAP and ent2:Team() == TEAM_ALIVE) then
-		return false
-	end 
-	
-	if IsValid(ent1) and IsValid(ent2) and ent1:IsPlayer() and ent2:IsPet() then
-		return false
-	end
-	
-	if IsValid(ent1) and IsValid(ent2) and ent1:IsPlayer() and (ent2:GetClass() == "prop_vehicle_jeep" or ent2:GetClass() == "prop_vehicle_airboat") then
+	if ent1:IsFriendly( ) and ent2:IsPlayer( ) then return false; end
+	if ent2:IsFriendly( ) and ent1:IsPlayer( ) then return false; end
 
-		return false
-	end
-	return true
-end
+	if VEHICLES[ent1:GetClass()] and ent2:IsPlayer( ) then return false; end
+	if VEHICLES[ent2:GetClass()] and ent1:IsPlayer( ) then return false; end
+
+end )
 
 lockedSpawn = false
 

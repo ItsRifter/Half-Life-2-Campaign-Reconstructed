@@ -6,6 +6,9 @@ hook.Add("PlayerInitialSpawn", "MiscSurv", function(ply)
 	if GetConVar("hl2cr_survivalmode"):GetInt() == 1 and ply:Alive() and not ply.isAliveSurv then
 		ply.isAliveSurv = false
 	end
+	if not game.SinglePlayer( ) then
+		ply:SetCustomCollisionCheck( true );
+	end
 	ply.respawnTimer = 0
 	ply.hasDiedOnce = false
 	ply.crowbarOnly = true
@@ -74,7 +77,7 @@ hook.Add("PlayerSpawn", "Misc", function(ply)
 
 	if not ply.loyal then
 		ply:SetTeam(TEAM_ALIVE)
-		ply:SetCustomCollisionCheck(true)
+		--ply:SetCustomCollisionCheck(true)
 		ply:SetupHands()
 	end
 	
@@ -351,7 +354,7 @@ hook.Add("PlayerLoadout", "StarterWeapons", function(ply)
 		
 	if ply.loyal then		
 		ply:SetTeam(TEAM_LOYAL)
-		ply:SetCustomCollisionCheck(false)
+		--ply:SetCustomCollisionCheck(false)
 		ply:SetupHands()
 		
 		ply:SetModel("models/player/combine_soldier.mdl")

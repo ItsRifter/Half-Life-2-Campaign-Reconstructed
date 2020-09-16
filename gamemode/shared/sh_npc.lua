@@ -1,25 +1,25 @@
 AddCSLuaFile() -- Add itself to files to be sent to the clients, as this file is shared
 
-FRIENDLY_NPCS = {
+--[[FRIENDLY_NPCS = {
 	"npc_citizen"
-}
+}--]]
 INVUL_NPCS = {
-	"npc_alyx",
-	"npc_barney",
-	"npc_breen",
-	"npc_dog",
-	"npc_eli",
-	"npc_fisherman",
-	"npc_gman",
-	"npc_kleiner",
-	"npc_magnusson",
-	"npc_monk",
-	"npc_mossman",
-}	
-
-VORTI_FRIENDLY = {
-	"npc_vortigaunt",
+	["npc_alyx"] = true,
+	["npc_barney"] = true,
+	["npc_breen"] = true,
+	["npc_dog"] = true,
+	["npc_eli"] = true,
+	["npc_fisherman"] = true,
+	["npc_gman"] = true,
+	["npc_kleiner"] = true,
+	["npc_magnusson"] = true,
+	["npc_monk"] = true,
+	["npc_mossman"] = true
 }
+
+--[[VORTI_FRIENDLY = {
+	"npc_vortigaunt",
+}--]]
 
 hook.Add("EntityTakeDamage", "FriendOrFoe", function(ent, dmgInfo)
 	friendlyMaps = {
@@ -92,7 +92,7 @@ hook.Add("EntityTakeDamage", "FriendOrFoe", function(ent, dmgInfo)
 		"d3_citadel_05",
 		"d3_breen_01",
 	}
-	
+
 	local attacker = dmgInfo:GetAttacker()
 	local dmg = dmgInfo:GetDamage()
 	if attacker:IsPet() and ent:IsNPC() then
@@ -100,17 +100,17 @@ hook.Add("EntityTakeDamage", "FriendOrFoe", function(ent, dmgInfo)
 		local totalDMG = dmg + attacker:GetNWInt("PetStr")
 		dmgInfo:SetDamage(totalDMG)
 	end
-	
-	if ent:IsPet() and (attacker:IsNPC() and table.HasValue(INVUL_NPCS, attacker:GetClass())) then
+
+	if ent:IsPet() and (attacker:IsNPC() and INVUL_NPCS[attacker:GetClass()]) then
 		attacker:AddEntityRelationship(ent, D_LI, 99)
 		dmgInfo:SetDamage(0)
 	end
-	
-	if table.HasValue(INVUL_NPCS, ent:GetClass()) or (attacker:IsPlayer() and attacker:Team() == TEAM_ALIVE and table.HasValue(FRIENDLY_NPCS, ent:GetClass())) then
+
+	if INVUL_NPCS[ent:GetClass()] or (attacker:IsPlayer() and attacker:Team() == TEAM_ALIVE and ent:GetClass() == "npc_citizen" ) then
 		dmgInfo:SetDamage(0)
 		return
 	end
-	if table.HasValue(VORTI_FRIENDLY, ent:GetClass()) then
+	if ent:GetClass() == "npc_vortigaunt" then
 		for k, m in pairs(friendlyMaps) do
 			if game.GetMap() == m then
 				dmgInfo:SetDamage(0)
@@ -118,16 +118,14 @@ hook.Add("EntityTakeDamage", "FriendOrFoe", function(ent, dmgInfo)
 			end
 		end
 	end
-		
+
 	if ent:IsPet() and ent.owner:IsValid() and attacker:IsNPC() then
 		ent:SetHealth(ent:Health() - dmg)
 	end
-	
-	if attacker:IsPet() and attacker.owner then
-		if attacker:GetClass() != "npc_headcrab" then
-			local totalPetDMG = math.Round((attacker.owner.hl2cPersistent.PetStr * dmg) / GetConVar("hl2cr_difficulty"):GetInt())
-			dmgInfo:SetDamage(totalPetDMG)
-		end
+
+	if attacker:IsPet() and attacker.owner and attacker:GetClass() != "npc_headcrab" then
+		local totalPetDMG = math.Round((attacker.owner.hl2cPersistent.PetStr * dmg) / GetConVar("hl2cr_difficulty"):GetInt())
+		dmgInfo:SetDamage(totalPetDMG)
 	end
 end)
 if SERVER then
@@ -149,7 +147,7 @@ if SERVER then
 				end
 			end
 		end
-		
+
 		if game.GetMap() == "d1_trainstation_01" or game.GetMap() == "d1_trainstation_02" or (game.GetMap() == "d1_trainstation_03" and not activateHostility) then
 			for k, pl in pairs(player.GetAll()) do
 				for i, cits in pairs(ents.FindByClass("npc_citizen")) do
@@ -173,7 +171,7 @@ if SERVER then
 				end
 			end
 		end
-		
+
 		if game.GetMap() == "d2_coast_10" then
 			for k, gunship in pairs(ents.FindByClass("npc_combinegunship")) do
 				if gunship:IsValid() and gunship:Health() <= 0 then
@@ -181,7 +179,7 @@ if SERVER then
 				end
 			end
 		end
-		
+
 		for k, npc in pairs(ents.FindByClass("npc_*")) do
 			for n, pet in pairs(ents.FindByClass("npc_*")) do
 				if npc:IsFriendly() and pet:IsPet() then
@@ -196,26 +194,26 @@ if SERVER then
 	end)
 
 	hook.Add("ScaleNPCDamage", "DiffScalingNPC", function(ent, hitGroup, dmgInfo)
-		
-		local inflictor = dmgInfo:GetDamageType()
+
+		--local inflictor = dmgInfo:GetDamageType() --Unused variable: inflictor
 		local attacker = dmgInfo:GetAttacker()
-		local dmg = dmgInfo:GetDamage()
+		--local dmg = dmgInfo:GetDamage()--Unused variable: dmg
 		local upgDmg = 0
 		if attacker:IsPlayer() and string.find(attacker.hl2cPersistent.TempUpg, "Shotgun_Blaster") then
 			upgDmg = 0.25
 		end
-		
-		if table.HasValue(INVUL_NPCS, ent:GetClass()) or attacker:IsPlayer() and table.HasValue(FRIENDLY_NPCS, ent:GetClass()) and ent:IsPet() then
+
+		if attacker:IsPlayer() and (INVUL_NPCS[ent:GetClass()] or ent:GetClass() == "npc_citizen" or ent:IsPet()) then
 			dmgInfo:SetDamage(0)
 			return
 		elseif attacker:IsPlayer() and attacker:GetActiveWeapon():GetClass() == "weapon_crowbar" then
 			dmgInfo:ScaleDamage(1.75 / GetConVar("hl2cr_difficulty"):GetInt())
 		elseif attacker:IsPlayer() and attacker:GetActiveWeapon():GetClass() == "weapon_shotgun" then
 			dmgInfo:ScaleDamage(upgDmg + 1.55 / GetConVar("hl2cr_difficulty"):GetInt())
-		else 
+		else
 			dmgInfo:ScaleDamage(1.55 / GetConVar("hl2cr_difficulty"):GetInt())
 		end
-		
+
 		--if ent:GetClass() == "npc_combinegunship" then
 		--	attacker.sharedXP = attacker.sharedXP + dmg * GetConVar("hl2cr_difficulty"):GetInt()
 		--end

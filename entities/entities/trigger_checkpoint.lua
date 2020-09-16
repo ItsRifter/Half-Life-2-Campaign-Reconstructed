@@ -2,20 +2,20 @@ ENT.Base = "base_brush"
 ENT.Type = "brush"
 
 function ENT:Initialize()
-	
+
 	if not TRIGGER_CHECKPOINT then
 		return
 	end
 
 	--Set width, length and height of the checkpoint
-	
+
 	local w = self.Max.x - self.Min.x
 	local l = self.Max.y - self.Min.y
 	local h = self.Max.z - self.Min.z
-	
+
 	local minPos = Vector(-1 - ( w / 2 ), -1 - ( l / 2 ), -1 - ( h / 2 ))
 	local maxPos = Vector(w / 2, l / 2, h / 2)
-	
+
 	self:DrawShadow(false)
 	self:SetCollisionBounds(minPos, maxPos)
 	self:SetSolid(SOLID_BBOX)
@@ -25,19 +25,19 @@ function ENT:Initialize()
 end
 
 --When the player touches the entity
-function ENT:StartTouch(ent)	
+function ENT:StartTouch(ent)
 	if ent and ent:IsValid() and ent:GetModel() == "models/props_c17/doll01.mdl" and game.GetMap() == "d1_trainstation_05" then
 		ent:Remove()
 		file.Delete("hl2cr_data/babydoll3.txt")
 		for k, v in pairs(player.GetAll()) do
-			Achievement(v, "A_Red_Letter_Baby", "HL2_Ach_List", 1000)	
+			Achievement(v, "A_Red_Letter_Baby", "HL2_Ach_List", 1000)
 		end
 	end
-	
+
 	if ent and ent:IsValid() and ent:IsPlayer() and ent:Team() == TEAM_ALIVE and not self.triggered then
 		self.triggered = true
-		local ang = ent:GetAngles()
-		
+		--local ang = ent:GetAngles() --Unused Variable: ang
+
 		--Checkpoint points
 		local point1 = self.Point1
 		local point2 = self.Point2
@@ -47,7 +47,7 @@ function ENT:StartTouch(ent)
 		if self.OnTouchRun then
 			self:OnTouchRun()
 		end
-		
+
 		--If the map is canals 11 and point1 has been triggered, allow the airboat gun
 		if point1 and game.GetMap() == "d1_canals_11" then
 			airboatGunSpawnable = true
@@ -57,7 +57,7 @@ function ENT:StartTouch(ent)
 				v.AllowSpawn = true
 			end
 		end
-		
+
 		--If point1 triggered and sand achievement is achievable
 		if point1 and game.GetMap() == "d2_coast_11" and sandAchEarnable then
 			for k, v in pairs(player.GetAll()) do
@@ -65,14 +65,14 @@ function ENT:StartTouch(ent)
 			end
 			surpassSand = true
 		end
-				
+
 		if point1 and game.GetMap() == "ep1_citadel_00" then
 			timer.Simple(5, function()
 				ent:ExitVehicle()
 				ent:SetPos(Vector(-8980, 5789, -117))
 			end)
 		end
-		
+
 		if game.GetMap() == "ep1_citadel_00" and point2 then
 			for k, alyx in pairs(ents.FindByClass("npc_alyx")) do
 				alyx:SetPos(Vector(-8636, 5987, -65))
@@ -81,7 +81,7 @@ function ENT:StartTouch(ent)
 				dog:SetPos(Vector(-7953, 5700, 48))
 			end
 		end
-				
+
 		--Chat print to all players and enable their one time command use
 		for k, p in pairs(player.GetAll()) do
 			p:ChatPrint("Checkpoint Reached")
@@ -93,11 +93,16 @@ function ENT:StartTouch(ent)
 				p.isAliveSurv = true
 				deaths = deaths - deaths
 			end
-			
+			local MAPS_TRAINSTATION = {
+				["d1_trainstation_01"] = true,
+				["d1_trainstation_02"] = true,
+				["d1_trainstation_03"] = true,
+				["d1_trainstation_04"] = true,
+				["d1_trainstation_05"] = true
+			}
 			for l, spawn in pairs(ents.FindByClass("info_player_start")) do
 				if p and IsValid(p) and p:Team() == TEAM_ALIVE and p != ent then
-					if (game.GetMap() != "d1_trainstation_01" or game.GetMap() != "d1_trainstation_02" or game.GetMap() != "d1_trainstation_03" or 
-					game.GetMap() != "d1_trainstation_04" or game.GetMap() != "d1_trainstation_05") then 
+					if not MAPS_TRAINSTATION[game.GetMap()] then
 						p.CPTP = true
 						ent.CPTP = false
 					end
@@ -106,7 +111,7 @@ function ENT:StartTouch(ent)
 						p.AllowSpawn = true
 						p:ExitVehicle()
 					end
-					
+
 					if point1 then
 						spawn:SetPos(point1)
 						p:SetPos(point1)
@@ -149,11 +154,11 @@ function ENT:StartTouch(ent)
 		elseif point5 then
 			lambdaModel5:Remove()
 		end
-		
+
 		if blocker and blocker:IsValid() then
 			blocker:Remove()
 		end
-		
+
 		if game.GetMap() == "d2_coast_10" and point1 then
 			for k, v in pairs(player.GetAll()) do
 				if v.spawnJeep then
@@ -167,16 +172,16 @@ function ENT:StartTouch(ent)
 		elseif game.GetMap() == "d2_coast_10" and point2 then
 			endLoyal()
 		end
-		
+
 		if game.GetMap() == "d3_c17_10a" then
 			for k, v in pairs(ents.FindByClass("npc_barney")) do
 				v:SetPos(point1)
 			end
 		end
-		
+
 		if game.GetMap() == "d3_citadel_04" and (point1 or point2) then
 			local train = ents.FindByName("citadel_train_lift01_1")
-			
+
 			for k, resetSpawn in pairs(ents.FindByClass("info_player_start")) do
 				resetSpawn:SetParent(train[1])
 			end

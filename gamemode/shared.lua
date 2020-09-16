@@ -151,15 +151,15 @@ GM.TempUpgItem = {}
 
 function Register.Armour(armourItem) 
 	GM.ArmourItem[armourItem.Name] = armourItem
-end	
+end
 
 function Register.Pet(petItem) 
 	GM.PetItem[petItem.Name] = petItem
-end	
+end
 
 function Register.TempUpg(tempUpgItem) 
 	GM.TempUpgItem[tempUpgItem.Name] = tempUpgItem
-end	
+end
 
 include("shared/sh_indicators.lua")
 include("shared/sh_player.lua")

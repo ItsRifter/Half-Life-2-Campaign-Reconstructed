@@ -21,7 +21,13 @@ function ENT:Initialize()
 	self:SetMoveType(0)
 	self:SetTrigger(true)
 end
-
+local MAPS_TRAINSTATION = {
+	["d1_trainstation_01"] = true,
+	["d1_trainstation_02"] = true,
+	["d1_trainstation_03"] = true,
+	["d1_trainstation_04"] = true,
+	["d1_trainstation_05"] = true
+}
 function ENT:StartTouch(ent)
 	if ent and ent:IsValid() and ent:GetModel() == "models/props_c17/doll01.mdl" then
 		ent:Remove()
@@ -33,7 +39,7 @@ function ENT:StartTouch(ent)
 			UpdateBaby()
 		end
 	end
-	
+
 	if ent and ent:IsValid() and ent:GetModel() == "models/roller.mdl" then
 		ent:Remove()
 		if game.GetMap() == "d1_eli_02" then
@@ -55,10 +61,10 @@ function ENT:StartTouch(ent)
 			UpdateBall()
 		end
 	end
-		
+
 	local bonusXP = 0
 	local bonusCoins = 0
-	
+
 	if ent and ent:IsValid() and ent:IsPlayer() and ent:Team() == TEAM_ALIVE then
 		ent:SetTeam(TEAM_COMPLETED_MAP)
 		SpectateMode(ent)
@@ -67,22 +73,21 @@ function ENT:StartTouch(ent)
 			net.Start("ClosePets")
 			net.Send(ent)
 		end
-		if game.GetMap() != "d1_trainstation_01" or game.GetMap() != "d1_trainstation_02" or game.GetMap() != "d1_trainstation_03" or
-		game.GetMap() != "d1_trainstation_04" or game.GetMap() != "d1_trainstation_05" then
+		if MAPS_TRAINSTATION[game.GetMap()] then
 			giveRewards(ent)
-			if not ent.hasDiedOnce and not (game.GetMap() == "d1_trainstation_01" or game.GetMap() == "d1_trainstation_02" or game.GetMap() == "d1_trainstation_03" or game.GetMap() == "d1_trainstation_04" or game.GetMap() == "d1_trainstation_05") then
+			if not ent.hasDiedOnce and not MAPS_TRAINSTATION[game.GetMap()] then
 				bonusCoins = 25 * GetConVar("hl2cr_difficulty"):GetInt()
 				bonusXP = 50 * GetConVar("hl2cr_difficulty"):GetInt()
 				AddXP(ent, bonusXP)
 				AddCoins(ent, bonusCoins)
-			elseif not ent.crowbarOnly and not (game.GetMap() == "d1_trainstation_01" or game.GetMap() == "d1_trainstation_02" or game.GetMap() == "d1_trainstation_03" or game.GetMap() == "d1_trainstation_04" or game.GetMap() == "d1_trainstation_05") then
+			elseif not ent.crowbarOnly and not MAPS_TRAINSTATION[game.GetMap()] then
 				bonusCoins = 45 * GetConVar("hl2cr_difficulty"):GetInt()
 				bonusXP = 75 * GetConVar("hl2cr_difficulty"):GetInt()
 				AddXP(ent, bonusXP)
 				AddCoins(ent, bonusCoins)
 			end
 		end
-		
+
 		if ent:GetVehicle() and ent:GetVehicle():IsValid() then
 			ent:GetVehicle():Remove()
 		end
@@ -95,19 +100,17 @@ function ENT:StartTouch(ent)
 end
 
 function ENT:Think()
-	
+
 	playerCount = #player.GetAll()
 	local addOne = 0
 	local subOne = 0
 	if playerCount > 0 and playerCount <= 5 then
 		addOne = 1
 	end
-	if timer.Exists("MapTimer") then
-		if GetConVar("hl2cr_survivalmode"):GetInt() == 1 then
-			subOne = team.NumPlayers(TEAM_DEAD)
-		end
+	if timer.Exists("MapTimer") and GetConVar("hl2cr_survivalmode"):GetInt() == 1 then
+		subOne = team.NumPlayers(TEAM_DEAD)
 	end
-	
+
 	if team.NumPlayers(TEAM_COMPLETED_MAP) >= team.NumPlayers(TEAM_ALIVE) + addOne - subOne and not (game.GetMap() == "d1_eli_01" or game.GetMap() == "d1_town_05" or game.GetMap() == "d3_citadel_01" or game.GetMap() == "d3_citadel_05" or game.GetMap() == "d3_breen_01") then
 		for k, p in pairs(player.GetAll()) do
 			if not displayOnce then
