@@ -526,6 +526,31 @@ concommand.Add("hl2cr_wipeinv", function(ply, cmd, args, argStr)
 		ply:PrintMessage(HUD_PRINTCONSOLE, "You do not have access to this command")
 	end
 end)
+
+--Meant for dev reasons with bots, but can be used on people for fun
+concommand.Add("hl2cr_forcesay", function(ply, cmd, args, argStr)
+
+	local stringSay = tostring(args[1])
+	local target = ""
+	if args[2] then
+		target = string.sub(args[2], 0)
+	end
+	
+	if ply:IsAdmin() then
+		for k, v in pairs(player.GetAll()) do
+			if string.match(string.lower(v:Nick()), tostring(target)) then
+				target = v
+			end
+		end
+		
+		if target then
+			target:Say(stringSay)
+		end
+	else
+		ply:PrintMessage(HUD_PRINTCONSOLE, "You do not have access to this command")
+	end
+end)
+
 concommand.Add("hl2cr_givexp", function(ply, cmd, args, argStr)
 	local int = tonumber(args[1])
 	local target = ""

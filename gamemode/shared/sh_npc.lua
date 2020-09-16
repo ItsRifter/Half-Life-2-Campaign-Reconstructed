@@ -130,6 +130,7 @@ hook.Add("EntityTakeDamage", "FriendOrFoe", function(ent, dmgInfo)
 end)
 if SERVER then
 	hook.Add("Think", "NPCThinkRelation", function()
+		--Loyal Players relation with combine npc
 		for k, v in pairs(player.GetAll()) do
 			if v:Team() == TEAM_LOYAL then
 				for i, cits in pairs(ents.FindByClass("npc_citizen")) do
@@ -148,7 +149,13 @@ if SERVER then
 			end
 		end
 
-		if game.GetMap() == "d1_trainstation_01" or game.GetMap() == "d1_trainstation_02" or (game.GetMap() == "d1_trainstation_03" and not activateHostility) then
+		local NEUTRAL_MAPS = {
+			["d1_trainstation_01"] = true,
+			["d1_trainstation_02"] = true,
+			["d1_trainstation_03"] = true
+		}
+		--If server is on first three maps, make everyone neutral until hostility is activated
+		if NEUTRAL_MAPS[game.GetMap()] and not activateHostility then
 			for k, pl in pairs(player.GetAll()) do
 				for i, cits in pairs(ents.FindByClass("npc_citizen")) do
 					cits:AddEntityRelationship(pl, D_NU, 99)
@@ -182,12 +189,19 @@ if SERVER then
 
 		for k, npc in pairs(ents.FindByClass("npc_*")) do
 			for n, pet in pairs(ents.FindByClass("npc_*")) do
-				if npc:IsFriendly() and pet:IsPet() then
-					npc:AddEntityRelationship(pet, D_LI, 99)
-					pet:AddEntityRelationship(npc, D_LI, 99)
-				elseif game.GetGlobalState("antlion_allied") == 1 and (npc:GetClass() == "npc_antlion" and pet:IsPet()) then
-					npc:AddEntityRelationship(pet, D_LI, 99)
-					pet:AddEntityRelationship(npc, D_LI, 99)
+				if pet:IsPet() and not npc:IsPet() then
+					if npc:IsFriendly() then
+						npc:AddEntityRelationship(pet, D_LI, 99)
+						pet:AddEntityRelationship(npc, D_LI, 99)
+					elseif game.GetGlobalState("antlion_allied") == 1 and npc:GetClass() == "npc_antlion" then
+						npc:AddEntityRelationship(pet, D_LI, 99)
+						pet:AddEntityRelationship(npc, D_LI, 99)
+					elseif npc:IsPet() then
+						pet:AddEntityRelationship(npc, D_LI, 99)
+						npc:AddEntityRelationship(pet, D_LI, 99)
+					elseif not npc:IsFriendly() then
+						pet:AddEntityRelationship(npc, D_HT, 99)
+					end
 				end
 			end
 		end

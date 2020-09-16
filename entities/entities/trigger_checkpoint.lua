@@ -106,7 +106,9 @@ function ENT:StartTouch(ent)
 						p.CPTP = true
 						ent.CPTP = false
 					end
-
+					if game.GetMap() == "d1_trainstation_03" then
+						activateHostility = true
+					end
 					if not (ent:GetVehicle() and ent:GetVehicle():IsValid()) and (p:GetVehicle() and p:GetVehicle():IsValid()) then
 						p.AllowSpawn = true
 						p:ExitVehicle()

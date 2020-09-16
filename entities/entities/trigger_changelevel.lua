@@ -101,6 +101,14 @@ end
 
 function ENT:Think()
 
+
+	local MAPS_ONEPLAYER = {
+		["d1_eli_01"] = true,
+		["d1_town_05"] = true,
+		["d3_citadel_01"] = true,
+		["d3_citadel_05"] = true,
+		["d3_breen_01"] = true
+	}
 	playerCount = #player.GetAll()
 	local addOne = 0
 	local subOne = 0
@@ -111,7 +119,7 @@ function ENT:Think()
 		subOne = team.NumPlayers(TEAM_DEAD)
 	end
 
-	if team.NumPlayers(TEAM_COMPLETED_MAP) >= team.NumPlayers(TEAM_ALIVE) + addOne - subOne and not (game.GetMap() == "d1_eli_01" or game.GetMap() == "d1_town_05" or game.GetMap() == "d3_citadel_01" or game.GetMap() == "d3_citadel_05" or game.GetMap() == "d3_breen_01") then
+	if team.NumPlayers(TEAM_COMPLETED_MAP) >= team.NumPlayers(TEAM_ALIVE) + addOne - subOne and not MAPS_ONEPLAYER[game.GetMap()] then
 		for k, p in pairs(player.GetAll()) do
 			if not displayOnce then
 				p:ChatPrint("Enough players have completed, changing map in 20 seconds")
@@ -121,7 +129,7 @@ function ENT:Think()
 				timer.Create("MapTimer", 20, 0, function() hook.Call("OnChangeLevel") timer.Remove("MapTimer") end)
 			end
 		end
-	elseif team.NumPlayers(TEAM_COMPLETED_MAP) == 1 and (game.GetMap() == "d1_eli_01" or game.GetMap() == "d1_town_05" or game.GetMap() == "d3_citadel_01" or game.GetMap() == "d3_citadel_05" or game.GetMap() == "d3_breen_01") then
+	elseif team.NumPlayers(TEAM_COMPLETED_MAP) == 1 and MAPS_ONEPLAYER[game.GetMap()] then
 		for k, p in pairs(player.GetAll()) do
 			if not displayOnce then
 				p:ChatPrint("Enough players have completed, changing map in 20 seconds")
