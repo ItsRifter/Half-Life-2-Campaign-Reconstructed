@@ -144,8 +144,8 @@ net.Receive("AddArmour", function(len, ply)
 		
 	elseif slot == "Hands" then
 		ply.hl2cPersistent.Hands = slotToFill
-		ply.hl2cPersistent.HandImage = slotImage
-		ply:SetNWString("HandSlot", ply.hl2cPersistent.HandImage)
+		ply.hl2cPersistent.HandsImage = slotImage
+		ply:SetNWString("HandSlot", ply.hl2cPersistent.HandsImage)
 		ply:SetNWInt("OldArmourHand", shieldPoints)
 		
 	elseif slot == "Boots" then

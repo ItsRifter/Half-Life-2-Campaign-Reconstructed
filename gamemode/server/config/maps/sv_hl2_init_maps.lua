@@ -11,7 +11,6 @@ function SetupHL2Map()
 	
 	if game.GetMap() == "d1_trainstation_05" then
 		for a, catAch in pairs(ents.FindByName("kill_mtport_rl_1")) do
-			print(catAch)
 			catAch:Fire("AddOutput", "OnTrigger triggerhook:RunPassedCode:hook.Run( 'GiveWhatCat' ):0:-1" )
 		end
 	end
@@ -160,11 +159,16 @@ function SetupHL2Map()
 		game.SetGlobalState("super_phys_gun", 0)
 	end
 	
-	if game.GetMap() == "d1_trainstation_01" and game.GetMap() == "d1_trainstation_02" then 
+	if game.GetMap() == "d1_trainstation_01" and game.GetMap() == "d1_trainstation_02" then
 		for k, cop in pairs(ents.FindByClass("npc_metropolice")) do
-			for i, ply in pairs(player.GetAll()) do
-			cop:AddRelationship(ply, D_NU, 99)
-			cop:AddRelationship("npc_citizen", D_NU, 99)
+			for i, citz in pairs(ents.FindByClass("npc_citizen")) do
+				for i, strider in pairs(ents.FindByClass("npc_strider")) do
+					for i, ply in pairs(player.GetAll()) do
+						cop:AddRelationship(ply, D_NU, 99)
+						cop:AddRelationship(citz, D_NU, 99)
+						strider:AddRelationship(citz, D_NU, 99)
+					end
+				end
 			end
 		end
 	end
@@ -297,9 +301,7 @@ function SetupHL2Map()
 		end
 	end
 	
-	if game.GetMap() != "hl2c_lobby_remake" then
-		SetCheckpointsStage()
-	end
+	SetCheckpointsStageHL2()
 end
 
 function UpdateBaby()
@@ -331,7 +333,7 @@ function UpdateBall()
 	elseif game.GetMap() == "d1_town_04" then
 		file.Delete("hl2cr_data/RavenBall8.txt")
 		for k, v in pairs(player.GetAll()) do
-			Achievement(v, "Rave_Ball", "HL2_Ach_List", 2500)	
+			Achievement(v, "Rave_Ball", "HL2_Ach_List", 5000)	
 		end
 	end
 end
@@ -480,13 +482,12 @@ hook.Add( "OnChangeLevel", "ChangeMap", function()
 end)
 
 hook.Add("GravGunOnPickedUp", "PastPickup", function(ply, ent)
-	print(ent)
-	if ent:EntIndex() == 564 then
+	if ent:GetModel() == "models/props_lab/hevplate.mdl" then
 		Achievement(ply, "Blast_from_the_Past", "HL2_Ach_List", 2500)
 	end
 end)
 
-function SetCheckpointsStage()
+function SetCheckpointsStageHL2()
 	
 	--Remove the old checkpoints and changelevels
 	for k, oldCheck in pairs(ents.FindByClass("trigger_checkpoint")) do
@@ -630,7 +631,7 @@ function SetCheckpointsStage()
 		}
 		TRIGGER_CHECKPOINT = {
 			 Vector(-777, -388, -575), 	Vector(-675, -272, -457),
-			 Vector(-2993, -4486, -638), 	Vector(-2371, -3692, -258)
+			 Vector(-2440, -4593, -445), 	Vector(-2755, -3590, -605)
 		}
 		TRIGGER_SPAWNPOINT = {
 			Vector(-783, -577, -540), 	Vector(-3391, -4081, -549)
@@ -675,7 +676,7 @@ function SetCheckpointsStage()
 			 Vector(19, 2075, -2727), 	Vector(-79, 2181, -2606),
 		}
 		TRIGGER_SPAWNPOINT = {
-			Vector(-107, 2747, -1270), Vector(453, 1660, -1284),
+			Vector(-107, 2747, -1270), Vector(455, 1666, -1253),
 			Vector(434, 1949, -2671), Vector(-329, 2132, -2671)
 		}
 		
@@ -1098,8 +1099,7 @@ function SetCheckpointsStage()
 	if TRIGGER_CHECKPOINT then
 	
 		if TRIGGER_CHECKPOINT[1] and TRIGGER_CHECKPOINT[2] then
-			local Checkpoint1 = ents.Create("trigger_checkpoint")
-			Checkpoint1.forcePlyTP = true
+			Checkpoint1 = ents.Create("trigger_checkpoint")
 			Checkpoint1.Min = Vector(TRIGGER_CHECKPOINT[1])
 			Checkpoint1.Max = Vector(TRIGGER_CHECKPOINT[2])
 			Checkpoint1.Pos = Vector(TRIGGER_CHECKPOINT[2]) - ( ( Vector(TRIGGER_CHECKPOINT[2]) - Vector(TRIGGER_CHECKPOINT[1])) / 2 )
@@ -1115,8 +1115,7 @@ function SetCheckpointsStage()
 		end
 		
 		if TRIGGER_CHECKPOINT[3] and TRIGGER_CHECKPOINT[4] then
-			local Checkpoint2 = ents.Create("trigger_checkpoint")
-			Checkpoint2.forcePlyTP = true
+			Checkpoint2 = ents.Create("trigger_checkpoint")
 			Checkpoint2.Min = Vector(TRIGGER_CHECKPOINT[3])
 			Checkpoint2.Max = Vector(TRIGGER_CHECKPOINT[4])
 			Checkpoint2.Pos = Vector(TRIGGER_CHECKPOINT[4]) - ( ( Vector(TRIGGER_CHECKPOINT[4]) - Vector(TRIGGER_CHECKPOINT[3])) / 2 )
@@ -1132,8 +1131,7 @@ function SetCheckpointsStage()
 		end
 		
 		if TRIGGER_CHECKPOINT[5] and TRIGGER_CHECKPOINT[6] then
-			local Checkpoint3 = ents.Create("trigger_checkpoint")
-			Checkpoint3.forcePlyTP = true
+			Checkpoint3 = ents.Create("trigger_checkpoint")
 			Checkpoint3.Min = Vector(TRIGGER_CHECKPOINT[5])
 			Checkpoint3.Max = Vector(TRIGGER_CHECKPOINT[6])
 			Checkpoint3.Pos = Vector(TRIGGER_CHECKPOINT[6]) - ( ( Vector(TRIGGER_CHECKPOINT[6]) - Vector(TRIGGER_CHECKPOINT[5])) / 2 )
@@ -1149,8 +1147,7 @@ function SetCheckpointsStage()
 		end
 		
 		if TRIGGER_CHECKPOINT[7] and TRIGGER_CHECKPOINT[8] then
-			local Checkpoint4 = ents.Create("trigger_checkpoint")
-			Checkpoint4.forcePlyTP = true
+			Checkpoint4 = ents.Create("trigger_checkpoint")
 			Checkpoint4.Min = Vector(TRIGGER_CHECKPOINT[7])
 			Checkpoint4.Max = Vector(TRIGGER_CHECKPOINT[8])
 			Checkpoint4.Pos = Vector(TRIGGER_CHECKPOINT[8]) - ( ( Vector(TRIGGER_CHECKPOINT[8]) - Vector(TRIGGER_CHECKPOINT[7])) / 2 )

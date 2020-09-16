@@ -124,8 +124,10 @@ hook.Add("EntityTakeDamage", "FriendOrFoe", function(ent, dmgInfo)
 	end
 	
 	if attacker:IsPet() and attacker.owner then
-		local totalPetDMG = math.Round((attacker.owner.hl2cPersistent.PetStr * dmg) / (GetConVar("hl2cr_difficulty"):GetInt() + 2))
-		dmgInfo:SetDamage(totalPetDMG)
+		if attacker:GetClass() != "npc_headcrab" then
+			local totalPetDMG = math.Round((attacker.owner.hl2cPersistent.PetStr * dmg) / GetConVar("hl2cr_difficulty"):GetInt())
+			dmgInfo:SetDamage(totalPetDMG)
+		end
 	end
 end)
 if SERVER then
@@ -183,6 +185,9 @@ if SERVER then
 		for k, npc in pairs(ents.FindByClass("npc_*")) do
 			for n, pet in pairs(ents.FindByClass("npc_*")) do
 				if npc:IsFriendly() and pet:IsPet() then
+					npc:AddEntityRelationship(pet, D_LI, 99)
+					pet:AddEntityRelationship(npc, D_LI, 99)
+				elseif game.GetGlobalState("antlion_allied") == 1 and (npc:GetClass() == "npc_antlion" and pet:IsPet()) then
 					npc:AddEntityRelationship(pet, D_LI, 99)
 					pet:AddEntityRelationship(npc, D_LI, 99)
 				end

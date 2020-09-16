@@ -23,7 +23,7 @@ util.AddNetworkString("PlaySoundLevelUp")
 util.AddNetworkString("DisplayMapTimer")
 util.AddNetworkString("ReturnLobby")
 util.AddNetworkString("DollAch")
-util.AddNetworkString("NewSuit")
+
 util.AddNetworkString("DisplayRewards")
 util.AddNetworkString("Spectating")
 

@@ -8,10 +8,7 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 	local givePetXP = 0
 	local totalXPSquad = 0
 	
-	print(attacker)
-	print(inflictor)
-	
-	if npc:IsNPC() and attacker:IsPlayer() and inflictor:EntIndex() == 111 then
+	if npc:IsNPC() and attacker:IsPlayer() and inflictor:GetModel() == "models/props_wasteland/prison_toilet01.mdl" and game.GetMap() == "d2_prison_02" then
 		Achievement(attacker, "Flushed", "HL2_Ach_List", 2500)
 	end
 	
@@ -51,7 +48,7 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 		giveCoins = 0
 		givePetXP = 0
 	elseif attacker:IsPet() and attacker.owner then
-		givePetXP = math.random(1, 10 * GetConVar("hl2cr_difficulty"):GetInt())
+		givePetXP = math.random(1, 15 * GetConVar("hl2cr_difficulty"):GetInt())
 		addPetXP(attacker.owner, givePetXP)
 		Spawn(givePetXP, 0, npc:GetPos(), npc, attacker.owner)
 	end

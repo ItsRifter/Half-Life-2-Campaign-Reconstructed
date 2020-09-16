@@ -24,11 +24,15 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 	
 	if (string.lower(text) == "!cp") then
 		--If the player can use !cp command, teleport them to the checkpoint
-		if ply.CPTP then
+		if ply.CPTP and not ply:InVehicle() then
 			for k, sp in pairs(ents.FindByClass("info_player_start")) do
 				ply:SetPos(sp:GetPos())
 				ply.CPTP = false
 			end
+		elseif ply:InVehicle() then
+			ply:ChatPrint("Exit the vehicle before using this command")
+		else
+			ply:ChatPrint("You can't use this command yet")
 		end
 		return ""
 	end
@@ -281,9 +285,6 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 			ply.pet:SetAngles(ply:GetAngles())
 			beginPetBringTimer(ply)
 			return ""
-		else
-			showTimerPet(ply)
-			return ""
 		end
 	return ""
 	end
@@ -434,7 +435,7 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 	if (string.lower(text) == "!seats") then
 		if ply:InVehicle() and not ply.hasSeat then
 			local vehicle = ply:GetVehicle()
-			if not vehicle:GetClass() == "prop_vehicle_jeep" then return end
+			if vehicle == "prop_vehicle_airboat" then return end
 			local seat = ents.Create("prop_vehicle_prisoner_pod")
 			seat:SetPos(vehicle:LocalToWorld( Vector( 31, -32, 18 ) ))
 			seat:SetModel("models/nova/jeep_seat.mdl")
@@ -461,6 +462,7 @@ function beginPetBringTimer(ply)
 	ply.petbringTime = 7 + CurTime()
 	if not ply then return end
 	hook.Add("Think", "petTimer", function()
+		if not ply or not ply.petbringTime then ply.BringPet = true return end
 		if ply.petbringTime <= CurTime() and ply:IsValid() then
 			ply.BringPet = true
 		end
@@ -469,6 +471,9 @@ end
 
 local function showTimerPet(ply)
 	ply:ChatPrint("You need to wait " .. math.Round(ply.petbringTime - CurTime()) .. " before bringing again")
+	if ply.petbringTime <= CurTime() then
+		ply.BringPet = true
+	end
 end
 
 function AddCoins(ply, amount)
@@ -814,6 +819,63 @@ concommand.Add("hl2cr_endloyal", function(ply, cmd, args)
 		endLoyal()
 	else
 		ply:ChatPrint("You don't have access to this command")
+	end
+end)
+
+concommand.Add("hl2cr_resetslots", function(ply, cmd, args)
+	local target = ""
+	if args[1] then
+		target = string.sub(args[1], 0)
+	end
+	
+	if ply:IsAdmin() then
+		for k, v in pairs(player.GetAll()) do
+			if string.match(string.lower(v:Nick()), tostring(target)) then
+				target = v
+			end
+		end
+		if target then
+			for k, item in pairs(GAMEMODE.ArmourItem) do
+				if target.hl2cPersistent.Helmet and target.hl2cPersistent.Helmet == GAMEMODE.ArmourItem[k].Name then
+					AddCoins(target, GAMEMODE.ArmourItem[k].Cost)
+					target.hl2cPersistent.Helmet = ""
+				end
+				
+				if target.hl2cPersistent.Suit and target.hl2cPersistent.Suit == GAMEMODE.ArmourItem[k].Name then
+					AddCoins(target, GAMEMODE.ArmourItem[k].Cost)
+					target.hl2cPersistent.Suit = ""
+				end
+				
+				if target.hl2cPersistent.Arm and target.hl2cPersistent.Arm == GAMEMODE.ArmourItem[k].Name then
+					AddCoins(target, GAMEMODE.ArmourItem[k].Cost)
+					target.hl2cPersistent.Arm = ""
+				end
+				
+				if target.hl2cPersistent.Hands and target.hl2cPersistent.Hands == GAMEMODE.ArmourItem[k].Name then
+					AddCoins(target, GAMEMODE.ArmourItem[k].Cost)
+					target.hl2cPersistent.Hands = ""
+				end
+				
+				if target.hl2cPersistent.Boot and target.hl2cPersistent.Boot == GAMEMODE.ArmourItem[k].Name then
+					AddCoins(target, GAMEMODE.ArmourItem[k].Cost)
+					target.hl2cPersistent.Boot = ""
+				end
+			end
+			
+			target.hl2cPersistent.Armour = 0
+			
+			target:SetNWInt("Armour", target.hl2cPersistent.Armour)
+
+			target:SetNWString("HelmetSlot", "")
+			target:SetNWString("SuitSlot", "")
+			target:SetNWString("ArmSlot", "")
+			target:SetNWString("HandSlot", "")
+			target:SetNWString("BootSlot", "")
+			
+			target:ChatPrint("Your armor points and slots have been reset by an admin, you have been refunded")
+		end
+	else
+		ply:PrintMessage(HUD_PRINTCONSOLE, "You do not have access to this command")
 	end
 end)
 

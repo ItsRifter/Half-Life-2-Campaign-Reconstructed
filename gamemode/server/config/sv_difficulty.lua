@@ -20,8 +20,7 @@ net.Receive("Diff_Vote", function(len, ply)
 			p:ChatPrint(voter .. " Has voted to disable 'Survival' mode: " .. votes .. "/" .. ply:GetNWInt("SurvVotes"))
 		end
 	end
-	
-	print(ply:GetNWInt("EasyVotes"))
+
 	
 	if votes >= ply:GetNWInt("EasyVotes") and diffMode == 1 then
 		diffVoted(1)

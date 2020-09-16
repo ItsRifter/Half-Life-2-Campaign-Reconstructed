@@ -24,9 +24,10 @@ include("server/sv_spectate.lua")
 include("server/stats/sv_pets_levels.lua")
 include("server/config/maps/sv_loyal.lua")
 include("server/sv_afkhandler.lua")
-include("server/config/maps/sv_hl2_init_maps.lua")
-include("server/config/maps/sv_coop_init_maps.lua")
 include("server/config/maps/sv_lobby_init_maps.lua")
+include("server/config/maps/sv_hl2_init_maps.lua")
+include("server/config/maps/sv_ep1_init_maps.lua")
+include("server/config/maps/sv_coop_init_maps.lua")
 include("server/config/maps/sv_vortex.lua")
 include("server/config/maps/sv_lambda.lua")
 
@@ -95,6 +96,8 @@ function GM:ShowHelp(ply)
 	net.Start("Greetings_new_player")
 	net.Send(ply)
 end
+
+local randomExchange = math.random(100, 1000)
 
 function GM:ShowTeam(ply)
 	if ply.spawnJeep then
@@ -245,6 +248,7 @@ function GM:ShowSpare2(ply)
 	else
 		net.Start("Open_F4_Menu")
 			net.WriteTable(ply.hl2cPersistent.Inventory)
+			net.WriteInt(randomExchange, 32)
 		net.Send(ply)
 	end
 end
@@ -292,6 +296,8 @@ function SetUpMap()
 	elseif string.match(game.GetMap(), "d1_") or string.match(game.GetMap(), "d2_") 
 	or string.match(game.GetMap(), "d3_") then
 		SetupHL2Map()
+	elseif string.match(game.GetMap(), "ep1_") then
+		SetupEP1Map()
 	end
 end
 

@@ -1442,7 +1442,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 		petEvolButton:SetSize(100, 50)
 		petEvolButton.DoClick = function()
 		if petStage == 0 then
-			if curSkill == 5 then
+			if curSkill >= 5 then
 				clientClosePets()
 				net.Start("Evolving")
 				net.SendToServer()
@@ -1453,7 +1453,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("Your pet isn't ready to evolve")
 			end
 		elseif petStage == 1 then
-			if curSkill == 7 then
+			if curSkill >= 7 then
 				petStatFrame:Close()
 				net.Start("Evolving")
 				net.SendToServer()
@@ -1464,11 +1464,11 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("Your pet isn't ready to evolve")
 			end
 		elseif petStage == 2 then
-			if curSkill == 6 then
+			if curSkill >= 6 then
 				LocalPlayer():ChatPrint("Your pet cannot evolve any further")
 			end
 		elseif petStage == 3 then
-			if curSkill == 8 then
+			if curSkill >= 8 then
 				petStatFrame:Close()
 				net.Start("Evolving")
 				net.SendToServer()
@@ -1479,7 +1479,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("Your pet isn't ready to evolve")
 			end
 		elseif petStage == 4 then
-			if curSkill == 10 then
+			if curSkill >= 10 then
 				petStatFrame:Close()
 				net.Start("Evolving")
 				net.SendToServer()
@@ -1490,7 +1490,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("Your pet isn't ready to evolve")
 			end
 		elseif petStage == 5 then
-			if curSkill == 11 then
+			if curSkill >= 11 then
 				LocalPlayer():ChatPrint("Your pet cannot evolve any further")
 			end
 		end
@@ -1617,7 +1617,7 @@ function petStats(entPet)
 		surface.DrawRect(0,0, LocalPlayer():GetNWInt("PetMaxXP"), h)
 		
 		surface.SetDrawColor(50, 165, 255, 255)
-		surface.DrawRect(0,0, LocalPlayer():GetNWInt("PetMaxXP") - LocalPlayer():GetNWInt("PetXP"), h)
+		surface.DrawRect(0,0, LocalPlayer():GetNWInt("PetXP"), h)
 	end
 	
 	petStatXPStatusLabel = vgui.Create("DLabel", petStatPanel)
@@ -1641,7 +1641,7 @@ function petStats(entPet)
 				
 				--Filled XP
 				surface.SetDrawColor(50, 165, 255, 255)
-				surface.DrawRect(0, 0, LocalPlayer():GetNWInt("PetMaxXP") - LocalPlayer():GetNWInt("PetXP"), h)
+				surface.DrawRect(0, 0, LocalPlayer():GetNWInt("PetXP"), h)
 			end
 			
 			petStatXPStatusLabel:SetText(LocalPlayer():GetNWInt("PetXP") .. "/" .. LocalPlayer():GetNWInt("PetMaxXP"))
@@ -1678,9 +1678,7 @@ function petStats(entPet)
 	petStatFrame:Add(terminatedLabel)
 end
 
-function clientClosePets()
-	petStatPanel:Close()
-	
+function clientClosePets()	
 	petStatFrame:MoveTo(-400, ScrH() / 2 - 200, 1, 0, -1, function()
 		petStatFrame:Close()
 	end)

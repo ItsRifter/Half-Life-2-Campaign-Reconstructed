@@ -224,11 +224,11 @@ hook.Add("PlayerShouldTakeDamage", "DisablePVP", function(ply, attacker)
 		return true
 	end
 	
-	if attacker:IsPlayer() and attacker:Team() == TEAM_ALIVE then
+	if attacker:IsPlayer() and (attacker:Team() == TEAM_ALIVE or attacker:Team() == TEAM_COMPLETED_MAP or attacker:Team() == TEAM_DEAD) then
 		return false
 	end
 	
-	if attacker:IsNPC() then 
+	if attacker:IsNPC() and (attacker:GetClass() != "npc_rollermine" and game.GetMap() != "d1_eli_02") then 
 		return true 
 	end
 	
@@ -240,7 +240,7 @@ hook.Add("PlayerShouldTakeDamage", "DisablePVP", function(ply, attacker)
 		return false
 	end
 		
-	if attacker:GetClass() == "npc_rollermine" and game.GetMap() == "d1_eli_02" then
+	if (attacker:IsNPC() and attacker:GetClass() == "npc_rollermine") and game.GetMap() == "d1_eli_02" then
 		return false
 	end
 	
@@ -266,10 +266,10 @@ hook.Add("ScalePlayerDamage", "DiffScalingPly", function( ply, hitgroup, dmgInfo
 	elseif not attacker:IsPlayer() then
 		local armour = ply.hl2cPersistent.Armour / 36
 		if hitgroup == HITGROUP_HEAD and GetConVar("hl2cr_difficulty"):GetInt() != 1 then
-			dmgInfo:ScaleDamage((1.25 * GetConVar("hl2cr_difficulty"):GetInt()) - (armour + expResist))
+			dmgInfo:ScaleDamage((1.25 * GetConVar("hl2cr_difficulty"):GetInt()) - armour)
 			return
 		elseif hitgroup == HITGROUP_CHEST and GetConVar("hl2cr_difficulty"):GetInt() != 1 then
-			dmgInfo:ScaleDamage((1 * GetConVar("hl2cr_difficulty"):GetInt()) - (armour + expResist))
+			dmgInfo:ScaleDamage((1 * GetConVar("hl2cr_difficulty"):GetInt()) - armour)
 			return
 		end
 	end

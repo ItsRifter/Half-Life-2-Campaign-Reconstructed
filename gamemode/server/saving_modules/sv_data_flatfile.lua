@@ -52,7 +52,7 @@ local function InitData(ply)
 	ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP or 100
 	ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr or 0
 	ply.hl2cPersistent.PetRegen = ply.hl2cPersistent.PetRegen or 0
-	ply.hl2cPersistent.PetMaxLvl = ply.hl2cPersistent.PetMaxLvl or 6
+	ply.hl2cPersistent.PetMaxLvl = ply.hl2cPersistent.PetMaxLvl or 5
 	ply.hl2cPersistent.PetStage = ply.hl2cPersistent.PetStage or 0
 	
 	-- Pet skills default settings

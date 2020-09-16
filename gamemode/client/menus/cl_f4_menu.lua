@@ -143,7 +143,7 @@ local function DropBoot( self, panels, onDropped, Command, x, y )
 	end
 end
 
-function OpenMenu(inventoryItems)
+function OpenMenu(inventoryItems, randomExchange)
 	
 	local getModel = LocalPlayer():GetNWString("Model")
 	
@@ -916,8 +916,6 @@ function OpenMenu(inventoryItems)
 	welcomeLabel:SetFont("F4_Trader_font")
 	welcomeLabel:SizeToContents()
 
-	local randomExchange = math.random(150, 1000)
-
 	local welcomeLabel2 = vgui.Create("DLabel", traderPanel)
 	welcomeLabel2:SetText("I'll sell essence for λ" .. randomExchange .. " each")
 	welcomeLabel2:SetPos(25, 125)
@@ -962,6 +960,9 @@ function OpenMenu(inventoryItems)
 		if curCoins < exchangerEssence:GetValue() * 500 then
 			LocalPlayer():ChatPrint("You don't have enough coins")
 			surface.PlaySound("buttons/button10.wav")
+		elseif exchangerEssence:GetValue() < 1 then
+			LocalPlayer():ChatPrint("Questionable... but I won't do that")
+			surface.PlaySound("buttons/button10.wav")
 		else
 			net.Start("Exchange")
 				net.WriteInt(exchangerEssence:GetValue(), 32)
@@ -976,5 +977,6 @@ end
 
 net.Receive("Open_F4_Menu", function(len, ply)
 	local invItems = net.ReadTable()
-	OpenMenu(invItems)
+	local randomExchange = net.ReadInt(32)
+	OpenMenu(invItems, randomExchange)
 end)

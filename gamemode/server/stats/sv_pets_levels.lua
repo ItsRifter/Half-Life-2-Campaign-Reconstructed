@@ -45,28 +45,11 @@ function spawnPet(ply, pos)
 				net.WriteEntity(ply.pet)
 			net.Send(ply)
 		end)
-		beginRelationThink(ply)
 		ply.pet:SetNWInt("PetStr", ply.hl2cPersistent.PetStr)
 		ply.pet:SetNWInt("PetRegen", ply.hl2cPersistent.PetRegen)
 	end
 end
 
-
-function beginRelationThink(ply)
-	if ply:IsValid() then
-		hook.Add("Think", "PetRelationThink", function()
-			if ply:IsValid() and ply.pet:IsValid() then
-				for k, v in pairs( ents.FindByClass( "npc_*" ) ) do
-					if (v:IsValid() and v:IsFriendly()) or v:IsPet() then
-						ply.pet:AddEntityRelationship(v, D_LI, 99)
-					elseif (v:IsValid() and not v:IsFriendly()) and not v:IsPet() then
-						ply.pet:AddEntityRelationship(v, D_HT, 99)
-					end
-				end
-			end
-		end)
-	end
-end
 -- Registry of all duels, accepted or not
 duelRegistry = {}
 
@@ -166,17 +149,28 @@ end
 
 local healingTime = 0
 
+hook.Add("PostEntityTakeDamage", "PetExtinguish", function(pet, dmgInfo, took)
+	local attacker = dmgInfo:GetAttacker()
+	local inflictor = dmgInfo:GetInflictor()
+	local dmg = dmgInfo:GetDamage()
+	local dmgType = dmgInfo:GetDamageType()
+	
+	if not pet:IsPet() then return end
+	
+	if dmgType == DMG_BURN or attacker:GetClass() == "entityflame" then
+		pet:Extinguish()
+	end
+	
+end)
+
 hook.Add("EntityTakeDamage", "PetHurtAndDamage", function(pet, dmgInfo)
 	local attacker = dmgInfo:GetAttacker()
 	local inflictor = dmgInfo:GetInflictor()
 	local dmg = dmgInfo:GetDamage()
+	local dmgType = dmgInfo:GetDamageType()
 	
 	if pet:IsPlayer() or not pet:IsPet() then return end
 	local ply = pet.owner 
-	
-	if attacker == "env_fire" then
-		pet:Extinguish()
-	end
 	
 	if not attacker:IsPlayer() then
 		healingTime = GetConVar("hl2cr_petrecovertime"):GetInt() + CurTime()

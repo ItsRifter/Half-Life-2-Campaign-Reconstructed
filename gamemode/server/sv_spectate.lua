@@ -5,6 +5,8 @@ function SpectateMode(ply)
 	isSpec = true
 	ply:SetNoTarget(true)
 	if ply:IsValid() then
+		ply:Flashlight(false)
+		ply:AllowFlashlight(false)
 		ply:StripWeapons()
 		ply:Spectate(5)
 	end

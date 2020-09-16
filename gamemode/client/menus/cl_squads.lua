@@ -91,7 +91,7 @@ function JoinSquad(leaderName, teamName)
 			timer.Create("SquadTimer", 5, 1, function()
 				
 				
-				print("Timer Expired")
+
 				XPTotal = 0
 				squadTeamLeaderMember:SetText(leaderName .. ":\n" .. 0 .. "XP")
 				for k, v in pairs(memberNames) do

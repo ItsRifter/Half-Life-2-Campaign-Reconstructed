@@ -8,12 +8,14 @@ function ENT:Initialize()
 	end
 
 	--Set width, length and height of the checkpoint
-	local w = TRIGGER_CHECKPOINT[2].x - TRIGGER_CHECKPOINT[1].x
-	local l = TRIGGER_CHECKPOINT[2].y - TRIGGER_CHECKPOINT[1].y
-	local h = TRIGGER_CHECKPOINT[2].z - TRIGGER_CHECKPOINT[1].z
+	
+	local w = self.Max.x - self.Min.x
+	local l = self.Max.y - self.Min.y
+	local h = self.Max.z - self.Min.z
+	
 	local minPos = Vector(-1 - ( w / 2 ), -1 - ( l / 2 ), -1 - ( h / 2 ))
 	local maxPos = Vector(w / 2, l / 2, h / 2)
-
+	
 	self:DrawShadow(false)
 	self:SetCollisionBounds(minPos, maxPos)
 	self:SetSolid(SOLID_BBOX)
@@ -52,6 +54,7 @@ function ENT:StartTouch(ent)
 			AllowSpawn = true
 			for k, v in pairs(player.GetAll()) do
 				v:ChatPrint("Airboat weapon is now available")
+				v.AllowSpawn = true
 			end
 		end
 		
@@ -61,6 +64,22 @@ function ENT:StartTouch(ent)
 				Achievement(v, "Keep_off_the_sand", "HL2_Ach_List", 7500)
 			end
 			surpassSand = true
+		end
+				
+		if point1 and game.GetMap() == "ep1_citadel_00" then
+			timer.Simple(5, function()
+				ent:ExitVehicle()
+				ent:SetPos(Vector(-8980, 5789, -117))
+			end)
+		end
+		
+		if game.GetMap() == "ep1_citadel_00" and point2 then
+			for k, alyx in pairs(ents.FindByClass("npc_alyx")) do
+				alyx:SetPos(Vector(-8636, 5987, -65))
+			end
+			for k, dog in pairs(ents.FindByClass("npc_dog")) do
+				dog:SetPos(Vector(-7953, 5700, 48))
+			end
 		end
 				
 		--Chat print to all players and enable their one time command use
