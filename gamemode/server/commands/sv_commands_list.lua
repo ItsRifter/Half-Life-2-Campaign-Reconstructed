@@ -18,7 +18,7 @@ end)
 hook.Add("PlayerSay", "Commands", function(ply, text)
 	--Worthless secret for worthless achievement hunter
 	if (string.lower(text) == "!gimmeasecret") then
-		Achievement(ply, "Worthless_Secret", "Lobby_Ach_List", 0)
+		Achievement(ply, "Worthless_Secret", "Lobby_Ach_List")
 		return ""
 	end
 	
@@ -527,6 +527,28 @@ concommand.Add("hl2cr_wipeinv", function(ply, cmd, args, argStr)
 	end
 end)
 
+--Incase important npcs break
+concommand.Add("hl2cr_bringnpc", function(ply, cmd, args, argStr)
+	local npc = tostring(args[1])
+	if ply:IsAdmin() then
+		if npc == "alyx" then
+			for k, bring in pairs(ents.FindByClass("npc_alyx")) do
+				bring:SetPos(ply:GetPos())
+			end
+		elseif npc == "barney" then
+			for k, bring in pairs(ents.FindByClass("npc_barney")) do
+				bring:SetPos(ply:GetPos())
+			end
+		elseif npc == "dog" then
+			for k, bring in pairs(ents.FindByClass("npc_dog")) do
+				bring:SetPos(ply:GetPos())
+			end
+		end
+	else
+		ply:PrintMessage(HUD_PRINTCONSOLE, "You do not have access to this command")
+	end
+
+end)
 --Meant for dev reasons with bots, but can be used on people for fun
 concommand.Add("hl2cr_forcesay", function(ply, cmd, args, argStr)
 
@@ -796,8 +818,21 @@ end)
 
 concommand.Add("hl2cr_petpoints", function(ply, cmd, args)
 	local petPoints = tonumber(args[1])
+	local target = nil
+	if args[2] then
+		target = string.sub(args[2], 0)	
+	end
 	if ply:IsAdmin() then
-		ply.hl2cPersistent.PetPoints = ply.hl2cPersistent.PetPoints + petPoints
+		for k, v in pairs(player.GetAll()) do
+			if string.match(string.lower(v:Nick()), tostring(target)) then
+				target = v
+			end
+		end
+		
+		if target and petPoints then
+			target.hl2cPersistent.PetPoints = target.hl2cPersistent.PetPoints + petPoints
+			target:ChatPrint("Your pet skill points has been set to " .. petPoints .. " by an admin")
+		end
 	else
 		ply:ChatPrint("You don't have access to this command")
 	end

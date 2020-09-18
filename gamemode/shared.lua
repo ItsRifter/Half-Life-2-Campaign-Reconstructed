@@ -63,6 +63,14 @@ function addDonatorCitizenModels(model)
 	table.insert(GM.donateCitizen, {model})
 end
 
+function addDonatorFighterModels(model)
+	table.insert(GM.donateFighter, {model})
+end
+
+function addHalloweenModels(model)
+	table.insert(GM.halloweenModel, {model})
+end
+
 GM.citizens = {}
 GM.rebels = {}
 GM.medics = {}
@@ -76,6 +84,8 @@ GM.gman = {}
 GM.rareHev = {}
 GM.admin = {}
 GM.donateCitizen = {}
+GM.donateFighter = {}
+GM.halloweenModel = {}
 
 addCitizenModels("models/player/Group01/female_01.mdl")
 addCitizenModels("models/player/Group01/female_02.mdl")
@@ -143,6 +153,10 @@ addGmanModels("models/kaesar/hlalyx/gman/gman.mdl")
 addAdminModels("models/humans/hev_mark2.mdl")
 
 addDonatorCitizenModels("models/hlvr/characters/russell/russell_player.mdl")
+
+addDonatorFighterModels("models/hlvr/characters/larry/larry_player.mdl")
+
+addHalloweenModels("models/hlvr/human/corpse/zombie/zombie_common_2_player.mdl")
 
 Register = {}
 GM.ArmourItem = {}

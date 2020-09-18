@@ -16,7 +16,7 @@ include("server/commands/sv_commands_list.lua")
 include("server/stats/sv_player_levels.lua")
 include("server/saving_modules/sv_data_flatfile.lua")
 include("server/sv_change_map.lua")
-include("server/extend/network.lua")
+include("server/extend/sv_network.lua")
 include("server/config/achievements/sv_ach.lua")
 include("server/sv_unstuck.lua")
 include("server/config/sv_difficulty.lua")
@@ -269,6 +269,17 @@ hook.Add("Think", "votingThink", function()
 		
 		v:SetNWInt("RestartVotes", neededVotesRestart)
 		v:SetNWInt("LobbyVotes", neededVotes)
+	end
+end)
+
+gameevent.Listen("player_connect")
+hook.Add("player_connect", "playerConnectSound", function(data)
+	local id = data.networkid
+	
+	for k, v in pairs(player.GetAll()) do
+		net.Start("AdminJoin")
+			net.WriteString(id)
+		net.Send(v)
 	end
 end)
 

@@ -31,7 +31,6 @@ function spawnPet(ply, pos)
 		for k, v in pairs(player.GetAll()) do
 			ply.pet:AddEntityRelationship(v, D_LI, 99)
 		end
-		ply.pet:SetKeyValue("spawnflags", "SF_NPC_FADE_CORPSE")
 		ply.pet:SetOwner(ply)
 		ply.pet.owner = ply.pet:GetOwner()
 		ply.pet:SetCustomCollisionCheck(false)
@@ -432,7 +431,7 @@ net.Receive("Evolving", function(len, ply)
 	if ply.hl2cPersistent.PetStage == 1 then
 		ply.hl2cPersistent.PetMaxLvl = 7
 	elseif ply.hl2cPersistent.PetStage == 2 then
-		ply.hl2cPersistent.PetMaxLvl = 6
+		ply.hl2cPersistent.PetMaxLvl = 7
 	end
 	
 	if ply.hl2cPersistent.PetStage == 4 then

@@ -167,6 +167,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 1
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -196,6 +197,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 2
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -221,6 +223,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 3
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -247,6 +250,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 4
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -273,6 +277,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 5
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -295,6 +300,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 1
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -323,6 +329,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 2
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -351,6 +358,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 3
 				surface.PlaySound("beams/beamstart5.wav")
 				net.Start("UpdateSkills")
@@ -378,6 +386,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 4
 				surface.PlaySound("beams/beamstart5.wav")
 				net.Start("UpdateSkills")
@@ -406,6 +415,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 5
 				surface.PlaySound("beams/beamstart5.wav")
 				net.Start("UpdateSkills")
@@ -434,6 +444,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 6
 				surface.PlaySound("beams/beamstart5.wav")
 				net.Start("UpdateSkills")
@@ -462,6 +473,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 7
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -483,6 +495,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 1
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -511,6 +524,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 2
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -539,6 +553,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 3
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -567,6 +582,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 4
 				net.Start("UpdateSkills")
 					net.WriteInt(4, 16)
@@ -596,6 +612,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 5
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -624,6 +641,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 6
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -682,6 +700,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 2
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -710,6 +729,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 3
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -738,6 +758,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 4
 				net.Start("UpdateSkills")
 					net.WriteInt(4, 16)
@@ -767,6 +788,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 5
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -795,6 +817,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 6
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -823,6 +846,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 7
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -851,6 +875,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 8
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -872,6 +897,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 1
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -900,6 +926,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 2
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -928,6 +955,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 3
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -956,6 +984,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 4
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -984,6 +1013,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 5
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -1012,6 +1042,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 6
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -1040,6 +1071,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 7
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -1068,6 +1100,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 8
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -1096,6 +1129,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 9
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -1123,6 +1157,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 10
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -1143,6 +1178,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 1
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -1171,6 +1207,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 2
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -1199,6 +1236,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 3
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -1227,6 +1265,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 4
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -1255,6 +1294,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 5
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -1283,6 +1323,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 6
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -1311,6 +1352,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 7
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -1339,6 +1381,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 8
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -1367,6 +1410,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 9
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -1395,6 +1439,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				curSkill = 10
 				net.Start("UpdateSkills")
 				net.SendToServer()
@@ -1423,6 +1468,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("You already unlocked this!")
 				surface.PlaySound("buttons/button8.wav")
 			else
+				skillPoints = skillPoints - 1
 				net.Start("Achievement")
 					net.WriteString("Fast_Climber")
 					net.WriteString("Misc_Ach_List")
@@ -1510,7 +1556,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 	local selectImage = vgui.Create("DImage", petSwitchPanel)
 	selectImage:SetSize(250, 250)
 	selectImage:SetPos(300, 175)
-	if curSkill == 6 and petStage == 2 then
+	if curSkill >= 6 and petStage == 2 then
 		selectImage:SetImage(PET_FAST_ZOMBIE_EVOL_ICON[3])
 		selectPetLabel:SetText("Fast Pet")
 		selectPetLabel:SetPos(375, 75)
@@ -1527,7 +1573,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 	selectPetButton:SetText("Adopt New Pet")
 	
 	selectPetButton.DoClick = function()
-		if curSkill == 6 and petStage == 2 then
+		if curSkill >= 6 and petStage == 2 then
 			net.Start("NewPet")
 				net.WriteString("hl2cr_fastzombie_pet")
 			net.SendToServer()

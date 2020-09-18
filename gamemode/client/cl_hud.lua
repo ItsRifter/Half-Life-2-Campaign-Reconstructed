@@ -15,6 +15,20 @@ surface.CreateFont("Map_Font", {
 	size = 128,
 })
 
+net.Receive("AdminJoin", function()
+	local id = net.ReadString()
+	if id == "STEAM_0:1:7832469" then
+		
+		LocalPlayer():ChatPrint("The 'Birdman' has joined the server")
+		surface.PlaySound("vo/Citadel/gman_exit01.wav")
+	elseif id == "STEAM_0:0:6009886" then
+		for k, v in pairs(player.GetAll()) do
+			v:ChatPrint("The owner 'SuperSponer' has joined the server")
+			surface.PlaySound("ambient/levels/outland/ol07_advisorblast04.wav")
+		end
+	end
+end)
+
 net.Receive("IndicSpawn", function()
 
 	local xpDisplay = net.ReadInt(16)
@@ -178,9 +192,16 @@ end)
 
 net.Receive("SurvAllDead", function() shouldDrawRestartTimer = true end)
 
+net.Receive("FailedMap", function() shouldDrawRestartTimer = true end)
+
 hook.Add("HUDPaint", "HUDPaint_DrawTimer", function()
 
-	if shouldDrawTimer and not survivalMode and game.GetMap() != "d3_breen_01" then
+	local WINMAPS = {
+		["d3_breen_01"] = true,
+		["ep1_c17_06"] = true
+	}
+
+	if shouldDrawTimer and not survivalMode and not WINMAPS[game.GetMap()]  then
 		if not timer.Exists("MapTimerClient") then
 			timer.Create("MapTimerClient", 20, 1, function() timer.Remove("MapTimerClient")	end)
 			surface.PlaySound("npc/overwatch/radiovoice/allunitsapplyforwardpressure.wav")
@@ -194,7 +215,7 @@ hook.Add("HUDPaint", "HUDPaint_DrawTimer", function()
 		end
 		draw.DrawText("Time Left: " .. math.Round(timer.TimeLeft("MapTimerClient"), 0), "Map_Font", ScrW() / 2, ScrH() - 350, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	
-	elseif shouldDrawTimer and not survivalMode and game.GetMap() == "d3_breen_01" then
+	elseif shouldDrawTimer and not survivalMode and WINMAPS[game.GetMap()] then
 		if not timer.Exists("MapTimer") then
 			timer.Create("MapTimer", 35, 1, function() end)
 			surface.PlaySound("vo/coast/odessa/male01/nlo_cheer04.wav")
@@ -207,9 +228,7 @@ hook.Add("HUDPaint", "HUDPaint_DrawTimer", function()
 			surface.DrawRect(0, ScrH() / 2 + 175, ScrW(), 175)
 		end
 		draw.DrawText("Time Left: " .. math.Round(timer.TimeLeft("MapTimer"), 0), "Map_Font", ScrW() / 2, ScrH() - 350, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-	end
-	
-	if shouldDrawRestartTimer then
+	elseif shouldDrawRestartTimer then
 		if not timer.Exists("RestartTimer") then
 			timer.Create("RestartTimer", 15, 1, function()
 				timer.Remove("RestartTimer")
@@ -224,9 +243,7 @@ hook.Add("HUDPaint", "HUDPaint_DrawTimer", function()
 			surface.DrawRect(0, ScrH() / 2 + 175, ScrW(), 175)
 		end
 		draw.DrawText("Restarting in " .. math.Round(timer.TimeLeft("RestartTimer"), 0), "Map_Font", ScrW() / 2, ScrH() - 350, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-	end
-	
-	if shouldDrawDeathTimer then
+	elseif shouldDrawDeathTimer then
 		if not timer.Exists("DeathTimer") then
 			timer.Create("DeathTimer", deathSeconds, 1, function()
 				timer.Remove("DeathTimer")
@@ -307,6 +324,21 @@ function meta:IsPet()
 	end
 end
 
+local FRIENDLY_NPCS = {
+	["npc_kleiner"] = true,
+	["npc_monk"] = true,
+	["npc_alyx"] = true,
+	["npc_barney"] = true,
+	["npc_citizen"] = true
+}
+function meta:IsFriendly()
+	if self:IsValid() and self:IsNPC() and FRIENDLY_NPCS[self:GetClass()] then
+		return true
+	else
+		return false
+	end
+end
+
 hook.Add("HUDPaint", "HUDPaint_DrawPetName", function()
 	for k, ent in pairs(ents.FindByClass("npc_*")) do
 		if ent:IsValid() and ent:IsPet() then
@@ -317,6 +349,20 @@ hook.Add("HUDPaint", "HUDPaint_DrawPetName", function()
 			if ent:GetOwner() and LocalPlayer():GetPos():Distance(ent:GetPos()) <= 1000 then
 				draw.SimpleText(ent:GetOwner():Nick() .. "'s Pet", "Pet_Font_User", ScrPos.x, ScrPos.y + 35, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 				draw.SimpleText(ent:GetOwner():GetNWString("PetName"), "Pet_Font_Name", ScrPos.x, ScrPos.y, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+			end
+		end
+	end
+end)
+
+hook.Add("HUDPaint", "HUDPaint_DrawNPCHP", function()
+	for k, ent in pairs(ents.FindByClass("npc_*")) do
+		if ent:IsValid() and (not ent:IsPet() and not ent:IsFriendly()) then
+			local dist = LocalPlayer():GetPos():Distance(ent:GetPos())
+			local pos = ent:GetPos()
+			pos.z = ent:GetPos().z + 45 + (dist * 0.0325)
+			local ScrPos = pos:ToScreen()
+			if ent:GetOwner() and LocalPlayer():GetPos():Distance(ent:GetPos()) <= 200 then
+				draw.SimpleText("Health: " .. ent:Health(), "Pet_Font_Name", ScrPos.x, ScrPos.y, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 			end
 		end
 	end

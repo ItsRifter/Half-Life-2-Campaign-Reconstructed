@@ -27,5 +27,5 @@ end
 hook.Add("GiveLostCause", "GrantLobbyAch", function()
 	local activator, caller = ACTIVATOR, CALLER
 	
-	Achievement(activator, "Lost_Cause", "Lobby_Ach_List", 500)
+	Achievement(activator, "Lost_Cause", "Lobby_Ach_List")
 end)

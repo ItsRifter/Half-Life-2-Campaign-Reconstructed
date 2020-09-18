@@ -4,7 +4,7 @@ function BeginHL2()
 end
 
 function BeginHL2EP1()
-	RunConsoleCommand("ChangeLevel", "ep1_citadel_00")
+	RunConsoleCommand("ChangeLevel", "ep1_citadel_01")
 end
 
 function BeginHL2EP2()

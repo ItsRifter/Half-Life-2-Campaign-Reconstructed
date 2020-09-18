@@ -14,7 +14,17 @@ HL2_Ach_List = {
 	[7] = {name = "Finish_HL2", desc = "Destroy the Citadel's\nreactor core", mat = "vgui/achievements/hl2_beat_game.png", isRare = false},
 	[8] = {name = "Lambda_Locator", desc = "Locate all\nthe Lambda caches", mat = "vgui/achievements/hl2_find_alllambdas.png", isRare = true},
 	[9] = {name = "Flushed", desc = "Kill an enemy with a toilet", mat = "vgui/achievements/hl2_kill_enemy_withtoilet.png", isRare = true},
-	[10] = {name = "Vortex Locator", desc = "Locate all the\nvortexes", mat = "vgui/achievements/hl2_find_alllambdas.png", isRare = true},
+	[10] = {name = "Vortex_Locator", desc = "Locate all the\nvortexes", mat = "vgui/achievements/hl2_find_alllambdas.png", isRare = true},
+}
+
+EP1_Ach_List = {
+	[1] = {name = "Watch_Your_Head", desc = "Make it to the bottom\nof the Citadel's main elevator shaft\nin one piece", mat = "vgui/achievements/ep1_beat_mainelevator.png", isRare = false},
+	[2] = {name = "Containment", desc = "Contain the Citadel core", mat = "vgui/achievements/ep1_beat_citadelcore.png", isRare = false},
+	[3] = {name = "Think_Fast", desc = "Kill an Elite Soldier\nwith his own energy ball", mat = "vgui/achievements/hlx_kill_elitesoldier_withhisenergyball.png", isRare = false},
+	[4] = {name = "Pacifist", desc = "Contain the Citadel core\nwithout killing any stalker", mat = "vgui/achievements/ep1_beat_citadelcore.png", isRare = false},
+	[5] = {name = "Attica", desc = "Destroy the gunship\nin the hospital attic", mat = "vgui/achievements/ep1_beat_hospitalatticgunship.png", isRare = false},
+	[6] = {name = "Safety_Measure", desc = "Whack the Combine\nGunship 5 times", mat = "vgui/achievements/ep1_beat_hospitalatticgunship.png", isRare = false},
+	[7] = {name = "Finish_EP1", desc = "Escape City-17 with alyx", mat = "vgui/achievements/ep1_beat_game.png", isRare = true},
 }
 
 Misc_Ach_List = {
@@ -188,11 +198,7 @@ function AchievementMenu(achievement, vortexes, lambdas)
 		
 		local achHL2Desc = hl2Panel:Add("DLabel")
 		achHL2Desc:SetPos(0, 90)
-		if table.HasValue(achievement, HL2_Ach_List[i].name) then
-			achHL2Desc:SetText(HL2_Ach_List[i].desc)
-		else
-			achHL2Desc:SetText("???")
-		end
+		achHL2Desc:SetText(HL2_Ach_List[i].desc)
 		achHL2Desc:SizeToContents()
 		achHL2Desc:SetColor(Color(0, 0, 0))
 		
@@ -208,6 +214,55 @@ function AchievementMenu(achievement, vortexes, lambdas)
 	
 	TabAchSheet:AddSheet("Half-Life 2", PanelHL2Ach, nil)
 	
+	local PanelEP1Ach = vgui.Create( "DPanel", achFrame )
+	PanelEP1Ach:SetSize(800, 850)
+	PanelEP1Ach:SetPos(0, 400)
+	PanelEP1Ach.Paint = function(s, w, h)
+		draw.RoundedBox(0,0,0, w, h, Color(170, 170, 170, 255))
+	end
+	
+	local ScrollEP1Ach = vgui.Create("DScrollPanel", PanelEP1Ach)
+	ScrollEP1Ach:Dock(FILL)
+	
+	local iconListEP1 = vgui.Create("DIconLayout", ScrollEP1Ach)
+	iconListEP1:Dock(FILL)
+	iconListEP1:SetSpaceY(5)
+	iconListEP1:SetSpaceX(5)
+	
+	for i = 1, #EP1_Ach_List do
+		
+		local ep1Panel = iconListEP1:Add("DPanel")
+		ep1Panel:SetPaintBackground(false)
+		ep1Panel:SetSize(128, 128)
+		
+		local achEP1Name = ep1Panel:Add("DLabel")
+		achEP1Name:SetPos(0, 65)
+		if table.HasValue(achievement, EP1_Ach_List[i].name) then
+			achEP1Name:SetText(EP1_Ach_List[i].name)
+		else
+			achEP1Name:SetText("LOCKED")
+		end
+		achEP1Name:SizeToContents()
+		achEP1Name:SetColor(Color(0, 0, 0))
+		
+		local achEP1Desc = ep1Panel:Add("DLabel")
+		achEP1Desc:SetPos(0, 90)
+		achEP1Desc:SetText(EP1_Ach_List[i].desc)
+		achEP1Desc:SizeToContents()
+		achEP1Desc:SetColor(Color(0, 0, 0))
+		
+		local achEP1Icon = ep1Panel:Add("DImage")
+		achEP1Icon:SetPos(0, 0)
+		achEP1Icon:SetSize(64, 64)
+		if table.HasValue(achievement, EP1_Ach_List[i].name) then
+			achEP1Icon:SetImage(EP1_Ach_List[i].mat)
+		else
+			achEP1Icon:SetImage("vgui/hud/icon_locked")
+		end
+	end	
+	
+	TabAchSheet:AddSheet("Episode 1", PanelEP1Ach, nil)
+	
 	local PanelMiscAch = vgui.Create( "DPanel", achFrame )
 	PanelMiscAch:SetSize(800, 850)
 	PanelMiscAch:SetPos(0, 400)
@@ -222,7 +277,7 @@ function AchievementMenu(achievement, vortexes, lambdas)
 	iconListMisc:Dock(FILL)
 	iconListMisc:SetSpaceY(5)
 	iconListMisc:SetSpaceX(5)
-	
+
 	for i = 1, #Misc_Ach_List do
 		
 		local miscPanel = iconListMisc:Add("DPanel")
@@ -241,12 +296,8 @@ function AchievementMenu(achievement, vortexes, lambdas)
 		achMiscName:SetColor(Color(0, 0, 0))
 		
 		local achMiscDesc = miscPanel:Add("DLabel")
-		achMiscDesc:SetPos(0, 90)
-		if table.HasValue(achievement, Misc_Ach_List[i].name) then
-			achMiscDesc:SetText(Misc_Ach_List[i].desc)
-		else
-			achMiscDesc:SetText("???")
-		end
+		achMiscDesc:SetPos(0, 90)	
+		achMiscDesc:SetText(Misc_Ach_List[i].desc)
 		achMiscDesc:SizeToContents()
 		achMiscDesc:SetColor(Color(0, 0, 0))
 		

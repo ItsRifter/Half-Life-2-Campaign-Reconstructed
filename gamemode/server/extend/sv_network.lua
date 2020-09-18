@@ -1,5 +1,8 @@
 --New player
 util.AddNetworkString("Greetings_new_player")
+
+util.AddNetworkString("AdminJoin")
+
 --Open menus and commands
 util.AddNetworkString("Open_Ach_Menu")
 util.AddNetworkString("Open_F4_Menu")
@@ -63,5 +66,8 @@ util.AddNetworkString("Squad_Left")
 
 --End map
 util.AddNetworkString("ShowEndStats")
+
+--Fail Networks
+util.AddNetworkString("FailedMap")
 
 util.AddNetworkString("DisplayDeathTimer")

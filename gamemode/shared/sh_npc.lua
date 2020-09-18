@@ -186,6 +186,16 @@ if SERVER then
 				end
 			end
 		end
+			
+		if game.GetMap() == "ep1_c17_02a" then
+			for k, gunship in pairs(ents.FindByClass("npc_combinegunship")) do
+				if gunship:IsValid() and gunship:Health() <= 0 then
+					for k, v in pairs(player.GetAll()) do
+						Achievement(v, "Attica", "EP1_Ach_List")
+					end
+				end
+			end
+		end
 
 		for k, npc in pairs(ents.FindByClass("npc_*")) do
 			for n, pet in pairs(ents.FindByClass("npc_*")) do
@@ -211,6 +221,7 @@ if SERVER then
 
 		--local inflictor = dmgInfo:GetDamageType() --Unused variable: inflictor
 		local attacker = dmgInfo:GetAttacker()
+		local dmg = dmgInfo:GetDamage()
 		--local dmg = dmgInfo:GetDamage()--Unused variable: dmg
 		local upgDmg = 0
 		if attacker:IsPlayer() and string.find(attacker.hl2cPersistent.TempUpg, "Shotgun_Blaster") then

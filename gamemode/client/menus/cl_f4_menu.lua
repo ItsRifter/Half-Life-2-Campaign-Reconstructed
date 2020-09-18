@@ -364,6 +364,20 @@ function OpenMenu(inventoryItems, randomExchange)
 		end
 	end
 	
+	for k, tier2 in pairs(GAMEMODE.donateFighter) do
+		if LocalPlayer():GetUserGroup() == "donator_resistance" or LocalPlayer():IsAdmin() then
+			local tier2Model = selectModelLayout:Add("SpawnIcon")
+			tier2Model:SetModel(tier2[1])
+			tier2Model.OnMousePressed = function()
+				net.Start("Update_Model")
+					net.WriteString(tier2Model:GetModelName())
+				net.SendToServer()
+				getModel = tier2Model:GetModelName()
+			end
+			selectPMScrollPanel:AddPanel(tier2Model)
+		end
+	end
+	
 	local helmetPanelReceiver = vgui.Create("DPanel", pmPanel)
 	helmetPanelReceiver:SetPos(225, 25)
 	helmetPanelReceiver:SetSize(75, 75)
@@ -960,13 +974,14 @@ function OpenMenu(inventoryItems, randomExchange)
 		if curCoins < exchangerEssence:GetValue() * 500 then
 			LocalPlayer():ChatPrint("You don't have enough coins")
 			surface.PlaySound("buttons/button10.wav")
-		elseif exchangerEssence:GetValue() < 1 then
+		elseif exchangerEssence:GetValue() < 0 then
 			LocalPlayer():ChatPrint("Questionable... but I won't do that")
 			surface.PlaySound("buttons/button10.wav")
-		else
+		elseif curCoins > exchangerEssence:GetValue() * 500 then
 			net.Start("Exchange")
 				net.WriteInt(exchangerEssence:GetValue(), 32)
 			net.SendToServer()
+			curCoins = curCoins - (exchangerEssence:GetValue() * 500)
 			surface.PlaySound("buttons/button9.wav")
 		end
 	end

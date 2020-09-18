@@ -30,7 +30,7 @@ function ENT:StartTouch(ent)
 		ent:Remove()
 		file.Delete("hl2cr_data/babydoll3.txt")
 		for k, v in pairs(player.GetAll()) do
-			Achievement(v, "A_Red_Letter_Baby", "HL2_Ach_List", 1000)
+			Achievement(v, "A_Red_Letter_Baby", "HL2_Ach_List")
 		end
 	end
 
@@ -61,12 +61,13 @@ function ENT:StartTouch(ent)
 		--If point1 triggered and sand achievement is achievable
 		if point1 and game.GetMap() == "d2_coast_11" and sandAchEarnable then
 			for k, v in pairs(player.GetAll()) do
-				Achievement(v, "Keep_off_the_sand", "HL2_Ach_List", 7500)
+				Achievement(v, "Keep_off_the_sand", "HL2_Ach_List")
 			end
 			surpassSand = true
 		end
-
-		if point1 and game.GetMap() == "ep1_citadel_00" then
+		
+		--[[
+		if game.GetMap() == "ep1_citadel_00" and point1 then
 			timer.Simple(5, function()
 				ent:ExitVehicle()
 				ent:SetPos(Vector(-8980, 5789, -117))
@@ -80,6 +81,40 @@ function ENT:StartTouch(ent)
 			for k, dog in pairs(ents.FindByClass("npc_dog")) do
 				dog:SetPos(Vector(-7953, 5700, 48))
 			end
+		elseif game.GetMap() == "ep1_citadel_00" and point3 then
+			for k, dog in pairs(ents.FindByClass("npc_dog")) do
+				dog:SetPos(Vector(-6549, 6258, -71))
+			end
+		end
+		--]]
+		
+		if game.GetMap() == "ep1_citadel_01" and point1 then
+			for k, alyx in pairs(ents.FindByClass("npc_alyx")) do
+				alyx:SetPos(Vector(-4637, 7798, 2537))
+			end
+			for k, removeBrush in pairs(ents.FindByClass("func_brush")) do
+				if removeBrush:GetName() == "clip_combineshieldwall6" then
+					removeBrush:Remove()
+				end
+			end
+		end
+		
+		if game.GetMap() == "ep1_citadel_02b" and point2 then
+			for k, v in pairs(player.GetAll()) do
+				Achievement(v, "Watch_Your_Head", "EP1_Ach_List")
+			end
+		end
+		
+		if game.GetMap() == "ep1_citadel_03" and point4 then
+			for k, v in pairs(player.GetAll()) do
+				Achievement(v, "Containment", "EP1_Ach_List")
+			end
+			if pacifistAchEarnable then
+				for k, v in pairs(player.GetAll()) do
+					Achievement(v, "Pacifist", "EP1_Ach_List")
+				end
+				surpassPacifist = true
+			end
 		end
 
 		--Chat print to all players and enable their one time command use
@@ -87,8 +122,6 @@ function ENT:StartTouch(ent)
 			p:ChatPrint("Checkpoint Reached")
 			if p:Team() == TEAM_DEAD then
 				p:Spawn()
-				p:UnLock()
-				p:UnSpectate()
 				DisableSpec(p)
 				p.isAliveSurv = true
 				deaths = deaths - deaths
@@ -182,6 +215,18 @@ function ENT:StartTouch(ent)
 		end
 
 		if game.GetMap() == "d3_citadel_04" and (point1 or point2) then
+			local train = ents.FindByName("citadel_train_lift01_1")
+
+			for k, resetSpawn in pairs(ents.FindByClass("info_player_start")) do
+				resetSpawn:SetParent(train[1])
+			end
+		else
+			for k, resetSpawn in pairs(ents.FindByClass("info_player_start")) do
+				resetSpawn:SetParent(nil)
+			end
+		end
+		
+		if game.GetMap() == "ep1_citadel_02b" and point1 then
 			local train = ents.FindByName("citadel_train_lift01_1")
 
 			for k, resetSpawn in pairs(ents.FindByClass("info_player_start")) do

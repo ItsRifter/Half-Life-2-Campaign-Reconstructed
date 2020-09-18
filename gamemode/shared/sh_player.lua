@@ -203,7 +203,6 @@ hook.Add("EntityTakeDamage", "BlastResist", function(ent, dmgInfo)
 	local dmgType = dmgInfo:GetDamageType()
 	local expResist = 0
 	
-	
 	if ent:IsPlayer() then 
 		if string.find(ent.hl2cPersistent.TempUpg, "Blast_Resistance") then
 			expResist = 50
@@ -466,7 +465,7 @@ hook.Add("WeaponEquip", "WeaponPickedUp", function(weapon, ply)
 
 	if weapon:GetClass() == "weapon_crowbar" and game.GetMap() == "d1_trainstation_06" then
 		for k, v in pairs(player.GetAll()) do
-			Achievement(v, "Trusty_Hardware", "HL2_Ach_List", 500)
+			Achievement(v, "Trusty_Hardware", "HL2_Ach_List")
 		end
 	end
 end)
@@ -496,7 +495,7 @@ function RespawnTimerActive(ply, deaths)
 		if playerDeaths == playersAlive then	
 			if playerDeaths >= 4 then
 				for k, v in pairs(player.GetAll()) do
-					Achievement(v, "Survival_Lost", "Misc_Ach_List", 500)
+					Achievement(v, "Survival_Lost", "Misc_Ach_List")
 				end
 			end
 			ply:ChatPrint("All players have died... restarting map")
@@ -669,7 +668,7 @@ end)
 
 
 function giveVortex(map, ply)
-	if not string.find(table.ToString(ply.hl2cPersistent.Vortexes), map) then
+	if not table.HasValue(ply.hl2cPersistent.Vortexes, map) then
 	
 		table.insert(ply.hl2cPersistent.Vortexes, map)
 		Special(ply, map, "HL2_Vortex", 750)
@@ -685,17 +684,17 @@ function giveVortex(map, ply)
 	end
 	
 	if table.Count(ply.hl2cPersistent.Vortexes) == 24 then
-		Achievement(ply, "Vortex_Locator", "HL2_Ach_List", 30000)
+		Achievement(ply, "Vortex_Locator", "HL2_Ach_List")
 	end
 end
 
 function giveLambda(map, ply)
-	if not string.find(table.ToString(ply.hl2cPersistent.Lambdas), map) then
+	if not table.HasValue(ply.hl2cPersistent.Lambdas, map) then
 		table.insert(ply.hl2cPersistent.Lambdas, map)
 		Special(ply, map, "HL2_Lambda", 500)
 	end
 	
 	if table.Count(ply.hl2cPersistent.Lambdas) == 34 then
-		Achievement(ply, "Lambda_Locator", "HL2_Ach_List", 15000)
+		Achievement(ply, "Lambda_Locator", "HL2_Ach_List")
 	end
 end

@@ -333,7 +333,7 @@ function UpdateBall()
 	elseif game.GetMap() == "d1_town_04" then
 		file.Delete("hl2cr_data/RavenBall8.txt")
 		for k, v in pairs(player.GetAll()) do
-			Achievement(v, "Rave_Ball", "HL2_Ach_List", 5000)	
+			Achievement(v, "Rave_Ball", "HL2_Ach_List")	
 		end
 	end
 end
@@ -369,14 +369,14 @@ end)
 hook.Add("GiveGravgun", "GrantGravgun", function()
 	for k, v in pairs(player.GetAll()) do
 		v:Give("weapon_physcannon")
-		Achievement(v, "ZeroPoint_Energy", "HL2_Ach_List", 500)
+		Achievement(v, "ZeroPoint_Energy", "HL2_Ach_List")
 		v:ChatPrint("Gravity gun is now enabled")
 	end
 end)
 
 hook.Add("EndHL2", "FinishedHL2", function()
 	for k, v in pairs(player.GetAll()) do
-		Achievement(v, "Finish_HL2", "HL2_Ach_List", 2500)
+		Achievement(v, "Finish_HL2", "HL2_Ach_List")
 	end
 	
 	EndHL2Game()
@@ -384,11 +384,11 @@ end)
 
 hook.Add("GiveWhatCat", "GrantCatAch", function()
 	for k, v in pairs(player.GetAll()) do
-		Achievement(v, "What_Cat", "HL2_Ach_List", 500)
+		Achievement(v, "What_Cat", "HL2_Ach_List")
 	end
 end)
 
-hook.Add( "OnChangeLevel", "ChangeMap", function()
+hook.Add( "OnChangeLevel", "ChangeMapHL2", function()
 	local map = game.GetMap()
 	
 	local HL2 = {
@@ -483,7 +483,7 @@ end)
 
 hook.Add("GravGunOnPickedUp", "PastPickup", function(ply, ent)
 	if ent:GetModel() == "models/props_lab/hevplate.mdl" then
-		Achievement(ply, "Blast_from_the_Past", "HL2_Ach_List", 2500)
+		Achievement(ply, "Blast_from_the_Past", "HL2_Ach_List")
 	end
 end)
 

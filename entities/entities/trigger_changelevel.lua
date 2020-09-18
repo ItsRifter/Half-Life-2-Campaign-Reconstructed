@@ -101,13 +101,18 @@ end
 
 function ENT:Think()
 
-
 	local MAPS_ONEPLAYER = {
 		["d1_eli_01"] = true,
 		["d1_town_05"] = true,
 		["d3_citadel_01"] = true,
 		["d3_citadel_05"] = true,
-		["d3_breen_01"] = true
+		["d3_breen_01"] = true,
+		["ep1_c17_06"] = true
+	}
+	
+	local MAPS_INSTANTTIMER = {
+		["d3_breen_01"] = true,
+		["ep1_c17_06"] = true
 	}
 	playerCount = #player.GetAll()
 	local addOne = 0
@@ -129,14 +134,18 @@ function ENT:Think()
 				timer.Create("MapTimer", 20, 0, function() hook.Call("OnChangeLevel") timer.Remove("MapTimer") end)
 			end
 		end
-	elseif team.NumPlayers(TEAM_COMPLETED_MAP) == 1 and MAPS_ONEPLAYER[game.GetMap()] then
-		for k, p in pairs(player.GetAll()) do
-			if not displayOnce then
-				p:ChatPrint("Enough players have completed, changing map in 20 seconds")
-				displayOnce = true
-				net.Start("DisplayMapTimer")
-				net.Broadcast()
-				timer.Create("MapTimer", 20, 0, function() hook.Call("OnChangeLevel") timer.Remove("MapTimer") end)
+	elseif team.NumPlayers(TEAM_COMPLETED_MAP) >= 1 and MAPS_ONEPLAYER[game.GetMap()] then
+		if game.GetMap() == "ep1_c17_06" then
+			EndEP1Game()
+		else
+			for k, p in pairs(player.GetAll()) do
+				if not displayOnce then
+					p:ChatPrint("Enough players have completed, changing map in 20 seconds")
+					displayOnce = true
+					net.Start("DisplayMapTimer")
+					net.Broadcast()
+					timer.Create("MapTimer", 20, 0, function() hook.Call("OnChangeLevel") timer.Remove("MapTimer") end)
+				end
 			end
 		end
 	end
@@ -146,6 +155,20 @@ function EndHL2Game()
 	for k, p in pairs(player.GetAll()) do
 		if not displayOnce then
 			p:ChatPrint("Congratulations on finishing Half-Life 2!, returning to lobby in 35 seconds")
+			displayOnce = true
+			game.SetGlobalState("super_phys_gun", 0)
+			net.Start("DisplayMapTimer")
+			net.Broadcast()
+			timer.Create("MapTimer", 35, 0, function() hook.Call("OnChangeLevel") timer.Remove("MapTimer") end)
+		end
+	end
+end
+
+function EndEP1Game()
+	for k, p in pairs(player.GetAll()) do
+		Achievement(p, "Finish_EP1", "EP1_Ach_List")
+		if not displayOnce then
+			p:ChatPrint("Congratulations on finishing Episode 1!, returning to lobby in 35 seconds")
 			displayOnce = true
 			game.SetGlobalState("super_phys_gun", 0)
 			net.Start("DisplayMapTimer")

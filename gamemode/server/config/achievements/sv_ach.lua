@@ -1,28 +1,38 @@
 AchievementLists = {
 	Lobby_Ach_List = {
-		First_Time = {name = "First Time", mat = "vgui/achievements/hl2_beat_cemetery.png", isRare = false, clientTriggerable = true},
-		Worthless_Secret = {name = "Worthless Secret", mat = "entities/npc_kleiner.png", isRare = true},
-		Lost_Cause = {name = "Lost Cause", mat = "vgui/achievements/hl2_beat_cemetery.png", isRare = false, clientTriggerable = true}
+		First_Time = {name = "First Time", mat = "vgui/achievements/hl2_beat_cemetery.png", reward = 0, isRare = false, clientTriggerable = true},
+		Worthless_Secret = {name = "Worthless Secret", mat = "entities/npc_kleiner.png", reward = 0, isRare = true},
+		Lost_Cause = {name = "Lost Cause", mat = "vgui/achievements/hl2_beat_cemetery.png", reward = 1000, isRare = false, clientTriggerable = true}
 	},
 
 	HL2_Ach_List = {
-		A_Red_Letter_Baby = {name = "A Red Letter Baby", mat = "vgui/achievements/hl2_beat_game.png", isRare = false},
-		What_Cat = {name = "What Cat", mat = "vgui/achievements/hl2_beat_game.png", isRare = false},
-		Trusty_Hardware = {name = "Trusty Hardware", mat = "vgui/achievements/hl2_get_crowbar.png", isRare = false},
-		ZeroPoint_Energy = {name = "ZeroPoint Energy", mat = "vgui/achievements/hl2_get_gravitygun.png", isRare = false},
-		Rave_Ball = {name = "Rave Ball", desc = "Carry dog's ball through Ravenholm into the mines", mat = "vgui/achievements/hl2_get_gravitygun.png", isRare = false},
-		Keep_off_the_sand = {name = "Keep off the sand", mat = "vgui/achievements/hl2_beat_donttouchsand.png", isRare = false},
-		Finish_HL2 = {name = "Finish HL2", mat = "vgui/achievements/hl2_beat_game.png", isRare = false},
-		Lambda_Locator = {name = "Lambda Locator", mat = "vgui/achievements/hl2_find_alllambdas.png", isRare = true},
-		Flushed = {name = "Flushed", mat = "vgui/achievements/hl2_kill_enemy_withtoilet.png", isRare = false},
-		Blast_from_the_Past = {name = "Blast from the Past", mat = "vgui/achievements/hl2_find_hevfaceplate.png", isRare = false},
-		Vortex_Locator = {name = "Vortex Locator", mat = "vgui/achievements/hl2_find_alllambdas.png", isRare = true},
+		A_Red_Letter_Baby = {name = "A Red Letter Baby", mat = "vgui/achievements/hl2_beat_game.png", reward = 2500, isRare = false},
+		What_Cat = {name = "What Cat", mat = "vgui/achievements/hl2_beat_game.png", reward = 1000, isRare = false},
+		Trusty_Hardware = {name = "Trusty Hardware", mat = "vgui/achievements/hl2_get_crowbar.png", reward = 500, isRare = false},
+		ZeroPoint_Energy = {name = "ZeroPoint Energy", mat = "vgui/achievements/hl2_get_gravitygun.png", reward = 500, isRare = false},
+		Rave_Ball = {name = "Rave Ball", desc = "Carry dog's ball through Ravenholm into the mines", mat = "vgui/achievements/hl2_get_gravitygun.png", reward = 10000, isRare = false},
+		Keep_off_the_sand = {name = "Keep off the sand", mat = "vgui/achievements/hl2_beat_donttouchsand.png", reward = 7500, isRare = false},
+		Finish_HL2 = {name = "Finish HL2", mat = "vgui/achievements/hl2_beat_game.png", reward = 2500, isRare = false},
+		Lambda_Locator = {name = "Lambda Locator", mat = "vgui/achievements/hl2_find_alllambdas.png", reward = 15000, isRare = true},
+		Flushed = {name = "Flushed", mat = "vgui/achievements/hl2_kill_enemy_withtoilet.png", reward = 2500, isRare = false},
+		Blast_from_the_Past = {name = "Blast from the Past", mat = "vgui/achievements/hl2_find_hevfaceplate.png", reward = 2500, isRare = false},
+		Vortex_Locator = {name = "Vortex Locator", mat = "vgui/achievements/hl2_find_alllambdas.png", reward = 30000, isRare = true},
+	},
+
+	EP1_Ach_List = {
+		Containment = {name = "Containment", mat = "vgui/achievements/ep1_beat_citadelcore.png", reward = 1500, isRare = false},
+		Watch_Your_Head = {name = "Watch your head!", mat = "vgui/achievements/ep1_beat_mainelevator.png", reward = 1500, isRare = false},
+		Think_Fast = {name = "Think Fast!", mat = "vgui/achievements/hlx_kill_elitesoldier_withhisenergyball.png", reward = 3500, isRare = false},
+		Pacifist = {name = "Pacifist", mat = "vgui/achievements/ep1_beat_citadelcore.png", reward = 5000, isRare = false},
+		Safety_Measure = {name = "Safety Measure", mat = "vgui/achievements/ep1_beat_hospitalatticgunship.png", reward = 1000, isRare = false},
+		Attica = {name = "Attica!", mat = "vgui/achievements/ep1_beat_hospitalatticgunship.png", reward = 1500, isRare = false},
+		Finish_EP1 = {name = "Finish EP1", mat = "vgui/achievements/ep1_beat_game.png", reward = 2500, isRare = false},
 	},
 
 	Misc_Ach_List = {
-		Survival_Lost = {name = "A Predictable Failure", mat = "vgui/achievements/hl2_find_allgmen.png", isRare = false},
-		Blast_that_little = {name = "Blast that little", mat = "vgui/achievements/hl2_beat_toxictunnel.png", isRare = false, clientTriggerable = true},
-		Fast_Climber = {name = "Fast Climber", mat = "vgui/achievements/hl2_beat_toxictunnel.png", isRare = false, clientTriggerable = true},
+		Survival_Lost = {name = "A Predictable Failure", mat = "vgui/achievements/hl2_find_allgmen.png", reward = 500, isRare = false},
+		Blast_that_little = {name = "Blast that little", mat = "vgui/achievements/hl2_beat_toxictunnel.png", reward = 2500, isRare = false, clientTriggerable = true},
+		Fast_Climber = {name = "Fast Climber", mat = "vgui/achievements/hl2_beat_toxictunnel.png", reward = 5000, isRare = false, clientTriggerable = true},
 	}
 }
 
@@ -92,7 +102,7 @@ SpecialLists = {
 	}
 }
 
-function Achievement(ply, name, list, amt, clientTriggered)
+function Achievement(ply, name, list, clientTriggered)
 
 	-- Get achievement list, or exit if it doesn't exists
 	local achievementList = AchievementLists[list]
@@ -102,6 +112,10 @@ function Achievement(ply, name, list, amt, clientTriggered)
 	local achievement = achievementList[name]
 	if not achievement then return end
 
+	--Get the achievement rewards
+	local rewards = achievementList[name].reward
+	if not rewards then return end
+	
 	-- Only allow the client to trigger achievements that are "clientTriggerable"
 	if clientTriggered and not achievement.clientTriggerable then return end
 
@@ -131,9 +145,9 @@ function Achievement(ply, name, list, amt, clientTriggered)
 	end
 
 	-- XP stuff
-	if amt != 0 then
-		AddXP(ply, amt)
-		ply:ChatPrint(string.format("You got %s XP", amt))
+	if rewards != 0 then
+		AddXP(ply, rewards)
+		ply:ChatPrint(string.format("You got %s XP", rewards))
 	end
 end
 
