@@ -31,6 +31,10 @@ function ENT:StartTouch(ent)
 		file.Delete("hl2cr_data/babydoll3.txt")
 		for k, v in pairs(player.GetAll()) do
 			Achievement(v, "A_Red_Letter_Baby", "HL2_Ach_List")
+			if not table.HasValue(v.hl2cPersistent.HatTable, "baby_head") then
+				table.insert(v.hl2cPersistent.HatTable, "baby_head")
+				v:ChatPrint("You earned a 'baby head' hat")
+			end
 		end
 	end
 
@@ -202,7 +206,7 @@ function ENT:StartTouch(ent)
 			end
 			lockedSpawn = true
 			if GetConVar("hl2cr_survivalmode"):GetInt() == 0 then
-				beginLoyal()
+				--beginLoyal()
 			end
 		elseif game.GetMap() == "d2_coast_10" and point2 then
 			endLoyal()

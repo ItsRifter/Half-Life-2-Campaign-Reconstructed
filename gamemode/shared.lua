@@ -7,6 +7,9 @@ GM.Author = "SuperSponer"
 GM.Email = "d_thomas_smith30@hotmail.com"
 GM.Website = "N/A"
 
+resource.AddFile("resource/fonts/Coraline's Cat.ttf")
+resource.AddFile("resource/fonts/Robotica.ttf")
+
 function GM:Initialize()
 	self.BaseClass.Initialize(self)
 end
@@ -47,10 +50,6 @@ function addHevModels(model)
 	table.insert(GM.hev, {model})
 end
 
-function addGmanModels(model)
-	table.insert(GM.gman, {model})
-end
-
 function addRareHevModels(model)
 	table.insert(GM.rareHev, {model})
 end
@@ -80,7 +79,6 @@ GM.heavySoldier = {}
 GM.eliteSoldier = {}
 GM.captainSoldier = {}
 GM.hev = {}
-GM.gman = {}
 GM.rareHev = {}
 GM.admin = {}
 GM.donateCitizen = {}
@@ -146,9 +144,7 @@ addCaptainModels("models/hlvr/characters/combine_captain/combine_captain_hlvr_pl
 
 addHevModels("models/player/SGG/hev_helmet.mdl")
 
-addRareHevModels("models/kaesar/hlalyx/gordon/gordon.mdl")
-
-addGmanModels("models/kaesar/hlalyx/gman/gman.mdl")
+addRareHevModels("models/inaki/characters/gordon_freeman.mdl")
 
 addAdminModels("models/humans/hev_mark2.mdl")
 
@@ -160,11 +156,16 @@ addHalloweenModels("models/hlvr/human/corpse/zombie/zombie_common_2_player.mdl")
 
 Register = {}
 GM.ArmourItem = {}
+GM.WeaponItem = {}
 GM.PetItem = {}
 GM.TempUpgItem = {}
 
 function Register.Armour(armourItem) 
 	GM.ArmourItem[armourItem.Name] = armourItem
+end
+
+function Register.Weapon(weaponItem) 
+	GM.WeaponItem[weaponItem.Name] = weaponItem
 end
 
 function Register.Pet(petItem) 

@@ -9,7 +9,9 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 	local totalXPSquad = 0
 	
 	if npc:IsNPC() and attacker:IsPlayer() and inflictor:GetModel() == "models/props_wasteland/prison_toilet01.mdl" and game.GetMap() == "d2_prison_02" then
-		Achievement(attacker, "Flushed", "HL2_Ach_List")
+		for k, v in pairs(player.GetAll()) do
+			Achievement(v, "Flushed", "HL2_Ach_List")
+		end
 	end
 	
 	if npc:IsPet() and attacker:IsPet() then
@@ -57,6 +59,8 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 		["d2_prison_01"] = true,
 		["d2_prison_02"] = true,
 		["d2_prison_03"] = true,
+		["d2_prison_04"] = true,
+		["d2_prison_05"] = true,
 		["ep1_c17_00"] = true,
 		["ep1_c17_00a"] = true,
 		["ep1_c17_01"] = true,
@@ -79,12 +83,34 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 		attacker.hl2cPersistent.KillCount = attacker.hl2cPersistent.KillCount + 1
 		AddXP(attacker, giveXP)
 		AddCoins(attacker, giveCoins)
+		
+		attacker.tableRewards["Kills"] = attacker.tableRewards["Kills"] + 1
+		
 		Spawn(giveXP, giveCoins, npc:GetPos(), npc, attacker)
 	end
 	
-	--Crowbar bonus if the player beats the map using only the crowbar
-	if attacker:IsPlayer() and attacker:GetActiveWeapon():GetClass() != "weapon_crowbar" and attacker.crowbarOnly then
-		attacker.crowbarOnly = false
+	--Crowbar bonus if the player beats the map using only the crowbar with jeep exception
+	if attacker:IsPlayer() and attacker:GetActiveWeapon():GetClass() != "weapon_crowbar" and attacker.tableRewards["CrowbarOnly"] 
+	and not inflictor:GetClass() == "prop_vehicle_jeep_old" then
+		attacker.tableRewards["CrowbarOnly"] = false
+		if attacker.hl2cPersistent.OTF then
+			attacker.hl2cPersistent.OTF = false
+			attacker:ChatPrint("You have failed the 'One True Freeman' Challenge")
+		end
+	else
+		attacker.hl2cPersistent.AchProgress.CrowbarKiller = attacker.hl2cPersistent.AchProgress.CrowbarKiller + 1
+		
+		if attacker.hl2cPersistent.AchProgress.CrowbarKiller >= 250 then
+			Achievement(attacker, "Crowbar_Killer_250", "Kill_Ach_List")
+		end
+		
+		if attacker.hl2cPersistent.AchProgress.CrowbarKiller >= 500 then
+			Achievement(attacker, "Crowbar_Killer_500", "Kill_Ach_List")
+		end
+		
+		if attacker.hl2cPersistent.AchProgress.CrowbarKiller >= 1000 then
+			Achievement(attacker, "Crowbar_Killer_1000", "Kill_Ach_List")
+		end
 	end
 	
 	if attacker:IsPlayer() and inflictor:GetClass() == "prop_combine_ball" and string.match(game.GetMap(), "ep1_") then
@@ -100,6 +126,8 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 		pacifistAchEarnable = false
 	end
 	
+	
+	--NOT USED
 	if attacker:IsPlayer() and (attacker.squads.leader == attacker:Nick() or string.find(table.ToString(attacker.squads.membername), attacker:Nick())) then
 		totalXPSquad = totalXPSquad + giveXP
 		net.Start("Squad_XPUpdate")

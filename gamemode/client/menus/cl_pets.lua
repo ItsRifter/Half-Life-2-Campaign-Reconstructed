@@ -18,7 +18,7 @@ surface.CreateFont("Pet_Evol_Font", {
 	size = 32,
 })
 
-function petDuelMenu()
+function petDuelMenu(coins)
 	
 	local target = ""
 	local currentCoins = tonumber(LocalPlayer():GetNWInt("Coins"))
@@ -70,7 +70,7 @@ function petDuelMenu()
 			
 			net.Start("PetChallenge")
 				net.WriteString(target)
-				net.WriteInt(betAmt, 32)
+				net.WriteInt(betAmt, 128)
 			net.SendToServer()
 			
 		else
@@ -80,7 +80,8 @@ function petDuelMenu()
 end
 
 net.Receive("PetDuel", function()
-	petDuelMenu()
+	local curCoins = net.ReadInt(64)
+	petDuelMenu(curCoins)
 end)
 
 --Not really used, just reminders for what is what
@@ -673,6 +674,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				surface.PlaySound("buttons/button8.wav")
 			else
 				curSkill = 1
+				skillPoints = skillPoints - 1
 				net.Start("UpdateSkills")
 				net.SendToServer()
 				surface.PlaySound("beams/beamstart5.wav")
@@ -1488,7 +1490,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 		petEvolButton:SetSize(100, 50)
 		petEvolButton.DoClick = function()
 		if petStage == 0 then
-			if curSkill >= 5 then
+			if LocalPlayer():GetNWInt("PetLevel") >= 5 then
 				clientClosePets()
 				net.Start("Evolving")
 				net.SendToServer()
@@ -1499,7 +1501,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("Your pet isn't ready to evolve")
 			end
 		elseif petStage == 1 then
-			if curSkill >= 7 then
+			if LocalPlayer():GetNWInt("PetLevel") >= 6 then
 				petStatFrame:Close()
 				net.Start("Evolving")
 				net.SendToServer()
@@ -1510,11 +1512,11 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("Your pet isn't ready to evolve")
 			end
 		elseif petStage == 2 then
-			if curSkill >= 6 then
+			if LocalPlayer():GetNWInt("PetLevel") >= 6 then
 				LocalPlayer():ChatPrint("Your pet cannot evolve any further")
 			end
 		elseif petStage == 3 then
-			if curSkill >= 8 then
+			if LocalPlayer():GetNWInt("PetLevel") >= 8 then
 				petStatFrame:Close()
 				net.Start("Evolving")
 				net.SendToServer()
@@ -1525,7 +1527,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("Your pet isn't ready to evolve")
 			end
 		elseif petStage == 4 then
-			if curSkill >= 10 then
+			if LocalPlayer():GetNWInt("PetLevel") >= 10 then
 				petStatFrame:Close()
 				net.Start("Evolving")
 				net.SendToServer()
@@ -1536,7 +1538,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 				LocalPlayer():ChatPrint("Your pet isn't ready to evolve")
 			end
 		elseif petStage == 5 then
-			if curSkill >= 11 then
+			if LocalPlayer():GetNWInt("PetLevel") >= 11 then
 				LocalPlayer():ChatPrint("Your pet cannot evolve any further")
 			end
 		end
@@ -1650,6 +1652,11 @@ function petStats(entPet)
 		end
 	end
 	
+	petStatHPStatusLabel = vgui.Create("DLabel", petStatPanel)
+	petStatHPStatusLabel:SetPos(petStatHealthBar:GetWide() - 325, petStatHealthBar:GetTall() + 75)
+	petStatHPStatusLabel:SetFont("Pets_Stats")
+	petStatHPStatusLabel:SizeToContents()
+	
 	petStatXPLabel = vgui.Create("DLabel", petStatPanel)
 	petStatXPLabel:SetPos(25, 150)
 	petStatXPLabel:SetFont("Pets_Stats")
@@ -1692,6 +1699,9 @@ function petStats(entPet)
 			
 			petStatXPStatusLabel:SetText(LocalPlayer():GetNWInt("PetXP") .. "/" .. LocalPlayer():GetNWInt("PetMaxXP"))
 			petStatXPStatusLabel:SizeToContents()
+			
+			petStatHPStatusLabel:SetText(entPet:Health() .. "/" .. entPet:GetMaxHealth())
+			petStatHPStatusLabel:SizeToContents()
 
 			petStatHealthBar.Paint = function(self, w, h)
 				if entPet:Health() >= 75 then

@@ -1,9 +1,20 @@
+local MAPS_NOPETS = {
+	["d1_trainstation_01"] = true,
+	["d1_trainstation_02"] = true,
+	["d1_trainstation_03"] = true,
+	["d1_trainstation_04"] = true,
+	["d1_trainstation_05"] = true,
+	["d1_eli_01"] = true,
+	["d3_breen_01"] = true,
+	["ep1_citadel_01"] = true
+}
+
 function spawnPet(ply, pos)
 
 	if ply:IsValid() and ply:Team() == TEAM_ALIVE and not ply.petAlive then
 		ply:SetNWBool("PetActive", true)
 		
-		if game.GetMap() == "d1_trainstation_01" or game.GetMap() == "d1_trainstation_02" or game.GetMap() == "d1_trainstation_03" or game.GetMap() == "d1_trainstation_04" or game.GetMap() == "d1_trainstation_05" or game.GetMap() == "d1_eli_01" then
+		if MAPS_NOPETS[game.GetMap()] then
 			ply:ChatPrint("Pets are disabled on this map")
 		else
 		
@@ -54,7 +65,7 @@ duelRegistry = {}
 
 net.Receive("PetChallenge", function(len, ply)
 	local challengeeName = net.ReadString()
-	local bet = net.ReadInt(32)
+	local bet = net.ReadInt(128)
 
 	local challengee
 	for k, v in pairs(player.GetAll()) do
@@ -374,7 +385,7 @@ net.Receive("NewPet", function(len, ply)
 		ply.hl2cPersistent.PetHP = 125
 		ply.hl2cPersistent.PetLevel = 1
 		
-		ply.hl2cPersistent.PetMaxLvl = 8
+		ply.hl2cPersistent.PetMaxLvl = 9
 		
 		ply.hl2cPersistent.PetStage = 3
 		
@@ -429,12 +440,13 @@ net.Receive("Evolving", function(len, ply)
 	ply:SetNWInt("PetMaxXP", ply.hl2cPersistent.PetMaxXP)
 	
 	if ply.hl2cPersistent.PetStage == 1 then
-		ply.hl2cPersistent.PetMaxLvl = 7
+		ply.hl2cPersistent.PetMaxLvl = 8
 	elseif ply.hl2cPersistent.PetStage == 2 then
-		ply.hl2cPersistent.PetMaxLvl = 7
+		ply.hl2cPersistent.PetMaxLvl = 9
 	end
-	
-	if ply.hl2cPersistent.PetStage == 4 then
+	if ply.hl2cPersistent.PetStage == 3 then
+		ply.hl2cPersistent.PetMaxLvl = 9
+	elseif ply.hl2cPersistent.PetStage == 4 then
 		ply.hl2cPersistent.PetMaxLvl = 10
 	elseif ply.hl2cPersistent.PetStage == 5 then
 		ply.hl2cPersistent.PetMaxLvl = 11
@@ -462,7 +474,6 @@ function addPetXP(ply, amt)
 	if ply.hl2cPersistent.PetLevel >= ply.hl2cPersistent.PetMaxLvl then
 		ply.hl2cPersistent.PetXP = 0
 		ply:SetNWInt("PetXP", math.Round(ply.hl2cPersistent.PetXP))
-		ply:ChatPrint("Your pet will not earn anymore XP at this stage, try evolving it")
 	end
 
 	if ply.hl2cPersistent.PetXP >= ply.hl2cPersistent.PetMaxXP then

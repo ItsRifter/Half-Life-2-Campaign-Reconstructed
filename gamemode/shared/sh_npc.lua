@@ -21,6 +21,11 @@ INVUL_NPCS = {
 	"npc_vortigaunt",
 }--]]
 
+local RESTRICTED_NPCS = {
+	["npc_antlion"] = true,
+	["zpn_pumpkin_boss"] = true
+}
+
 hook.Add("EntityTakeDamage", "FriendOrFoe", function(ent, dmgInfo)
 	friendlyMaps = {
 		"d1_trainstation_01",
@@ -217,6 +222,17 @@ if SERVER then
 		end
 	end)
 
+	hook.Add("Think", "DoubleHPVar", function()
+		if GetConVar("hl2cr_doublehp"):GetInt() == 1 then
+			for k, dbNPC in pairs(ents.FindByClass("npc_*")) do
+				if not dbNPC.doubled and not dbNPC:IsPet() then
+					dbNPC:SetHealth(dbNPC:Health() * 2)
+					dbNPC.doubled = true
+				end
+			end
+		end
+	end)
+
 	hook.Add("ScaleNPCDamage", "DiffScalingNPC", function(ent, hitGroup, dmgInfo)
 
 		--local inflictor = dmgInfo:GetDamageType() --Unused variable: inflictor
@@ -244,3 +260,21 @@ if SERVER then
 		--end
 	end)
 end
+
+hook.Add("OnNPCKilled", "HalloweenEventNPC", function(npc, attacker, inflictor)
+	if GetConVar("hl2cr_halloween"):GetInt() == 0 then return end
+	if RESTRICTED_NPCS[npc:GetClass()] then return end
+	
+	local randCandy = math.random(1, 3)
+	
+	if attacker:IsPlayer() then
+		for i = 0, randCandy do
+			local randPosX = math.random(1, 90)
+			local randPosY = math.random(1, 90)
+			local candy = ents.Create("zpn_candy")
+			candy:SetCandy(1)
+			candy:SetPos(Vector(npc:GetPos().x + randPosX, npc:GetPos().y + randPosY, npc:GetPos().z + 25))
+			candy:Spawn()
+		end
+	end
+end)

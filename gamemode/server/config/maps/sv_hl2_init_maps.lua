@@ -1,24 +1,23 @@
 function SetupHL2Map()
 	sandAchEarnable = false
 	surpassSand = false
-	CHECKPOINTS = CHECKPOINTS or {}
 	game.SetGlobalState("friendly_encounter", 0)
 
 	--Create the lua entity
 	MapLua = ents.Create("lua_run")
 	MapLua:SetName("triggerhook")
 	MapLua:Spawn()
-	
-	if game.GetMap() == "d1_trainstation_05" then
-		for a, catAch in pairs(ents.FindByName("kill_mtport_rl_1")) do
-			catAch:Fire("AddOutput", "OnTrigger triggerhook:RunPassedCode:hook.Run( 'GiveWhatCat' ):0:-1" )
-		end
-	end
-	
+		
 	--Fix the spawnpoints
 	if game.GetMap() == "d1_trainstation_02" then 
 		for k, reset1 in pairs(ents.FindByClass("info_player_start")) do
 			reset1:SetPos(Vector(-4315, -215, 0))
+		end
+	end
+		
+	if game.GetMap() == "d1_trainstation_05" then
+		for a, catAch in pairs(ents.FindByName("kill_mtport_rl_1")) do
+			catAch:Fire("AddOutput", "OnTrigger triggerhook:RunPassedCode:hook.Run( 'GiveWhatCat' ):0:-1" )
 		end
 	end
 		
@@ -152,13 +151,20 @@ function SetupHL2Map()
 		end
 	end
 	
+	local SUPER_GUN = {
+		["d3_citadel_03"] = true,
+		["d3_citadel_04"] = true,
+		["d3_citadel_05"] = true,
+		["d3_breen_01"] = true
+	}
+	
 	--Fix super grav gun
-	if game.GetMap() == "d3_citadel_03" or game.GetMap() == "d3_citadel_04" or game.GetMap() == "d3_citadel_05" or game.GetMap() == "d3_breen_01" then
+	if SUPER_GUN[game.GetMap()] then
 		game.SetGlobalState("super_phys_gun", 1)
 	else
 		game.SetGlobalState("super_phys_gun", 0)
 	end
-	
+
 	if game.GetMap() == "d1_trainstation_01" and game.GetMap() == "d1_trainstation_02" then
 		for k, cop in pairs(ents.FindByClass("npc_metropolice")) do
 			for i, citz in pairs(ents.FindByClass("npc_citizen")) do
@@ -302,6 +308,27 @@ function SetupHL2Map()
 	end
 	
 	SetCheckpointsStageHL2()
+	
+	if GetConVar("hl2cr_halloween"):GetInt() == 1 then
+		SetUpHalloweenMap()
+	end
+	
+end
+
+local playersAmt = 0
+
+hook.Add("Think", "eventThink", function()
+	playersAmt = #player.GetAll()
+end)
+
+function SetUpHalloweenMap()
+	if playersAmt < 4 then return end
+	
+	if game.GetMap() == "d1_town_02a" then
+		local pumpkinBoss = ents.Create("zpn_pumpkin_boss")
+		pumpkinBoss:SetPos(Vector(-7565, 537, -3389))
+		pumpkinBoss:Spawn()
+	end
 end
 
 function UpdateBaby()
@@ -385,99 +412,6 @@ end)
 hook.Add("GiveWhatCat", "GrantCatAch", function()
 	for k, v in pairs(player.GetAll()) do
 		Achievement(v, "What_Cat", "HL2_Ach_List")
-	end
-end)
-
-hook.Add( "OnChangeLevel", "ChangeMapHL2", function()
-	local map = game.GetMap()
-	
-	local HL2 = {
-		"d1_trainstation_01",
-		"d1_trainstation_02",
-		"d1_trainstation_03",
-		"d1_trainstation_04",
-		"d1_trainstation_05",
-		"d1_trainstation_06",
-		"d1_canals_01",
-		"d1_canals_01a",
-		"d1_canals_02",
-		"d1_canals_03",
-		"d1_canals_05",
-		"d1_canals_06",
-		"d1_canals_07",
-		"d1_canals_08",
-		"d1_canals_09",
-		"d1_canals_10",
-		"d1_canals_11",
-		"d1_canals_12",
-		"d1_canals_13",
-		"d1_eli_01",
-		"d1_eli_02",
-		"d1_town_01",
-		"d1_town_01a",
-		"d1_town_02",
-		"d1_town_03",
-		"d1_town_02a",
-		"d1_town_04",
-		"d1_town_05",
-		"d2_coast_01",
-		"d2_coast_03",
-		"d2_coast_04",
-		"d2_coast_05",
-		"d2_coast_07",
-		"d2_coast_08",
-		"d2_coast_09",
-		"d2_coast_10",
-		"d2_coast_11",
-		"d2_coast_12",
-		"d2_prison_01",
-		"d2_prison_02",
-		"d2_prison_03",
-		"d2_prison_04",
-		"d2_prison_05",
-		"d2_prison_06",
-		"d2_prison_07",
-		"d2_prison_08",
-		"d3_c17_01",
-		"d3_c17_02",
-		"d3_c17_03",
-		"d3_c17_04",
-		"d3_c17_05",
-		"d3_c17_06a",
-		"d3_c17_06b",
-		"d3_c17_07",
-		"d3_c17_08",
-		"d3_c17_09",
-		"d3_c17_10a",
-		"d3_c17_10b",
-		"d3_c17_11",
-		"d3_c17_12",
-		"d3_c17_12b",
-		"d3_c17_13",
-		"d3_citadel_01",
-		"d3_citadel_03",
-		"d3_citadel_04",
-		"d3_citadel_05",
-		"d3_breen_01",
-		"hl2c_lobby_remake"
-	}
-	for k = 1, #HL2 do
-		if map == HL2[k] then
-			if not file.Exists("hl2cr_data/d1_town_02.txt", "DATA") and not file.Exists("hl2cr_data/d2_coast_07.txt", "DATA") then
-				RunConsoleCommand("changelevel", HL2[k+1])
-			elseif file.Exists("hl2cr_data/d1_town_02.txt", "DATA") and game.GetMap() == "d1_town_03" then
-				RunConsoleCommand("changelevel", "d1_town_02")
-			elseif game.GetMap() == "d2_coast_08" and file.Exists("hl2cr_data/d2_coast_07.txt", "DATA") then
-				RunConsoleCommand("changelevel", "d2_coast_07")
-			end
-			
-			if game.GetMap() == "d1_town_02" and file.Exists("hl2cr_data/d1_town_02.txt", "DATA") then
-				RunConsoleCommand("changelevel", "d1_town_02a")
-			end
-			if game.GetMap() == "d2_coast_07" and file.Exists("hl2cr_data/d2_coast_07.txt", "DATA") then
-				RunConsoleCommand("changelevel", "d2_coast_09")
-			end
-		end
 	end
 end)
 
@@ -566,10 +500,11 @@ function SetCheckpointsStageHL2()
 		}
 		
 		TRIGGER_CHECKPOINT = {
-			 Vector(707, 2727, -87), Vector(758, 2756, -0),
+			Vector(381, -3925, 258), Vector(137, -3712, 387),
+			Vector(707, 2727, -87), Vector(758, 2756, -0),
 		}
 		TRIGGER_SPAWNPOINT = {
-			Vector(512, 2882, -31)
+			Vector(65, -3397, 262),		Vector(512, 2882, -31)
 		}
 		
 	elseif game.GetMap() == "d1_canals_01a" then
@@ -578,7 +513,7 @@ function SetCheckpointsStageHL2()
 		}
 		
 		TRIGGER_CHECKPOINT = {
-			 Vector(-2931, 5371, -56), Vector(-3012, 5216, 112),
+			 Vector(-2931, 5371, -56), Vector(-3012, 5216, 112)
 		}
 		TRIGGER_SPAWNPOINT = {
 			Vector(-3200, 5180, -78)

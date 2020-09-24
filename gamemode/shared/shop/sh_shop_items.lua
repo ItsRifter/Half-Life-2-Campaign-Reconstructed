@@ -1,5 +1,10 @@
 AddCSLuaFile() -- Add itself to files to be sent to the clients, as this file is shared
 
+--Weapon Items - Shop
+local wepItem = createItemBase(BaseWeapon, "Medkit", "Become a medic with this kit", "hl2cr/armour_parts/health")
+wepItem.Cost = 5000
+Register.Weapon(wepItem)
+
 -- Armour items - Shop
 --Upg Items
 local upgItem = createItemBase(BaseSuitArmour, "Health_Module_MK1", "Improves your life expectancy", "hl2cr/armour_parts/health")

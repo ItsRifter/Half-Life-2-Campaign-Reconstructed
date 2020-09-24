@@ -2,6 +2,27 @@ local indicators = {}
 local indicators2 = {}
 local lastcurtime = 0
 
+net.Receive("SendClientColours", function()
+	colours = net.ReadColor()
+	colourBool = net.ReadBool()
+	font = net.ReadString()
+end)
+
+surface.CreateFont("Default", {
+	font = "Arial",
+	size = 48,
+})
+
+surface.CreateFont("Spooky", {
+	font = "Coraline's Cat",
+	size = 48,
+})
+
+surface.CreateFont("Robotic", {
+	font = "Robotica",
+	size = 48,
+})
+
 surface.CreateFont("Indicator_Font", {
 	font = "Arial",
 	extended = false,
@@ -18,14 +39,11 @@ surface.CreateFont("Map_Font", {
 net.Receive("AdminJoin", function()
 	local id = net.ReadString()
 	if id == "STEAM_0:1:7832469" then
-		
 		LocalPlayer():ChatPrint("The 'Birdman' has joined the server")
 		surface.PlaySound("vo/Citadel/gman_exit01.wav")
 	elseif id == "STEAM_0:0:6009886" then
-		for k, v in pairs(player.GetAll()) do
-			v:ChatPrint("The owner 'SuperSponer' has joined the server")
-			surface.PlaySound("ambient/levels/outland/ol07_advisorblast04.wav")
-		end
+		LocalPlayer():ChatPrint("The owner 'SuperSponer' has joined the server")
+		surface.PlaySound("ambient/levels/outland/ol07_advisorblast04.wav")
 	end
 end)
 
@@ -178,16 +196,20 @@ hook.Add("HUDShouldDraw", "DisableHud", function(name)
 		end
 	end
 end)
-
+local survivalMode = false
 local shouldDrawTimer = false
 local shouldDrawRestartTimer = false
 local shouldDrawDeathTimer = false
 local deathSeconds = 0
-net.Receive("DisplayMapTimer", function() shouldDrawTimer = true end)
+net.Receive("DisplayMapTimer", function() 
+	chat.AddText(Color(235, 150, 50),	"Enough players have finished, changing map in 20 seconds")
+	shouldDrawTimer = true
+end)
 
 net.Receive("DisplayDeathTimer", function() 
 	shouldDrawDeathTimer = true 
 	deathSeconds = net.ReadInt(16)
+	survivalMode = net.ReadBool()
 end)
 
 net.Receive("SurvAllDead", function() shouldDrawRestartTimer = true end)
@@ -201,7 +223,7 @@ hook.Add("HUDPaint", "HUDPaint_DrawTimer", function()
 		["ep1_c17_06"] = true
 	}
 
-	if shouldDrawTimer and not survivalMode and not WINMAPS[game.GetMap()]  then
+	if shouldDrawTimer and not survivalMode and not WINMAPS[game.GetMap()] then
 		if not timer.Exists("MapTimerClient") then
 			timer.Create("MapTimerClient", 20, 1, function() timer.Remove("MapTimerClient")	end)
 			surface.PlaySound("npc/overwatch/radiovoice/allunitsapplyforwardpressure.wav")
@@ -243,7 +265,7 @@ hook.Add("HUDPaint", "HUDPaint_DrawTimer", function()
 			surface.DrawRect(0, ScrH() / 2 + 175, ScrW(), 175)
 		end
 		draw.DrawText("Restarting in " .. math.Round(timer.TimeLeft("RestartTimer"), 0), "Map_Font", ScrW() / 2, ScrH() - 350, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-	elseif shouldDrawDeathTimer then
+	elseif shouldDrawDeathTimer and not LocalPlayer():Alive() then
 		if not timer.Exists("DeathTimer") then
 			timer.Create("DeathTimer", deathSeconds, 1, function()
 				timer.Remove("DeathTimer")
@@ -257,16 +279,9 @@ hook.Add("HUDPaint", "HUDPaint_DrawTimer", function()
 			surface.DrawRect(0, ScrH() / 2 + 175, ScrW(), 175)
 		end
 		draw.DrawText("You will respawn in " .. math.Round(timer.TimeLeft("DeathTimer"), 0) .. " seconds", "Map_Font", ScrW() / 2, ScrH() - 350, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+	elseif LocalPlayer():Team() == TEAM_COMPLETED_MAP or survivalMode then
+		shouldDrawDeathTimer = false
 	end
-end)
-
-net.Receive("DisplayRewards", function()
-	local xp = net.ReadInt(32)
-	local coins = net.ReadInt(32)
-	chat.AddText(Color(235, 150, 50),"BONUS FOR NOT DYING ONCE")
-	chat.AddText(Color(0, 150, 255), "XP: ", tostring(xp))
-	chat.AddText(Color(255, 150, 0), "Coins: λ", tostring(coins))
-	
 end)
 
 net.Receive("PlaySoundLevelUp", function()
@@ -329,7 +344,9 @@ local FRIENDLY_NPCS = {
 	["npc_monk"] = true,
 	["npc_alyx"] = true,
 	["npc_barney"] = true,
-	["npc_citizen"] = true
+	["npc_citizen"] = true,
+	["npc_vortigaunt"] = true,
+	["npc_mossman"] = true
 }
 function meta:IsFriendly()
 	if self:IsValid() and self:IsNPC() and FRIENDLY_NPCS[self:GetClass()] then
@@ -356,13 +373,18 @@ end)
 
 hook.Add("HUDPaint", "HUDPaint_DrawNPCHP", function()
 	for k, ent in pairs(ents.FindByClass("npc_*")) do
-		if ent:IsValid() and (not ent:IsPet() and not ent:IsFriendly()) then
+		if ent:IsNPC() and (not ent:IsPet() and not ent:IsFriendly()) and colourBool then
 			local dist = LocalPlayer():GetPos():Distance(ent:GetPos())
 			local pos = ent:GetPos()
-			pos.z = ent:GetPos().z + 45 + (dist * 0.0325)
+			if string.find(ent:GetClass(), "headcrab") then
+				pos.z = ent:GetPos().z + 5 + (dist * 0.0325)
+			else
+				pos.z = ent:GetPos().z + 45 + (dist * 0.0325)
+			end
 			local ScrPos = pos:ToScreen()
 			if ent:GetOwner() and LocalPlayer():GetPos():Distance(ent:GetPos()) <= 200 then
-				draw.SimpleText("Health: " .. ent:Health(), "Pet_Font_Name", ScrPos.x, ScrPos.y, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+				draw.SimpleText(ent:GetClass(), font, ScrPos.x, ScrPos.y, Color(colours.r, colours.b, colours.g, colours.a), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+				draw.SimpleText("Health: " .. ent:Health(), font, ScrPos.x, ScrPos.y + 50, Color(colours.r, colours.b, colours.g, colours.a), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 			end
 		end
 	end

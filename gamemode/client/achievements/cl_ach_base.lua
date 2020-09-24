@@ -15,6 +15,8 @@ HL2_Ach_List = {
 	[8] = {name = "Lambda_Locator", desc = "Locate all\nthe Lambda caches", mat = "vgui/achievements/hl2_find_alllambdas.png", isRare = true},
 	[9] = {name = "Flushed", desc = "Kill an enemy with a toilet", mat = "vgui/achievements/hl2_kill_enemy_withtoilet.png", isRare = true},
 	[10] = {name = "Vortex_Locator", desc = "Locate all the\nvortexes", mat = "vgui/achievements/hl2_find_alllambdas.png", isRare = true},
+	[11] = {name = "Crowbar_Only_HL2", desc = "Finish Half-Life 2 with\nonly the crowbar", mat = "vgui/achievements/hl2_beat_game.png", isRare = false},
+	--[12] = {name = "Crowbar_Only_HL2_Hard", desc = "Finish Half-Life 2 with\nonly the crowbar\non hard with\nsurvival enabled", mat = "vgui/achievements/hl2_beat_game.png", isRare = false},
 }
 
 EP1_Ach_List = {
@@ -25,12 +27,26 @@ EP1_Ach_List = {
 	[5] = {name = "Attica", desc = "Destroy the gunship\nin the hospital attic", mat = "vgui/achievements/ep1_beat_hospitalatticgunship.png", isRare = false},
 	[6] = {name = "Safety_Measure", desc = "Whack the Combine\nGunship 5 times", mat = "vgui/achievements/ep1_beat_hospitalatticgunship.png", isRare = false},
 	[7] = {name = "Finish_EP1", desc = "Escape City-17 with alyx", mat = "vgui/achievements/ep1_beat_game.png", isRare = true},
+	[8] = {name = "Crowbar_Only_EP1", desc = "Finish Episode 1 with\nonly the crowbar", mat = "vgui/achievements/ep1_beat_game.png", isRare = false},
+	--[9] = {name = "Crowbar_Only_EP1_Hard", desc = "Finish Episode 1 with\nonly the crowbar\non hard with\nsurvival enabled", mat = "vgui/achievements/ep1_beat_game.png", isRare = false},
 }
 
 Misc_Ach_List = {
-	[1] = {name = "A_Predictable_Failure", desc = "Fail a map on survival with 4 or more players", mat = "vgui/achievements/hl2_find_allgmen.png", isRare = false},
+	[1] = {name = "A_Predictable_Failure", desc = "Fail a map on survival\nwith 4 or more players", mat = "vgui/achievements/hl2_find_allgmen.png", isRare = false},
 	[2] = {name = "Blast_that_little", desc = "Complete the Zombie\nevolution tree", mat = "vgui/achievements/hl2_beat_toxictunnel.png", isRare = false},
 	[3] = {name = "Fast_Climber", desc = "Complete the Fast Zombie\nevolution tree", mat = "vgui/achievements/hl2_beat_toxictunnel.png", isRare = false},
+	[4] = {name = "One_True_Freeman", desc = "Finish all of half-life 2\n(including episodes)\nwith only the crowbar", mat = "vgui/achievements/hl2_get_crowbar.png", isRare = true},
+	--[5] = {name = "Ultimate_One_True_Freeman", desc = "Impossibly finish all of\nhalf-life 2 with only the\ncrowbar on hard with\nsurvival enabled", mat = "vgui/achievements/hl2_get_crowbar.png", isRare = true},
+}
+
+Kill_Ach_List = {
+	[1] = {name = "Crowbar Killer I", desc = "Kill 250 NPC's\nwith the crowbar", mat = "vgui/achievements/hl2_get_crowbar.png", isRare = false},
+	[2] = {name = "Crowbar Killer II", desc = "Kill 500 NPC's\nwith the crowbar", mat = "vgui/achievements/hl2_get_crowbar.png", isRare = false},
+	[3] = {name = "Crowbar Killer III", desc = "Kill 1000 NPC's\nwith the crowbar", mat = "vgui/achievements/hl2_get_crowbar.png", isRare = false},
+}
+
+Event_Ach_List = {
+	[1] = {name = "Candy Collector", mat = "vgui/achievements/hl2_find_allgmen.png", reward = 10000, isRare = false},
 }
 
 HL2_Lambda_List = {
@@ -184,7 +200,7 @@ function AchievementMenu(achievement, vortexes, lambdas)
 		
 		local hl2Panel = iconListHL2:Add("DPanel")
 		hl2Panel:SetPaintBackground(false)
-		hl2Panel:SetSize(128, 128)
+		hl2Panel:SetSize(128, 158)
 		
 		local achHL2Name = hl2Panel:Add("DLabel")
 		achHL2Name:SetPos(0, 65)
@@ -233,7 +249,7 @@ function AchievementMenu(achievement, vortexes, lambdas)
 		
 		local ep1Panel = iconListEP1:Add("DPanel")
 		ep1Panel:SetPaintBackground(false)
-		ep1Panel:SetSize(128, 128)
+		ep1Panel:SetSize(128, 158)
 		
 		local achEP1Name = ep1Panel:Add("DLabel")
 		achEP1Name:SetPos(0, 65)
@@ -282,7 +298,7 @@ function AchievementMenu(achievement, vortexes, lambdas)
 		
 		local miscPanel = iconListMisc:Add("DPanel")
 		miscPanel:SetPaintBackground(false)
-		miscPanel:SetSize(128, 128)
+		miscPanel:SetSize(128, 158)
 		
 		local achMiscName = miscPanel:Add("DLabel")
 		achMiscName:SetPos(0, 65)
@@ -312,6 +328,56 @@ function AchievementMenu(achievement, vortexes, lambdas)
 	end
 		
 	TabAchSheet:AddSheet("Miscellaneous", PanelMiscAch, nil)
+	
+	local PanelKillAch = vgui.Create( "DPanel", achFrame )
+	PanelKillAch:SetSize(800, 850)
+	PanelKillAch:SetPos(0, 400)
+	PanelKillAch.Paint = function(s, w, h)
+		draw.RoundedBox(0,0,0, w, h, Color(170, 170, 170, 255))
+	end
+	
+	local ScrollKillAch = vgui.Create("DScrollPanel", PanelKillAch)
+	ScrollKillAch:Dock(FILL)
+	
+	local iconListKill = vgui.Create("DIconLayout", ScrollKillAch)
+	iconListKill:Dock(FILL)
+	iconListKill:SetSpaceY(5)
+	iconListKill:SetSpaceX(5)
+
+	for i = 1, #Kill_Ach_List do
+		
+		local killPanel = iconListKill:Add("DPanel")
+		killPanel:SetPaintBackground(false)
+		killPanel:SetSize(128, 158)
+		
+		local achKillName = killPanel:Add("DLabel")
+		achKillName:SetPos(0, 65)
+		if table.HasValue(achievement, Kill_Ach_List[i].name) then
+			achKillName:SetText(Kill_Ach_List[i].name)
+		else
+			achKillName:SetText("LOCKED")
+		end
+		
+		achKillName:SizeToContents()
+		achKillName:SetColor(Color(0, 0, 0))
+		
+		local achKillDesc = killPanel:Add("DLabel")
+		achKillDesc:SetPos(0, 90)	
+		achKillDesc:SetText(Kill_Ach_List[i].desc)
+		achKillDesc:SizeToContents()
+		achKillDesc:SetColor(Color(0, 0, 0))
+		
+		local achKillIcon = killPanel:Add("DImage")
+		achKillIcon:SetPos(0, 0)
+		achKillIcon:SetSize(64, 64)
+		if table.HasValue(achievement, Kill_Ach_List[i].name) then
+			achKillIcon:SetImage(Kill_Ach_List[i].mat)
+		else
+			achKillIcon:SetImage("vgui/hud/icon_locked")
+		end
+	end
+		
+	TabAchSheet:AddSheet("Kill List", PanelKillAch, nil)
 	
 	local PanelHL2Lambda = vgui.Create( "DPanel", achFrame )
 	PanelHL2Lambda:SetSize(800, 850)

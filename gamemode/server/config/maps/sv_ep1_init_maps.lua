@@ -1,9 +1,10 @@
 function SetupEP1Map()
 	pacifistAchEarnable = false
-	
 	MapLua = ents.Create("lua_run")
 	MapLua:SetName("triggerhook")
 	MapLua:Spawn()
+	
+	game.SetGlobalState("antlion_allied", 0)
 	
 	if game.GetMap() == "ep1_citadel_00" then
 		for k, h in pairs( ents.FindByName("relay_givegravgun_1")) do
@@ -84,36 +85,6 @@ hook.Add("FailMap", "ElevatorFailer", function()
 	timer.Simple(15, function()
 		RunConsoleCommand("changelevel", game.GetMap())
 	end)
-end)
-
-hook.Add( "OnChangeLevel", "ChangeMapEP1", function()
-	local map = game.GetMap()
-	
-	local EP1 = {
-		--first map is skipped due to map logic
-		--"ep1_citadel_00",
-		"ep1_citadel_01",
-		"ep1_citadel_02",
-		"ep1_citadel_02b",
-		"ep1_citadel_03",
-		"ep1_citadel_04",
-		"ep1_c17_00",
-		"ep1_c17_00a",
-		"ep1_c17_01",
-		--"ep1_c17_01a",
-		"ep1_c17_02",
-		"ep1_c17_02b",
-		"ep1_c17_02a",
-		--"ep1_c17_05", -Gotta fix somehow
-		"ep1_c17_06",
-		"hl2c_lobby_remake"
-	}
-	
-	for k = 1, #EP1 do
-		if map == EP1[k] then
-			RunConsoleCommand("changelevel", EP1[k+1])
-		end
-	end
 end)
 
 function SetCheckpointsStageEP1()
@@ -234,11 +205,13 @@ function SetCheckpointsStageEP1()
 		
 		TRIGGER_CHECKPOINT = {
 			Vector(1240, 4225, 631), 	Vector(1143, 4345, 743),
+			Vector(3144, 3882, 411), 	Vector(2931, 4199, 533),
 			Vector(4525, 3528, 640), 	Vector(4664, 3641, 682)
 		}
 		
 		TRIGGER_SPAWNPOINT = {
-			Vector(894, 4310, 651),		Vector(4586, 3577, 578)
+			Vector(894, 4310, 651),		Vector(4363, 3581, 421),	
+			Vector(4586, 3577, 578)
 		}
 	elseif game.GetMap() == "ep1_c17_01" then
 		TRIGGER_CHANGELEVEL = {
@@ -252,7 +225,8 @@ function SetCheckpointsStageEP1()
 		}
 		
 		TRIGGER_SPAWNPOINT = {
-			Vector(2575, -1284, 21),	Vector(1583, 1964, 219)
+			Vector(2575, -1284, 21),	Vector(1583, 1964, 219),
+			Vector(-3399, 459, 12)
 		}
 	elseif game.GetMap() == "ep1_c17_01" then
 		TRIGGER_CHANGELEVEL = {
@@ -274,10 +248,11 @@ function SetCheckpointsStageEP1()
 		}
 
 		TRIGGER_CHECKPOINT = {
+			Vector(1291, -257, 28), 	Vector(1474, -176, 194),
 			Vector(-892, 1592, -1), 	Vector(-1192, 1783, 134)
 		}
 		TRIGGER_SPAWNPOINT = {
-			Vector(-958, 1814, 14)
+			Vector(1291, -257, 28),		Vector(-958, 1814, 14)
 		}
 	elseif game.GetMap() == "ep1_c17_02b" then
 		TRIGGER_CHANGELEVEL = {
@@ -392,6 +367,22 @@ function SetCheckpointsStageEP1()
 			lambdaModel4:SetMaterial("editor/orange")
 			lambdaModel4:SetPos(Checkpoint4.Pos)
 			lambdaModel4:Spawn()
+		end
+		
+		if TRIGGER_CHECKPOINT[9] and TRIGGER_CHECKPOINT[10] then
+			Checkpoint5 = ents.Create("trigger_checkpoint")
+			Checkpoint5.Min = Vector(TRIGGER_CHECKPOINT[9])
+			Checkpoint5.Max = Vector(TRIGGER_CHECKPOINT[10])
+			Checkpoint5.Pos = Vector(TRIGGER_CHECKPOINT[10]) - ( ( Vector(TRIGGER_CHECKPOINT[10]) - Vector(TRIGGER_CHECKPOINT[9])) / 2 )
+			Checkpoint5.Point5 = Vector(TRIGGER_SPAWNPOINT[5])
+			Checkpoint5:SetPos(Checkpoint5.Pos)
+			Checkpoint5:Spawn()
+			
+			lambdaModel5 = ents.Create("prop_dynamic")
+			lambdaModel5:SetModel("models/hl2cr_lambda.mdl")
+			lambdaModel5:SetMaterial("editor/orange")
+			lambdaModel5:SetPos(Checkpoint5.Pos)
+			lambdaModel5:Spawn()
 		end
 	end
 end

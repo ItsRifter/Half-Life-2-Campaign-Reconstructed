@@ -71,7 +71,7 @@ local examplePets = {
 	[3] = "entities/npc_manhack.png",
 }
 
-function LobbyMenu()
+function LobbyMenu(version)
 
 	--The Frame
 
@@ -80,7 +80,11 @@ function LobbyMenu()
 	frame:Center()
 	frame:SetVisible(true)
 	frame:SetDraggable(true)
-	frame:ShowCloseButton(true)
+	if ScrW() < 1920 and ScrH() < 1080 then
+		frame:ShowCloseButton(true)
+	else
+		frame:ShowCloseButton(false)
+	end
 	frame:SetTitle("")
 	frame.Paint = function(s, w, h)
 		draw.RoundedBox(0,0,0, w, h, Color(140, 140, 140, 255))
@@ -131,7 +135,7 @@ function LobbyMenu()
 	LabelVersionText = vgui.Create( "DLabel", PanelTabOne )
 	LabelVersionText:SetPos(PanelTabOne:GetWide() / 2.5, 750)
 	LabelVersionText:SetFont("Intro_Tab1_Font")
-	LabelVersionText:SetText("Version: 0.1.7")
+	LabelVersionText:SetText("Version " .. version)
 	LabelVersionText:SizeToContents()
 	LabelVersionText:SetColor(Color(0, 0, 0))
 	
@@ -221,7 +225,7 @@ function LobbyMenu()
 	local LabelTabThreeRules = vgui.Create( "DLabel", PanelTabThree )
 	LabelTabThreeRules:SetPos(50, 250)
 	LabelTabThreeRules:SetFont("Intro_Tab3_Font")
-	LabelTabThreeRules:SetText("No griefing other players (prop killing, disrupting achievements)\nDo not steal pet kills\nNo Mic/Chat spamming\nKeep it english only in voice chat\nDo not offend other players\nNo exploits/cheating")
+	LabelTabThreeRules:SetText("No griefing other players (prop killing, disrupting achievements)\nDo not steal pet owner's kills\nThat said, don't hog all the kills for your pet\nNo Mic/Chat spamming\nKeep it english only in voice chat\nDo not offend other players\nNo exploits/cheating\nNo offensive or racist names")
 	LabelTabThreeRules:SizeToContents()
 	LabelTabThreeRules:SetColor(Color(0, 0, 0))
 	
@@ -321,4 +325,7 @@ function LobbyMenu()
 	TabSheet:AddSheet("Begin Playing", PanelTabFive, nil)
 end
 
-net.Receive("Greetings_new_player", LobbyMenu)
+net.Receive("Greetings_new_player", function()
+	local ver = net.ReadString()
+	LobbyMenu(ver)
+end)

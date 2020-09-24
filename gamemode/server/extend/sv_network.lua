@@ -15,6 +15,7 @@ util.AddNetworkString("Update_Model")
 
 util.AddNetworkString("SetSuicide")
 util.AddNetworkString("Open_Diff_Menu")
+util.AddNetworkString("VarientVote")
 util.AddNetworkString("Diff_Vote")
 util.AddNetworkString("Diff_Change")
 util.AddNetworkString("Survival")
@@ -27,7 +28,6 @@ util.AddNetworkString("DisplayMapTimer")
 util.AddNetworkString("ReturnLobby")
 util.AddNetworkString("DollAch")
 
-util.AddNetworkString("DisplayRewards")
 util.AddNetworkString("Spectating")
 
 --Pets
@@ -56,6 +56,7 @@ util.AddNetworkString("SellItemSlot")
 
 --Inventory
 util.AddNetworkString("AddArmour")
+util.AddNetworkString("AddWeapon")
 
 --Squads and Combine Loyals
 util.AddNetworkString("Squad_Created")
@@ -71,3 +72,16 @@ util.AddNetworkString("ShowEndStats")
 util.AddNetworkString("FailedMap")
 
 util.AddNetworkString("DisplayDeathTimer")
+
+--OTF
+util.AddNetworkString("ShowOTF")
+util.AddNetworkString("BeginOTF")
+
+-- CFG Customizer
+util.AddNetworkString("StartNPCColour")
+util.AddNetworkString("UpdateNPCColour")
+util.AddNetworkString("SendClientColours")
+
+--Cosmetics
+util.AddNetworkString("WearHat")
+util.AddNetworkString("EquipHat")

@@ -1,6 +1,4 @@
-function SetupCoopMap()
-	
-	CHECKPOINTS = CHECKPOINTS or {}
+function SetupCoopMap01()
 	
 	--Create the lua entity
 	MapLua = ents.Create("lua_run")
@@ -70,7 +68,7 @@ hook.Add("OnChangeLevel", "NextCoop01Map", function()
 		"level05_diehard",
 		"level06_base",
 		"level07_scary_house",
-		"hl2c_lobby_remake"
+		"hl2cr_lobby"
 	}
 	
 	for k = 1, #Coop01 do

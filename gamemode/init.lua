@@ -10,6 +10,7 @@ AddCSLuaFile("client/menus/cl_f4_menu.lua")
 AddCSLuaFile("client/menus/cl_pets.lua")
 AddCSLuaFile("client/menus/cl_new_player.lua")
 AddCSLuaFile("client/menus/cl_squads.lua")
+AddCSLuaFile("client/menus/cl_otf.lua")
 
 -- Server side files only
 include("server/commands/sv_commands_list.lua")
@@ -31,15 +32,23 @@ include("server/config/maps/sv_coop_init_maps.lua")
 include("server/config/maps/sv_vortex.lua")
 include("server/config/maps/sv_lambda.lua")
 
---HL2C Convars
+--HL2CR Convars
 CreateConVar("hl2cr_allowsuicide", 1, {FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_ARCHIVE}, "Disable kill command", 0, 1) 
 CreateConVar("hl2cr_respawntime", 10, {FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_ARCHIVE})
 CreateConVar("hl2cr_difficulty", 1, {FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_ARCHIVE}, "Change Difficulty", 1, 3)
 CreateConVar("hl2cr_survivalmode", 0, {FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_ARCHIVE}, "Change Difficulty", 0, 1)
 
+--Difficulty Variant Convars
+CreateConVar("hl2cr_doublehp", 0, {FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_ARCHIVE}, "Enable/Disable Double NPC HP", 0, 1)
+CreateConVar("hl2cr_specials", 0, {FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_ARCHIVE}, "Enable/Disable Special NPCs", 0, 1)
+
 --Pet Convars
 CreateConVar("hl2cr_petrecovertime", 15, FCVAR_NOTIFY, "Change Pets recovering time", 1, 999)
 CreateConVar("hl2cr_petrecovery", 10, FCVAR_NOTIFY, "Change Pets recover HP", 1, 999)
+
+--Events
+CreateConVar("hl2cr_halloween", 0, FCVAR_NOTIFY, "Enable/Disable Halloween Event", 0, 1)
+CreateConVar("hl2cr_christmas", 0, FCVAR_NOTIFY, "Enable/Disable Christmas Event", 0, 1)
 
 --Ammo Limits
 CreateConVar("max_pistol", 				150, 	{FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_ARCHIVE}, true)
@@ -69,6 +78,8 @@ team.SetUp(TEAM_LOYAL, "Loyal Combine", Color(0, 225, 255, 255))
 local meta = FindMetaTable( "Entity" )
 if not meta then return end
 
+version = "0.2.3"
+
 function meta:IsPet()
 	if self:IsValid() and self:IsNPC() and self:GetNWBool("PetActive") then
 		return true
@@ -81,8 +92,11 @@ local FRIENDLY_NPCS = {
 	["npc_monk"] = true,
 	["npc_alyx"] = true,
 	["npc_barney"] = true,
-	["npc_citizen"] = true
+	["npc_citizen"] = true,
+	["npc_vortigaunt"] = true,
+	["npc_mossman"] = true
 }
+
 function meta:IsFriendly()
 	if self:IsValid() and self:IsNPC() and FRIENDLY_NPCS[self:GetClass()] then
 		return true
@@ -90,20 +104,23 @@ function meta:IsFriendly()
 		return false
 	end
 end
-
+randomExchange = 0
 function GM:Initialize()
 	isAliveSurv = true
 	pets = false
 	airboatSpawnable = false
 	airboatGunSpawnable = false
+	fixAI = false
+	randomExchange = math.random(100, 1000)
 end
 
 function GM:ShowHelp(ply)
 	net.Start("Greetings_new_player")
+		net.WriteString(version)
 	net.Send(ply)
 end
 
-local randomExchange = math.random(100, 1000)
+
 
 function GM:ShowTeam(ply)
 	if ply.spawnJeep then
@@ -130,6 +147,7 @@ hook.Add( "ShouldCollide", "hl2crShouldCollide", function( ent1, ent2 )
 
 	if ent1:IsPlayer( ) and ent2:IsPlayer( ) and ent2:Team( ) == ent1:Team( ) then return false; end
 	if ent1:IsPlayer( ) and ent2:IsPlayer( ) and ent2:Team( ) ~= ent1:Team( ) then return true; end
+	
 	-- Set Up Pets Collision with Players
 	if ent1:IsPet( ) and ent2:IsPlayer( ) then return false; end
 	if ent2:IsPet( ) and ent1:IsPlayer( ) then return false; end
@@ -243,33 +261,74 @@ function GM:CanPlayerEnterVehicle(ply)
 	return false
 end
 function GM:ShowSpare2(ply)
+	local red = ply.hl2cPersistent.NPCColourSettings.r
+	local blue = ply.hl2cPersistent.NPCColourSettings.b
+	local green = ply.hl2cPersistent.NPCColourSettings.g
+	local alpha = ply.hl2cPersistent.NPCColourSettings.a
+	
+	local eventNumber = 0
+	
+	if GetConVar("hl2cr_halloween"):GetInt() == 1 then
+		eventNumber = 1
+	end
+	
 	if ply.loyal then
 		ply:ChatPrint("You cannot access the F4 menu while a loyal player")
 	else
 		net.Start("Open_F4_Menu")
 			net.WriteTable(ply.hl2cPersistent.Inventory)
 			net.WriteInt(randomExchange, 32)
+			if table.HasValue(ply.hl2cPersistent.Achievements, "One_True_Freeman") then
+				net.WriteBool(true)
+			else
+				net.WriteBool(false)
+			end
+			net.WriteColor(Color(red, blue, green, alpha))
+			net.WriteBool(ply.hl2cPersistent.NPCColourEnabled)
+			net.WriteString(ply.hl2cPersistent.NPCFont)
+			net.WriteInt(ply.hl2cPersistent.EventItems, 32)
+			net.WriteInt(eventNumber, 8)
+			net.WriteTable(ply.hl2cPersistent.HatTable)
 		net.Send(ply)
 	end
 end
+
+VOTE_REQUIRED = {
+	["EasyVotes"] = 0,
+	["MediumVotes"] = 0,
+	["HardVotes"] = 0,
+	["SurvVotes"] = 0,
+	["neededVotes"] = 0,
+	["neededVotesRestart"] = 0
+}
+
+DIFFVAR_VOTE_REQUIRED = {
+	["DoubleHP"] = 0,
+	["Special"] = 0
+}
+
 hook.Add("Think", "votingThink", function()
 	local easyRequired = math.ceil(#player.GetAll() / 2)
 	local mediumRequired = math.ceil(#player.GetAll() / 2)
 	local hardRequired = math.ceil(#player.GetAll() / 2)
+	
+	local HPRequired = math.ceil(#player.GetAll() / 2)
+	local specialRequired = math.ceil(#player.GetAll() / 2)
 
 	local survRequired = #player.GetAll()
 	local neededVotes = #player.GetAll()
 	local neededVotesRestart = #player.GetAll()
-
-	for k, v in pairs(player.GetAll()) do
-		v:SetNWInt("EasyVotes", easyRequired)
-		v:SetNWInt("MediumVotes", mediumRequired)
-		v:SetNWInt("HardVotes", hardRequired)
-		v:SetNWInt("SurvVotes", survRequired)
-		
-		v:SetNWInt("RestartVotes", neededVotesRestart)
-		v:SetNWInt("LobbyVotes", neededVotes)
-	end
+	
+	VOTE_REQUIRED["EasyVotes"] = easyRequired
+	VOTE_REQUIRED["MediumVotes"] = mediumRequired
+	VOTE_REQUIRED["HardVotes"] = hardRequired
+	VOTE_REQUIRED["SurvVotes"] = survRequired
+	VOTE_REQUIRED["neededVotes"] = neededVotes
+	VOTE_REQUIRED["neededVotesRestart"] = neededVotesRestart
+	
+	DIFFVAR_VOTE_REQUIRED["DoubleHP"] = HPRequired
+	DIFFVAR_VOTE_REQUIRED["Special"] = specialRequired
+	
 end)
 
 gameevent.Listen("player_connect")
@@ -302,15 +361,16 @@ hook.Add( "PrePACEditorOpen", "RestrictToSuperadmin", function( ply )
 end)
 
 function SetUpMap()
-	if game.GetMap() == "hl2c_lobby_remake" then
+	if game.GetMap() == "hl2cr_lobby" then
 		SetupLobbyMap()
 	elseif string.match(game.GetMap(), "d1_") or string.match(game.GetMap(), "d2_") 
 	or string.match(game.GetMap(), "d3_") then
 		SetupHL2Map()
 	elseif string.match(game.GetMap(), "ep1_") then
 		SetupEP1Map()
+	elseif string.match(game.GetMap(), "level") then
+		SetupCoopMap01()
 	end
 end
-
-hook.Add("InitPostEntity", "SetupHL2Lua", SetUpMap)
+hook.Add("InitPostEntity", "SetupLua", SetUpMap)
 hook.Add("PostCleanupMap", "SetupHL2Lua", SetUpMap)

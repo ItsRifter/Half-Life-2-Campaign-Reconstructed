@@ -2,16 +2,58 @@ AddCSLuaFile() -- Add itself to files to be sent to the clients, as this file is
 local startingWeapons = {}
 
 hook.Add("PlayerInitialSpawn", "MiscSurv", function(ply)
+	if table.HasValue(ply.hl2cPersistent.Achievements, "Crowbar_Only_HL2") and table.HasValue(ply.hl2cPersistent.Achievements, "Crowbar_Only_EP1") then
+		Achievement(ply, "One_True_Freeman", "Misc_Ach_List")
+	end
+
+	if table.HasValue(ply.hl2cPersistent.Achievements, "A_Red_Letter_Baby") and not table.HasValue(ply.hl2cPersistent.HatTable, "baby_head") then
+		table.insert(ply.hl2cPersistent.HatTable, "baby_head")
+		ply:ChatPrint("You earned a 'baby head' hat")
+	end
+
+	local red = ply.hl2cPersistent.NPCColourSettings.r
+	local blue = ply.hl2cPersistent.NPCColourSettings.b
+	local green = ply.hl2cPersistent.NPCColourSettings.g
+	local alpha = ply.hl2cPersistent.NPCColourSettings.a
+	
+	if ply.hl2cPersistent.NPCColourEnabled then
+		net.Start("SendClientColours")
+			net.WriteColor(Color(red, green, blue, alpha))
+			net.WriteBool(ply.hl2cPersistent.NPCColourEnabled)
+			net.WriteString(ply.hl2cPersistent.NPCFont)
+		net.Send(ply)
+	end
+	
+	ply.tableRewards = {
+		["HasDied"] = false,
+		["CrowbarOnly"] = true,
+		["Kills"] = 0,
+		["Metal"] = 0,
+	}
+	
+	if game.GetMap() == "hl2c_lobby_remake" then
+		ply.hl2cPersistent.OTF = false
+	end
+
+	if game.GetMap() == "ep1_citadel_01" then
+		ply.EnableOTF = true
+	end
+	
+	if not fixAI and string.match(game.GetMap(), "ep1_") then
+		timer.Simple(1, function()
+			fixAI = true
+			game.CleanUpMap(false)
+		end)
+	end
 	
 	if GetConVar("hl2cr_survivalmode"):GetInt() == 1 and ply:Alive() and not ply.isAliveSurv then
 		ply.isAliveSurv = false
 	end
-	if not game.SinglePlayer( ) then
-		ply:SetCustomCollisionCheck( true );
+	if not game.SinglePlayer() then
+		ply:SetCustomCollisionCheck(true);
 	end
 	ply.respawnTimer = 0
 	ply.hasDiedOnce = false
-	ply.crowbarOnly = true
 	
 	ply.BringPet = true
 	
@@ -20,15 +62,66 @@ hook.Add("PlayerInitialSpawn", "MiscSurv", function(ply)
 	ply.loyal = false
 end)
 
+hook.Add("EventPickUp", "EventItems", function(ply, amount)
+	if not ply then return end
+	ply.hl2cPersistent.EventItems = ply.hl2cPersistent.EventItems + amount
+end)
 
-hook.Add("PlayerSpawn", "Misc", function(ply)
+net.Receive("EquipHat", function(len, ply)
+	local newHat = net.ReadString()
+	
+	if not ply then return end
+	if newHat == "no_hat" then
+		ply.hl2cPersistent.Hat = "no_hat"
+	else
+		ply.hl2cPersistent.Hat = newHat
+	end
+	
+	net.Start("WearHat")
+		net.WriteString(ply.hl2cPersistent.Hat)
+	net.Send(ply)
+	
+end)
+
+net.Receive("UpdateNPCColour", function(len, ply)
+	local colours = net.ReadColor()
+	local enabled = net.ReadBool()
+	local font = net.ReadString()
+	
+	if not ply then return end
+	
+	ply.hl2cPersistent.NPCColourSettings = Color(colours.r, colours.b, colours.g, colours.a)
+	if enabled != nil then
+		ply.hl2cPersistent.NPCColourEnabled = enabled
+	end
+	
+	ply.hl2cPersistent.NPCFont = font
+	
+	--Send the client the new colours to their hud
+	net.Start("SendClientColours")
+		net.WriteColor(ply.hl2cPersistent.NPCColourSettings)
+		net.WriteBool(ply.hl2cPersistent.NPCColourEnabled)
+		net.WriteString(ply.hl2cPersistent.NPCFont)
+	net.Send(ply)
+	
+end)
+
+hook.Add("PlayerSpawn", "SpawnDefault", function(ply)
+	if ply.hl2cPersistent.Hat != "no_hat" and ply:IsValid() then
+		net.Start("WearHat")
+			net.WriteString(ply.hl2cPersistent.Hat)
+		net.Send(ply)
+	end
+	
+	if ply:Team() == TEAM_COMPLETED_MAP then
+		SpectateMode(ply)
+		return
+	end
 	
 	--Give spawning items to player first
 	for i, w in pairs(ents.FindByName("player_spawn_items")) do
 		w:SetPos(ply:GetPos())
 	end
-
-	ply.isSpec = false
 
 	local addHPUpg = 0
 	local levelHPBoost = ply.hl2cPersistent.Level - 1
@@ -55,7 +148,7 @@ hook.Add("PlayerSpawn", "Misc", function(ply)
 			addStatsHP = 10
 			
 		elseif ply.hl2cPersistent.Arm == "Health_Module_MK3" then
-			addStatsHP = 15
+			addStatsHP = 20
 
 		elseif ply.hl2cPersistent.Arm == "Suit_Battery_Pack_MK1" then
 			armourBoost = 5
@@ -64,7 +157,7 @@ hook.Add("PlayerSpawn", "Misc", function(ply)
 			armourBoost = 10
 			
 		elseif ply.hl2cPersistent.Arm == "Suit_Battery_Pack_MK3" then
-			armourBoost = 15
+			armourBoost = 30
 		end
 	end
 	
@@ -75,7 +168,7 @@ hook.Add("PlayerSpawn", "Misc", function(ply)
 	ply:SetHealth(maxHP)
 	ply:SetArmor(armourBoost)
 
-	if not ply.loyal then
+	if not ply.loyal and ply:Team() != TEAM_COMPLETED_MAP then
 		ply:SetTeam(TEAM_ALIVE)
 		--ply:SetCustomCollisionCheck(true)
 		ply:SetupHands()
@@ -120,14 +213,19 @@ hook.Add("PlayerSpawn", "Misc", function(ply)
 	end
 end)
 
-function GM:DoPlayerDeath(ply, attacker, dmgInfo)
+hook.Add("DoPlayerDeath", "DefaultDeaths", function(ply, attacker, dmgInfo)
 	ply:CreateRagdoll()
 	ply:SetTeam(TEAM_DEAD)
 	
 	net.Start("DisplayDeathTimer")
 	net.WriteInt(GetConVar("hl2cr_difficulty"):GetInt() * GetConVar("hl2cr_respawntime"):GetInt(), 16)
+	if GetConVar("hl2cr_survivalmode"):GetInt() == 1 then
+		net.WriteBool(true)
+	else
+		net.WriteBool(false)
+	end
 	net.Send(ply)
-end
+end)
 
 local tempUpgHealTime = 0
 
@@ -175,13 +273,26 @@ hook.Add("CanExitVehicle", "PodCannotExit", function(veh, ply)
 	return true
 end)
 
+local NO_SUICIDE_MAPS = {
+	["hl2c_lobby_remake"] = true,
+	["hl2cr_lobby"] = true,
+	["d1_trainstation_01"] = true,
+	["d1_trainstation_02"] = true,
+	["d1_trainstation_03"] = true,
+	["d1_trainstation_04"] = true,
+	["d1_trainstation_05"] = true,
+	["d3_citadel_01"] = true,
+	["d3_citadel_05"] = true,
+	["d3_breen_01"] = true
+	
+}
+
 hook.Add("CanPlayerSuicide", "DefaultSuicide", function(ply)
 
-	if game.GetMap() == "hl2c_lobby_remake" or game.GetMap() == "d1_trainstation_01" or game.GetMap() == "d1_trainstation_02" or game.GetMap() == "d1_trainstation_03" 
-	or game.GetMap() == "d1_trainstation_04" or game.GetMap() == "d1_trainstation_05" or game.GetMap() == "d3_citadel_01" or game.GetMap() == "d3_citadel_05" or game.GetMap() == "d3_breen_01" then
+	if NO_SUICIDE_MAPS[game.GetMap()] then
 		ply:ChatPrint("You can't commit suicide on this map!")
 		return false
-		
+	
 	elseif GetConVar("hl2cr_allowsuicide"):GetInt() == 0 then
 		ply:ChatPrint("Suiciding is disabled")
 		return false
@@ -221,6 +332,12 @@ hook.Add("EntityTakeDamage", "BlastResist", function(ent, dmgInfo)
 	
 end)
 
+local ROLLER_MAPS = {
+	["d1_eli_02"] = true,
+	["ep1_citadel_02"] = true,
+	["ep1_citadel_04"] = true
+}
+
 hook.Add("PlayerShouldTakeDamage", "DisablePVP", function(ply, attacker)	
 	if attacker == ply then
 		return true
@@ -230,8 +347,8 @@ hook.Add("PlayerShouldTakeDamage", "DisablePVP", function(ply, attacker)
 		return false
 	end
 	
-	if attacker:IsNPC() and (attacker:GetClass() != "npc_rollermine" and game.GetMap() != "d1_eli_02") then 
-		return true 
+	if attacker:IsNPC() and (attacker:GetClass() == "npc_rollermine" and ROLLER_MAPS[game.GetMap()]) then 
+		return false
 	end
 	
 	if not attacker:IsPlayer() and attacker:EntIndex() == 0 then
@@ -343,14 +460,24 @@ hook.Add("Think", "HasWeaponThink", function()
 end)
 
 hook.Add("PlayerLoadout", "StarterWeapons", function(ply)
-	if (game.GetMap() == "hl2c_lobby_remake") then
+	if (game.GetMap() == "hl2cr_lobby") then
 		ply:Give("weapon_crowbar")
 		ply:Give("weapon_physcannon")
 		if ply:IsAdmin() then
 			ply:Give("weapon_physgun")
 		end
 	end
-		
+	
+	ply:GiveAmmo(45, "Pistol", true)
+	ply:GiveAmmo(90, "SMG1", true)
+	ply:GiveAmmo(30, "AR2", true)
+	ply:GiveAmmo(12, "Buckshot", true)
+	ply:GiveAmmo(6, "357", true)
+	
+	if ply.hl2cPersistent.InvWeapon == "Medkit" then
+		ply:Give("weapon_medkit")
+	end
+
 	if ply.loyal then		
 		ply:SetTeam(TEAM_LOYAL)
 		--ply:SetCustomCollisionCheck(false)
@@ -458,16 +585,32 @@ hook.Add("PlayerLoadout", "StarterWeapons", function(ply)
 	end
 end)
 
+local RESTRICTED_WEPS = {
+	["weapon_frag"] = true,
+	["weapon_medkit"] = true,
+	["zpn_partypopper"] = true
+}
+
 hook.Add("WeaponEquip", "WeaponPickedUp", function(weapon, ply)
-	if weapon:GetClass() != "weapon_frag" and ply:Team() == TEAM_ALIVE then 
+	if not RESTRICTED_WEPS[weapon:GetClass()] and ply:Team() == TEAM_ALIVE then 
 		table.insert(startingWeapons, weapon:GetClass())
 	end
 
 	if weapon:GetClass() == "weapon_crowbar" and game.GetMap() == "d1_trainstation_06" then
 		for k, v in pairs(player.GetAll()) do
 			Achievement(v, "Trusty_Hardware", "HL2_Ach_List")
+			v.EnableOTF = true
+			v:ChatPrint("OTF Enabled, type !otf to attempt the challenge")
 		end
 	end
+end)
+
+net.Receive("BeginOTF", function(len, ply)
+	if not ply then return end
+	
+	ply.EnableOTF = false
+	ply.hl2cPersistent.OTF = true
+	ply:ChatPrint("You have started 'One True Freeman', good luck")
 end)
 
 hook.Add("PlayerDeathThink", "SpecThink", function(ply)		
@@ -479,13 +622,18 @@ net.Receive("Squad_Disband", function(len, ply)
 end)
 
 function RespawnTimerActive(ply, deaths)
+	
 	ply.hasDiedOnce = true
 	
 	timer.Simple(5, function()
-		SpectateMode(ply)
+		if not ply:Alive() then
+			SpectateMode(ply)
+		else
+			DisableSpec(ply)
+		end
 	end)
 
-	if GetConVar("hl2cr_survivalmode"):GetInt() == 1 and game.GetMap() != "hl2c_lobby_remake" then
+	if GetConVar("hl2cr_survivalmode"):GetInt() == 1 and game.GetMap() != "hl2c_lobby_remake"  then
 		ply.isAliveSurv = false
 		local playersAlive = #player.GetAll()
 		local playerDeaths = deaths
@@ -518,6 +666,10 @@ end
 hook.Add("Think", "RespawnPlayersTimer", function()
 	for k, p in pairs (player.GetAll()) do
 		if not p.respawnTimer then return end
+		if p:Alive() then 
+			DisableSpec(p)
+			return 
+		end
 		if GetConVar("hl2cr_survivalmode"):GetInt() == 1 then return end
 		if CurTime() >= p.respawnTimer then
 			if not p:Alive() then
@@ -530,7 +682,6 @@ end)
 deaths = 0
 totalXPLoyal = 0
 hook.Add("PlayerDeath", "RespawnTimer", function(victim, inflictor, attacker)
-	victim.isSpec = true
 	
 	if attacker:IsPlayer() and attacker:Team() == TEAM_LOYAL then
 		local giveLoyalXP = math.random(15, 150)

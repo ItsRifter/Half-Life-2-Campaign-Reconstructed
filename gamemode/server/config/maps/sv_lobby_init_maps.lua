@@ -6,16 +6,23 @@ function SetupLobbyMap()
 		
 	for k, door in pairs(ents.FindByName("hl2_door")) do
 		door:Fire("Open")
+	end	
+	
+	for k, door in pairs(ents.FindByName("hl2_ep1_door")) do
+		door:Fire("Open")
 	end
 	
 	game.SetGlobalState("super_phys_gun", 0)
+	
+	GetConVar("hl2cr_doublehp"):SetInt(0)
+	GetConVar("hl2cr_specials"):SetInt(0)
 	
 	--Lost cause achievement trigger
 	for a, LCAch in pairs(ents.FindByName("trigger_achievement_lostcause")) do
 		LCAch:Fire("AddOutput", "OnTrigger triggerhook:RunPassedCode:hook.Run( 'GiveLostCause' ):0:-1" )
 	end
 	
-	if game.GetMap() == "hl2c_lobby_remake" then
+	if game.GetMap() == "hl2cr_lobby" then
 		if file.Exists("hl2cr_data/d1_town_02", "DATA") then
 			file.Delete("hl2cr_data/d1_town_02.txt")
 		elseif file.Exists("hl2cr_data/d2_coast_07", "DATA") then

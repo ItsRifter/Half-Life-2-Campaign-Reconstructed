@@ -1,5 +1,9 @@
 local alive = team.GetPlayers(TEAM_ALIVE)
-isSpec = false
+
+hook.Add("Think", "AliveThink", function()
+	alive = team.GetPlayers(TEAM_ALIVE)
+end)
+
 local specEnt = 1
 function SpectateMode(ply)
 	isSpec = true
@@ -10,11 +14,11 @@ function SpectateMode(ply)
 		ply:StripWeapons()
 		ply:Spectate(5)
 	end
+
 end
 
 function DisableSpec(ply)
 	ply:UnSpectate()
-	ply.isSpec = false
 end
 
 hook.Add("KeyPress", "SpecKey", function(ply, key)
@@ -23,12 +27,14 @@ hook.Add("KeyPress", "SpecKey", function(ply, key)
 		if specEnt > #alive then
 			specEnt = 1
 		end
+		
 		ply:SpectateEntity(alive[specEnt])
 	elseif ply:KeyPressed(IN_ATTACK2) then
 		specEnt = specEnt - 1
 		if specEnt < 0 then
 			specEnt = #team.GetPlayers(TEAM_ALIVE) 
 		end
+		
 		ply:SpectateEntity(alive[specEnt])
 	end
 end)

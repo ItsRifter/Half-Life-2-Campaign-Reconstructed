@@ -31,6 +31,8 @@ BaseSuitArmour.ArmourPoints = 0
 BaseSuitArmour.HPBoost = 0
 BaseSuitArmour.BatteryBoost = 0
 
+BaseWeapon = DeriveTable(itemBase)
+
 BaseTempUpg = DeriveTable(itemBase)
 BaseTempUpg.UpgBuffs = {}
 BaseTempUpg.EssenceCost = 1

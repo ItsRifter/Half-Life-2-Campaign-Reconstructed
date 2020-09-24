@@ -3,14 +3,23 @@ local restartVotes = 0
 oldModel = ""
 local playerFound = false
 local inSquad = false
-
+local diffVar = ""
 local timer = 3600 + CurTime()
 local petbringTime = 0
 
+local DISABLED_MAPS = {
+	["hl2cr_lobby"] = true,
+	["d1_trainstation_01"] = true,
+	["d1_trainstation_02"] = true,
+	["d1_trainstation_03"] = true,
+	["d1_trainstation_04"] = true,
+	["d1_trainstation_05"] = true
+}
+
 hook.Add("Think", "LobbyTimer", function()
-	if game.GetMap() != "hl2c_lobby_remake" then
+	if not DISABLED_MAPS[game.GetMap()] then
 		if timer <= CurTime() then
-			RunConsoleCommand("changelevel", "hl2c_lobby_remake")
+			RunConsoleCommand("changelevel", "hl2cr_lobby")
 		end
 	end
 end)
@@ -44,6 +53,36 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 			net.WriteTable(ply.hl2cPersistent.Vortexes)
 			net.WriteTable(ply.hl2cPersistent.Lambdas)
 		net.Send(ply)
+		return ""
+	end
+	
+	--Views the achievements the player has
+	if (string.find(string.lower(text), "!ach ")) then
+		local target = ""
+		target = string.lower(string.sub(text, 6))
+		for k, v in pairs(player.GetAll()) do
+			if string.match(string.lower(v:Nick()), tostring(target)) then
+				target = v
+			end
+		end
+		net.Start("Open_Ach_Menu")
+			net.WriteTable(target.hl2cPersistent.Achievements)
+			net.WriteTable(target.hl2cPersistent.Vortexes)
+			net.WriteTable(target.hl2cPersistent.Lambdas)
+		net.Send(ply)
+		return ""
+	end
+	
+	--When enabled, let the player enable one true freeman for them
+	if (string.lower(text) == "!otf") then
+		if ply.EnableOTF and not ply.hl2cPersistent.OTF then
+			net.Start("ShowOTF")
+			net.Send(ply)
+		elseif ply.hl2cPersistent.OTF then
+			ply:ChatPrint("You are attempting the 'One true Freeman' right now, stay strong!")
+		else
+			ply:ChatPrint("You cannot attempt 'One true Freeman' at this time")
+		end
 		return ""
 	end
 	
@@ -259,10 +298,8 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 		net.Start("Open_Diff_Menu")
 			net.WriteInt(GetConVar("hl2cr_difficulty"):GetInt(), 8)
 			net.WriteInt(GetConVar("hl2cr_survivalmode"):GetInt(), 8)
-			net.WriteInt(ply:GetNWInt("EasyVotes"), 8)
-			net.WriteInt(ply:GetNWInt("MediumVotes"), 8)
-			net.WriteInt(ply:GetNWInt("HardVotes"), 8)
-			net.WriteInt(ply:GetNWInt("SurvVotes"), 8)
+			net.WriteInt(GetConVar("hl2cr_specials"):GetInt(), 8)
+			net.WriteInt(GetConVar("hl2cr_doublehp"):GetInt(), 8)
 		net.Send(ply)
 		return ""
 	end
@@ -298,11 +335,11 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 		end
 
 		if ply.pet:Health() == ply.pet:GetMaxHealth() then
-			ply.pet:Remove()
 			net.Start("ClosePets")
 			net.Send(ply)
 			ply.petAlive = false
 			ply:SetNWBool("PetActive", false)
+			ply.pet:Remove()
 		else
 			ply:ChatPrint("Your pet needs to be at full health to be removed")
 		end
@@ -350,6 +387,7 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 	
 	if (string.lower(text) == "!petduel" or string.lower(text) == "!duelpet") then
 		net.Start("PetDuel")
+			net.WriteInt(ply.hl2cPersistent.Coins, 64)
 		net.Send(ply)
 		return ""
 	end
@@ -381,36 +419,36 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 		return ""
 	end
 	if (string.lower(text) == "!lobby") then
-		if game.GetMap() != "hl2c_lobby_remake" then
+		if not DISABLED_MAPS[game.GetMap()] then
 			if not ply.hasVotedLobby then
 				lobbyVotes = lobbyVotes + 1
 				ply:SetNWInt("PlayerVotesLobby", lobbyVotes)
 				ply.hasVotedLobby = true
 				for k, v in pairs(player.GetAll()) do
-					v:ChatPrint(ply:Nick() .. " Has voted to return to the lobby: " .. lobbyVotes .. "/" .. ply:GetNWInt("LobbyVotes") )
+					v:ChatPrint(ply:Nick() .. " Has voted to return to the lobby: " .. lobbyVotes .. "/" .. VOTE_REQUIRED["neededVotes"] )
 				end
-				if lobbyVotes == ply:GetNWInt("LobbyVotes") then
+				if lobbyVotes == VOTE_REQUIRED["neededVotes"] then
 					game.SetGlobalState("super_phys_gun", 0)
 					ply:ChatPrint("Enough players have voted to return the lobby, returning in 10 seconds")
-					RunConsoleCommand("changelevel", "hl2c_lobby_remake")
+					RunConsoleCommand("changelevel", "hl2cr_lobby")
 				end
 			else
 				ply:ChatPrint("You already voted to return to the lobby!")
 			end
 		else
-			ply:ChatPrint("You are currently in the lobby!")
+			ply:ChatPrint("You can't use this command on this map!")
 		end
 	return ""
 	end
 	if (string.lower(text) == "!restart" or string.lower(text) == "!vrm") then
-		if game.GetMap() != "hl2c_lobby_remake" then
+		if game.GetMap() != "hl2cr_lobby" then
 			if not ply.hasVotedRestart then
 				restartVotes = restartVotes + 1
 				ply.hasVotedRestart = true
 				for k, v in pairs(player.GetAll()) do
-					v:ChatPrint(ply:Nick() .. " has voted to return to restart the map: " .. restartVotes .. "/" .. ply:GetNWInt("RestartVotes"))
+					v:ChatPrint(ply:Nick() .. " has voted to return to restart the map: " .. restartVotes .. "/" .. VOTE_REQUIRED["neededVotesRestart"])
 				end
-				if restartVotes >= ply:GetNWInt("RestartVotes") then
+				if restartVotes >= VOTE_REQUIRED["neededVotesRestart"] then
 					ply:ChatPrint("Enough players have voted to restart the map")
 					RunConsoleCommand("changelevel", game.GetMap()) 
 				end
@@ -424,8 +462,8 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 	end
 	
 	if (string.lower(text) == "!time") then
-		if game.GetMap() == "hl2c_lobby_remake" then
-			ply:ChatPrint("Time is infinite while in the lobby")
+		if DISABLED_MAPS[game.GetMap()] then
+			ply:ChatPrint("Time is infinite on this map")
 		else
 			ply:ChatPrint(math.Round(3600 - CurTime(), 0) .. " seconds left before returning to lobby")
 		end
@@ -433,9 +471,8 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 	end
 	
 	if (string.lower(text) == "!seats") then
-		if ply:InVehicle() and not ply.hasSeat then
+		if (ply:InVehicle() and ply:GetVehicle():GetClass() == "prop_vehicle_jeep") and not ply.hasSeat then
 			local vehicle = ply:GetVehicle()
-			if vehicle == "prop_vehicle_airboat" then return end
 			local seat = ents.Create("prop_vehicle_prisoner_pod")
 			seat:SetPos(vehicle:LocalToWorld( Vector( 31, -32, 18 ) ))
 			seat:SetModel("models/nova/jeep_seat.mdl")
@@ -451,6 +488,8 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 			ply.hasSeat = true
 		elseif ply.hasSeat then
 			ply:ChatPrint("You already have a passenger seat!")
+		elseif ply:InVehicle() and ply:GetVehicle():GetClass() != "prop_vehicle_jeep" then
+			ply:ChatPrint("You can only use this command on a jeep")
 		else
 			ply:ChatPrint("You can't use this command while not in a vehicle!")
 		end
@@ -462,7 +501,7 @@ function beginPetBringTimer(ply)
 	ply.petbringTime = 7 + CurTime()
 	if not ply then return end
 	hook.Add("Think", "petTimer", function()
-		if not ply or not ply.petbringTime then ply.BringPet = true return end
+		if not ply or not ply.petbringTime then return end
 		if ply.petbringTime <= CurTime() and ply:IsValid() then
 			ply.BringPet = true
 		end
@@ -477,6 +516,9 @@ local function showTimerPet(ply)
 end
 
 function AddCoins(ply, amount)
+	if ply.hl2cPersistent.Coins < 0 then
+		ply.hl2cPersistent.Coins = 0 + amount
+	end
 	ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins + amount
 	ply:SetNWInt("Coins", math.Round(ply.hl2cPersistent.Coins))
 end
@@ -779,6 +821,31 @@ concommand.Add("hl2cr_petsummon", function(ply, cmd, args)
 	end
 end)
 
+concommand.Add("hl2cr_otf", function(ply, cmd, args)
+	local target = ""
+	
+	if args[1] then
+		target = string.sub(args[1], 0)
+	end
+	
+	if ply:IsAdmin() then
+		for k, v in pairs(player.GetAll()) do
+			if string.match(string.lower(v:Nick()), tostring(target)) then
+				target = v
+			end
+		end
+		
+		if target.hl2cPersistent.OTF then
+			ply:ChatPrint("OTF Already enabled")
+		else
+			target.hl2cPersistent.OTF = true
+			target:ChatPrint("An admin just enabled OTF for you")
+		end
+	else
+		ply:ChatPrint("You don't have access to this command")
+	end
+end)
+
 concommand.Add("hl2cr_petbring", function(ply, cmd, args)
 	if not ply.pet:IsValid() then
 		ply:ChatPrint("Your pet doesn't exist!")
@@ -831,7 +898,8 @@ concommand.Add("hl2cr_petpoints", function(ply, cmd, args)
 		
 		if target and petPoints then
 			target.hl2cPersistent.PetPoints = target.hl2cPersistent.PetPoints + petPoints
-			target:ChatPrint("Your pet skill points has been set to " .. petPoints .. " by an admin")
+			target:SetNWInt("PetSkillPoints", target.hl2cPersistent.PetPoints)
+			target:ChatPrint("Your pet skill points has been added by " .. petPoints .. " by an admin")
 		end
 	else
 		ply:ChatPrint("You don't have access to this command")

@@ -17,6 +17,8 @@ AchievementLists = {
 		Flushed = {name = "Flushed", mat = "vgui/achievements/hl2_kill_enemy_withtoilet.png", reward = 2500, isRare = false},
 		Blast_from_the_Past = {name = "Blast from the Past", mat = "vgui/achievements/hl2_find_hevfaceplate.png", reward = 2500, isRare = false},
 		Vortex_Locator = {name = "Vortex Locator", mat = "vgui/achievements/hl2_find_alllambdas.png", reward = 30000, isRare = true},
+		Crowbar_Only_HL2 = {name = "Crowbar Only HL2", mat = "vgui/achievements/hl2_beat_game.png", reward = 45000, isRare = false},
+		Crowbar_Only_HL2_Hard = {name = "Crowbar Only HL2 Hard", mat = "vgui/achievements/hl2_beat_game.png", reward = 70000, isRare = false},
 	},
 
 	EP1_Ach_List = {
@@ -27,12 +29,26 @@ AchievementLists = {
 		Safety_Measure = {name = "Safety Measure", mat = "vgui/achievements/ep1_beat_hospitalatticgunship.png", reward = 1000, isRare = false},
 		Attica = {name = "Attica!", mat = "vgui/achievements/ep1_beat_hospitalatticgunship.png", reward = 1500, isRare = false},
 		Finish_EP1 = {name = "Finish EP1", mat = "vgui/achievements/ep1_beat_game.png", reward = 2500, isRare = false},
+		Crowbar_Only_EP1 = {name = "Crowbar Only EP1", mat = "vgui/achievements/ep1_beat_game.png", reward = 15000, isRare = false},
+		Crowbar_Only_EP1_Hard = {name = "Crowbar Only EP1 Hard", mat = "vgui/achievements/ep1_beat_game.png", reward = 30000, isRare = false},
 	},
 
 	Misc_Ach_List = {
-		Survival_Lost = {name = "A Predictable Failure", mat = "vgui/achievements/hl2_find_allgmen.png", reward = 500, isRare = false},
+		Survival_Lost = {name = "A Predictable Failure", mat = "vgui/achievements/hl2_find_allgmen.png", reward = 1500, isRare = false},
 		Blast_that_little = {name = "Blast that little", mat = "vgui/achievements/hl2_beat_toxictunnel.png", reward = 2500, isRare = false, clientTriggerable = true},
 		Fast_Climber = {name = "Fast Climber", mat = "vgui/achievements/hl2_beat_toxictunnel.png", reward = 5000, isRare = false, clientTriggerable = true},
+		One_True_Freeman = {name = "One True Freeman", mat = "vgui/achievements/hl2_get_crowbar.png", reward = 500000, isRare = true},
+		Ultimate_One_True_Freeman = {name = "Ultimate One True Freeman", mat = "vgui/achievements/hl2_get_crowbar.png", reward = 1000000, isRare = true},
+	},
+	
+	Kill_Ach_List = {
+		Crowbar_Killer_250 = {name = "Crowbar Killer I", mat = "vgui/achievements/hl2_get_crowbar.png", reward = 5000, isRare = false},
+		Crowbar_Killer_500 = {name = "Crowbar Killer II", mat = "vgui/achievements/hl2_get_crowbar.png", reward = 10000, isRare = false},
+		Crowbar_Killer_1000 = {name = "Crowbar Killer III", mat = "vgui/achievements/hl2_get_crowbar.png", reward = 20000, isRare = false},
+	},
+	
+	Event_Ach_List = {
+		Candy_Collector = {name = "Candy Collector", mat = "vgui/achievements/hl2_find_allgmen.png", reward = 10000, isRare = false},
 	}
 }
 
