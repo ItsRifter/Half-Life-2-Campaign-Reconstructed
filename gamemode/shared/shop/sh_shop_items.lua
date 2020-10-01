@@ -138,7 +138,7 @@ local tempUpgItem = createItemBase(BaseTempUpg, "Health_Boost", "Bullets mean no
 tempUpgItem.EssenceCost = 1
 Register.TempUpg(tempUpgItem)
 
-local tempUpgItem = createItemBase(BaseTempUpg, "Shotgun_Blaster", "Your shotgun can deal more damage", "hl2cr/armour_parts/health")
+local tempUpgItem = createItemBase(BaseTempUpg, "Shotgun_Blaster", "Your shotgun can deal more damage", "hl2cr/misc/shells")
 tempUpgItem.EssenceCost = 2
 Register.TempUpg(tempUpgItem)
 
@@ -154,6 +154,6 @@ local tempUpgItem = createItemBase(BaseTempUpg, "Self_Healing_3", "Your body man
 tempUpgItem.EssenceCost = 15
 Register.TempUpg(tempUpgItem)
 
-local tempUpgItem = createItemBase(BaseTempUpg, "Blast_Resistance", "Explosions are just a scratch to you", "hl2cr/armour_parts/health")
+local tempUpgItem = createItemBase(BaseTempUpg, "Blast_Resistance", "Explosions are just a scratch to you", "hl2cr/misc/blast_resist")
 tempUpgItem.EssenceCost = 20
 Register.TempUpg(tempUpgItem)

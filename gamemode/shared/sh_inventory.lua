@@ -41,8 +41,7 @@ net.Receive("Upgrade", function(len, ply)
 	
 	SubEssen(ply, UpgCost)
 	
-	ply.hl2cPersistent.TempUpg = ply.hl2cPersistent.TempUpg .. UpgName .. " "
-	ply:SetNWString("TempUpg", ply.hl2cPersistent.TempUpg .. UpgName .. " ")
+	table.insert(ply.hl2cPersistent.TempUpg, UpgName)
 
 end)
 

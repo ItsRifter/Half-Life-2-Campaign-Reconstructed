@@ -1,5 +1,7 @@
 AddCSLuaFile() -- Add itself to files to be sent to the clients, as this file is shared
 
+local crowAttempt = false
+
 hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 	local giveXP = 0
 	local giveCoins = 0
@@ -49,6 +51,17 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 		giveXP = 0
 		giveCoins = 0
 	end
+	local crowKills = 0
+	if npc:GetClass() == "npc_crow" and inflictor:GetClass() == "prop_physics" then
+		crowAttempt = true
+		crowKills = crowKills + 1
+		if npc:GetClass() == "npc_crow" and inflictor:GetClass() == "prop_physics" and crowKills >= 2 then
+			Achievement(attacker, "Two_Birds_One_Stone", "EP2_Ach_List")
+		end
+		timer.Simple(2, function()
+			crowAttempt = false
+		end)
+	end
 	
 	local RESTRICTED_MAPS = {
 		["d2_coast_01"] = true,
@@ -73,7 +86,7 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 		giveXP = 0
 		giveCoins = 0
 		givePetXP = 0
-	elseif attacker:IsPet() and attacker.owner then
+	elseif attacker:IsPet() and attacker.owner and attacker != npc then
 		givePetXP = math.random(1, 15 * GetConVar("hl2cr_difficulty"):GetInt())
 		addPetXP(attacker.owner, givePetXP)
 		Spawn(givePetXP, 0, npc:GetPos(), npc, attacker.owner)
@@ -92,14 +105,13 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 	--Crowbar bonus if the player beats the map using only the crowbar with jeep exception
 	if attacker:IsPlayer() and attacker:GetActiveWeapon():GetClass() != "weapon_crowbar" and attacker.tableRewards["CrowbarOnly"] 
 	and not inflictor:GetClass() == "prop_vehicle_jeep_old" then
-		attacker.tableRewards["CrowbarOnly"] = false
 		if attacker.hl2cPersistent.OTF then
 			attacker.hl2cPersistent.OTF = false
 			attacker:ChatPrint("You have failed the 'One True Freeman' Challenge")
 		end
-	else
+	elseif attacker:IsPlayer() and attacker:GetActiveWeapon():GetClass() == "weapon_crowbar" then
 		attacker.hl2cPersistent.AchProgress.CrowbarKiller = attacker.hl2cPersistent.AchProgress.CrowbarKiller + 1
-		
+		attacker.tableRewards["CrowbarOnly"] = true
 		if attacker.hl2cPersistent.AchProgress.CrowbarKiller >= 250 then
 			Achievement(attacker, "Crowbar_Killer_250", "Kill_Ach_List")
 		end

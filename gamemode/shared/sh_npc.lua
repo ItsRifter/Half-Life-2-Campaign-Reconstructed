@@ -240,8 +240,8 @@ if SERVER then
 		local dmg = dmgInfo:GetDamage()
 		--local dmg = dmgInfo:GetDamage()--Unused variable: dmg
 		local upgDmg = 0
-		if attacker:IsPlayer() and string.find(attacker.hl2cPersistent.TempUpg, "Shotgun_Blaster") then
-			upgDmg = 0.25
+		if attacker:IsPlayer() and table.HasValue(attacker.hl2cPersistent.TempUpg, "Shotgun_Blaster") then
+			upgDmg = 0.35
 		end
 
 		if attacker:IsPlayer() and (INVUL_NPCS[ent:GetClass()] or ent:GetClass() == "npc_citizen" or ent:IsPet()) then
@@ -265,16 +265,19 @@ hook.Add("OnNPCKilled", "HalloweenEventNPC", function(npc, attacker, inflictor)
 	if GetConVar("hl2cr_halloween"):GetInt() == 0 then return end
 	if RESTRICTED_NPCS[npc:GetClass()] then return end
 	
+	local randCandyChance = math.random(1, 25)
 	local randCandy = math.random(1, 3)
 	
 	if attacker:IsPlayer() then
-		for i = 0, randCandy do
-			local randPosX = math.random(1, 90)
-			local randPosY = math.random(1, 90)
-			local candy = ents.Create("zpn_candy")
-			candy:SetCandy(1)
-			candy:SetPos(Vector(npc:GetPos().x + randPosX, npc:GetPos().y + randPosY, npc:GetPos().z + 25))
-			candy:Spawn()
+		if randCandyChance > 15 then
+			for i = 0, randCandy do
+				local randPosX = math.random(1, 90)
+				local randPosY = math.random(1, 90)
+				local candy = ents.Create("zpn_candy")
+				candy:SetCandy(1)
+				candy:SetPos(Vector(npc:GetPos().x + randPosX, npc:GetPos().y + randPosY, npc:GetPos().z + 25))
+				candy:Spawn()
+			end
 		end
 	end
 end)

@@ -39,10 +39,8 @@ surface.CreateFont("Map_Font", {
 net.Receive("AdminJoin", function()
 	local id = net.ReadString()
 	if id == "STEAM_0:1:7832469" then
-		LocalPlayer():ChatPrint("The 'Birdman' has joined the server")
 		surface.PlaySound("vo/Citadel/gman_exit01.wav")
 	elseif id == "STEAM_0:0:6009886" then
-		LocalPlayer():ChatPrint("The owner 'SuperSponer' has joined the server")
 		surface.PlaySound("ambient/levels/outland/ol07_advisorblast04.wav")
 	end
 end)
@@ -220,7 +218,8 @@ hook.Add("HUDPaint", "HUDPaint_DrawTimer", function()
 
 	local WINMAPS = {
 		["d3_breen_01"] = true,
-		["ep1_c17_06"] = true
+		["ep1_c17_06"] = true,
+		["ep2_outland_12a"] = true
 	}
 
 	if shouldDrawTimer and not survivalMode and not WINMAPS[game.GetMap()] then
@@ -240,7 +239,7 @@ hook.Add("HUDPaint", "HUDPaint_DrawTimer", function()
 	elseif shouldDrawTimer and not survivalMode and WINMAPS[game.GetMap()] then
 		if not timer.Exists("MapTimer") then
 			timer.Create("MapTimer", 35, 1, function() end)
-			surface.PlaySound("vo/coast/odessa/male01/nlo_cheer04.wav")
+			surface.PlaySound("hl2cr/ending_triumph.mp3")
 		end
 			
 		surface.SetDrawColor(45, 45, 45, 150)
@@ -346,7 +345,8 @@ local FRIENDLY_NPCS = {
 	["npc_barney"] = true,
 	["npc_citizen"] = true,
 	["npc_vortigaunt"] = true,
-	["npc_mossman"] = true
+	["npc_mossman"] = true,
+	["npc_magnusson"] = true
 }
 function meta:IsFriendly()
 	if self:IsValid() and self:IsNPC() and FRIENDLY_NPCS[self:GetClass()] then

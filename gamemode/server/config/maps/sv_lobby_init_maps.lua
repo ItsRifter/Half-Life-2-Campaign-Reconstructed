@@ -8,11 +8,18 @@ function SetupLobbyMap()
 		door:Fire("Open")
 	end	
 	
-	for k, door in pairs(ents.FindByName("hl2_ep1_door")) do
-		door:Fire("Open")
+	for k, door2 in pairs(ents.FindByName("hl2_ep1_door")) do
+		door2:Fire("Open")
+	end
+	
+	for k, door3 in pairs(ents.FindByName("hl2_ep2_door")) do
+		door3:Fire("Open")
 	end
 	
 	game.SetGlobalState("super_phys_gun", 0)
+	game.SetGlobalState("antlion_allied", 0)
+	game.SetGlobalState("ep2_alyx_injured", 0)
+	game.SetGlobalState("friendly_encounter", 0)
 	
 	GetConVar("hl2cr_doublehp"):SetInt(0)
 	GetConVar("hl2cr_specials"):SetInt(0)

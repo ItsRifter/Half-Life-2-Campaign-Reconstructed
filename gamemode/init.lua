@@ -7,10 +7,27 @@ AddCSLuaFile("client/menus/cl_difficulty_vote.lua")
 AddCSLuaFile("client/menus/cl_scoreboard.lua")
 AddCSLuaFile("client/cl_hud.lua")
 AddCSLuaFile("client/menus/cl_f4_menu.lua")
-AddCSLuaFile("client/menus/cl_pets.lua")
 AddCSLuaFile("client/menus/cl_new_player.lua")
 AddCSLuaFile("client/menus/cl_squads.lua")
 AddCSLuaFile("client/menus/cl_otf.lua")
+
+AddCSLuaFile("client/menus/cl_pets.lua")
+
+AddCSLuaFile("client/menus/pets/cl_headcrab.lua")
+AddCSLuaFile("client/menus/pets/cl_torsozombie_tree.lua")
+AddCSLuaFile("client/menus/pets/cl_zombie_tree.lua")
+
+AddCSLuaFile("client/menus/pets/cl_fast_headcrab_tree.lua")
+AddCSLuaFile("client/menus/pets/cl_fast_torso_tree.lua")
+AddCSLuaFile("client/menus/pets/cl_fast_zombie_tree.lua")
+
+AddCSLuaFile("client/menus/pets/cl_rollermine.lua")
+AddCSLuaFile("client/menus/pets/cl_manhack.lua")
+AddCSLuaFile("client/menus/pets/cl_stalker.lua")
+AddCSLuaFile("client/menus/pets/cl_metropolice_stunstuck.lua")
+AddCSLuaFile("client/menus/pets/cl_metropolice_pistol.lua")
+AddCSLuaFile("client/menus/pets/cl_metropolice_smg.lua")
+
 
 -- Server side files only
 include("server/commands/sv_commands_list.lua")
@@ -19,16 +36,18 @@ include("server/saving_modules/sv_data_flatfile.lua")
 include("server/sv_change_map.lua")
 include("server/extend/sv_network.lua")
 include("server/config/achievements/sv_ach.lua")
-include("server/sv_unstuck.lua")
 include("server/config/sv_difficulty.lua")
 include("server/sv_spectate.lua")
 include("server/stats/sv_pets_levels.lua")
 include("server/config/maps/sv_loyal.lua")
 include("server/sv_afkhandler.lua")
+
 include("server/config/maps/sv_lobby_init_maps.lua")
 include("server/config/maps/sv_hl2_init_maps.lua")
 include("server/config/maps/sv_ep1_init_maps.lua")
+include("server/config/maps/sv_ep2_init_maps.lua")
 include("server/config/maps/sv_coop_init_maps.lua")
+
 include("server/config/maps/sv_vortex.lua")
 include("server/config/maps/sv_lambda.lua")
 
@@ -47,8 +66,8 @@ CreateConVar("hl2cr_petrecovertime", 15, FCVAR_NOTIFY, "Change Pets recovering t
 CreateConVar("hl2cr_petrecovery", 10, FCVAR_NOTIFY, "Change Pets recover HP", 1, 999)
 
 --Events
-CreateConVar("hl2cr_halloween", 0, FCVAR_NOTIFY, "Enable/Disable Halloween Event", 0, 1)
-CreateConVar("hl2cr_christmas", 0, FCVAR_NOTIFY, "Enable/Disable Christmas Event", 0, 1)
+CreateConVar("hl2cr_halloween", 0, {FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_ARCHIVE}, "Enable/Disable Halloween Event", 0, 1)
+CreateConVar("hl2cr_christmas", 0, {FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_ARCHIVE}, "Enable/Disable Christmas Event", 0, 1)
 
 --Ammo Limits
 CreateConVar("max_pistol", 				150, 	{FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_ARCHIVE}, true)
@@ -62,6 +81,7 @@ CreateConVar("max_crossbowbolt", 		10, 	{FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_A
 CreateConVar("max_grenade", 			5, 		{FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_ARCHIVE}, true)
 CreateConVar("max_slam", 				5, 		{FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_ARCHIVE}, true)
 CreateConVar("max_rpg_round", 			3, 		{FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_ARCHIVE}, true)
+CreateConVar("max_frags", 				5, 		{FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_ARCHIVE}, true)
 
 TEAM_ALIVE = 1
 team.SetUp(TEAM_ALIVE, "Alive", Color(81, 124, 199, 255))
@@ -78,7 +98,7 @@ team.SetUp(TEAM_LOYAL, "Loyal Combine", Color(0, 225, 255, 255))
 local meta = FindMetaTable( "Entity" )
 if not meta then return end
 
-version = "0.2.3"
+version = "0.3"
 
 function meta:IsPet()
 	if self:IsValid() and self:IsNPC() and self:GetNWBool("PetActive") then
@@ -138,19 +158,25 @@ function GM:ShowTeam(ply)
 		ply.spawnAirboatGun:Remove()
 		ply.AllowSpawn = true
 	end
+	
+	if ply.spawnJalopy then
+		ply.spawnJalopy:Remove()
+		ply.AllowSpawn = true
+	end
 end
 local VEHICLES = {
 	["prop_vehicle_airboat"] = true,
-	["prop_vehicle_jeep"] = true
+	["prop_vehicle_jeep"] = true,
+	["prop_vehicle_jeep_old"] = true
 }
 hook.Add( "ShouldCollide", "hl2crShouldCollide", function( ent1, ent2 )
 
-	if ent1:IsPlayer( ) and ent2:IsPlayer( ) and ent2:Team( ) == ent1:Team( ) then return false; end
-	if ent1:IsPlayer( ) and ent2:IsPlayer( ) and ent2:Team( ) ~= ent1:Team( ) then return true; end
+	if ent1:IsPlayer( ) and ent2:IsPlayer( ) and ent1:Team( ) == ent2:Team( ) then return false end
+	if ent1:IsPlayer( ) and ent2:IsPlayer( ) and ent2:Team( ) != ent1:Team( ) then return true end
 	
 	-- Set Up Pets Collision with Players
-	if ent1:IsPet( ) and ent2:IsPlayer( ) then return false; end
-	if ent2:IsPet( ) and ent1:IsPlayer( ) then return false; end
+	if ent1:IsPet( ) and ent2:IsPlayer( ) then return false end
+	if ent2:IsPet( ) and ent1:IsPlayer( ) then return false end
 
 	if ent1:IsFriendly( ) and ent2:IsPlayer( ) then return false; end
 	if ent2:IsFriendly( ) and ent1:IsPlayer( ) then return false; end
@@ -200,9 +226,56 @@ function GM:ShowSpare1(ply)
 	
 	list.Set( "Vehicles", "AirboatGun", airboatGun )
 	
+	local jalopy = {
+		Name = "Jalopy",
+		Class = "prop_vehicle_jeep_old",
+		Category = Category,
+		Model = "models/vehicle.mdl",
+		KeyValues = {
+			vehiclescript = "scripts/vehicles/jalopy.txt",
+		}
+	}
+	
+	list.Set( "Vehicles", "Jalopy", jalopy )
+	
 	if ply.loyal then return end
 	
-	if game.GetMap() == "d2_coast_01" or game.GetMap() == "d2_coast_03" or game.GetMap() == "d2_coast_04" or game.GetMap() == "d2_coast_05" or game.GetMap() == "d2_coast_06" or game.GetMap() == "d2_coast_07" or game.GetMap() == "d2_coast_09" or (game.GetMap() == "d2_coast_10" and not lockedSpawn) then
+	local JEEP_MAPS = {
+		["d2_coast_01"] = true,
+		["d2_coast_03"] = true,
+		["d2_coast_04"] = true,
+		["d2_coast_05"] = true,
+		["d2_coast_06"] = true,
+		["d2_coast_06"] = true,
+		["d2_coast_07"] = true,
+		["d2_coast_09"] = true,
+		["d2_coast_10"] = true
+	}
+	
+	local AIRBOAT_MAPS = {
+		["d1_canals_06"] = true,
+		["d1_canals_07"] = true,
+		["d1_canals_08"] = true,
+		["d1_canals_09"] = true,
+		["d1_canals_10"] = true,
+		["d1_canals_11"] = true
+	}
+	
+	local AIRBOAT_GUN_MAPS = {
+		["d1_canals_12"] = true,
+		["d1_canals_13"] = true
+	}
+	
+	local JALOPY_MAPS = {
+		["ep2_outland_06a"] = true,
+		["ep2_outland_07"] = true,
+		["ep2_outland_08"] = true,
+		["ep2_outland_10"] = true,
+		["ep2_outland_10"] = true,
+		["ep2_outland_12"] = true
+	}
+	
+	if JEEP_MAPS[game.GetMap()] and not lockedSpawn then
 		if ply.AllowSpawn then
 			ply.spawnJeep = ents.Create(jeep.Class)
 			ply.spawnJeep:SetModel(jeep.Model)
@@ -216,7 +289,7 @@ function GM:ShowSpare1(ply)
 			ply.AllowSpawn = false
 		end
 		
-	elseif game.GetMap() == "d1_canals_06" or game.GetMap() == "d1_canals_07" or game.GetMap() == "d1_canals_08" or game.GetMap() == "d1_canals_09" or game.GetMap() == "d1_canals_10" or game.GetMap() == "d1_canals_11" and not airboatGunSpawnable or airboatSpawnable then
+	elseif AIRBOAT_MAPS[game.GetMap()] and not airboatGunSpawnable or airboatSpawnable then
 		if ply.AllowSpawn then
 			ply.spawnAirboat = ents.Create(airboat.Class)
 			ply.spawnAirboat:SetModel(airboat.Model)
@@ -229,7 +302,7 @@ function GM:ShowSpare1(ply)
 			ply.spawnAirboat:Fire( "addoutput", "targetname airboat" )
 			ply.AllowSpawn = false
 		end
-	elseif (game.GetMap() == "d1_canals_11" and airboatGunSpawnable) or game.GetMap() == "d1_canals_12" or game.GetMap() == "d1_canals_13" then
+	elseif AIRBOAT_GUN_MAPS[game.GetMap()] or airboatGunSpawnable then
 		if ply.AllowSpawn then
 			ply.spawnAirboatGun = ents.Create(airboatGun.Class)
 			ply.spawnAirboatGun:SetModel(airboatGun.Model)
@@ -241,6 +314,19 @@ function GM:ShowSpare1(ply)
 			ply.spawnAirboatGun:SetOwner(ply)
 			ply.spawnAirboatGun:Fire( "addoutput", "targetname airboat" )
 			ply.spawnAirboatGun:Activate()
+			ply.AllowSpawn = false
+		end
+	elseif JALOPY_MAPS[game.GetMap()] or jalopySpawnable then
+		if ply.AllowSpawn then
+			ply.spawnJalopy = ents.Create(jalopy.Class)
+			ply.spawnJalopy:SetModel(jalopy.Model)
+			for k, v in pairs(jalopy.KeyValues) do
+				ply.spawnJalopy:SetKeyValue(k, v)
+			end
+			ply.spawnJalopy:SetPos(Vector(ply:EyePos().x, ply:EyePos().y, ply:EyePos().z - 15))
+			ply.spawnJalopy:Spawn()
+			ply.spawnJalopy:SetOwner(ply)
+			ply.spawnJalopy:Fire( "addoutput", "targetname jalopy" )
 			ply.AllowSpawn = false
 		end
 	else
@@ -289,6 +375,7 @@ function GM:ShowSpare2(ply)
 			net.WriteInt(ply.hl2cPersistent.EventItems, 32)
 			net.WriteInt(eventNumber, 8)
 			net.WriteTable(ply.hl2cPersistent.HatTable)
+			net.WriteTable(ply.hl2cPersistent.TempUpg)
 		net.Send(ply)
 	end
 end
@@ -368,6 +455,8 @@ function SetUpMap()
 		SetupHL2Map()
 	elseif string.match(game.GetMap(), "ep1_") then
 		SetupEP1Map()
+	elseif string.match(game.GetMap(), "ep2_") then
+		SetupEP2Map()
 	elseif string.match(game.GetMap(), "level") then
 		SetupCoopMap01()
 	end

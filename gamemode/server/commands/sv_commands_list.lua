@@ -52,6 +52,8 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 			net.WriteTable(ply.hl2cPersistent.Achievements)
 			net.WriteTable(ply.hl2cPersistent.Vortexes)
 			net.WriteTable(ply.hl2cPersistent.Lambdas)
+			net.WriteTable(ply.hl2cPersistent.Vortexes.EP1)
+			net.WriteTable(ply.hl2cPersistent.Vortexes.EP2)
 		net.Send(ply)
 		return ""
 	end
@@ -69,6 +71,8 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 			net.WriteTable(target.hl2cPersistent.Achievements)
 			net.WriteTable(target.hl2cPersistent.Vortexes)
 			net.WriteTable(target.hl2cPersistent.Lambdas)
+			net.WriteTable(ply.hl2cPersistent.Vortexes.EP1)
+			net.WriteTable(ply.hl2cPersistent.Vortexes.EP2)
 		net.Send(ply)
 		return ""
 	end
@@ -409,15 +413,6 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 		return ""
 	end
 	
-	if (string.lower(text) == "!unstuck") then
-		if not ply:IsOnGround() and ply:GetSequence() != 199 and ply:GetSequence() != 122 then
-			ply:ChatPrint("You appear to be stuck, Unstucking...")
-			IsStuck(ply)
-		else
-			ply:ChatPrint("You don't appear to be stuck, if you really are ask an admin or commit suicide")
-		end
-		return ""
-	end
 	if (string.lower(text) == "!lobby") then
 		if not DISABLED_MAPS[game.GetMap()] then
 			if not ply.hasVotedLobby then
@@ -465,7 +460,7 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 		if DISABLED_MAPS[game.GetMap()] then
 			ply:ChatPrint("Time is infinite on this map")
 		else
-			ply:ChatPrint(math.Round(3600 - CurTime(), 0) .. " seconds left before returning to lobby")
+			ply:ChatPrint(math.Round(timer, 0) .. " seconds left before returning to lobby")
 		end
 		return ""
 	end
@@ -629,6 +624,9 @@ concommand.Add("hl2cr_givexp", function(ply, cmd, args, argStr)
 			end
 		end
 		
+	if target == "" then
+		target = ply
+	end
 		if target and int then
 			AddXP(target, int)
 			target:ChatPrint("You have been given " .. int .. "xp by an admin")
@@ -692,6 +690,10 @@ concommand.Add("hl2cr_setlevel", function(ply, cmd, args, argStr)
 				target = v
 			end
 		end
+		
+		if target == "" then
+			target = ply
+		end
 	
 		if level > 0 then
 			target.hl2cPersistent.Level = level
@@ -720,6 +722,10 @@ concommand.Add("hl2cr_addcoins", function(ply, cmd, args)
 			end
 		end
 		
+		if target == "" then
+			target = ply
+		end
+		
 		if coins >= 0 and target then
 			AddCoins(target, coins)
 			target:ChatPrint("You have been given " .. coins .. " lambda coins by an admin")
@@ -744,6 +750,11 @@ concommand.Add("hl2cr_subcoins", function(ply, cmd, args)
 				target = v
 			end
 		end
+		
+		if target == "" then
+			target = ply
+		end
+		
 		if coins >= 0 and target then
 			SubCoins(target, coins)
 			target:ChatPrint("Your " .. coins .. " lambda coins were deducted by an admin")
@@ -835,6 +846,10 @@ concommand.Add("hl2cr_otf", function(ply, cmd, args)
 			end
 		end
 		
+		if target == "" then
+			target = ply
+		end
+		
 		if target.hl2cPersistent.OTF then
 			ply:ChatPrint("OTF Already enabled")
 		else
@@ -894,6 +909,10 @@ concommand.Add("hl2cr_petpoints", function(ply, cmd, args)
 			if string.match(string.lower(v:Nick()), tostring(target)) then
 				target = v
 			end
+		end
+		
+		if target == "" then
+			target = ply
 		end
 		
 		if target and petPoints then
@@ -962,6 +981,11 @@ concommand.Add("hl2cr_resetslots", function(ply, cmd, args)
 				target = v
 			end
 		end
+		
+		if target == "" then
+			target = ply
+		end
+		
 		if target then
 			for k, item in pairs(GAMEMODE.ArmourItem) do
 				if target.hl2cPersistent.Helmet and target.hl2cPersistent.Helmet == GAMEMODE.ArmourItem[k].Name then

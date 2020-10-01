@@ -14,7 +14,6 @@ function SpectateMode(ply)
 		ply:StripWeapons()
 		ply:Spectate(5)
 	end
-
 end
 
 function DisableSpec(ply)

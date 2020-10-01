@@ -44,6 +44,7 @@ util.AddNetworkString("UpdateSkills")
 util.AddNetworkString("Evolving")
 util.AddNetworkString("NewPet")
 util.AddNetworkString("PetDead")
+util.AddNetworkString("PetKilledBarnacle")
 util.AddNetworkString("PetKilled")
 util.AddNetworkString("PetPanic")
 

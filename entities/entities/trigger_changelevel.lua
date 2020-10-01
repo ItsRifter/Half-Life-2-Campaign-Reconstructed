@@ -8,6 +8,8 @@ or string.match(game.GetMap(), "d3_") then
 	series = "hl2"
 elseif string.match(game.GetMap(), "ep1_") then
 	series = "ep1"
+elseif string.match(game.GetMap(), "ep2_") then
+	series = "ep2"
 end
 
 function ENT:Initialize()
@@ -109,10 +111,8 @@ local MAPS_ONEPLAYER = {
 	["d1_eli_01"] = true,
 	["d1_town_05"] = true,
 	["d3_citadel_01"] = true,
-	["d3_citadel_05"] = true,
-	["d3_breen_01"] = true,
+	["d3_citadel_05"] = true
 }
-
 function ENT:Think()
 	playerCount = #player.GetAll()
 	local addOne = 0
@@ -123,7 +123,9 @@ function ENT:Think()
 	if timer.Exists("MapTimer") and GetConVar("hl2cr_survivalmode"):GetInt() == 1 then
 		subOne = team.NumPlayers(TEAM_DEAD)
 	end
+	
 	if playerCount <= 0 then return end
+	
 	if team.NumPlayers(TEAM_COMPLETED_MAP) >= team.NumPlayers(TEAM_ALIVE) + addOne - subOne and not MAPS_ONEPLAYER[game.GetMap()] then
 		if displayOnce == false then
 			displayOnce = true
@@ -142,6 +144,8 @@ function ENT:Think()
 					ChangeMapHL2()
 				elseif series == "ep1" then
 					ChangeMapEP1()
+				elseif series == "ep2" then
+					ChangeMapEP2()
 				end
 				displayOnce = false
 			end)
@@ -163,12 +167,19 @@ function ENT:Think()
 					ChangeMapHL2()
 				elseif series == "ep1" then
 					ChangeMapEP1()
+				elseif series == "ep2" then
+					ChangeMapEP2()
 				end
 				displayOnce = false
 			end)
 		end
-	elseif team.NumPlayers(TEAM_COMPLETED_MAP) >= 1 and game.GetMap() == "ep1_c17_06" then
+	end
+	if team.NumPlayers(TEAM_COMPLETED_MAP) >= 1 and game.GetMap() == "ep1_c17_06" then
 		EndEP1Game()
+		timer.Remove("MapTimer")
+	elseif team.NumPlayers(TEAM_COMPLETED_MAP) >= 1 and game.GetMap() == "ep2_outland_12a" then
+		EndEP2Game()
+		timer.Remove("MapTimer")
 	end
 end
 
@@ -190,7 +201,7 @@ function EndHL2Game()
 			game.SetGlobalState("super_phys_gun", 0)
 			net.Start("DisplayMapTimer")
 			net.Broadcast()
-			timer.Create("MapTimer", 35, 0, function() ChangeMapHL2() timer.Remove("MapTimer") end)
+			timer.Create("MapTimerEnd", 35, 0, function() ChangeMapHL2() timer.Remove("MapTimerEnd") end)
 		end
 	end
 end
@@ -207,12 +218,38 @@ function EndEP1Game()
 			p.hl2cPersistent.HardOTF = false
 		end
 		
+		Achievement(p, "Finish_EP1", "EP1_Ach_List")
+		
 		if not displayOnce then
 			p:ChatPrint("Congratulations on finishing Episode 1!, returning to lobby in 35 seconds")
 			displayOnce = true
 			net.Start("DisplayMapTimer")
-			net.Broadcast()
-			timer.Create("MapTimer", 35, 0, function() ChangeMapEP1() timer.Remove("MapTimer") end)
+			net.Send(p)
+			timer.Create("MapTimerEnd", 35, 0, function() ChangeMapEP1() timer.Remove("MapTimerEnd") end)
+		end
+	end
+end
+
+function EndEP2Game()
+	for k, p in pairs(player.GetAll()) do
+		if p.hl2cPersistent.OTF then
+			Achievement(p, "Crowbar_Only_EP2", "EP2_Ach_List")
+			p.hl2cPersistent.OTF = false
+		end
+		
+		if p.hl2cPersistent.HardOTF then
+			Achievement(p, "Crowbar_Only_EP2_Hard", "EP2_Ach_List")
+			p.hl2cPersistent.HardOTF = false
+		end
+		
+		Achievement(p, "Finish_EP2", "EP2_Ach_List")
+		
+		if not displayOnce then
+			p:ChatPrint("Congratulations on finishing Episode 2!, returning to lobby in 35 seconds")
+			displayOnce = true
+			net.Start("DisplayMapTimer")
+			net.Send(p)
+			timer.Create("MapTimerEnd", 35, 0, function() ChangeMapEP2() timer.Remove("MapTimerEnd") end)
 		end
 	end
 end
@@ -288,7 +325,7 @@ function ChangeMapHL2()
 		"d3_citadel_04",
 		"d3_citadel_05",
 		"d3_breen_01",
-		"hl2c_lobby_remake"
+		"hl2cr_lobby"
 	}
 	for k = 1, #HL2 do
 		if map == HL2[k] then
@@ -327,12 +364,43 @@ function ChangeMapEP1()
 		"ep1_c17_02a",
 		--"ep1_c17_05", -Gotta fix somehow
 		"ep1_c17_06",
-		"hl2c_lobby_remake"
+		"hl2cr_lobby"
 	}
 	
 	for k = 1, #EP1 do
 		if map == EP1[k] then
 			RunConsoleCommand("changelevel", EP1[k+1])
+		end
+	end
+end
+
+function ChangeMapEP2()
+	local map = game.GetMap()
+	
+	local EP2 = {
+		"ep2_outland_01",
+		"ep2_outland_01a",
+		"ep2_outland_02",
+		"ep2_outland_03",
+		"ep2_outland_04",
+		"ep2_outland_05",
+		"ep2_outland_06",
+		"ep2_outland_06a",
+		"ep2_outland_07",
+		"ep2_outland_08",
+		"ep2_outland_09",
+		"ep2_outland_10",
+		"ep2_outland_11",
+		"ep2_outland_11a",
+		"ep2_outland_11b",
+		"ep2_outland_12",
+		"ep2_outland_12a",
+		"hl2cr_lobby"
+	}
+	
+	for k = 1, #EP2 do
+		if map == EP2[k] then
+			RunConsoleCommand("changelevel", EP2[k+1])
 		end
 	end
 end

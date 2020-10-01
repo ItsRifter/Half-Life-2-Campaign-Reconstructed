@@ -2,7 +2,8 @@ AddCSLuaFile() -- Add itself to files to be sent to the clients, as this file is
 local startingWeapons = {}
 
 hook.Add("PlayerInitialSpawn", "MiscSurv", function(ply)
-	if table.HasValue(ply.hl2cPersistent.Achievements, "Crowbar_Only_HL2") and table.HasValue(ply.hl2cPersistent.Achievements, "Crowbar_Only_EP1") then
+	if table.HasValue(ply.hl2cPersistent.Achievements, "Crowbar_Only_HL2") and table.HasValue(ply.hl2cPersistent.Achievements, "Crowbar_Only_EP1") 
+	and table.HasValue(ply.hl2cPersistent.Achievements, "Crowbar_Only_EP2") then
 		Achievement(ply, "One_True_Freeman", "Misc_Ach_List")
 	end
 
@@ -26,16 +27,16 @@ hook.Add("PlayerInitialSpawn", "MiscSurv", function(ply)
 	
 	ply.tableRewards = {
 		["HasDied"] = false,
-		["CrowbarOnly"] = true,
+		["CrowbarOnly"] = false,
 		["Kills"] = 0,
 		["Metal"] = 0,
 	}
 	
-	if game.GetMap() == "hl2c_lobby_remake" then
+	if game.GetMap() == "hl2cr_lobby" then
 		ply.hl2cPersistent.OTF = false
 	end
 
-	if game.GetMap() == "ep1_citadel_01" then
+	if game.GetMap() == "ep1_citadel_01" and not table.HasValue(ply.hl2cPersistent.Achievements, "Crowbar_Only_EP1") then
 		ply.EnableOTF = true
 	end
 	
@@ -107,17 +108,10 @@ net.Receive("UpdateNPCColour", function(len, ply)
 end)
 
 hook.Add("PlayerSpawn", "SpawnDefault", function(ply)
-	if ply.hl2cPersistent.Hat != "no_hat" and ply:IsValid() then
-		net.Start("WearHat")
-			net.WriteString(ply.hl2cPersistent.Hat)
-		net.Send(ply)
+	if ply:IsBot() then 
+		ply:SetTeam(TEAM_ALIVE)
+		return 
 	end
-	
-	if ply:Team() == TEAM_COMPLETED_MAP then
-		SpectateMode(ply)
-		return
-	end
-	
 	--Give spawning items to player first
 	for i, w in pairs(ents.FindByName("player_spawn_items")) do
 		w:SetPos(ply:GetPos())
@@ -128,7 +122,7 @@ hook.Add("PlayerSpawn", "SpawnDefault", function(ply)
 	local armourBoost = 0
 	local addStatsHP = 0
 	
-	if string.find(ply.hl2cPersistent.TempUpg, "Health_Boost") then
+	if table.HasValue(ply.hl2cPersistent.TempUpg, "Health_Boost") then
 		addHPUpg = addHPUpg + 5
 	end
 	
@@ -229,9 +223,20 @@ end)
 
 local tempUpgHealTime = 0
 
+hook.Add("EntityTakeDamage", "EP1Fix", function(ply, dmgInfo)
+	local attacker = dmgInfo:GetAttacker()
+	local dmg = dmgInfo:GetDamage()
+	if attacker:GetClass() == "func_movelinear" then
+		dmgInfo:SetDamage(0)
+	end
+end)
+
 hook.Add("PlayerHurt", "PlayerRecover", function(vic, att, hp, dmg)	
+	
 	tempUpgHealTime = 60 + CurTime()
-	beginHealingTimer(vic)
+	if vic:IsPlayer() then
+		beginHealingTimer(vic)
+	end
 end)
 
 function beginHealingTimer(ply)
@@ -239,22 +244,22 @@ function beginHealingTimer(ply)
 	
 	if not ply then return end
 	
-	if string.find(ply.hl2cPersistent.TempUpg, "Self_Healing") then
+	if table.HasValue(ply.hl2cPersistent.TempUpg, "Self_Healing") then
 		healthBoost = healthBoost + 5
 	end
 	
-	if string.find(ply.hl2cPersistent.TempUpg, "Self_Healing_2") then 
+	if table.HasValue(ply.hl2cPersistent.TempUpg, "Self_Healing_2") then 
 		healthBoost = healthBoost + 10
 	end
 	
-	if string.find(ply.hl2cPersistent.TempUpg, "Self_Healing_3") then 
+	if table.HasValue(ply.hl2cPersistent.TempUpg, "Self_Healing_3") then 
 		healthBoost = healthBoost + 15
 	end
 	
-	if healthBoost == 0 then return end
+	if healthBoost <= 0 then return end
 	hook.Add("Think", "healingThink", function()
 		if tempUpgHealTime <= CurTime() then
-			if ply:Health() <= ply:GetMaxHealth() and ply:IsValid() then
+			if ply:IsValid() and ply:Health() <= ply:GetMaxHealth() and not ply:IsBot() then
 				ply:SetHealth(ply:Health() + healthBoost)
 				if ply:Health() >= ply:GetMaxHealth() then
 					ply:SetHealth(ply:GetMaxHealth())
@@ -274,7 +279,6 @@ hook.Add("CanExitVehicle", "PodCannotExit", function(veh, ply)
 end)
 
 local NO_SUICIDE_MAPS = {
-	["hl2c_lobby_remake"] = true,
 	["hl2cr_lobby"] = true,
 	["d1_trainstation_01"] = true,
 	["d1_trainstation_02"] = true,
@@ -315,7 +319,7 @@ hook.Add("EntityTakeDamage", "BlastResist", function(ent, dmgInfo)
 	local expResist = 0
 	
 	if ent:IsPlayer() then 
-		if string.find(ent.hl2cPersistent.TempUpg, "Blast_Resistance") then
+		if table.HasValue(ent.hl2cPersistent.TempUpg, "Blast_Resistance") then
 			expResist = 50
 		end
 	end
@@ -426,6 +430,10 @@ hook.Add("PlayerCanPickupWeapon", "DisableWeaponsPickup", function(ply, weapon)
 	end
 	
 	if weapon:GetClass() == "weapon_smg1" and ply:GetAmmoCount("SMG1") >= GetConVar("max_SMG1"):GetInt() then
+		return false
+	end
+	
+	if weapon:GetClass() == "weapon_frag" and ply:GetAmmoCount("Grenade") >= GetConVar("max_frags"):GetInt() then
 		return false
 	end
 	
@@ -550,7 +558,7 @@ hook.Add("PlayerLoadout", "StarterWeapons", function(ply)
 	for k, v in pairs(player.GetAll()) do
 		if v:Team() == TEAM_LOYAL or ply:Team() == TEAM_LOYAL then return end
 		
-		if v:GetWeapons() != nil and ply:GetWeapons() != v:GetWeapons() and game.GetMap() != "hl2c_lobby_remake" then
+		if v:GetWeapons() != nil and ply:GetWeapons() != v:GetWeapons() and game.GetMap() != "hl2cr_lobby" then
 			for k, w in pairs(v:GetWeapons()) do
 				ply:Give(w:GetClass())
 			end	
@@ -599,8 +607,10 @@ hook.Add("WeaponEquip", "WeaponPickedUp", function(weapon, ply)
 	if weapon:GetClass() == "weapon_crowbar" and game.GetMap() == "d1_trainstation_06" then
 		for k, v in pairs(player.GetAll()) do
 			Achievement(v, "Trusty_Hardware", "HL2_Ach_List")
-			v.EnableOTF = true
-			v:ChatPrint("OTF Enabled, type !otf to attempt the challenge")
+			if not table.HasValue(v.hl2cPersistent.Achievements "Crowbar_Only_HL2") then
+				v.EnableOTF = true
+				v:ChatPrint("OTF Enabled, type !otf to attempt the challenge")
+			end
 		end
 	end
 end)
@@ -633,7 +643,7 @@ function RespawnTimerActive(ply, deaths)
 		end
 	end)
 
-	if GetConVar("hl2cr_survivalmode"):GetInt() == 1 and game.GetMap() != "hl2c_lobby_remake"  then
+	if GetConVar("hl2cr_survivalmode"):GetInt() == 1 and game.GetMap() != "hl2cr_lobby"  then
 		ply.isAliveSurv = false
 		local playersAlive = #player.GetAll()
 		local playerDeaths = deaths
@@ -666,10 +676,6 @@ end
 hook.Add("Think", "RespawnPlayersTimer", function()
 	for k, p in pairs (player.GetAll()) do
 		if not p.respawnTimer then return end
-		if p:Alive() then 
-			DisableSpec(p)
-			return 
-		end
 		if GetConVar("hl2cr_survivalmode"):GetInt() == 1 then return end
 		if CurTime() >= p.respawnTimer then
 			if not p:Alive() then
@@ -743,6 +749,10 @@ if SERVER then
 
 			if p:GetAmmoCount("SMG1_Grenade") > GetConVar("max_SMG1_Grenade"):GetInt() then		
 				p:RemoveAmmo( p:GetAmmoCount("SMG1_Grenade") - GetConVar("max_SMG1_Grenade"):GetInt(), "SMG1_Grenade" )
+			end
+			
+			if p:GetAmmoCount("Grenade") > GetConVar("max_frags"):GetInt() then
+				p:RemoveAmmo( p:GetAmmoCount("Grenade") - GetConVar("max_frags"):GetInt(), "Grenade" )
 			end
 		end
 	end)
@@ -839,6 +849,47 @@ function giveVortex(map, ply)
 	end
 end
 
+function giveVortexEP1(map, ply)
+	if not table.HasValue(ply.hl2cPersistent.Vortexes.EP1, map) then
+	
+		table.insert(ply.hl2cPersistent.Vortexes.EP1, map)
+		Special(ply, map, "EP1_Vortex", 1000)
+
+		timer.Simple(0.01, function()
+			local effectdata = EffectData()
+			effectdata:SetOrigin(ply:GetPos())
+			effectdata:SetScale(1.50)
+			effectdata:SetMagnitude(0.05)
+			util.Effect( "cball_explode", effectdata )
+			ply:EmitSound("ambient/energy/zap7.wav", 100, 100)
+		end)
+	end
+	
+	if table.Count(ply.hl2cPersistent.Vortexes.EP1) == 6 then
+		Achievement(ply, "Vortex_Locator", "EP1_Ach_List")
+	end
+end
+function giveVortexEP2(map, ply)
+	if not table.HasValue(ply.hl2cPersistent.Vortexes.EP2, map) then
+	
+		table.insert(ply.hl2cPersistent.Vortexes.EP2, map)
+		Special(ply, map, "EP2_Vortex", 1250)
+
+		timer.Simple(0.01, function()
+			local effectdata = EffectData()
+			effectdata:SetOrigin(ply:GetPos())
+			effectdata:SetScale(1.50)
+			effectdata:SetMagnitude(0.05)
+			util.Effect( "cball_explode", effectdata )
+			ply:EmitSound("ambient/energy/zap7.wav", 100, 100)
+		end)
+	end
+	
+	if table.Count(ply.hl2cPersistent.Vortexes.EP2) == 8 then
+		Achievement(ply, "Vortex_Locator", "EP2_Ach_List")
+	end
+end
+
 function giveLambda(map, ply)
 	if not table.HasValue(ply.hl2cPersistent.Lambdas, map) then
 		table.insert(ply.hl2cPersistent.Lambdas, map)
@@ -846,6 +897,18 @@ function giveLambda(map, ply)
 	end
 	
 	if table.Count(ply.hl2cPersistent.Lambdas) == 34 then
-		Achievement(ply, "Lambda_Locator", "HL2_Ach_List")
+		Achievement(ply, "Lambda_Locator", "EP2_Ach_List")
 	end
 end
+
+local whackHits = 0
+hook.Add("EntityTakeDamage", "WhackAch", function(gunship, dmg)
+	local player = dmg:GetAttacker()
+	
+	if game.GetMap() == "ep1_c17_02a" and gunship:GetName() == "gunship_showdown_ragdoll" and player:IsPlayer() then
+		player.whackHits = player.whackHits + 1
+		if player.whackHits >= 5 then
+			Achievement(player, "Safety_Measure", "EP1_Ach_List")
+		end
+	end
+end)

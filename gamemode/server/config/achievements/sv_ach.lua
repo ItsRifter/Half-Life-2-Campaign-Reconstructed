@@ -2,7 +2,7 @@ AchievementLists = {
 	Lobby_Ach_List = {
 		First_Time = {name = "First Time", mat = "vgui/achievements/hl2_beat_cemetery.png", reward = 0, isRare = false, clientTriggerable = true},
 		Worthless_Secret = {name = "Worthless Secret", mat = "entities/npc_kleiner.png", reward = 0, isRare = true},
-		Lost_Cause = {name = "Lost Cause", mat = "vgui/achievements/hl2_beat_cemetery.png", reward = 1000, isRare = false, clientTriggerable = true}
+		Lost_Cause = {name = "Lost Cause", mat = "hl2cr/misc/lostcause", reward = 1000, isRare = false, clientTriggerable = true}
 	},
 
 	HL2_Ach_List = {
@@ -31,6 +31,17 @@ AchievementLists = {
 		Finish_EP1 = {name = "Finish EP1", mat = "vgui/achievements/ep1_beat_game.png", reward = 2500, isRare = false},
 		Crowbar_Only_EP1 = {name = "Crowbar Only EP1", mat = "vgui/achievements/ep1_beat_game.png", reward = 15000, isRare = false},
 		Crowbar_Only_EP1_Hard = {name = "Crowbar Only EP1 Hard", mat = "vgui/achievements/ep1_beat_game.png", reward = 30000, isRare = false},
+		Vortex_Locator = {name = "Vortex Locator", mat = "vgui/achievements/hl2_find_alllambdas.png", reward = 40000, isRare = true},
+	},
+	
+	EP2_Ach_List = {
+		Two_Birds_One_Stone = {name = "Two Birds One Stone", mat = "vgui/achievements/hl2_get_gravitygun.png", reward = 2000, isRare = false},
+		Crowbar_Only_EP2 = {name = "Crowbar Only EP2", mat = "vgui/achievements/ep2_beat_missilesilo2.png", reward = 15000, isRare = false},
+		Quiet_Mountain_Getaway = {name = "Quiet Mountain Getaway", mat = "vgui/achievements/ep2_beat_whiteforestinn.png", reward = 1000, isRare = false},
+		Twofer = {name = "Twofer", mat = "vgui/achievements/ep2_beat_antlionguards.png", reward = 2000, isRare = false},
+		Defense_of_the_Armament = {name = "Defense of the Armament", mat = "vgui/achievements/ep2_beat_missilesilo2.png", reward = 5000, isRare = false},
+		Finish_EP2 = {name = "Finish EP2", mat = "vgui/achievements/hlx_find_onegman.png", reward = 3000, isRare = false},
+		Vortex_Locator = {name = "Vortex Locator", mat = "vgui/achievements/hl2_find_alllambdas.png", reward = 50000, isRare = true},
 	},
 
 	Misc_Ach_List = {
@@ -114,12 +125,32 @@ SpecialLists = {
 		d3_c17_03 = {name = "d3_c17_03", mat = "vgui/achievements/hlx_find_onegman.png"},
 		d3_c17_07 = {name = "d3_c17_07", mat = "vgui/achievements/hlx_find_onegman.png"},
 		d3_c17_12b = {name = "d3_c17_12b", mat = "vgui/achievements/hlx_find_onegman.png"},
-		d3_c17_13 = {name = "d3_c17_13", mat = "vgui/achievements/hlx_find_onegman.png"},
+		d3_c17_13 = {name = "d3_c17_13", mat = "vgui/achievements/hlx_find_onegman.png"}
+	},
+	
+	EP1_Vortex = {
+		ep1_citadel_01 = {name = "ep1_citadel_01", mat = "vgui/achievements/hlx_find_onegman.png"},
+		ep1_citadel_02 = {name = "ep1_citadel_02", mat = "vgui/achievements/hlx_find_onegman.png"},
+		ep1_c17_01 = {name = "ep1_c17_01", mat = "vgui/achievements/hlx_find_onegman.png"},
+		ep1_c17_02 = {name = "ep1_c17_02", mat = "vgui/achievements/hlx_find_onegman.png"},
+		ep1_c17_02b = {name = "ep1_c17_02b", mat = "vgui/achievements/hlx_find_onegman.png"},
+		ep1_c17_06 = {name = "ep1_c17_06", mat = "vgui/achievements/hlx_find_onegman.png"}
+	},
+	
+	EP2_Vortex = {
+		ep2_outland_01 = {name = "ep2_outland_01", mat = "vgui/achievements/hlx_find_onegman.png"},
+		ep2_outland_01a = {name = "ep2_outland_01a", mat = "vgui/achievements/hlx_find_onegman.png"},
+		ep2_outland_04 = {name = "ep2_outland_04", mat = "vgui/achievements/hlx_find_onegman.png"},
+		ep2_outland_05 = {name = "ep2_outland_05", mat = "vgui/achievements/hlx_find_onegman.png"},
+		ep2_outland_06 = {name = "ep2_outland_06", mat = "vgui/achievements/hlx_find_onegman.png"},
+		ep2_outland_07 = {name = "ep2_outland_07", mat = "vgui/achievements/hlx_find_onegman.png"},
+		ep2_outland_10 = {name = "ep2_outland_10", mat = "vgui/achievements/hlx_find_onegman.png"},
+		ep2_outland_12a = {name = "ep2_outland_12a", mat = "vgui/achievements/hlx_find_onegman.png"},
 	}
 }
 
 function Achievement(ply, name, list, clientTriggered)
-
+	if not ply then return end
 	-- Get achievement list, or exit if it doesn't exists
 	local achievementList = AchievementLists[list]
 	if not achievementList then return end

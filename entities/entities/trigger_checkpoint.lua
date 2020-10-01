@@ -214,7 +214,7 @@ function ENT:StartTouch(ent)
 
 		if game.GetMap() == "d3_c17_10a" then
 			for k, v in pairs(ents.FindByClass("npc_barney")) do
-				v:SetPos(point1)
+				v:SetPos(Vector(-2460, 6721, 514))
 			end
 		end
 
@@ -239,6 +239,42 @@ function ENT:StartTouch(ent)
 		else
 			for k, resetSpawn in pairs(ents.FindByClass("info_player_start")) do
 				resetSpawn:SetParent(nil)
+			end
+		end
+		
+		if game.GetMap() == "ep2_outland_05" and point1 then
+			for k, v in pairs(player.GetAll()) do
+				Achievement(v, "Twofer", "EP2_Ach_List")
+			end
+		end
+		
+		if game.GetMap() == "ep2_outland_06" and point3 then
+			jalopySpawnable = true
+		end
+		
+		if game.GetMap() == "ep2_outland_10" and point2 then
+			for k, v in pairs(player.GetAll()) do
+				Achievement(v, "Quiet_Mountain_Getaway", "EP2_Ach_List")
+			end
+		end
+		
+		if game.GetMap() == "ep2_outland_12" and point3 then
+			for k, v in pairs(player.GetAll()) do
+				Achievement(v, "Defense_of_the_Armament", "EP2_Ach_List")
+			end
+		end
+		
+		if game.GetMap() == "ep2_outland_07" and point1 then
+			for k, removeDoor in pairs(ents.FindByName("barn_door_1")) do
+				removeDoor:Remove()
+			end
+			
+			for k, removeGateBrush in pairs(ents.FindByName("clip_gate_closed")) do
+				removeGateBrush:Remove()
+			end
+			
+			for k, removeGate in pairs(ents.FindByName("gate_closed")) do
+				removeGate:Remove()
 			end
 		end
 		self:EmitSound("hl1/ambience/port_suckin1.wav", 100, 100)

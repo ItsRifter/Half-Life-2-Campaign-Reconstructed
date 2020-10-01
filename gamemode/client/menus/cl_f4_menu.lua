@@ -71,6 +71,7 @@ local function DropSuit( self, panels, onDropped, Command, x, y )
 							net.WriteInt(GAMEMODE.ArmourItem[i].ArmourPoints, 16)
 						net.SendToServer()
 					end
+					itemButton:Remove()
 				end
 			end
 		end
@@ -93,6 +94,7 @@ local function DropHelmet( self, panels, onDropped, Command, x, y )
 							net.WriteInt(GAMEMODE.ArmourItem[i].ArmourPoints, 16)
 						net.SendToServer()
 					end
+					itemButton:Remove()
 				end
 			end
 		end
@@ -115,6 +117,7 @@ local function DropArm( self, panels, onDropped, Command, x, y )
 							net.WriteInt(GAMEMODE.ArmourItem[i].ArmourPoints, 16)
 						net.SendToServer()
 					end
+					itemButton:Remove()
 				end
 			end
 		end
@@ -137,6 +140,7 @@ local function DropHands( self, panels, onDropped, Command, x, y )
 							net.WriteInt(GAMEMODE.ArmourItem[i].ArmourPoints, 16)
 						net.SendToServer()
 					end
+					itemButton:Remove()
 				end
 			end
 		end
@@ -159,6 +163,7 @@ local function DropBoot( self, panels, onDropped, Command, x, y )
 							net.WriteInt(GAMEMODE.ArmourItem[i].ArmourPoints, 16)
 						net.SendToServer()
 					end
+					itemButton:Remove()
 				end
 			end
 		end
@@ -179,6 +184,7 @@ local function DropWeapon( self, panels, onDropped, Command, x, y )
 							net.WriteString(GAMEMODE.WeaponItem[i].Icon)
 						net.SendToServer()
 					end
+					itemButton:Remove()
 				end
 			end
 		end
@@ -198,7 +204,7 @@ local function DropSlot( self, panels, onDropped, Command, x, y )
 end
 
 
-function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font, curEventItems, curEvent, curHats)
+function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font, curEventItems, curEvent, curHats, curTempUpg)
 	
 	local getModel = LocalPlayer():GetNWString("Model")
 	
@@ -213,7 +219,6 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 	local curEssence = LocalPlayer():GetNWInt("Essence")
 	local curCryst = LocalPlayer():GetNWInt("Cryst")
 	local curScrap = LocalPlayer():GetNWInt("Scrap")
-	local curTempUpg = LocalPlayer():GetNWString("TempUpg")
 	local curArmour = LocalPlayer():GetNWInt("Armour")
 	
 	local helmetSlot = LocalPlayer():GetNWString("HelmetSlot")
@@ -222,7 +227,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 	local handSlot = LocalPlayer():GetNWString("HandSlot")
 	local bootSlot = LocalPlayer():GetNWString("BootSlot")
 	local wepSlot = LocalPlayer():GetNWString("WepSlot")
-
+	
 	DEFAULT_COLOUR_HL2 = Color(243, 123, 33, 255)
 	COLOUR_MODEL_PANEL = Color(100, 100, 100)
 	INVENTORY_MENU = Color(50, 50, 50)
@@ -797,7 +802,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 		inventoryLayout:Add(itemImg)
 		
 		if itemName then
-			local itemButton = itemImg:Add("DButton")
+			itemButton = itemImg:Add("DButton")
 			itemButton:SetPos(0, 60)
 			itemButton:SetSize(25, 25)
 			itemButton:SetText("Sell")
@@ -983,7 +988,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 		tempUpgLayout:SetSpaceY(5)
 		
 		for i, tempUpg in pairs(GAMEMODE.TempUpgItem) do
-			if not string.find(curTempUpg, GAMEMODE.TempUpgItem[i].Name) then
+			if not table.HasValue(curTempUpg, GAMEMODE.TempUpgItem[i].Name) then
 				local tempUpgItem = tempUpgLayout:Add("DPanel")
 				tempUpgItem:SetSize(80, 80)
 			
@@ -1269,7 +1274,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 	end
 	
 	local customHatLabel = vgui.Create("DLabel", customPanel)
-	customHatLabel:SetPos(650, 125)
+	customHatLabel:SetPos(625, 100)
 	customHatLabel:SetText("Select Hat")
 	customHatLabel:SetFont("Default")
 	customHatLabel:SizeToContents()
@@ -1422,5 +1427,6 @@ net.Receive("Open_F4_Menu", function(len, ply)
 	local eventItemsCount = net.ReadInt(32)
 	local curEvent = net.ReadInt(8)
 	local hats = net.ReadTable()
-	OpenMenu(invItems, randomExchange, hasOTF, colours, enabled, font, eventItemsCount, curEvent, hats)
+	local curTempUpg = net.ReadTable()
+	OpenMenu(invItems, randomExchange, hasOTF, colours, enabled, font, eventItemsCount, curEvent, hats, curTempUpg)
 end)

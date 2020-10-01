@@ -17,13 +17,15 @@ local function InitData(ply)
 	ply.hl2cPersistent.Essence = ply.hl2cPersistent.Essence or 0
 	ply.hl2cPersistent.Cryst = ply.hl2cPersistent.Cryst or 0
 	ply.hl2cPersistent.ScrapMetal = ply.hl2cPersistent.ScrapMetal or 0
-	ply.hl2cPersistent.TempUpg = ply.hl2cPersistent.TempUpg or ""
+	ply.hl2cPersistent.TempUpg = ply.hl2cPersistent.TempUpg or {}
 	
 	ply.hl2cPersistent.Model = ply.hl2cPersistent.Model or "models/player/Group01/male_07.mdl"
 	
 	-- Default Achievement, vortex and lambda settings
 	ply.hl2cPersistent.Achievements = ply.hl2cPersistent.Achievements or {}
 	ply.hl2cPersistent.Vortexes = ply.hl2cPersistent.Vortexes or {}
+	ply.hl2cPersistent.Vortexes.EP1 = ply.hl2cPersistent.Vortexes.EP1 or {}
+	ply.hl2cPersistent.Vortexes.EP2 = ply.hl2cPersistent.Vortexes.EP2 or {}
 	ply.hl2cPersistent.Lambdas = ply.hl2cPersistent.Lambdas or {}
 	
 	-- Default Inventory settings
@@ -54,7 +56,8 @@ local function InitData(ply)
 	ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP or 100
 	ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr or 0
 	ply.hl2cPersistent.PetRegen = ply.hl2cPersistent.PetRegen or 0
-	ply.hl2cPersistent.PetMaxLvl = ply.hl2cPersistent.PetMaxLvl or 6
+	ply.hl2cPersistent.PetMaxLvl = ply.hl2cPersistent.PetMaxLvl or 30
+	ply.hl2cPersistent.PetIntendedLvl = ply.hl2cPersistent.PetIntendedLvl or 6
 	ply.hl2cPersistent.PetStage = ply.hl2cPersistent.PetStage or 0
 	
 	-- Pet skills default settings
@@ -96,7 +99,6 @@ local function InitData(ply)
 	
 	ply:SetNWString("Ach", table.concat(ply.hl2cPersistent.Achievements, " "))
 	ply:SetNWString("Vortex", table.concat(ply.hl2cPersistent.Vortexes, " "))
-	ply:SetNWString("TempUpg", ply.hl2cPersistent.TempUpg)
 	
 	ply:SetNWInt("InvSpace", ply.hl2cPersistent.InvSpace)
 	ply:SetNWInt("MaxInvSpace", ply.hl2cPersistent.MaxInvSpace)
@@ -118,7 +120,6 @@ local function InitData(ply)
 	ply:SetNWInt("PetSkillPoints", ply.hl2cPersistent.PetPoints)
 	ply:SetNWInt("PetStr", ply.hl2cPersistent.PetStr)
 	ply:SetNWInt("PetHP", ply.hl2cPersistent.PetHP)
-	ply:SetNWInt("PetSpd", ply.hl2cPersistent.PetSpd)
 	ply:SetNWInt("PetRegen", ply.hl2cPersistent.PetRegen)
 	ply:SetNWInt("PetStage", ply.hl2cPersistent.PetStage)
 	
@@ -177,19 +178,6 @@ local function SaveData(ply)
 	ply.hl2cPersistent.Name = ply:Nick()
 	ply.hl2cPersistent.Model = ply:GetModel()
 	
-	if ply.hl2cPersistent.PetStage == 0 then
-		ply.hl2cPersistent.PetMaxLvl = 6
-	elseif ply.hl2cPersistent.PetStage == 1 then
-		ply.hl2cPersistent.PetMaxLvl = 8
-	elseif ply.hl2cPersistent.PetStage == 2 then
-		ply.hl2cPersistent.PetMaxLvl = 9
-	elseif ply.hl2cPersistent.PetStage == 3 then
-		ply.hl2cPersistent.PetMaxLvl = 9
-	elseif ply.hl2cPersistent.PetStage == 4 then
-		ply.hl2cPersistent.PetMaxLvl = 10
-	elseif ply.hl2cPersistent.PetStage == 5 then
-		ply.hl2cPersistent.PetMaxLvl = 11
-	end
 	-- Store all persistent data as JSON
 	file.Write("hl2cr_data/" .. PlayerID .. ".txt", util.TableToJSON(ply.hl2cPersistent, true))
 	
@@ -215,8 +203,7 @@ end)
 --When the player disconnects, add kills and remove temporary upgrades (THIS SHOULDN'T HAPPEN ON SERVER CRASH)
 hook.Add("PlayerDisconnected", "SavePlayerDataDisconnect", function(ply) 
 	ply.hl2cPersistent.KillCount = ply.hl2cPersistent.KillCount + ply:Frags()
-	ply.hl2cPersistent.TempUpg = ""
-	ply:SetNWString("TempUpg", "")
+	table.Empty(ply.hl2cPersistent.TempUpg)
 	SaveData(ply)
 	
 	ply:SetNWString("SquadLeader", nil)

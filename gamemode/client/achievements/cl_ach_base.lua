@@ -1,7 +1,7 @@
 Lobby_Ach_List = {
 	[1] = {name = "First_Time", desc = "Play the gamemode\nfor the first time", mat = "vgui/achievements/hl2_beat_cemetery.png", isRare = false},
 	[2] = {name = "Worthless_Secret", desc = "You get this one\nbut with no XP!", mat = "entities/npc_kleiner.png", isRare = true},
-	[3] = {name = "Lost_Cause", desc = "Find what remains of\nLeiftiger's HL2C server", mat = "vgui/achievements/hl2_beat_cemetery.png", isRare = false}
+	[3] = {name = "Lost_Cause", desc = "Find what remains of\nLeiftiger's HL2C server", mat = "hl2cr/misc/lostcause", isRare = false}
 }
 
 HL2_Ach_List = {
@@ -13,8 +13,8 @@ HL2_Ach_List = {
 	[6] = {name = "Keep_off_the_sand", desc = "Cross the antlion beach\nin d2_coast_11 without\ntouching the sand", mat = "vgui/achievements/hl2_beat_donttouchsand.png", isRare = false},
 	[7] = {name = "Finish_HL2", desc = "Destroy the Citadel's\nreactor core", mat = "vgui/achievements/hl2_beat_game.png", isRare = false},
 	[8] = {name = "Lambda_Locator", desc = "Locate all\nthe Lambda caches", mat = "vgui/achievements/hl2_find_alllambdas.png", isRare = true},
-	[9] = {name = "Flushed", desc = "Kill an enemy with a toilet", mat = "vgui/achievements/hl2_kill_enemy_withtoilet.png", isRare = true},
-	[10] = {name = "Vortex_Locator", desc = "Locate all the\nvortexes", mat = "vgui/achievements/hl2_find_alllambdas.png", isRare = true},
+	[9] = {name = "Flushed", desc = "Kill an enemy with a toilet", mat = "vgui/achievements/hl2_kill_enemy_withtoilet.png", isRare = false},
+	[10] = {name = "Vortex_Locator", desc = "Locate all the\nvortexes in Half-Life 2", mat = "vgui/achievements/hl2_find_alllambdas.png", isRare = true},
 	[11] = {name = "Crowbar_Only_HL2", desc = "Finish Half-Life 2 with\nonly the crowbar", mat = "vgui/achievements/hl2_beat_game.png", isRare = false},
 	--[12] = {name = "Crowbar_Only_HL2_Hard", desc = "Finish Half-Life 2 with\nonly the crowbar\non hard with\nsurvival enabled", mat = "vgui/achievements/hl2_beat_game.png", isRare = false},
 }
@@ -28,7 +28,18 @@ EP1_Ach_List = {
 	[6] = {name = "Safety_Measure", desc = "Whack the Combine\nGunship 5 times", mat = "vgui/achievements/ep1_beat_hospitalatticgunship.png", isRare = false},
 	[7] = {name = "Finish_EP1", desc = "Escape City-17 with alyx", mat = "vgui/achievements/ep1_beat_game.png", isRare = true},
 	[8] = {name = "Crowbar_Only_EP1", desc = "Finish Episode 1 with\nonly the crowbar", mat = "vgui/achievements/ep1_beat_game.png", isRare = false},
+	[9] = {name = "Vortex_Locator", desc = "Locate all the\nvortexes in Episode 1", mat = "vgui/achievements/hl2_find_alllambdas.png", isRare = true},
 	--[9] = {name = "Crowbar_Only_EP1_Hard", desc = "Finish Episode 1 with\nonly the crowbar\non hard with\nsurvival enabled", mat = "vgui/achievements/ep1_beat_game.png", isRare = false},
+}
+
+EP2_Ach_List = {
+	[1] = {name = "Two_Birds_One_Stone", desc = "Kill 2 birds\nwith one stone", mat = "vgui/achievements/hl2_get_gravitygun.png", isRare = false},
+	[2] = {name = "Crowbar_Only_EP2", desc = "Finish Episode 2 with\nonly the crowbar", mat = "vgui/achievements/ep2_beat_missilesilo2.png", isRare = false},
+	[3] = {name = "Quiet_Mountain_Getaway", desc = "Survive the ambush\nat White Forest Inn", mat = "vgui/achievements/ep2_beat_whiteforestinn.png", isRare = false},
+	[4] = {name = "Defense_of_the_Armament", desc = "Save the missile silo\nfrom the\nCombine offensive", mat = "vgui/achievements/ep2_beat_missilesilo2.png", isRare = false},
+	[5] = {name = "Finish_EP2", desc = "Prepare for\nUnforeseen Consequences", mat = "vgui/achievements/hlx_find_onegman.png", isRare = false},
+	[6] = {name = "Twofer", desc = "Defeat both antlion guards\noutside the White Forest", mat = "vgui/achievements/ep2_beat_antlionguards.png", isRare = false},
+	[7] = {name = "Vortex_Locator", desc = "Locate all the\nvortexes in Episode 2", mat = "vgui/achievements/hl2_find_alllambdas.png", isRare = true},
 }
 
 Misc_Ach_List = {
@@ -40,9 +51,9 @@ Misc_Ach_List = {
 }
 
 Kill_Ach_List = {
-	[1] = {name = "Crowbar Killer I", desc = "Kill 250 NPC's\nwith the crowbar", mat = "vgui/achievements/hl2_get_crowbar.png", isRare = false},
-	[2] = {name = "Crowbar Killer II", desc = "Kill 500 NPC's\nwith the crowbar", mat = "vgui/achievements/hl2_get_crowbar.png", isRare = false},
-	[3] = {name = "Crowbar Killer III", desc = "Kill 1000 NPC's\nwith the crowbar", mat = "vgui/achievements/hl2_get_crowbar.png", isRare = false},
+	[1] = {name = "Crowbar_Killer_250", desc = "Kill 250 NPC's\nwith the crowbar", mat = "vgui/achievements/hl2_get_crowbar.png", isRare = false},
+	[2] = {name = "Crowbar_Killer_500", desc = "Kill 500 NPC's\nwith the crowbar", mat = "vgui/achievements/hl2_get_crowbar.png", isRare = false},
+	[3] = {name = "Crowbar_Killer_1000", desc = "Kill 1000 NPC's\nwith the crowbar", mat = "vgui/achievements/hl2_get_crowbar.png", isRare = false},
 }
 
 Event_Ach_List = {
@@ -113,7 +124,27 @@ HL2_Vortex_List = {
 	[24] = {name = "d3_c17_13", mat = "vgui/achievements/hlx_find_onegman.png"},
 }
 
-function AchievementMenu(achievement, vortexes, lambdas)
+EP1_Vortex_List = {
+	[1] = {name = "ep1_citadel_01", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[2] = {name = "ep1_citadel_02", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[3] = {name = "ep1_c17_01", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[4] = {name = "ep1_c17_02", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[5] = {name = "ep1_c17_02b", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[6] = {name = "ep1_c17_06", mat = "vgui/achievements/hlx_find_onegman.png"},
+}
+
+EP2_Vortex_List = {
+	[1] = {name = "ep2_outland_01", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[2] = {name = "ep2_outland_01a", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[3] = {name = "ep2_outland_04", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[4] = {name = "ep2_outland_05", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[5] = {name = "ep2_outland_06", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[6] = {name = "ep2_outland_07", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[7] = {name = "ep2_outland_10", mat = "vgui/achievements/hlx_find_onegman.png"},
+	[8] = {name = "ep2_outland_12a", mat = "vgui/achievements/hlx_find_onegman.png"},
+}
+
+function AchievementMenu(achievement, vortexes, lambdas, vortexesEP1, vortexesEP2)
 
 	local achFrame = vgui.Create("DFrame")
 	achFrame:SetSize(850, 600)
@@ -278,6 +309,55 @@ function AchievementMenu(achievement, vortexes, lambdas)
 	end	
 	
 	TabAchSheet:AddSheet("Episode 1", PanelEP1Ach, nil)
+	
+	local PanelEP2Ach = vgui.Create( "DPanel", achFrame )
+	PanelEP2Ach:SetSize(800, 850)
+	PanelEP2Ach:SetPos(0, 400)
+	PanelEP2Ach.Paint = function(s, w, h)
+		draw.RoundedBox(0,0,0, w, h, Color(170, 170, 170, 255))
+	end
+	
+	local ScrollEP2Ach = vgui.Create("DScrollPanel", PanelEP2Ach)
+	ScrollEP2Ach:Dock(FILL)
+	
+	local iconListEP2 = vgui.Create("DIconLayout", ScrollEP2Ach)
+	iconListEP2:Dock(FILL)
+	iconListEP2:SetSpaceY(5)
+	iconListEP2:SetSpaceX(5)
+	
+	for i = 1, #EP2_Ach_List do
+		
+		local ep2Panel = iconListEP2:Add("DPanel")
+		ep2Panel:SetPaintBackground(false)
+		ep2Panel:SetSize(128, 158)
+		
+		local achEP2Name = ep2Panel:Add("DLabel")
+		achEP2Name:SetPos(0, 65)
+		if table.HasValue(achievement, EP2_Ach_List[i].name) then
+			achEP2Name:SetText(EP2_Ach_List[i].name)
+		else
+			achEP2Name:SetText("LOCKED")
+		end
+		achEP2Name:SizeToContents()
+		achEP2Name:SetColor(Color(0, 0, 0))
+		
+		local achEP2Desc = ep2Panel:Add("DLabel")
+		achEP2Desc:SetPos(0, 90)
+		achEP2Desc:SetText(EP2_Ach_List[i].desc)
+		achEP2Desc:SizeToContents()
+		achEP2Desc:SetColor(Color(0, 0, 0))
+		
+		local achEP2Icon = ep2Panel:Add("DImage")
+		achEP2Icon:SetPos(0, 0)
+		achEP2Icon:SetSize(64, 64)
+		if table.HasValue(achievement, EP2_Ach_List[i].name) then
+			achEP2Icon:SetImage(EP2_Ach_List[i].mat)
+		else
+			achEP2Icon:SetImage("vgui/hud/icon_locked")
+		end
+	end	
+	
+	TabAchSheet:AddSheet("Episode 2", PanelEP2Ach, nil)
 	
 	local PanelMiscAch = vgui.Create( "DPanel", achFrame )
 	PanelMiscAch:SetSize(800, 850)
@@ -459,6 +539,86 @@ function AchievementMenu(achievement, vortexes, lambdas)
 	end
 	
 	TabAchSheet:AddSheet("HL2 Vortexes", PanelHL2Vort, nil)
+	
+	local PanelEP1Vort = vgui.Create( "DPanel", achFrame )
+	PanelEP1Vort:SetSize(800, 850)
+	PanelEP1Vort:SetPos(0, 400)
+	PanelEP1Vort.Paint = function(s, w, h)
+		draw.RoundedBox(0,0,0, w, h, Color(170, 170, 170, 255))
+	end
+	
+	local ScrollEP1Vort = vgui.Create("DScrollPanel", PanelEP1Vort)
+	ScrollEP1Vort:Dock(FILL)
+	
+	local iconListEP1Vort = vgui.Create("DIconLayout", ScrollEP1Vort)
+	iconListEP1Vort:Dock(FILL)
+	iconListEP1Vort:SetSpaceY(5)
+	iconListEP1Vort:SetSpaceX(5)
+	
+	for i = 1, #EP1_Vortex_List do
+		
+		local vortEP1Panel = iconListEP1Vort:Add("DPanel")
+		vortEP1Panel:SetPaintBackground(false)
+		vortEP1Panel:SetSize(128, 128)
+		
+		local vortEP1Name = vortEP1Panel:Add("DLabel")
+		vortEP1Name:SetPos(0, 65)
+		vortEP1Name:SetText(EP1_Vortex_List[i].name)
+		
+		vortEP1Name:SizeToContents()
+		vortEP1Name:SetColor(Color(0, 0, 0))
+		
+		local vortEP1Icon = vortEP1Panel:Add("DImage")
+		vortEP1Icon:SetPos(0, 0)
+		vortEP1Icon:SetSize(64, 64)
+		if table.HasValue(vortexesEP1, EP1_Vortex_List[i].name) then
+			vortEP1Icon:SetImage(EP1_Vortex_List[i].mat)
+		else
+			vortEP1Icon:SetImage("vgui/hud/icon_locked")
+		end
+	end
+	
+	TabAchSheet:AddSheet("EP1 Vortexes", PanelEP1Vort, nil)
+	
+	local PanelEP2Vort = vgui.Create( "DPanel", achFrame )
+	PanelEP2Vort:SetSize(800, 850)
+	PanelEP2Vort:SetPos(0, 400)
+	PanelEP2Vort.Paint = function(s, w, h)
+		draw.RoundedBox(0,0,0, w, h, Color(170, 170, 170, 255))
+	end
+	
+	local ScrollEP2Vort = vgui.Create("DScrollPanel", PanelEP2Vort)
+	ScrollEP2Vort:Dock(FILL)
+	
+	local iconListEP2Vort = vgui.Create("DIconLayout", ScrollEP2Vort)
+	iconListEP2Vort:Dock(FILL)
+	iconListEP2Vort:SetSpaceY(5)
+	iconListEP2Vort:SetSpaceX(5)
+	
+	for i = 1, #EP2_Vortex_List do
+		
+		local vortEP2Panel = iconListEP2Vort:Add("DPanel")
+		vortEP2Panel:SetPaintBackground(false)
+		vortEP2Panel:SetSize(128, 128)
+		
+		local vortEP2Name = vortEP2Panel:Add("DLabel")
+		vortEP2Name:SetPos(0, 65)
+		vortEP2Name:SetText(EP2_Vortex_List[i].name)
+		
+		vortEP2Name:SizeToContents()
+		vortEP2Name:SetColor(Color(0, 0, 0))
+		
+		local vortEP2Icon = vortEP2Panel:Add("DImage")
+		vortEP2Icon:SetPos(0, 0)
+		vortEP2Icon:SetSize(64, 64)
+		if table.HasValue(vortexesEP2, EP2_Vortex_List[i].name) then
+			vortEP2Icon:SetImage(EP2_Vortex_List[i].mat)
+		else
+			vortEP2Icon:SetImage("vgui/hud/icon_locked")
+		end
+	end
+	
+	TabAchSheet:AddSheet("EP2 Vortexes", PanelEP2Vort, nil)
 end
 
 surface.CreateFont( "DermaDefault_18px", {
@@ -569,7 +729,9 @@ net.Receive("Open_Ach_Menu", function()
 	local ach = net.ReadTable()
 	local vort = net.ReadTable()
 	local lamb = net.ReadTable()
-	AchievementMenu(ach, vort, lamb)
+	local vortep1 = net.ReadTable()
+	local vortep2 = net.ReadTable()
+	AchievementMenu(ach, vort, lamb, vortep1, vortep2)
 end)
 
 net.Receive("Achievement_Earned", PopUp)

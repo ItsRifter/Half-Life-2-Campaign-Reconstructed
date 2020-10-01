@@ -50,6 +50,37 @@ function placeVortex()
 		VORTEX_POSITION = Vector(6815, 2729, 256)
 	end
 	
+	if game.GetMap() == "ep1_citadel_01" then
+		VORTEX_POSITION = Vector(-4209, 6942, 2584)
+	elseif game.GetMap() == "ep1_citadel_02" then
+		VORTEX_POSITION = Vector(-945, -823, 849)
+	elseif game.GetMap() == "ep1_c17_01" then
+		VORTEX_POSITION = Vector(2723, 281, 192)
+	elseif game.GetMap() == "ep1_c17_02" then
+		VORTEX_POSITION = Vector(-613, 609, 321)
+	elseif game.GetMap() == "ep1_c17_02b" then
+		VORTEX_POSITION = Vector(636, 3076, 394)
+	elseif game.GetMap() == "ep1_c17_06" then
+		VORTEX_POSITION = Vector(12096, 8537, -671)
+	end
+	
+	if game.GetMap() == "ep2_outland_01" then
+		VORTEX_POSITION = Vector(-5837, 3783, 45)
+	elseif game.GetMap() == "ep2_outland_01a" then
+		VORTEX_POSITION = Vector(-11134, -7896, 1396)
+	elseif game.GetMap() == "ep2_outland_04" then
+		VORTEX_POSITION = Vector(6187, 633, -2369)
+	elseif game.GetMap() == "ep2_outland_05" then
+		VORTEX_POSITION = Vector(110, 3932, 234)
+	elseif game.GetMap() == "ep2_outland_06" then
+		VORTEX_POSITION = Vector(3357, 4041, 254)
+	elseif game.GetMap() == "ep2_outland_07" then
+		VORTEX_POSITION = Vector(-10018, -9600, 660)
+	elseif game.GetMap() == "ep2_outland_10" then
+		VORTEX_POSITION = Vector(1509, -2401, 536)
+	elseif game.GetMap() == "ep2_outland_12a" then
+		VORTEX_POSITION = Vector(144, -1864, -1111)
+	end
 	
 	if VORTEX_POSITION then
 		Vortex = ents.Create("prop_dynamic")

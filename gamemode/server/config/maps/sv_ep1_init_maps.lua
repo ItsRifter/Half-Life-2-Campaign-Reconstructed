@@ -3,15 +3,7 @@ function SetupEP1Map()
 	MapLua = ents.Create("lua_run")
 	MapLua:SetName("triggerhook")
 	MapLua:Spawn()
-	
-	game.SetGlobalState("antlion_allied", 0)
-	
-	if game.GetMap() == "ep1_citadel_00" then
-		for k, h in pairs( ents.FindByName("relay_givegravgun_1")) do
-			h:Fire("AddOutput", "OnTrigger triggerhook:RunPassedCode:hook.Run( 'GiveGravgunEp1' ):0:-1" )
-		end
-	end
-	
+		
 	local SUPERGUN_MAPS = {
 		["ep1_citadel_02"] = true,
 		["ep1_citadel_02b"] = true,
@@ -42,13 +34,6 @@ function SetupEP1Map()
 			fix1:SetAngles(Angle(0, 0, 0))
 		end
 		pacifistAchEarnable = true
-	end
-	
-	if game.GetMap() == "ep1_c17_01" then
-		for k, fix2 in pairs(ents.FindByClass("info_player_start")) do
-			fix2:SetPos(Vector(4642, -362, -241))
-			fix2:SetAngles(Angle(0, 90, 0))
-		end
 	end
 	
 	if game.GetMap() == "ep1_c17_02" then
@@ -261,10 +246,12 @@ function SetCheckpointsStageEP1()
 
 		TRIGGER_CHECKPOINT = {
 			Vector(1088, 1936, -253), 	Vector(1267, 1862, -138),
+			Vector(1229, 1794, 250), 	Vector(1340, 1961, 132),
 			Vector(1140, 2695, 68), 	Vector(986, 2838, 191)
 		}
 		TRIGGER_SPAWNPOINT = {
-			Vector(1153, 1776, -233),	Vector(933, 2772, 89)
+			Vector(1153, 1776, -233),	Vector(1082, 1916, 143),
+			Vector(1153, 1776, -233)
 		}
 	elseif game.GetMap() == "ep1_c17_02a" then
 		TRIGGER_CHANGELEVEL = {

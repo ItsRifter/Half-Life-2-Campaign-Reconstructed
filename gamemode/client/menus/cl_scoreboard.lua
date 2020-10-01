@@ -39,6 +39,7 @@ function ToggleBoard(toggle, clientTimer)
 		Board:SetDraggable(false)
 		Board:ShowCloseButton(false)
 		Board:SetPos(ScrW() / 2 * .5, ScrH() / 2 * 0.1)
+		Board:MakePopup()
 		Board:SetVisible(true)
 		Board.Paint = function(self, w, h)
 			surface.SetDrawColor(0, 0, 0, 0)
@@ -178,9 +179,46 @@ function ToggleBoard(toggle, clientTimer)
 				end
 			end
 			
-			yPos = yPos + playerStatusPanel:GetTall() * 1.2
-
+			if v != LocalPlayer() and not v:IsBot() then
+				local playerRankButton = vgui.Create("DImageButton", Board)
+				playerRankButton:SetImage("icon16/user.png")
+				playerRankButton:SetPos(0, yPos)
+				if (ScrW() == 3840 and ScrH() == 2160) then
+					playerRankButton:SetSize(45, 45)
+				else
+					playerRankButton:SetSize(30, 30)
+				end
+				playerRankButton.DoClick = function()
+					v:ShowProfile()
+				end
+			end
 			
+			if v != LocalPlayer() and not v:IsBot() then
+				local playerMuteButton = vgui.Create("DImageButton", Board)
+				if (ScrW() == 3840 and ScrH() == 2160) then
+					playerMuteButton:SetPos(1150, yPos)
+					playerMuteButton:SetSize(45, 45)
+				else
+					playerMuteButton:SetPos(965, yPos)
+					playerMuteButton:SetSize(30, 30)
+				end
+				if v:IsMuted() then
+					playerMuteButton:SetImage("icon16/sound_mute.png")
+				elseif not v:IsMuted() then
+					playerMuteButton:SetImage("icon16/sound.png")
+				end
+				playerMuteButton.DoClick = function()
+					if v:IsMuted() then
+						playerMuteButton:SetImage("icon16/sound.png")
+						v:SetMuted(false)
+					elseif not v:IsMuted() then
+						playerMuteButton:SetImage("icon16/sound_mute.png")
+						v:SetMuted(true)
+					end
+					
+				end
+			end
+			yPos = yPos + playerStatusPanel:GetTall() * 1.2
 
 			local playerXPLabel = vgui.Create("DLabel", Board)
 			playerXPLabel:SetText("XP: " .. playerXP .. " / " .. playerMaxXP)

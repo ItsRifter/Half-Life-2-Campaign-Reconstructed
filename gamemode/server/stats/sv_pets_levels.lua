@@ -30,10 +30,19 @@ function spawnPet(ply, pos)
 				ply.pet = ents.Create("npc_fastzombie_torso")
 			elseif tonumber(ply:GetNWInt("PetStage")) == 5 then
 				ply.pet = ents.Create("npc_fastzombie")	
+			elseif tonumber(ply:GetNWInt("PetStage")) == 6 then
+				ply.pet = ents.Create("npc_rollermine")	
+			elseif tonumber(ply:GetNWInt("PetStage")) == 7 then
+				ply.pet = ents.Create("npc_manhack")
+			elseif tonumber(ply:GetNWInt("PetStage")) == 8 then
+				ply.pet = ents.Create("npc_stalker")
+			elseif tonumber(ply:GetNWInt("PetStage")) == 9 then
+				ply.pet = ents.Create("npc_metropolice")
+				ply.pet:Give("weapon_stunstick")
 			end
 		end
 		if not pos then
-		ply.pet:SetPos(ply:GetPos())
+			ply.pet:SetPos(ply:GetPos())
 		else
 			ply.pet:SetPos(pos)
 		end
@@ -225,6 +234,8 @@ net.Receive("UpdateSkills", function(len, ply)
 	ply.hl2cPersistent.PetPoints = ply.hl2cPersistent.PetPoints - 1
 	ply.hl2cPersistent.PetSkills = ply.hl2cPersistent.PetSkills + 1
 	
+	ply:SetNWInt("PetSkill", ply.hl2cPersistent.PetSkills)
+	--Headcrab
 	if ply.hl2cPersistent.PetStage == 0 then
 		if ply.hl2cPersistent.PetSkills == 1 then
 			ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP + 10
@@ -241,6 +252,7 @@ net.Receive("UpdateSkills", function(len, ply)
 		elseif ply.hl2cPersistent.PetSkills == 5 then
 			ply.hl2cPersistent.PetRegen = ply.hl2cPersistent.PetRegen + 5
 		end
+	--Torso Zombie
 	elseif ply.hl2cPersistent.PetStage == 1 then
 		if ply.hl2cPersistent.PetSkills == 1 then
 			ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP + 10
@@ -264,7 +276,7 @@ net.Receive("UpdateSkills", function(len, ply)
 		elseif ply.hl2cPersistent.PetSkills == 7 then
 			ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 1
 		end
-		
+	--Full Zombie
 	elseif ply.hl2cPersistent.PetStage == 2 then
 		if ply.hl2cPersistent.PetSkills == 1 then
 			ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP + 5
@@ -287,6 +299,7 @@ net.Receive("UpdateSkills", function(len, ply)
 		elseif ply.hl2cPersistent.PetSkills == 7 then
 			ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 2
 		end
+	--Fast Headcrab
 	elseif ply.hl2cPersistent.PetStage == 3 then
 		if ply.hl2cPersistent.PetSkills == 1 then
 			ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 1
@@ -310,6 +323,7 @@ net.Receive("UpdateSkills", function(len, ply)
 			ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 1
 			
 		end	
+	--Fast Torso Zombie
 	elseif ply.hl2cPersistent.PetStage == 4 then
 		if ply.hl2cPersistent.PetSkills == 1 then
 			ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP + 10
@@ -337,6 +351,7 @@ net.Receive("UpdateSkills", function(len, ply)
 		elseif ply.hl2cPersistent.PetSkills == 9 then
 			ply.hl2cPersistent.PetRegen = ply.hl2cPersistent.PetRegen + 10
 		end
+	--Full Fast Zombie
 	elseif ply.hl2cPersistent.PetStage == 5 then
 		if ply.hl2cPersistent.PetSkills == 1 then
 			ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 2
@@ -364,28 +379,69 @@ net.Receive("UpdateSkills", function(len, ply)
 		
 		elseif ply.hl2cPersistent.PetSkills == 9 then
 			ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP + 25
-		
-		elseif ply.hl2cPersistent.PetSkills == 10 then
-		
-		
-		elseif ply.hl2cPersistent.PetSkills == 11 then
-		
+		end
+	--Rollermine
+	elseif ply.hl2cPersistent.PetStage == 6 then
+		if ply.hl2cPersistent.PetSkills == 1 then
+			ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 1
+			
+		elseif ply.hl2cPersistent.PetSkills == 2 then
+			ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 2
+			
+		elseif ply.hl2cPersistent.PetSkills == 3 then
+			ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 3
+		end
+	--Manhack
+	elseif ply.hl2cPersistent.PetStage == 7 then
+		if ply.hl2cPersistent.PetSkills == 1 then
+			ply.hl2cPersistent.PetRegen = ply.hl2cPersistent.PetRegen + 10
+			
+		elseif ply.hl2cPersistent.PetSkills == 2 then
+			ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP + 15
+			
+		elseif ply.hl2cPersistent.PetSkills == 3 then
+			ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP + 20
+			
+		elseif ply.hl2cPersistent.PetSkills == 4 then
+			ply.hl2cPersistent.PetRegen = ply.hl2cPersistent.PetRegen + 10
+			
+		elseif ply.hl2cPersistent.PetSkills == 5 then
+			ply.hl2cPersistent.PetRegen = ply.hl2cPersistent.PetRegen + 15
+			
+		elseif ply.hl2cPersistent.PetSkills == 6 then
+			ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 3
 		end
 	end
+	ply:SetNWInt("PetStr", ply.hl2cPersistent.PetStr)
+	ply:SetNWInt("PetHP", ply.hl2cPersistent.PetHP)
+	ply:SetNWInt("PetRegen", ply.hl2cPersistent.PetRegen)
+	
 	ply:SetNWInt("PetSkillPoints", ply.hl2cPersistent.PetPoints)
 end)
+
+hook.Add("GravGunOnPickedUp", "PetPreventPickup", function(ply, ent)
+	if ent:IsPet() then
+		ply:DropObject()
+	end
+end)
+
+function GM:GravGunPunt(ply, ent)
+	if ent:IsPet() then
+		return false
+	end
+	return true
+end
 
 net.Receive("NewPet", function(len, ply)
 	local newPet = net.ReadString()
 	
 	if not ply then return end
-	
+	ply.hl2cPersistent.PetXP = 0
+	ply:SetNWInt("PetXP", 0)
 	if newPet == "hl2cr_fastzombie_pet" then
 		ply.hl2cPersistent.PetMaxXP = 300
 		ply.hl2cPersistent.PetHP = 125
 		ply.hl2cPersistent.PetLevel = 1
-		
-		ply.hl2cPersistent.PetMaxLvl = 9
 		
 		ply.hl2cPersistent.PetStage = 3
 		
@@ -399,17 +455,38 @@ net.Receive("NewPet", function(len, ply)
 		
 		ply:ChatPrint("You've adopted a fast headcrab, Congratulations!")
 		ply.petAlive = false
-		
-		ply:SetNWInt("PetSkill", ply.hl2cPersistent.PetLevel)
 	
-		ply:SetNWInt("PetStr", ply.hl2cPersistent.PetStr)
-		ply:SetNWInt("PetHP", ply.hl2cPersistent.PetHP)
-		ply:SetNWInt("PetRegen", ply.hl2cPersistent.PetRegen)
-		
-		ply:SetNWInt("PetStage", ply.hl2cPersistent.PetStage)
-		ply:SetNWInt("PetLevel", ply.hl2cPersistent.PetLevel)
-		ply:SetNWInt("PetMaxXP", ply.hl2cPersistent.PetMaxXP)
 	end
+	
+	if newPet == "hl2cr_rollermine_pet" then
+		ply.hl2cPersistent.PetMaxXP = 500
+		ply.hl2cPersistent.PetHP = 150
+		ply.hl2cPersistent.PetLevel = 1
+		
+		ply.hl2cPersistent.PetStage = 6
+		
+		ply.hl2cPersistent.PetRegen = 0
+		ply.hl2cPersistent.PetSkills = 0
+		ply.hl2cPersistent.PetStr = 0
+		
+		if ply.pet:IsValid() then
+			ply.pet:Remove()
+		end
+		
+		ply:ChatPrint("You've adopted a combine rollermine, Congratulations!")
+		ply.petAlive = false
+	
+	end
+	
+	ply:SetNWInt("PetSkill", ply.hl2cPersistent.PetLevel)
+
+	ply:SetNWInt("PetStr", ply.hl2cPersistent.PetStr)
+	ply:SetNWInt("PetHP", ply.hl2cPersistent.PetHP)
+	ply:SetNWInt("PetRegen", ply.hl2cPersistent.PetRegen)
+	
+	ply:SetNWInt("PetStage", ply.hl2cPersistent.PetStage)
+	ply:SetNWInt("PetLevel", ply.hl2cPersistent.PetLevel)
+	ply:SetNWInt("PetMaxXP", ply.hl2cPersistent.PetMaxXP)
 end)
 
 net.Receive("Evolving", function(len, ply)
@@ -423,16 +500,19 @@ net.Receive("Evolving", function(len, ply)
 	ply.hl2cPersistent.PetLevel = 1
 	
 	ply.hl2cPersistent.PetHP = ply.hl2cPersistent.PetHP + 25
-	ply.hl2cPersistent.PetStr = ply.hl2cPersistent.PetStr + 1
+	ply.hl2cPersistent.PetStr = math.Round(ply.hl2cPersistent.PetStr / 2, 0) + 1
 	ply.hl2cPersistent.PetRegen = 0
 	
 	ply:SetNWInt("PetSkill", ply.hl2cPersistent.PetLevel)
-
+	ply.hl2cPersistent.PetPoints = 0
+	ply:SetNWInt("PetSkillPoints", ply.hl2cPersistent.PetPoints)
 	
 	ply:SetNWInt("PetStr", ply.hl2cPersistent.PetStr)
 	ply:SetNWInt("PetHP", ply.hl2cPersistent.PetHP)
 	ply:SetNWInt("PetRegen", ply.hl2cPersistent.PetRegen)
 	
+	ply.hl2cPersistent.PetXP = 0
+	ply:SetNWInt("PetXP", 0)
 	ply.hl2cPersistent.PetMaxXP = 100 + (ply.hl2cPersistent.PetMaxXP + 50)
 	ply.hl2cPersistent.PetStage = ply.hl2cPersistent.PetStage + 1
 	ply:SetNWInt("PetStage", ply.hl2cPersistent.PetStage)
@@ -440,16 +520,20 @@ net.Receive("Evolving", function(len, ply)
 	ply:SetNWInt("PetMaxXP", ply.hl2cPersistent.PetMaxXP)
 	
 	if ply.hl2cPersistent.PetStage == 1 then
-		ply.hl2cPersistent.PetMaxLvl = 8
+		ply.hl2cPersistent.PetIntendedLvl = 8
 	elseif ply.hl2cPersistent.PetStage == 2 then
-		ply.hl2cPersistent.PetMaxLvl = 9
+		ply.hl2cPersistent.PetIntendedLvl = 9
 	end
 	if ply.hl2cPersistent.PetStage == 3 then
-		ply.hl2cPersistent.PetMaxLvl = 9
+		ply.hl2cPersistent.PetIntendedLvl = 9
 	elseif ply.hl2cPersistent.PetStage == 4 then
-		ply.hl2cPersistent.PetMaxLvl = 10
+		ply.hl2cPersistent.PetIntendedLvl = 10
 	elseif ply.hl2cPersistent.PetStage == 5 then
-		ply.hl2cPersistent.PetMaxLvl = 11
+		ply.hl2cPersistent.PetIntendedLvl = 11
+	elseif ply.hl2cPersistent.PetStage == 6 then
+		ply.hl2cPersistent.PetIntendedLvl = 4
+	elseif ply.hl2cPersistent.PetStage == 7 then
+		ply.hl2cPersistent.PetIntendedLvl = 7
 	end
 	
 	timer.Simple(5, function()
@@ -478,7 +562,11 @@ function addPetXP(ply, amt)
 
 	if ply.hl2cPersistent.PetXP >= ply.hl2cPersistent.PetMaxXP then
 		ply.hl2cPersistent.PetXP = 0
-		ply.hl2cPersistent.PetMaxXP = ply.hl2cPersistent.PetMaxXP + 25
+		
+		if ply.hl2cPersistent.PetLevel != ply.hl2cPersistent.PetIntendedLvl then
+			ply.hl2cPersistent.PetMaxXP = ply.hl2cPersistent.PetMaxXP + 25
+		end
+		
 		ply.hl2cPersistent.PetLevel = ply.hl2cPersistent.PetLevel + 1
 		ply.hl2cPersistent.PetPoints = ply.hl2cPersistent.PetPoints + 1
 		
@@ -493,6 +581,12 @@ function addPetXP(ply, amt)
 		ply:ChatPrint("Your pet has leveled up to " .. ply:GetNWInt("PetLevel"))
 	end
 end
+
+net.Receive("PetKilledBarnacle", function(len, ply)
+	if not ply then return end
+	
+	ply.petAlive = false
+end)
 
 hook.Add( "OnNPCKilled", "PetDeath", function(npc, attacker, inflictor)
 	if npc:IsPet() then
