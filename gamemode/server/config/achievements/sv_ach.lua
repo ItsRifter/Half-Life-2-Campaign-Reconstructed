@@ -31,7 +31,7 @@ AchievementLists = {
 		Finish_EP1 = {name = "Finish EP1", mat = "vgui/achievements/ep1_beat_game.png", reward = 2500, isRare = false},
 		Crowbar_Only_EP1 = {name = "Crowbar Only EP1", mat = "vgui/achievements/ep1_beat_game.png", reward = 15000, isRare = false},
 		Crowbar_Only_EP1_Hard = {name = "Crowbar Only EP1 Hard", mat = "vgui/achievements/ep1_beat_game.png", reward = 30000, isRare = false},
-		Vortex_Locator = {name = "Vortex Locator", mat = "vgui/achievements/hl2_find_alllambdas.png", reward = 40000, isRare = true},
+		Vortex_Locator_EP1 = {name = "Vortex Locator EP1", mat = "vgui/achievements/hl2_find_alllambdas.png", reward = 40000, isRare = true},
 	},
 	
 	EP2_Ach_List = {
@@ -41,7 +41,8 @@ AchievementLists = {
 		Twofer = {name = "Twofer", mat = "vgui/achievements/ep2_beat_antlionguards.png", reward = 2000, isRare = false},
 		Defense_of_the_Armament = {name = "Defense of the Armament", mat = "vgui/achievements/ep2_beat_missilesilo2.png", reward = 5000, isRare = false},
 		Finish_EP2 = {name = "Finish EP2", mat = "vgui/achievements/hlx_find_onegman.png", reward = 3000, isRare = false},
-		Vortex_Locator = {name = "Vortex Locator", mat = "vgui/achievements/hl2_find_alllambdas.png", reward = 50000, isRare = true},
+		Vortex_Locator_EP2 = {name = "Vortex Locator EP2", mat = "vgui/achievements/hl2_find_alllambdas.png", reward = 50000, isRare = true},
+		Crowbar_Only_EP2 = {name = "Crowbar Only EP2", mat = "vgui/achievements/ep2_beat_missilesilo2.png", reward = 60000, isRare = true},
 	},
 
 	Misc_Ach_List = {

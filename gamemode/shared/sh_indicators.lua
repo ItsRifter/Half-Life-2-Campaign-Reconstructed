@@ -1,6 +1,7 @@
 AddCSLuaFile() -- Add itself to files to be sent to the clients, as this file is shared
 
 local crowAttempt = false
+local crowKills = 0
 
 hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 	local giveXP = 0
@@ -51,7 +52,6 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 		giveXP = 0
 		giveCoins = 0
 	end
-	local crowKills = 0
 	if npc:GetClass() == "npc_crow" and inflictor:GetClass() == "prop_physics" then
 		crowAttempt = true
 		crowKills = crowKills + 1

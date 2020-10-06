@@ -17,7 +17,7 @@ local function InitData(ply)
 	ply.hl2cPersistent.Essence = ply.hl2cPersistent.Essence or 0
 	ply.hl2cPersistent.Cryst = ply.hl2cPersistent.Cryst or 0
 	ply.hl2cPersistent.ScrapMetal = ply.hl2cPersistent.ScrapMetal or 0
-	ply.hl2cPersistent.TempUpg = ply.hl2cPersistent.TempUpg or {}
+	ply.hl2cPersistent.TempUpg = {}
 	
 	ply.hl2cPersistent.Model = ply.hl2cPersistent.Model or "models/player/Group01/male_07.mdl"
 	

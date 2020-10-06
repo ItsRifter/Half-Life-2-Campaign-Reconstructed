@@ -4,6 +4,10 @@ function SetupEP2Map()
 	MapLua:SetName("triggerhook")
 	MapLua:Spawn()
 	
+	for k, clip in pairs(ents.FindByName("*_clip")) do
+		clip:Remove()
+	end
+	
 	if game.GetMap() == "ep2_outland_01" then
 		for k, gravTrigger in pairs(ents.FindByName("trigger_Get_physgun")) do
 			gravTrigger:Fire("AddOutput", "OnTrigger triggerhook:RunPassedCode:hook.Run( 'GiveGravgunEp2' ):0:-1" )
@@ -18,6 +22,28 @@ function SetupEP2Map()
 		for k, grub in pairs(ents.FindByClass("npc_antlion_grub")) do
 			grub:Remove()
 		end
+	end
+	
+	if game.GetMap() == "ep2_outland_05" then
+		for k, fixScript in pairs(ents.FindByName("ss_alyx_wait_02")) do
+			fixScript:Remove()
+		end
+	end
+	
+	if game.GetMap() == "ep2_outland_06" then
+		local preventLeap = ents.Create("prop_dynamic")
+		preventLeap:SetPos(Vector(65, 1042, 892))
+		preventLeap:SetAngles(Angle(0, 0, 0))
+		preventLeap:SetModel("models/props_c17/fence01a.mdl")
+		preventLeap:PhysicsInit(SOLID_VPHYSICS)
+		preventLeap:Spawn()
+		
+		local preventLeap2 = ents.Create("prop_dynamic")
+		preventLeap2:SetPos(Vector(65, 1042, 1012))
+		preventLeap2:SetAngles(Angle(0, 0, 0))
+		preventLeap2:SetModel("models/props_c17/fence01a.mdl")
+		preventLeap2:PhysicsInit(SOLID_VPHYSICS)
+		preventLeap2:Spawn()
 	end
 	
 	if game.GetMap() == "ep2_outland_07" then
@@ -132,12 +158,13 @@ function SetCheckpointsStageEP2()
 		TRIGGER_CHECKPOINT = {
 			Vector(903, -4077, -753), 	Vector(1016, -4175, -626),
 			Vector(1005, -7308, -1646), 		Vector(1064, -7424, -1511),
-			Vector(1092, -9623, -508), 		Vector(1290, -9773, -372)
+			Vector(1092, -9623, -508), 		Vector(1290, -9773, -372),
+			Vector(3947, -9273, -574), 		Vector(3696, -9269, -384)
 		}
 		
 		TRIGGER_SPAWNPOINT = {
 			Vector(971, -4013, -749),	Vector(789, -7348, -1620),
-			Vector(1182, -9724, -502)
+			Vector(1182, -9724, -502),	Vector(3791, -9275, -568)
 		}
 	elseif game.GetMap() == "ep2_outland_04" then
 		TRIGGER_CHANGELEVEL = {

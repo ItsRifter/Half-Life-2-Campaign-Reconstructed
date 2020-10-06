@@ -8,7 +8,7 @@ function BeginHL2EP1()
 end
 
 function BeginHL2EP2()
-	RunConsoleCommand("ChangeLevel", "ep2_outlands_01")
+	RunConsoleCommand("ChangeLevel", "ep2_outland_01")
 end
 
 function BeginCoop01()

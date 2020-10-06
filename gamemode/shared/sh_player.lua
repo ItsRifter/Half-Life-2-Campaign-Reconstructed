@@ -40,6 +40,10 @@ hook.Add("PlayerInitialSpawn", "MiscSurv", function(ply)
 		ply.EnableOTF = true
 	end
 	
+	if game.GetMap() == "ep2_outland_01a" and not table.HasValue(ply.hl2cPersistent.Achievements, "Crowbar_Only_EP2") then
+		ply.EnableOTF = true
+	end
+	
 	if not fixAI and string.match(game.GetMap(), "ep1_") then
 		timer.Simple(1, function()
 			fixAI = true
@@ -227,6 +231,14 @@ hook.Add("EntityTakeDamage", "EP1Fix", function(ply, dmgInfo)
 	local attacker = dmgInfo:GetAttacker()
 	local dmg = dmgInfo:GetDamage()
 	if attacker:GetClass() == "func_movelinear" then
+		dmgInfo:SetDamage(0)
+	end
+end)
+
+hook.Add("EntityTakeDamage", "EP2Fix", function(ply, dmgInfo)
+	local attacker = dmgInfo:GetAttacker()
+	local dmg = dmgInfo:GetDamage()
+	if attacker:GetClass() == "func_tracktrain" then
 		dmgInfo:SetDamage(0)
 	end
 end)
@@ -452,7 +464,7 @@ hook.Add("PlayerCanPickupWeapon", "DisableWeaponsPickup", function(ply, weapon)
 end)
 
 function GM:GetFallDamage( ply, speed )
-    return ( speed / 16 )
+    return ( speed * 1.1 )
 end
 
 hook.Add("Think", "HasWeaponThink", function()
@@ -866,7 +878,7 @@ function giveVortexEP1(map, ply)
 	end
 	
 	if table.Count(ply.hl2cPersistent.Vortexes.EP1) == 6 then
-		Achievement(ply, "Vortex_Locator", "EP1_Ach_List")
+		Achievement(ply, "Vortex_Locator_EP1", "EP1_Ach_List")
 	end
 end
 function giveVortexEP2(map, ply)
@@ -886,7 +898,7 @@ function giveVortexEP2(map, ply)
 	end
 	
 	if table.Count(ply.hl2cPersistent.Vortexes.EP2) == 8 then
-		Achievement(ply, "Vortex_Locator", "EP2_Ach_List")
+		Achievement(ply, "Vortex_Locator_EP2", "EP2_Ach_List")
 	end
 end
 

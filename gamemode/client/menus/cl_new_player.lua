@@ -225,7 +225,7 @@ function LobbyMenu(version)
 	local LabelTabThreeRules = vgui.Create( "DLabel", PanelTabThree )
 	LabelTabThreeRules:SetPos(50, 250)
 	LabelTabThreeRules:SetFont("Intro_Tab3_Font")
-	LabelTabThreeRules:SetText("No griefing other players (prop killing, disrupting achievements)\nDo not steal pet owner's kills\nThat said, don't hog all the kills for your pet\nNo Mic/Chat spamming\nKeep it english only in voice chat\nDo not offend other players\nNo exploits/cheating\nNo offensive or racist names")
+	LabelTabThreeRules:SetText("No griefing other players (prop killing, disrupting achievements)\nDo not steal pet owner's kills\nThat said, don't hog all the kills for your pet\nNo Mic/Chat spamming\nKeep it english only in voice chat\nDo not offend other players\nNo exploits/cheating\nNo offensive or racist names\nNo speedrunning the maps, let everyone have a chance to play")
 	LabelTabThreeRules:SizeToContents()
 	LabelTabThreeRules:SetColor(Color(0, 0, 0))
 	

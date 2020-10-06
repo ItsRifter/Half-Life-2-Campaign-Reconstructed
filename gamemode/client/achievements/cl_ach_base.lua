@@ -28,7 +28,7 @@ EP1_Ach_List = {
 	[6] = {name = "Safety_Measure", desc = "Whack the Combine\nGunship 5 times", mat = "vgui/achievements/ep1_beat_hospitalatticgunship.png", isRare = false},
 	[7] = {name = "Finish_EP1", desc = "Escape City-17 with alyx", mat = "vgui/achievements/ep1_beat_game.png", isRare = true},
 	[8] = {name = "Crowbar_Only_EP1", desc = "Finish Episode 1 with\nonly the crowbar", mat = "vgui/achievements/ep1_beat_game.png", isRare = false},
-	[9] = {name = "Vortex_Locator", desc = "Locate all the\nvortexes in Episode 1", mat = "vgui/achievements/hl2_find_alllambdas.png", isRare = true},
+	[9] = {name = "Vortex_Locator_EP1", desc = "Locate all the\nvortexes in Episode 1", mat = "vgui/achievements/hl2_find_alllambdas.png", isRare = true},
 	--[9] = {name = "Crowbar_Only_EP1_Hard", desc = "Finish Episode 1 with\nonly the crowbar\non hard with\nsurvival enabled", mat = "vgui/achievements/ep1_beat_game.png", isRare = false},
 }
 
@@ -39,7 +39,7 @@ EP2_Ach_List = {
 	[4] = {name = "Defense_of_the_Armament", desc = "Save the missile silo\nfrom the\nCombine offensive", mat = "vgui/achievements/ep2_beat_missilesilo2.png", isRare = false},
 	[5] = {name = "Finish_EP2", desc = "Prepare for\nUnforeseen Consequences", mat = "vgui/achievements/hlx_find_onegman.png", isRare = false},
 	[6] = {name = "Twofer", desc = "Defeat both antlion guards\noutside the White Forest", mat = "vgui/achievements/ep2_beat_antlionguards.png", isRare = false},
-	[7] = {name = "Vortex_Locator", desc = "Locate all the\nvortexes in Episode 2", mat = "vgui/achievements/hl2_find_alllambdas.png", isRare = true},
+	[7] = {name = "Vortex_Locator_EP2", desc = "Locate all the\nvortexes in Episode 2", mat = "vgui/achievements/hl2_find_alllambdas.png", isRare = true},
 }
 
 Misc_Ach_List = {
