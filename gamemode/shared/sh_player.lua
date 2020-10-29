@@ -417,31 +417,31 @@ hook.Add("PlayerCanPickupWeapon", "DisableWeaponsPickup", function(ply, weapon)
 		return false
 	end
 	
-	if weapon:GetClass() == "weapon_357" and ply:GetAmmoCount("357") >= GetConVar("max_357"):GetInt() then
+	if weapon:GetClass() == "weapon_357" and ply:HasWeapon(weapon:GetClass()) and ply:GetAmmoCount("357") >= GetConVar("max_357"):GetInt() then
 		return false
 	end
 	
-	if weapon:GetClass() == "weapon_ar2" and ply:GetAmmoCount("AR2") >= GetConVar("max_AR2"):GetInt() then
+	if weapon:GetClass() == "weapon_ar2" and ply:HasWeapon(weapon:GetClass()) and ply:GetAmmoCount("AR2") >= GetConVar("max_AR2"):GetInt() then
 		return false
 	end
 	
-	if weapon:GetClass() == "weapon_shotgun" and ply:GetAmmoCount("Buckshot") >= GetConVar("max_Buckshot"):GetInt() then
+	if weapon:GetClass() == "weapon_shotgun" and ply:HasWeapon(weapon:GetClass()) and ply:GetAmmoCount("Buckshot") >= GetConVar("max_Buckshot"):GetInt() then
 		return false
 	end
 	
-	if weapon:GetClass() == "weapon_crossbow" and ply:GetAmmoCount("XBowBolt") >= GetConVar("max_crossbowbolt"):GetInt() then
+	if weapon:GetClass() == "weapon_crossbow" and ply:HasWeapon(weapon:GetClass()) and ply:GetAmmoCount("XBowBolt") >= GetConVar("max_crossbowbolt"):GetInt() then
 		return false
 	end
 	
-	if weapon:GetClass() == "weapon_pistol" and ply:GetAmmoCount("Pistol") >= GetConVar("max_Pistol"):GetInt() then
+	if weapon:GetClass() == "weapon_pistol" and ply:HasWeapon(weapon:GetClass())and ply:GetAmmoCount("Pistol") >= GetConVar("max_Pistol"):GetInt() then
 		return false
 	end
 	
-	if weapon:GetClass() == "weapon_rpg" and ply:GetAmmoCount("RPG_Round") >= GetConVar("max_RPG_Round"):GetInt() then
+	if weapon:GetClass() == "weapon_rpg" and ply:HasWeapon(weapon:GetClass()) and ply:GetAmmoCount("RPG_Round") >= GetConVar("max_RPG_Round"):GetInt() then
 		return false
 	end
 	
-	if weapon:GetClass() == "weapon_smg1" and ply:GetAmmoCount("SMG1") >= GetConVar("max_SMG1"):GetInt() then
+	if weapon:GetClass() == "weapon_smg1" and ply:HasWeapon(weapon:GetClass()) and ply:GetAmmoCount("SMG1") >= GetConVar("max_SMG1"):GetInt() then
 		return false
 	end
 	
@@ -464,7 +464,7 @@ hook.Add("PlayerCanPickupWeapon", "DisableWeaponsPickup", function(ply, weapon)
 end)
 
 function GM:GetFallDamage( ply, speed )
-    return ( speed * 1.1 )
+	return (speed / 16)
 end
 
 hook.Add("Think", "HasWeaponThink", function()
@@ -825,18 +825,8 @@ hook.Add("PlayerCanPickupItem", "AmmoPickup", function(ply, item)
 		ply:RemoveAmmo( ply:GetAmmoCount("SMG1_Grenade") - GetConVar("max_SMG1_Grenade"):GetInt(), "SMG1_Grenade" )
 		return false
 	end
-	
-	if item:GetClass() == "item_battery" then
-		return true
-	end
-	
-	if item:GetClass() == "item_healthvial" then
-		return true
-	end
-	
-	if item:GetClass() == "item_healthkit" then
-		return true
-	end
+
+	return true
 end)
 
 

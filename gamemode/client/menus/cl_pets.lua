@@ -297,7 +297,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 	selectImage:SetSize(250, 250)
 	selectImage:SetPos(300, 175)
 	if curSkill >= 6 and petStage == 2 then
-		selectImage:SetImage(PET_FAST_ZOMBIE_EVOL_ICON[3])
+		selectImage:SetImage(PET_ZOMBIE_EVOL_ICON[3])
 		selectPetLabel:SetText("Fast Pet")
 		selectPetLabel:SetPos(375, 75)
 	else

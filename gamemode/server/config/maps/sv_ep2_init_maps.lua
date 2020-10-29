@@ -5,6 +5,7 @@ function SetupEP2Map()
 	MapLua:Spawn()
 	
 	for k, clip in pairs(ents.FindByName("*_clip")) do
+		if game.GetMap() == "ep2_outland_10" then return end
 		clip:Remove()
 	end
 	

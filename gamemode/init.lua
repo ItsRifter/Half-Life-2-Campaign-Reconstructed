@@ -143,6 +143,7 @@ end
 
 
 function GM:ShowTeam(ply)
+	
 	if ply.spawnJeep then
 		ply.spawnJeep:Remove()
 		ply.AllowSpawn = true
@@ -189,6 +190,8 @@ end )
 lockedSpawn = false
 
 function GM:ShowSpare1(ply)
+	if not ply:Alive() then return end
+	
 	local jeep = {
 		Name = "Jeep",
 		Class = "prop_vehicle_jeep_old",
