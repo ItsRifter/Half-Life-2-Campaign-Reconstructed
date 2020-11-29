@@ -8,7 +8,7 @@ function ENT:Initialize()
 	end
 
 	--Set width, length and height of the checkpoint
-
+	
 	local w = self.Max.x - self.Min.x
 	local l = self.Max.y - self.Min.y
 	local h = self.Max.z - self.Min.z
@@ -48,6 +48,7 @@ function ENT:StartTouch(ent)
 		local point3 = self.Point3
 		local point4 = self.Point4
 		local point5 = self.Point5
+		local point6 = self.Point6
 		if self.OnTouchRun then
 			self:OnTouchRun()
 		end
@@ -138,7 +139,7 @@ function ENT:StartTouch(ent)
 				["d1_trainstation_05"] = true
 			}
 			for l, spawn in pairs(ents.FindByClass("info_player_start")) do
-				if p and IsValid(p) and p:Team() == TEAM_ALIVE and p != ent then
+				if p and IsValid(p) and p:Team() == TEAM_ALIVE then
 					if not MAPS_TRAINSTATION[game.GetMap()] then
 						p.CPTP = true
 						ent.CPTP = false
@@ -166,6 +167,9 @@ function ENT:StartTouch(ent)
 					elseif point5 then
 						spawn:SetPos(point5)
 						p:SetPos(point5)
+					elseif point6 then
+						spawn:SetPos(point6)
+						p:SetPos(point6)
 					end
 				elseif p == ent then
 					if point1 then
@@ -178,6 +182,8 @@ function ENT:StartTouch(ent)
 						spawn:SetPos(point4)
 					elseif point5 then
 						spawn:SetPos(point5)
+					elseif point6 then
+						spawn:SetPos(point6)
 					end
 				end
 			end
@@ -192,6 +198,8 @@ function ENT:StartTouch(ent)
 			lambdaModel4:Remove()
 		elseif point5 then
 			lambdaModel5:Remove()
+		elseif point6 then
+			lambdaModel6:Remove()
 		end
 
 		if blocker and blocker:IsValid() then
@@ -277,6 +285,13 @@ function ENT:StartTouch(ent)
 				removeGate:Remove()
 			end
 		end
+		
+		if game.GetMap() == "syn_trials4b" and point5 then
+			for k, logic in pairs(ents.FindByName("finale_logic_start")) do
+				logic:Fire("Trigger")
+			end
+		end
+		
 		self:EmitSound("hl1/ambience/port_suckin1.wav", 100, 100)
 		self:Remove()
 	end

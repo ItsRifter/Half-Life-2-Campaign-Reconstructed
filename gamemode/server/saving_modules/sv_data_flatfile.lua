@@ -5,6 +5,8 @@ local function InitData(ply)
 	-- Set some default settings
 	ply.hl2cPersistent.Name = ply.hl2cPersistent.Name or ply:Nick()
 	ply.hl2cPersistent.Level = ply.hl2cPersistent.Level or 1
+	ply.hl2cPersistent.Prestige = ply.hl2cPersistent.Prestige or 0
+	ply.hl2cPersistent.LevelCap = ply.hl2cPersistent.LevelCap or 20
 	ply.hl2cPersistent.DeathCount = ply.hl2cPersistent.DeathCount or 0
 	ply.hl2cPersistent.KillCount = ply.hl2cPersistent.KillCount or 0
 	
@@ -17,7 +19,8 @@ local function InitData(ply)
 	ply.hl2cPersistent.Essence = ply.hl2cPersistent.Essence or 0
 	ply.hl2cPersistent.Cryst = ply.hl2cPersistent.Cryst or 0
 	ply.hl2cPersistent.ScrapMetal = ply.hl2cPersistent.ScrapMetal or 0
-	ply.hl2cPersistent.TempUpg = {}
+	ply.hl2cPersistent.TempUpg = ply.hl2cPersistent.TempUpg or {}
+	ply.hl2cPersistent.PermUpg = ply.hl2cPersistent.PermUpg or {}
 	
 	ply.hl2cPersistent.Model = ply.hl2cPersistent.Model or "models/player/Group01/male_07.mdl"
 	
@@ -47,6 +50,12 @@ local function InitData(ply)
 	ply.hl2cPersistent.BootImage = ply.hl2cPersistent.BootImage or ""
 	ply.hl2cPersistent.InvWeaponImage = ply.hl2cPersistent.InvWeaponImage or ""
 	
+	ply.hl2cPersistent.OldHelmet = ply.hl2cPersistent.OldHelmet or 0
+	ply.hl2cPersistent.OldSuit = ply.hl2cPersistent.OldSuit or 0
+	ply.hl2cPersistent.OldArm = ply.hl2cPersistent.OldArm or 0
+	ply.hl2cPersistent.OldHands = ply.hl2cPersistent.OldHands or 0
+	ply.hl2cPersistent.OldBoot = ply.hl2cPersistent.OldBoot or 0
+
 	-- Default pet settings
 	ply.hl2cPersistent.PetName = ply.hl2cPersistent.PetName or ""
 	ply.hl2cPersistent.PetXP = ply.hl2cPersistent.PetXP or 0
@@ -87,6 +96,7 @@ local function InitData(ply)
 	
 	-- Also set/create networked variables
 	ply:SetNWInt("Level", ply.hl2cPersistent.Level)
+	ply:SetNWInt("Prestige", ply.hl2cPersistent.Prestige)
 	
 	ply:SetNWInt("Coins", math.Round(ply.hl2cPersistent.Coins))
 	ply:SetNWInt("Essence", math.Round(ply.hl2cPersistent.Essence))

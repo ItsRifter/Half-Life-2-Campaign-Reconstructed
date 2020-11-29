@@ -120,18 +120,23 @@ function PetMenu(curSkill, skillPoints, petStage)
 	COLOUR_PET_MODEL_PANEL = Color(100, 100, 100)
 	COLOUR_PET_MAIN_PANEL = Color(100, 100, 100)
 	COLOUR_PET_EVOL_PANEL = Color(0, 0, 0)
-	local music = CreateSound(LocalPlayer(), "HL1/ambience/alien_powernode.wav")
+	music = CreateSound(LocalPlayer(), "HL1/ambience/alien_powernode.wav")
 	music:Play()
-	local petFrame = vgui.Create("DFrame")
+	
+	local petFrame = vgui.Create("HL2CR.petFrame")
 	petFrame:SetSize(900, 700)
 	petFrame:Center()
 	petFrame:MakePopup()
-	petFrame.OnClose = function()
-		music:Stop()
-	end
 
-	local petSheet = vgui.Create( "DPropertySheet", petFrame )
+	local petBtns = vgui.Create("HL2CR.petBtn", petFrame)
+	petBtns:AddTab("Genetics Lab")
+	petBtns:AddTab("Adoption Centre")
+	petBtns:SetActiveName("Genetics Lab")
+	petBtns:SetSize(650, 32)
+	
+	local petSheet = vgui.Create("DPropertySheet", petFrame)
 	petSheet:Dock(FILL)
+	petSheet:SetSize(0, 0)
 	
 	local defaultColour = Color(255, 255, 255)
 	
@@ -195,8 +200,13 @@ function PetMenu(curSkill, skillPoints, petStage)
 		petEvolModel:SetModel(PET_COMBINE_EVOL_MODEL[petStage])
 		
 	elseif petStage == 8 then
-	
+		
 		showStalkerTree(curSkill, skillPoints)
+		petEvolModel:SetModel(PET_COMBINE_EVOL_MODEL[petStage])
+		
+	elseif petStage == 9 then
+		
+		showMetroStunTree(curSkill, skillPoints)
 		petEvolModel:SetModel(PET_COMBINE_EVOL_MODEL[petStage])
 		
 	end
@@ -279,9 +289,20 @@ function PetMenu(curSkill, skillPoints, petStage)
 			else
 				LocalPlayer():ChatPrint("Your pet isn't ready to evolve")
 			end
+		elseif petStage == 8 then
+			if curSkill >= 6 then
+				petStatFrame:Close()
+				net.Start("Evolving")
+				net.SendToServer()
+				timer.Simple(5, function()
+					LocalPlayer():ChatPrint("Your pet has evolved, Congratulations!")
+				end)
+			else
+				LocalPlayer():ChatPrint("Your pet isn't ready to evolve")
+			end
 		end
 	end
-	petSheet:AddSheet("Evolution Tree", petEvolPanel, nil)
+	petSheet:AddSheet("", petEvolPanel, nil)
 	
 	local petSwitchPanel = vgui.Create("DPanel", petFrame)
 	
@@ -345,9 +366,15 @@ function PetMenu(curSkill, skillPoints, petStage)
 		end
 	end
 	
-	petSheet:AddSheet("Pet Adoption Centre", petSwitchPanel, nil)
+	petSheet:AddSheet("", petSwitchPanel, nil)
 	
-	
+	petFrame.Think = function()
+		if petBtns.active == 1 then
+			petSheet:SetActiveTab(petSheet:GetItems()[1].Tab)
+		elseif petBtns.active == 2 then
+			petSheet:SetActiveTab(petSheet:GetItems()[2].Tab)
+		end
+	end
 end
 
 net.Receive("Open_Pet_Menu", function(len, ply)

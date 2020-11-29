@@ -1,45 +1,11 @@
-surface.CreateFont("Scoreboard_Title4K_font", {
-	font = "Roboto",
-	size = 68,
-})
-
-surface.CreateFont("Scoreboard_Title_font", {
-	font = "Roboto",
-	size = 34,
-})
-
-
-surface.CreateFont("Scoreboard_Board_font", {
-	font = "Arial",
-	extended = true,
-	size = 20,
-})
-
-surface.CreateFont("Scoreboard_Stats_font", {
-	font = "Arial",
-	size = 24,
-})
-
-surface.CreateFont("Scoreboard_Stats_4K_XP_font", {
-	font = "Arial",
-	size = 36,
-})
-
-surface.CreateFont("Scoreboard_Stats_XP_font", {
-	font = "Arial",
-	size = 26,
-})
-
 function ToggleBoard(toggle, clientTimer)
 	if toggle then
-		
 		Board = vgui.Create("DFrame")
 		Board:SetTitle("")
 		Board:SetSize(ScrW() / 2 + 50, ScrH() / 2 + 50)
 		Board:SetDraggable(false)
 		Board:ShowCloseButton(false)
 		Board:SetPos(ScrW() / 2 * .5, ScrH() / 2 * 0.1)
-		Board:MakePopup()
 		Board:SetVisible(true)
 		Board.Paint = function(self, w, h)
 			surface.SetDrawColor(0, 0, 0, 0)
@@ -76,12 +42,13 @@ function ToggleBoard(toggle, clientTimer)
 		
 		local BoardLevelLabel = vgui.Create("DLabel", Board)
 		BoardLevelLabel:SetFont("Scoreboard_Board_font")
-		BoardLevelLabel:SetText("Level")
+		BoardLevelLabel:SetText("Level/Prestige")
 		if (ScrW() == 3840 and ScrH() == 2160) then
-			BoardLevelLabel:SetPos(Board:GetWide() / 5 - 60, 175)
+			BoardLevelLabel:SetPos(Board:GetWide() / 5 - 90, 175)
 		else
-			BoardLevelLabel:SetPos(Board:GetWide() / 2 - 170, 85)
+			BoardLevelLabel:SetPos(Board:GetWide() / 2 - 200, 85)
 		end
+		BoardLevelLabel:SizeToContents()
 		
 		local BoardPingLabel = vgui.Create("DLabel", Board)
 		BoardPingLabel:SetFont("Scoreboard_Board_font")
@@ -107,6 +74,7 @@ function ToggleBoard(toggle, clientTimer)
 			local playerName = v:Nick()
 			local playerPing = v:Ping()
 			local playerLevel = v:GetNWInt("Level", 1)
+			local playerPrestige = v:GetNWInt("Prestige", 0)
 			local playerXP = LocalPlayer():GetNWInt("XP", 0)
 			local playerMaxXP = LocalPlayer():GetNWInt("MaxXP", 500)
 			local playerTeam = v:Team()
@@ -128,7 +96,7 @@ function ToggleBoard(toggle, clientTimer)
 			playerStatusPanel:SetSize(Board:GetWide() + 50, Board:GetTall() * .05)
 			playerStatusPanel.Paint = function(self, w, h)
 				if IsValid(v) then
-					draw.SimpleText(playerLevel, "Scoreboard_Stats_font", 350, h / 2, Color(40, 255, 25, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+					draw.SimpleText(playerLevel .. "/" .. playerPrestige, "Scoreboard_Stats_font", 350, h / 2, Color(40, 255, 25, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 				end
 			end
 			
@@ -238,6 +206,13 @@ function ToggleBoard(toggle, clientTimer)
 		Board:SetVisible(false)
 	end
 end
+
+hook.Add( "CreateMove", "PopUpBoard", function()
+	if (input.WasMousePressed( MOUSE_RIGHT )) then  
+		Board:MakePopup()
+		return
+	end
+end )
 
 hook.Add("ScoreboardShow", "OpenHL2CScoreBoard", function()
 	ToggleBoard(true)

@@ -159,6 +159,7 @@ GM.ArmourItem = {}
 GM.WeaponItem = {}
 GM.PetItem = {}
 GM.TempUpgItem = {}
+GM.PermUpgItem = {}
 
 function Register.Armour(armourItem) 
 	GM.ArmourItem[armourItem.Name] = armourItem
@@ -174,6 +175,10 @@ end
 
 function Register.TempUpg(tempUpgItem) 
 	GM.TempUpgItem[tempUpgItem.Name] = tempUpgItem
+end
+
+function Register.PermUpg(permUpgItem) 
+	GM.PermUpgItem[permUpgItem.Name] = permUpgItem
 end
 
 include("shared/sh_indicators.lua")

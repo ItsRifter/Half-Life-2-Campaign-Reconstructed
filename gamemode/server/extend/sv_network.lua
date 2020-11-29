@@ -6,6 +6,8 @@ util.AddNetworkString("AdminJoin")
 --Open menus and commands
 util.AddNetworkString("Open_Ach_Menu")
 util.AddNetworkString("Open_F4_Menu")
+util.AddNetworkString("UpdateConCmds")
+
 --Data management
 util.AddNetworkString("Create_Data")
 util.AddNetworkString("Achievement_Earned")
@@ -47,6 +49,10 @@ util.AddNetworkString("PetDead")
 util.AddNetworkString("PetKilledBarnacle")
 util.AddNetworkString("PetKilled")
 util.AddNetworkString("PetPanic")
+
+--Levels/Prestige
+util.AddNetworkString("Prestige")
+util.AddNetworkString("BeginPrestige")
 
 --Shops
 util.AddNetworkString("Purchase")

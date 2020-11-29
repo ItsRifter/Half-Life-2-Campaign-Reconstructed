@@ -101,8 +101,16 @@ function ENT:StartTouch(ent)
 		end
 		playerCount = team.NumPlayers(TEAM_ALIVE) + team.NumPlayers(TEAM_COMPLETED_MAP)
 		ent:SetAvoidPlayers(false)
-		for k, p in pairs(player.GetAll()) do
-			p:ChatPrint(ent:Nick() .. " has completed the map " .. team.NumPlayers(TEAM_COMPLETED_MAP) .. "/" .. playerCount)
+		if team.NumPlayers(TEAM_COMPLETED_MAP) >= 1 and game.GetMap() == "ep1_c17_06" then
+			EndEP1Game()
+			timer.Remove("MapTimer")
+		elseif team.NumPlayers(TEAM_COMPLETED_MAP) >= 1 and game.GetMap() == "ep2_outland_12a" then
+			EndEP2Game()
+			timer.Remove("MapTimer")
+		else
+			for k, p in pairs(player.GetAll()) do
+				p:ChatPrint(ent:Nick() .. " has completed the map " .. team.NumPlayers(TEAM_COMPLETED_MAP) .. "/" .. playerCount)
+			end
 		end
 	end
 end
@@ -146,6 +154,8 @@ function ENT:Think()
 					ChangeMapEP1()
 				elseif series == "ep2" then
 					ChangeMapEP2()
+				else
+					RunConsoleCommand("changelevel", "hl2cr_lobby")
 				end
 				displayOnce = false
 			end)
@@ -173,13 +183,8 @@ function ENT:Think()
 				displayOnce = false
 			end)
 		end
-	end
-	if team.NumPlayers(TEAM_COMPLETED_MAP) >= 1 and game.GetMap() == "ep1_c17_06" then
-		EndEP1Game()
-		timer.Remove("MapTimer")
-	elseif team.NumPlayers(TEAM_COMPLETED_MAP) >= 1 and game.GetMap() == "ep2_outland_12a" then
-		EndEP2Game()
-		timer.Remove("MapTimer")
+	elseif team.NumPlayers(TEAM_COMPLETED_MAP) >= team.NumPlayers(TEAM_ALIVE) + addOne - subOne and string.find(game.GetMap(), "syn") then
+		EndCoop()
 	end
 end
 
@@ -341,6 +346,9 @@ function ChangeMapHL2()
 				RunConsoleCommand("changelevel", HL2[k+1])
 			end
 		end
+		if HL2[k] == "hl2cr_lobby" then
+			file.Delete("hl2cr_data/maprecovery.txt")
+		end
 	end
 end
 
@@ -370,6 +378,9 @@ function ChangeMapEP1()
 	for k = 1, #EP1 do
 		if map == EP1[k] then
 			RunConsoleCommand("changelevel", EP1[k+1])
+		end
+		if EP1[k] == "hl2cr_lobby" then
+			file.Delete("hl2cr_data/maprecovery.txt")
 		end
 	end
 end
@@ -401,6 +412,23 @@ function ChangeMapEP2()
 	for k = 1, #EP2 do
 		if map == EP2[k] then
 			RunConsoleCommand("changelevel", EP2[k+1])
+		end
+		if EP2[k] == "hl2cr_lobby" then
+			file.Delete("hl2cr_data/maprecovery.txt")
+		end
+	end
+end
+
+function EndCoop()
+	for k, p in pairs(player.GetAll()) do
+		if not displayOnce then
+			p:ChatPrint("Co-Op map finished, returning to lobby in 20 seconds")
+			displayOnce = true
+			net.Start("DisplayMapTimer")
+			net.Send(p)
+			giveRewards(p)
+			p:GodEnable()
+			timer.Create("MapTimerEnd", 20, 0, function() file.Delete("hl2cr_data/maprecovery.txt") RunConsoleCommand("changelevel", "hl2cr_lobby") timer.Remove("MapTimerEnd") end)
 		end
 	end
 end

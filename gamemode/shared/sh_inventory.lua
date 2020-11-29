@@ -25,23 +25,29 @@ net.Receive("Exchange", function(len, ply)
 	
 	total = randomExchange * exchangeAmt
 
-	ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins - total
-	ply.hl2cPersistent.Essence = ply.hl2cPersistent.Essence + exchangeAmt
-	
-	ply:SetNWInt("Coins", math.Round(ply.hl2cPersistent.Coins))
-	ply:SetNWInt("Essence", math.Round(ply.hl2cPersistent.Essence))
+	SubCoins(ply, total)
+	SubEssen(ply, exchangeAmt)
 	
 end)
 
 net.Receive("Upgrade", function(len, ply)
 	local UpgName = net.ReadString()
-	local UpgCost = net.ReadInt(16)
-	
+	local UpgCostCoins = net.ReadInt(16)
+	local UpgCostEss = net.ReadInt(16)
+	local UpgCostCryst = net.ReadInt(16)
+	local UpgType = net.ReadString()
 	if not ply then return end
 	
-	SubEssen(ply, UpgCost)
-	
-	table.insert(ply.hl2cPersistent.TempUpg, UpgName)
+	if UpgType == "hl2cr_tempupg" then
+		SubCoins(ply, UpgCostCoins)
+		SubEssen(ply, UpgCostEss)
+		table.insert(ply.hl2cPersistent.TempUpg, UpgName)
+	elseif UpgType == "hl2cr_permupg" then
+		SubCoins(ply, UpgCostCoins)
+		SubEssen(ply, UpgCostEss)
+		SubCryst(ply, UpgCostCryst)
+		table.insert(ply.hl2cPersistent.PermUpg, UpgName)
+	end
 
 end)
 
@@ -70,7 +76,9 @@ function giveRewards(ply)
 		chance = 20
 	end
 	
-	local metalChance = math.random(1, 75)
+	local metalChance = math.random(1, 65)
+	local essenceChance = math.random(1, 45)
+	local crystalChance = math.random(1, 105)
 	
 	if chance >= metalChance then
 		local metalEarned = math.random(1, 10)
@@ -79,14 +87,24 @@ function giveRewards(ply)
 		ply:SetNWInt("Scrap", ply.hl2cPersistent.ScrapMetal)
 	end
 	
+	if chance >= essenceChance then
+		local essenceEarned = math.random(1, 5)
+		ply.tableRewards["Essence"] = essenceEarned
+		AddEssen(ply, essenceEarned)
+	end
+	
+	if chance >= crystalChance then
+		local crystalEarned = math.random(1, 3)
+		ply.tableRewards["Crystals"] = crystalEarned
+		AddCryst(ply, crystalEarned)
+	end
+	
 	if ply.tableRewards["Kills"] != 0 then
 		randCoins = math.random(1, 10 * ply.tableRewards["Kills"])
-		ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins + randCoins
-		ply:SetNWInt("Coins", ply.hl2cPersistent.Coins)
+		AddCoins(ply, randCoins)
 		
 		randXP = math.random(1, 10 * ply.tableRewards["Kills"])
-		ply.hl2cPersistent.XP = ply.hl2cPersistent.XP + randXP
-		ply:SetNWInt("XP", ply.hl2cPersistent.XP)
+		AddXP(ply, randXP)
 	else
 		randCoins = 0
 		randXP = 0
@@ -127,31 +145,30 @@ net.Receive("AddArmour", function(len, ply)
 	if not ply then return end
 
 	ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour + shieldPoints
-
 	
 	if ply.hl2cPersistent.Helmet != "" and slot == "Helmet" then
 		table.insert(ply.hl2cPersistent.Inventory, ply.hl2cPersistent.Helmet)
-		ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour - ply:GetNWInt("OldArmourHelmet")
+		ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour - ply.hl2cPersistent.OldHelmet
 	end
 	
 	if ply.hl2cPersistent.Suit != "" and slot == "Suit" then
 		table.insert(ply.hl2cPersistent.Inventory, ply.hl2cPersistent.Suit)
-		ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour - ply:GetNWInt("OldArmourSuit")
+		ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour - ply.hl2cPersistent.OldSuit
 	end
 	
 	if ply.hl2cPersistent.Arm != "" and slot == "Arm" then
 		table.insert(ply.hl2cPersistent.Inventory, ply.hl2cPersistent.Arm)
-		ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour - ply:GetNWInt("OldArmourArm")
+		ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour - ply.hl2cPersistent.OldArm
 	end
 	
 	if ply.hl2cPersistent.Hands != "" and slot == "Hands" then
 		table.insert(ply.hl2cPersistent.Inventory, ply.hl2cPersistent.Hands)
-		ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour - ply:GetNWInt("OldArmourHand")
+		ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour - ply.hl2cPersistent.OldHands
 	end
 	
 	if ply.hl2cPersistent.Boot != "" and slot == "Boots" then
 		table.insert(ply.hl2cPersistent.Inventory, ply.hl2cPersistent.Boot)
-		ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour - ply:GetNWInt("OldArmourBoot")
+		ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour - ply.hl2cPersistent.OldBoot
 	end
 	
 	table.RemoveByValue(ply.hl2cPersistent.Inventory, slotToFill)
@@ -160,31 +177,31 @@ net.Receive("AddArmour", function(len, ply)
 		ply.hl2cPersistent.Helmet = slotToFill
 		ply.hl2cPersistent.HelmetImage = slotImage
 		ply:SetNWString("HelmetSlot", ply.hl2cPersistent.HelmetImage)
-		ply:SetNWInt("OldArmourHelmet", shieldPoints)
+		ply.hl2cPersistent.OldHelmet = shieldPoints
 		
 	elseif slot == "Suit" then
 		ply.hl2cPersistent.Suit = slotToFill
 		ply.hl2cPersistent.SuitImage = slotImage
 		ply:SetNWString("SuitSlot", ply.hl2cPersistent.SuitImage)
-		ply:SetNWInt("OldArmourSuit", shieldPoints)
+		ply.hl2cPersistent.OldSuit = shieldPoints
 		
 	elseif slot == "Arm" then
 		ply.hl2cPersistent.Arm = slotToFill
 		ply.hl2cPersistent.ArmImage = slotImage
 		ply:SetNWString("ArmSlot", ply.hl2cPersistent.ArmImage)
-		ply:SetNWInt("OldArmourArm", shieldPoints)
+		ply.hl2cPersistent.OldArm = shieldPoints
 		
 	elseif slot == "Hands" then
 		ply.hl2cPersistent.Hands = slotToFill
 		ply.hl2cPersistent.HandsImage = slotImage
 		ply:SetNWString("HandSlot", ply.hl2cPersistent.HandsImage)
-		ply:SetNWInt("OldArmourHand", shieldPoints)
+		ply.hl2cPersistent.OldHands = shieldPoints
 		
 	elseif slot == "Boots" then
 		ply.hl2cPersistent.Boot = slotToFill
 		ply.hl2cPersistent.BootImage = slotImage
 		ply:SetNWString("BootSlot", ply.hl2cPersistent.BootImage)
-		ply:SetNWInt("OldArmourBoot", shieldPoints)
+		ply.hl2cPersistent.OldBoot = shieldPoints
 	end
 	
 	ply.hl2cPersistent.InvSpace = ply.hl2cPersistent.InvSpace - 1 
@@ -339,6 +356,28 @@ if CLIENT then
 			scrapLabel:SetFont("Bonus_Items_Font")
 			scrapLabel:SetText(Rewards["Metal"]) 
 		end
+		
+		if Rewards["Essence"] != 0 then
+			local essenReward = itemsLayout:Add("DImage")
+			essenReward:SetImage("hl2cr/mats/essence")
+			essenReward:SetSize(64, 64)
+			
+			local essenLabel = essenReward:Add("DLabel")
+			essenLabel:SetFont("Bonus_Items_Font")
+			essenLabel:SetText(Rewards["Essence"]) 
+		end
+		
+		if Rewards["Crystals"] != 0 then
+			local crystReward = itemsLayout:Add("DImage")
+			crystReward:SetImage("hl2cr/mats/crystal")
+			crystReward:SetSize(64, 64)
+			
+			local crystLabel = crystReward:Add("DLabel")
+			crystLabel:SetFont("Bonus_Items_Font")
+			crystLabel:SetText(Rewards["Crystals"]) 
+		end
+		
+		
 
 		local itemsText = vgui.Create("DLabel", itemsPanel)
 		itemsText:SetText("Bonus Items")

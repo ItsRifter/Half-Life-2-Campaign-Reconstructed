@@ -55,12 +55,6 @@ function SetupEP1Map()
 		end
 	end
 	
-	if game.GetMap() == "ep1_c17_05" then
-		GetConVar("fmod_enable"):SetInt(1)
-	else
-		GetConVar("fmod_enable"):SetInt(0)
-	end
-	
 	SetCheckpointsStageEP1()
 end
 
@@ -175,7 +169,6 @@ function SetCheckpointsStageEP1()
 		TRIGGER_CHANGELEVEL = {
 			Vector(1899, 64, 333), 	Vector(1781, 141, 420)
 		}
-		
 		TRIGGER_CHECKPOINT = {
 			Vector(3926, -177, -102), 	Vector(4100, -199, -28),
 		}
@@ -280,7 +273,6 @@ function SetCheckpointsStageEP1()
 			Vector(10615, 8168, -723),	Vector(11626, 8368, -575)
 		}
 	end
-	
 	if TRIGGER_CHANGELEVEL then
 		local changeLevel = ents.Create("trigger_changelevel")
 		changeLevel.Min = Vector(TRIGGER_CHANGELEVEL[1])
@@ -306,6 +298,8 @@ function SetCheckpointsStageEP1()
 			lambdaModel1:SetMaterial("editor/orange")
 			lambdaModel1:SetPos(Checkpoint1.Pos)
 			lambdaModel1:Spawn()
+			lambdaModel1:SetName("lambdaCheckpoint")
+			lambdaModel1:ResetSequence("idle")
 		end
 		
 		if TRIGGER_CHECKPOINT[3] and TRIGGER_CHECKPOINT[4] then
@@ -322,6 +316,8 @@ function SetCheckpointsStageEP1()
 			lambdaModel2:SetMaterial("editor/orange")
 			lambdaModel2:SetPos(Checkpoint2.Pos)
 			lambdaModel2:Spawn()
+			lambdaModel2:SetName("lambdaCheckpoint")
+			lambdaModel2:ResetSequence("idle")
 		end
 		
 		if TRIGGER_CHECKPOINT[5] and TRIGGER_CHECKPOINT[6] then
@@ -338,6 +334,8 @@ function SetCheckpointsStageEP1()
 			lambdaModel3:SetMaterial("editor/orange")
 			lambdaModel3:SetPos(Checkpoint3.Pos)
 			lambdaModel3:Spawn()
+			lambdaModel3:SetName("lambdaCheckpoint")
+			lambdaModel3:ResetSequence("idle")
 		end
 		
 		if TRIGGER_CHECKPOINT[7] and TRIGGER_CHECKPOINT[8] then
@@ -354,22 +352,8 @@ function SetCheckpointsStageEP1()
 			lambdaModel4:SetMaterial("editor/orange")
 			lambdaModel4:SetPos(Checkpoint4.Pos)
 			lambdaModel4:Spawn()
-		end
-		
-		if TRIGGER_CHECKPOINT[9] and TRIGGER_CHECKPOINT[10] then
-			Checkpoint5 = ents.Create("trigger_checkpoint")
-			Checkpoint5.Min = Vector(TRIGGER_CHECKPOINT[9])
-			Checkpoint5.Max = Vector(TRIGGER_CHECKPOINT[10])
-			Checkpoint5.Pos = Vector(TRIGGER_CHECKPOINT[10]) - ( ( Vector(TRIGGER_CHECKPOINT[10]) - Vector(TRIGGER_CHECKPOINT[9])) / 2 )
-			Checkpoint5.Point5 = Vector(TRIGGER_SPAWNPOINT[5])
-			Checkpoint5:SetPos(Checkpoint5.Pos)
-			Checkpoint5:Spawn()
-			
-			lambdaModel5 = ents.Create("prop_dynamic")
-			lambdaModel5:SetModel("models/hl2cr_lambda.mdl")
-			lambdaModel5:SetMaterial("editor/orange")
-			lambdaModel5:SetPos(Checkpoint5.Pos)
-			lambdaModel5:Spawn()
+			lambdaModel4:SetName("lambdaCheckpoint")
+			lambdaModel4:ResetSequence("idle")
 		end
 	end
 end

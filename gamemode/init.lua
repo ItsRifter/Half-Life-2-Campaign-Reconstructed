@@ -28,6 +28,10 @@ AddCSLuaFile("client/menus/pets/cl_metropolice_stunstuck.lua")
 AddCSLuaFile("client/menus/pets/cl_metropolice_pistol.lua")
 AddCSLuaFile("client/menus/pets/cl_metropolice_smg.lua")
 
+AddCSLuaFile("client/menus/cl_ui.lua")
+AddCSLuaFile("client/menus/cl_fonts.lua")
+AddCSLuaFile("client/menus/cl_prestige.lua")
+
 
 -- Server side files only
 include("server/commands/sv_commands_list.lua")
@@ -98,7 +102,7 @@ team.SetUp(TEAM_LOYAL, "Loyal Combine", Color(0, 225, 255, 255))
 local meta = FindMetaTable( "Entity" )
 if not meta then return end
 
-version = "0.3"
+version = "0.4.5"
 
 function meta:IsPet()
 	if self:IsValid() and self:IsNPC() and self:GetNWBool("PetActive") then
@@ -131,16 +135,14 @@ function GM:Initialize()
 	airboatSpawnable = false
 	airboatGunSpawnable = false
 	fixAI = false
-	randomExchange = math.random(100, 1000)
+	randomExchange = math.random(100, 850)
 end
 
-function GM:ShowHelp(ply)
+function GM:ShowHelp(ply)	
 	net.Start("Greetings_new_player")
 		net.WriteString(version)
 	net.Send(ply)
 end
-
-
 
 function GM:ShowTeam(ply)
 	
@@ -366,6 +368,9 @@ function GM:ShowSpare2(ply)
 	else
 		net.Start("Open_F4_Menu")
 			net.WriteTable(ply.hl2cPersistent.Inventory)
+			if randomExchange <= 0 then 
+				randomExchange = math.random(100, 850)
+			end
 			net.WriteInt(randomExchange, 32)
 			if table.HasValue(ply.hl2cPersistent.Achievements, "One_True_Freeman") then
 				net.WriteBool(true)
@@ -379,6 +384,7 @@ function GM:ShowSpare2(ply)
 			net.WriteInt(eventNumber, 8)
 			net.WriteTable(ply.hl2cPersistent.HatTable)
 			net.WriteTable(ply.hl2cPersistent.TempUpg)
+			net.WriteTable(ply.hl2cPersistent.PermUpg)
 		net.Send(ply)
 	end
 end
@@ -389,7 +395,8 @@ VOTE_REQUIRED = {
 	["HardVotes"] = 0,
 	["SurvVotes"] = 0,
 	["neededVotes"] = 0,
-	["neededVotesRestart"] = 0
+	["neededVotesRestart"] = 0,
+	["neededVoteRestore"] = 0
 }
 
 DIFFVAR_VOTE_REQUIRED = {
@@ -407,6 +414,7 @@ hook.Add("Think", "votingThink", function()
 
 	local survRequired = #player.GetAll()
 	local neededVotes = #player.GetAll()
+	local neededVoteRestores = #player.GetAll()
 	local neededVotesRestart = #player.GetAll()
 	
 	VOTE_REQUIRED["EasyVotes"] = easyRequired
@@ -414,6 +422,7 @@ hook.Add("Think", "votingThink", function()
 	VOTE_REQUIRED["HardVotes"] = hardRequired
 	VOTE_REQUIRED["SurvVotes"] = survRequired
 	VOTE_REQUIRED["neededVotes"] = neededVotes
+	VOTE_REQUIRED["neededVoteRestore"] = neededVoteRestores
 	VOTE_REQUIRED["neededVotesRestart"] = neededVotesRestart
 	
 	DIFFVAR_VOTE_REQUIRED["DoubleHP"] = HPRequired
@@ -455,13 +464,17 @@ function SetUpMap()
 		SetupLobbyMap()
 	elseif string.match(game.GetMap(), "d1_") or string.match(game.GetMap(), "d2_") 
 	or string.match(game.GetMap(), "d3_") then
+		file.Write("hl2cr_data/maprecovery.txt", game.GetMap())
 		SetupHL2Map()
 	elseif string.match(game.GetMap(), "ep1_") then
+		file.Write("hl2cr_data/maprecovery.txt", game.GetMap())
 		SetupEP1Map()
 	elseif string.match(game.GetMap(), "ep2_") then
+		file.Write("hl2cr_data/maprecovery.txt", game.GetMap())
 		SetupEP2Map()
-	elseif string.match(game.GetMap(), "level") then
-		SetupCoopMap01()
+	else
+		file.Write("hl2cr_data/maprecovery.txt", game.GetMap())
+		SetupCoopMap()
 	end
 end
 hook.Add("InitPostEntity", "SetupLua", SetUpMap)

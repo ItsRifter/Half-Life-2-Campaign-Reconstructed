@@ -2,7 +2,8 @@ AddCSLuaFile() -- Add itself to files to be sent to the clients, as this file is
 
 local crowAttempt = false
 local crowKills = 0
-
+local totalXPGained = 0
+local totalPetXPGained = 0
 hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 	local giveXP = 0
 	local giveCoins = 0
@@ -45,7 +46,20 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 		["npc_seagull"] = true
 	}
 
-	if not RESTRICTED_NPCS[npc:GetClass()] then
+	if not RESTRICTED_NPCS[npc:GetClass()] and attacker:IsPlayer() and attacker.XPCap then 
+		if not attacker.totalXPGained then
+			attacker.totalXPGained = 0
+		end
+		if attacker.totalXPGained < attacker.XPCap then
+			giveXP = math.random(1 + bonusXP, (25 + bonusXP) * GetConVar("hl2cr_difficulty"):GetInt())
+			giveCoins = math.random(1 + bonusCoins, (15 + bonusCoins) * GetConVar("hl2cr_difficulty"):GetInt())
+			attacker.totalXPGained = attacker.totalXPGained + giveXP
+			if attacker.totalXPGained >= attacker.XPCap then
+				attacker:ChatPrint("You have exceeded the XP you can gain on this map")
+				attacker:ChatPrint("Try proceeding to the next map")
+			end
+		end
+	elseif not attacker.XPCap then
 		giveXP = math.random(1 + bonusXP, (25 + bonusXP) * GetConVar("hl2cr_difficulty"):GetInt())
 		giveCoins = math.random(1 + bonusCoins, (15 + bonusCoins) * GetConVar("hl2cr_difficulty"):GetInt())
 	else
@@ -61,6 +75,16 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 		timer.Simple(2, function()
 			crowAttempt = false
 		end)
+	end
+	
+	if attacker:IsPlayer() and table.HasValue(attacker.hl2cPersistent.PermUpg, "Vampirism") and attacker:GetActiveWeapon():GetClass() == "weapon_crowbar" then
+		local chance = math.random(1, 100)
+		if chance <= 35 then
+			attacker:SetHealth(attacker:Health() + 5)
+			if attacker:Health() > attacker:GetMaxHealth() then
+				attacker:SetHealth(attacker:GetMaxHealth())
+			end
+		end
 	end
 	
 	local RESTRICTED_MAPS = {
@@ -86,10 +110,19 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 		giveXP = 0
 		giveCoins = 0
 		givePetXP = 0
-	elseif attacker:IsPet() and attacker.owner and attacker != npc then
-		givePetXP = math.random(1, 15 * GetConVar("hl2cr_difficulty"):GetInt())
-		addPetXP(attacker.owner, givePetXP)
-		Spawn(givePetXP, 0, npc:GetPos(), npc, attacker.owner)
+	elseif attacker:IsPet() and attacker.owner and attacker != npc and attacker.owner.PetXPCap then
+		if not attacker.owner.totalPetXPGained then
+			attacker.owner.totalPetXPGained = 0
+		end
+		if attacker.owner.totalPetXPGained < attacker.owner.PetXPCap then
+			givePetXP = math.random(1, 15 * GetConVar("hl2cr_difficulty"):GetInt())
+			addPetXP(attacker.owner, givePetXP)
+			if attacker.owner.totalPetXPGained >= attacker.owner.PetXPCap then
+				attacker:ChatPrint("You have exceeded the XP you can gain on this map")
+				attacker:ChatPrint("Try proceeding to the next map")
+			end
+			Spawn(givePetXP, 0, npc:GetPos(), npc, attacker.owner)
+		end
 	end
 	
 	if attacker:IsPlayer() and not npc.owner then

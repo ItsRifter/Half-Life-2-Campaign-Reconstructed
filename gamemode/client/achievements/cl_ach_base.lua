@@ -16,6 +16,9 @@ HL2_Ach_List = {
 	[9] = {name = "Flushed", desc = "Kill an enemy with a toilet", mat = "vgui/achievements/hl2_kill_enemy_withtoilet.png", isRare = false},
 	[10] = {name = "Vortex_Locator", desc = "Locate all the\nvortexes in Half-Life 2", mat = "vgui/achievements/hl2_find_alllambdas.png", isRare = true},
 	[11] = {name = "Crowbar_Only_HL2", desc = "Finish Half-Life 2 with\nonly the crowbar", mat = "vgui/achievements/hl2_beat_game.png", isRare = false},
+	[12] = {name = "Vorticough", desc = "Discover the hidden\nsinging vortigaunt cave", mat = "vgui/achievements/hl2_find_vortigauntcave.png", isRare = false},
+	[13] = {name = "Defiant", desc = "Hit the trashcan\ncop with the can", mat = "vgui/achievements/hl2_hit_cancop_withcan.png", isRare = false},
+	[14] = {name = "Submissive", desc = "Put the can in the trash", mat = "vgui/achievements/hl2_put_canintrash.png", isRare = false},
 	--[12] = {name = "Crowbar_Only_HL2_Hard", desc = "Finish Half-Life 2 with\nonly the crowbar\non hard with\nsurvival enabled", mat = "vgui/achievements/hl2_beat_game.png", isRare = false},
 }
 
@@ -146,13 +149,24 @@ EP2_Vortex_List = {
 
 function AchievementMenu(achievement, vortexes, lambdas, vortexesEP1, vortexesEP2)
 
-	local achFrame = vgui.Create("DFrame")
-	achFrame:SetSize(850, 600)
+	local achFrame = vgui.Create("HL2CR.f4Frame")
+	achFrame:SetSize(1050, 600)
 	achFrame:Center()
-	achFrame:SetDraggable(false)
-	achFrame:ShowCloseButton(true)
-	achFrame:SetTitle("Achievements Menu")
 	achFrame:MakePopup()
+	
+	local achBtns = vgui.Create("HL2CR.f4Btn", achFrame)
+	achBtns:SetSize(850, 32)
+	
+	achBtns:AddTab("Lobby")
+	achBtns:AddTab("Half-Life 2")
+	achBtns:AddTab("Episode 1")
+	achBtns:AddTab("Episode 2")
+	achBtns:AddTab("Misc")
+	achBtns:AddTab("Kill List")
+	achBtns:AddTab("Lambdas")
+	achBtns:AddTab("Vortexes")
+	
+	achBtns:SetActiveName("Lobby")
 	
 	local TabAchSheet = vgui.Create( "DPropertySheet", achFrame )
 	TabAchSheet:Dock( FILL )
@@ -210,7 +224,7 @@ function AchievementMenu(achievement, vortexes, lambdas, vortexesEP1, vortexesEP
 		end
 	end
 	
-	TabAchSheet:AddSheet("Lobby", PanelLobbyAch, nil)
+	TabAchSheet:AddSheet("", PanelLobbyAch, nil)
 
 	local PanelHL2Ach = vgui.Create( "DPanel", achFrame )
 	PanelHL2Ach:SetSize(800, 850)
@@ -259,7 +273,7 @@ function AchievementMenu(achievement, vortexes, lambdas, vortexesEP1, vortexesEP
 		end
 	end
 	
-	TabAchSheet:AddSheet("Half-Life 2", PanelHL2Ach, nil)
+	TabAchSheet:AddSheet("", PanelHL2Ach, nil)
 	
 	local PanelEP1Ach = vgui.Create( "DPanel", achFrame )
 	PanelEP1Ach:SetSize(800, 850)
@@ -308,7 +322,7 @@ function AchievementMenu(achievement, vortexes, lambdas, vortexesEP1, vortexesEP
 		end
 	end	
 	
-	TabAchSheet:AddSheet("Episode 1", PanelEP1Ach, nil)
+	TabAchSheet:AddSheet("", PanelEP1Ach, nil)
 	
 	local PanelEP2Ach = vgui.Create( "DPanel", achFrame )
 	PanelEP2Ach:SetSize(800, 850)
@@ -357,7 +371,7 @@ function AchievementMenu(achievement, vortexes, lambdas, vortexesEP1, vortexesEP
 		end
 	end	
 	
-	TabAchSheet:AddSheet("Episode 2", PanelEP2Ach, nil)
+	TabAchSheet:AddSheet("", PanelEP2Ach, nil)
 	
 	local PanelMiscAch = vgui.Create( "DPanel", achFrame )
 	PanelMiscAch:SetSize(800, 850)
@@ -407,7 +421,7 @@ function AchievementMenu(achievement, vortexes, lambdas, vortexesEP1, vortexesEP
 		end
 	end
 		
-	TabAchSheet:AddSheet("Miscellaneous", PanelMiscAch, nil)
+	TabAchSheet:AddSheet("", PanelMiscAch, nil)
 	
 	local PanelKillAch = vgui.Create( "DPanel", achFrame )
 	PanelKillAch:SetSize(800, 850)
@@ -457,7 +471,7 @@ function AchievementMenu(achievement, vortexes, lambdas, vortexesEP1, vortexesEP
 		end
 	end
 		
-	TabAchSheet:AddSheet("Kill List", PanelKillAch, nil)
+	TabAchSheet:AddSheet("", PanelKillAch, nil)
 	
 	local PanelHL2Lambda = vgui.Create( "DPanel", achFrame )
 	PanelHL2Lambda:SetSize(800, 850)
@@ -498,7 +512,7 @@ function AchievementMenu(achievement, vortexes, lambdas, vortexesEP1, vortexesEP
 	
 	end
 	
-	TabAchSheet:AddSheet("HL2 Lambdas", PanelHL2Lambda, nil)
+	TabAchSheet:AddSheet("", PanelHL2Lambda, nil)
 	
 	local PanelHL2Vort = vgui.Create( "DPanel", achFrame )
 	PanelHL2Vort:SetSize(800, 850)
@@ -524,6 +538,7 @@ function AchievementMenu(achievement, vortexes, lambdas, vortexesEP1, vortexesEP
 		local vortHL2Name = vortHL2Panel:Add("DLabel")
 		vortHL2Name:SetPos(0, 65)
 		vortHL2Name:SetText(HL2_Vortex_List[i].name)
+		vortHL2Name:SetFont("Ach_Label_Font")
 		
 		vortHL2Name:SizeToContents()
 		vortHL2Name:SetColor(Color(0, 0, 0))
@@ -537,33 +552,17 @@ function AchievementMenu(achievement, vortexes, lambdas, vortexesEP1, vortexesEP
 			vortHL2Icon:SetImage("vgui/hud/icon_locked")
 		end
 	end
-	
-	TabAchSheet:AddSheet("HL2 Vortexes", PanelHL2Vort, nil)
-	
-	local PanelEP1Vort = vgui.Create( "DPanel", achFrame )
-	PanelEP1Vort:SetSize(800, 850)
-	PanelEP1Vort:SetPos(0, 400)
-	PanelEP1Vort.Paint = function(s, w, h)
-		draw.RoundedBox(0,0,0, w, h, Color(170, 170, 170, 255))
-	end
-	
-	local ScrollEP1Vort = vgui.Create("DScrollPanel", PanelEP1Vort)
-	ScrollEP1Vort:Dock(FILL)
-	
-	local iconListEP1Vort = vgui.Create("DIconLayout", ScrollEP1Vort)
-	iconListEP1Vort:Dock(FILL)
-	iconListEP1Vort:SetSpaceY(5)
-	iconListEP1Vort:SetSpaceX(5)
-	
+			
 	for i = 1, #EP1_Vortex_List do
 		
-		local vortEP1Panel = iconListEP1Vort:Add("DPanel")
+		local vortEP1Panel = iconListHL2Vort:Add("DPanel")
 		vortEP1Panel:SetPaintBackground(false)
 		vortEP1Panel:SetSize(128, 128)
 		
 		local vortEP1Name = vortEP1Panel:Add("DLabel")
 		vortEP1Name:SetPos(0, 65)
 		vortEP1Name:SetText(EP1_Vortex_List[i].name)
+		vortEP1Name:SetFont("Ach_Label_Font")
 		
 		vortEP1Name:SizeToContents()
 		vortEP1Name:SetColor(Color(0, 0, 0))
@@ -577,33 +576,17 @@ function AchievementMenu(achievement, vortexes, lambdas, vortexesEP1, vortexesEP
 			vortEP1Icon:SetImage("vgui/hud/icon_locked")
 		end
 	end
-	
-	TabAchSheet:AddSheet("EP1 Vortexes", PanelEP1Vort, nil)
-	
-	local PanelEP2Vort = vgui.Create( "DPanel", achFrame )
-	PanelEP2Vort:SetSize(800, 850)
-	PanelEP2Vort:SetPos(0, 400)
-	PanelEP2Vort.Paint = function(s, w, h)
-		draw.RoundedBox(0,0,0, w, h, Color(170, 170, 170, 255))
-	end
-	
-	local ScrollEP2Vort = vgui.Create("DScrollPanel", PanelEP2Vort)
-	ScrollEP2Vort:Dock(FILL)
-	
-	local iconListEP2Vort = vgui.Create("DIconLayout", ScrollEP2Vort)
-	iconListEP2Vort:Dock(FILL)
-	iconListEP2Vort:SetSpaceY(5)
-	iconListEP2Vort:SetSpaceX(5)
-	
+		
 	for i = 1, #EP2_Vortex_List do
 		
-		local vortEP2Panel = iconListEP2Vort:Add("DPanel")
+		local vortEP2Panel = iconListHL2Vort:Add("DPanel")
 		vortEP2Panel:SetPaintBackground(false)
 		vortEP2Panel:SetSize(128, 128)
 		
 		local vortEP2Name = vortEP2Panel:Add("DLabel")
 		vortEP2Name:SetPos(0, 65)
 		vortEP2Name:SetText(EP2_Vortex_List[i].name)
+		vortEP2Name:SetFont("Ach_Label_Font")
 		
 		vortEP2Name:SizeToContents()
 		vortEP2Name:SetColor(Color(0, 0, 0))
@@ -618,7 +601,27 @@ function AchievementMenu(achievement, vortexes, lambdas, vortexesEP1, vortexesEP
 		end
 	end
 	
-	TabAchSheet:AddSheet("EP2 Vortexes", PanelEP2Vort, nil)
+	TabAchSheet:AddSheet("", PanelHL2Vort, nil)
+	
+	achFrame.Think = function()
+		if achBtns.active == 1 then
+			TabAchSheet:SetActiveTab(TabAchSheet:GetItems()[1].Tab)
+		elseif achBtns.active == 2 then
+			TabAchSheet:SetActiveTab(TabAchSheet:GetItems()[2].Tab)
+		elseif achBtns.active == 3 then
+			TabAchSheet:SetActiveTab(TabAchSheet:GetItems()[3].Tab)
+		elseif achBtns.active == 4 then
+			TabAchSheet:SetActiveTab(TabAchSheet:GetItems()[4].Tab)
+		elseif achBtns.active == 5 then
+			TabAchSheet:SetActiveTab(TabAchSheet:GetItems()[5].Tab)
+		elseif achBtns.active == 6 then
+			TabAchSheet:SetActiveTab(TabAchSheet:GetItems()[6].Tab)
+		elseif achBtns.active == 7 then
+			TabAchSheet:SetActiveTab(TabAchSheet:GetItems()[7].Tab)
+		elseif achBtns.active == 8 then
+			TabAchSheet:SetActiveTab(TabAchSheet:GetItems()[8].Tab)
+		end
+	end
 end
 
 surface.CreateFont( "DermaDefault_18px", {

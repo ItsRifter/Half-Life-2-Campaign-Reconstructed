@@ -350,9 +350,6 @@ function SetCheckpointsStageEP2()
 		}
 	end
 	
-	
-		
-	
 	if TRIGGER_CHANGELEVEL then
 		local changeLevel = ents.Create("trigger_changelevel")
 		changeLevel.Min = Vector(TRIGGER_CHANGELEVEL[1])
@@ -378,6 +375,8 @@ function SetCheckpointsStageEP2()
 			lambdaModel1:SetMaterial("editor/orange")
 			lambdaModel1:SetPos(Checkpoint1.Pos)
 			lambdaModel1:Spawn()
+			lambdaModel1:SetName("lambdaCheckpoint")
+			lambdaModel1:ResetSequence("idle")
 		end
 		
 		if TRIGGER_CHECKPOINT[3] and TRIGGER_CHECKPOINT[4] then
@@ -394,6 +393,8 @@ function SetCheckpointsStageEP2()
 			lambdaModel2:SetMaterial("editor/orange")
 			lambdaModel2:SetPos(Checkpoint2.Pos)
 			lambdaModel2:Spawn()
+			lambdaModel2:SetName("lambdaCheckpoint")
+			lambdaModel2:ResetSequence("idle")
 		end
 		
 		if TRIGGER_CHECKPOINT[5] and TRIGGER_CHECKPOINT[6] then
@@ -410,6 +411,8 @@ function SetCheckpointsStageEP2()
 			lambdaModel3:SetMaterial("editor/orange")
 			lambdaModel3:SetPos(Checkpoint3.Pos)
 			lambdaModel3:Spawn()
+			lambdaModel3:SetName("lambdaCheckpoint")
+			lambdaModel3:ResetSequence("idle")
 		end
 		
 		if TRIGGER_CHECKPOINT[7] and TRIGGER_CHECKPOINT[8] then
@@ -426,22 +429,8 @@ function SetCheckpointsStageEP2()
 			lambdaModel4:SetMaterial("editor/orange")
 			lambdaModel4:SetPos(Checkpoint4.Pos)
 			lambdaModel4:Spawn()
-		end
-		
-		if TRIGGER_CHECKPOINT[9] and TRIGGER_CHECKPOINT[10] then
-			Checkpoint5 = ents.Create("trigger_checkpoint")
-			Checkpoint5.Min = Vector(TRIGGER_CHECKPOINT[9])
-			Checkpoint5.Max = Vector(TRIGGER_CHECKPOINT[10])
-			Checkpoint5.Pos = Vector(TRIGGER_CHECKPOINT[10]) - ( ( Vector(TRIGGER_CHECKPOINT[10]) - Vector(TRIGGER_CHECKPOINT[9])) / 2 )
-			Checkpoint5.Point5 = Vector(TRIGGER_SPAWNPOINT[5])
-			Checkpoint5:SetPos(Checkpoint5.Pos)
-			Checkpoint5:Spawn()
-			
-			lambdaModel5 = ents.Create("prop_dynamic")
-			lambdaModel5:SetModel("models/hl2cr_lambda.mdl")
-			lambdaModel5:SetMaterial("editor/orange")
-			lambdaModel5:SetPos(Checkpoint5.Pos)
-			lambdaModel5:Spawn()
+			lambdaModel4:SetName("lambdaCheckpoint")
+			lambdaModel4:ResetSequence("idle")
 		end
 	end
 end

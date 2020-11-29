@@ -35,4 +35,11 @@ BaseWeapon = DeriveTable(itemBase)
 
 BaseTempUpg = DeriveTable(itemBase)
 BaseTempUpg.UpgBuffs = {}
+BaseTempUpg.Cost = 1
 BaseTempUpg.EssenceCost = 1
+
+BasePermUpg = DeriveTable(itemBase)
+BasePermUpg.UpgBuffs = {}
+BasePermUpg.Cost = 1
+BasePermUpg.EssenceCost = 1
+BasePermUpg.CrystalCost = 1

@@ -2,7 +2,8 @@ function SetupHL2Map()
 	sandAchEarnable = false
 	surpassSand = false
 	game.SetGlobalState("friendly_encounter", 0)
-
+	noSubmissive = false
+	noDefiant = false
 	--Create the lua entity
 	MapLua = ents.Create("lua_run")
 	MapLua:SetName("triggerhook")
@@ -12,6 +13,13 @@ function SetupHL2Map()
 	if game.GetMap() == "d1_trainstation_02" then 
 		for k, reset1 in pairs(ents.FindByClass("info_player_start")) do
 			reset1:SetPos(Vector(-4315, -215, 0))
+		end
+		for i, obey in pairs(ents.FindByName("trashcan_trigger")) do
+			obey:Fire("AddOutput", "OnTrigger triggerhook:RunPassedCode:hook.Run( 'GiveObey' ):0:-1" )
+		end
+		
+		for l, disobey in pairs(ents.FindByName("throwcan_trigger")) do
+			disobey:Fire("AddOutput", "OnTrigger triggerhook:RunPassedCode:hook.Run( 'GiveDefiant' ):0:-1" )
 		end
 	end
 		
@@ -30,6 +38,14 @@ function SetupHL2Map()
 	if game.GetMap() == "d1_canals_10" then 
 		for k, fix1 in pairs(ents.FindByClass("info_player_start")) do
 			fix1:SetPos(Vector(11808, -12450, -475))
+		end
+	end
+	
+	if game.GetMap() == "d1_canals_13" then 
+		for k, singer in pairs(ents.FindByClass("trigger_once")) do
+			if singer:GetPos() == Vector(11328, 672, -288) then
+				singer:Fire("AddOutput", "OnTrigger triggerhook:RunPassedCode:hook.Run( 'GiveSinger' ):0:-1" )
+			end
 		end
 	end
 	
@@ -293,6 +309,12 @@ function SetupHL2Map()
 		end
 	end
 	
+	if game.GetMap() == "d3_c17_10b" then
+		for k, trap in pairs(ents.FindByClass("env_beam")) do
+			trap:Fire("AddOutput", "OnTouchedByEntity triggerhook:RunPassedCode:hook.Run( 'ResetTrap' ):15:-1")
+		end
+	end
+	
 	if game.GetMap() == "d3_citadel_03" then
 		timer.Simple(5, function()
 			for k, removeWeaponAmmo in pairs(ents.FindByName("global_newgame_spawner_*")) do
@@ -383,6 +405,25 @@ hook.Add("FixBarney", "TeleportBarney", function()
 	end
 end)
 
+hook.Add("ResetTrap", "ResetLaserTrap", function()
+	
+	for k, beam in pairs(ents.FindByClass("env_beam")) do
+		beam:Fire("TurnOn")
+	end
+	
+	for k, turret in pairs(ents.FindByClass("npc_turret_ceiling")) do
+		turret:Fire("Disable")
+	end
+	
+	for k, button in pairs(ents.FindByName("s_room_panelswitch")) do
+		button:Fire("Unlock")
+	end
+	
+	for k, doors in pairs(ents.FindByName("s_room_doors")) do
+		doors:Fire("Open")
+	end
+end)
+
 hook.Add("FailSand", "FailureSandAch", function()	
 	if sandAchEarnable and not surpassSand then 
 		for k, v in pairs(player.GetAll()) do
@@ -413,6 +454,28 @@ hook.Add("GiveWhatCat", "GrantCatAch", function()
 	for k, v in pairs(player.GetAll()) do
 		Achievement(v, "What_Cat", "HL2_Ach_List")
 	end
+end)
+
+hook.Add("GiveObey", "GrantSubmissiveAch", function()
+	if noSubmissive then return end
+	noDefiant = true
+	for k, v in pairs(player.GetAll()) do
+		Achievement(v, "Submissive", "HL2_Ach_List")
+	end
+end)
+
+hook.Add("GiveDefiant", "GrantDefiantAch", function()
+	if noSubmissive then return end
+	noSubmissive = true
+	for k, v in pairs(player.GetAll()) do
+		Achievement(v, "Defiant", "HL2_Ach_List")
+	end
+end)
+
+hook.Add("GiveSinger", "GrantSingerAch", function()
+	local activator, caller = ACTIVATOR, CALLER
+	
+	Achievement(activator, "Vorticough", "HL2_Ach_List")
 end)
 
 hook.Add("GravGunOnPickedUp", "PastPickup", function(ply, ent)
@@ -1022,7 +1085,6 @@ function SetCheckpointsStageHL2()
 			Vector(-692, 1, 1311)
 		}	
 	end
-	
 	if TRIGGER_CHANGELEVEL then
 		local changeLevel = ents.Create("trigger_changelevel")
 		changeLevel.Min = Vector(TRIGGER_CHANGELEVEL[1])
@@ -1031,6 +1093,7 @@ function SetCheckpointsStageHL2()
 		changeLevel:SetPos(changeLevel.Pos)
 		changeLevel:Spawn()
 	end
+	
 	if TRIGGER_CHECKPOINT then
 	
 		if TRIGGER_CHECKPOINT[1] and TRIGGER_CHECKPOINT[2] then
@@ -1047,6 +1110,8 @@ function SetCheckpointsStageHL2()
 			lambdaModel1:SetMaterial("editor/orange")
 			lambdaModel1:SetPos(Checkpoint1.Pos)
 			lambdaModel1:Spawn()
+			lambdaModel1:SetName("lambdaCheckpoint")
+			lambdaModel1:ResetSequence("idle")
 		end
 		
 		if TRIGGER_CHECKPOINT[3] and TRIGGER_CHECKPOINT[4] then
@@ -1063,6 +1128,8 @@ function SetCheckpointsStageHL2()
 			lambdaModel2:SetMaterial("editor/orange")
 			lambdaModel2:SetPos(Checkpoint2.Pos)
 			lambdaModel2:Spawn()
+			lambdaModel2:SetName("lambdaCheckpoint")
+			lambdaModel2:ResetSequence("idle")
 		end
 		
 		if TRIGGER_CHECKPOINT[5] and TRIGGER_CHECKPOINT[6] then
@@ -1079,6 +1146,8 @@ function SetCheckpointsStageHL2()
 			lambdaModel3:SetMaterial("editor/orange")
 			lambdaModel3:SetPos(Checkpoint3.Pos)
 			lambdaModel3:Spawn()
+			lambdaModel3:SetName("lambdaCheckpoint")
+			lambdaModel3:ResetSequence("idle")
 		end
 		
 		if TRIGGER_CHECKPOINT[7] and TRIGGER_CHECKPOINT[8] then
@@ -1095,6 +1164,8 @@ function SetCheckpointsStageHL2()
 			lambdaModel4:SetMaterial("editor/orange")
 			lambdaModel4:SetPos(Checkpoint4.Pos)
 			lambdaModel4:Spawn()
+			lambdaModel4:SetName("lambdaCheckpoint")
+			lambdaModel4:ResetSequence("idle")
 		end
 	end
 end

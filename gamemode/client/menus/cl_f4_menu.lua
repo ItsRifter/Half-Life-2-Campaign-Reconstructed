@@ -1,69 +1,13 @@
-surface.CreateFont("F4_font", {
-	font = "Arial",
-	size = 24,
-})
-
-surface.CreateFont("F4_Stats_font", {
-	font = "Arial",
-	size = 28,
-})
-
-surface.CreateFont("F4_Customizer_font", {
-	font = "Arial",
-	bold = true,
-	size = 38,
-})
-
-surface.CreateFont("F4_Shop_Title_font", {
-	font = "Arial",
-	size = 42,
-})
-
-surface.CreateFont("F4_Shop_font", {
-	font = "Arial",
-	size = 32,
-})
-
-surface.CreateFont("F4_Shop_Cost", {
-	font = "Arial",
-	size = 16,
-})
-
-surface.CreateFont("F4_Trader_font", {
-	font = "Arial",
-	size = 28,
-})
-
-surface.CreateFont("F4_Trader_Exchange_font", {
-	font = "Arial",
-	size = 18,
-})
-
-surface.CreateFont("Default", {
-	font = "Arial",
-	size = 48,
-})
-
-surface.CreateFont("Spooky", {
-	font = "Coraline's Cat",
-	size = 48,
-})
-
-surface.CreateFont("Robotic", {
-	font = "Robotica",
-	size = 48,
-})
-
 --Inventory Drag n drop triggers
 local function DropSuit( self, panels, onDropped, Command, x, y )
 	if (onDropped) then
 		for k, v in pairs(panels) do
-			if suitImage:GetImage() != v:GetImage() then
-				suitImage:SetImage(v:GetImage())
+			if suitImage:GetImage() != v:GetChild(0):GetImage() then
+				suitImage:SetImage(v:GetChild(0):GetImage())
 				surface.PlaySound("hl1/fvox/bell.wav")
 				
 				for i, armour in pairs(GAMEMODE.ArmourItem) do
-					if v:GetImage() == GAMEMODE.ArmourItem[i].Icon then
+					if v:GetChild(0):GetImage() == GAMEMODE.ArmourItem[i].Icon then
 						net.Start("AddArmour")
 							net.WriteString(GAMEMODE.ArmourItem[i].Name)
 							net.WriteString(GAMEMODE.ArmourItem[i].Icon)
@@ -72,6 +16,7 @@ local function DropSuit( self, panels, onDropped, Command, x, y )
 						net.SendToServer()
 					end
 					itemButton:Remove()
+					v:Remove()
 				end
 			end
 		end
@@ -81,12 +26,12 @@ end
 local function DropHelmet( self, panels, onDropped, Command, x, y )
 	if (onDropped) then
 		for k, v in pairs(panels) do
-			if helmetImage:GetImage() != v:GetImage() then
-				helmetImage:SetImage(v:GetImage())
+			if helmetImage:GetImage() != v:GetChild(0):GetImage() then
+				helmetImage:SetImage(v:GetChild(0):GetImage())
 				surface.PlaySound("hl1/fvox/bell.wav")
 				
 				for i, armour in pairs(GAMEMODE.ArmourItem) do
-					if v:GetImage() == GAMEMODE.ArmourItem[i].Icon then
+					if v:GetChild(0):GetImage() == GAMEMODE.ArmourItem[i].Icon then
 						net.Start("AddArmour")
 							net.WriteString(GAMEMODE.ArmourItem[i].Name)
 							net.WriteString(GAMEMODE.ArmourItem[i].Icon)
@@ -95,6 +40,7 @@ local function DropHelmet( self, panels, onDropped, Command, x, y )
 						net.SendToServer()
 					end
 					itemButton:Remove()
+					v:Remove()
 				end
 			end
 		end
@@ -104,12 +50,12 @@ end
 local function DropArm( self, panels, onDropped, Command, x, y )
 	if (onDropped) then
 		for k, v in pairs(panels) do
-			if armImage:GetImage() != v:GetImage() then
-				armImage:SetImage(v:GetImage())
+			if armImage:GetImage() != v:GetChild(0):GetImage() then
+				armImage:SetImage(v:GetChild(0):GetImage())
 				surface.PlaySound("hl1/fvox/bell.wav")
 				
 				for i, armour in pairs(GAMEMODE.ArmourItem) do
-					if v:GetImage() == GAMEMODE.ArmourItem[i].Icon then
+					if v:GetChild(0):GetImage() == GAMEMODE.ArmourItem[i].Icon then
 						net.Start("AddArmour")
 							net.WriteString(GAMEMODE.ArmourItem[i].Name)
 							net.WriteString(GAMEMODE.ArmourItem[i].Icon)
@@ -118,6 +64,7 @@ local function DropArm( self, panels, onDropped, Command, x, y )
 						net.SendToServer()
 					end
 					itemButton:Remove()
+					v:Remove()
 				end
 			end
 		end
@@ -127,12 +74,12 @@ end
 local function DropHands( self, panels, onDropped, Command, x, y )
 	if (onDropped) then
 		for k, v in pairs(panels) do
-			if handImage:GetImage() != v:GetImage() then
-				handImage:SetImage(v:GetImage())
+			if handImage:GetImage() != v:GetChild(0):GetImage() then
+				handImage:SetImage(v:GetChild(0):GetImage())
 				surface.PlaySound("hl1/fvox/bell.wav")
 				
 				for i, armour in pairs(GAMEMODE.ArmourItem) do
-					if v:GetImage() == GAMEMODE.ArmourItem[i].Icon then
+					if v:GetChild(0):GetImage() == GAMEMODE.ArmourItem[i].Icon then
 						net.Start("AddArmour")
 							net.WriteString(GAMEMODE.ArmourItem[i].Name)
 							net.WriteString(GAMEMODE.ArmourItem[i].Icon)
@@ -141,6 +88,7 @@ local function DropHands( self, panels, onDropped, Command, x, y )
 						net.SendToServer()
 					end
 					itemButton:Remove()
+					v:Remove()
 				end
 			end
 		end
@@ -150,12 +98,12 @@ end
 local function DropBoot( self, panels, onDropped, Command, x, y )
 	if (onDropped) then
 		for k, v in pairs(panels) do
-			if bootImage:GetImage() != v:GetImage() then
-				bootImage:SetImage(v:GetImage())
+			if bootImage:GetImage() != v:GetChild(0):GetImage() then
+				bootImage:SetImage(v:GetChild(0):GetImage())
 				surface.PlaySound("hl1/fvox/bell.wav")
 				
 				for i, armour in pairs(GAMEMODE.ArmourItem) do
-					if v:GetImage() == GAMEMODE.ArmourItem[i].Icon then
+					if v:GetChild(0):GetImage() == GAMEMODE.ArmourItem[i].Icon then
 						net.Start("AddArmour")
 							net.WriteString(GAMEMODE.ArmourItem[i].Name)
 							net.WriteString(GAMEMODE.ArmourItem[i].Icon)
@@ -164,6 +112,7 @@ local function DropBoot( self, panels, onDropped, Command, x, y )
 						net.SendToServer()
 					end
 					itemButton:Remove()
+					v:Remove()
 				end
 			end
 		end
@@ -173,18 +122,19 @@ end
 local function DropWeapon( self, panels, onDropped, Command, x, y )
 	if (onDropped) then
 		for k, v in pairs(panels) do
-			if wepImage:GetImage() != v:GetImage() then
-				wepImage:SetImage(v:GetImage())
+			if wepImage:GetImage() != v:GetChild(0):GetImage() then
+				wepImage:SetImage(v:GetChild(0):GetImage())
 				surface.PlaySound("hl1/fvox/bell.wav")
 				
 				for i, armour in pairs(GAMEMODE.WeaponItem) do
-					if v:GetImage() == GAMEMODE.WeaponItem[i].Icon then
+					if v:GetChild(0):GetImage() == GAMEMODE.WeaponItem[i].Icon then
 						net.Start("AddWeapon")
 							net.WriteString(GAMEMODE.WeaponItem[i].Name)
 							net.WriteString(GAMEMODE.WeaponItem[i].Icon)
 						net.SendToServer()
 					end
 					itemButton:Remove()
+					v:Remove()
 				end
 			end
 		end
@@ -203,8 +153,7 @@ local function DropSlot( self, panels, onDropped, Command, x, y )
 	end
 end
 
-
-function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font, curEventItems, curEvent, curHats, curTempUpg)
+function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font, curEventItems, curEvent, curHats, curTempUpg, curPermUpg)
 	
 	local getModel = LocalPlayer():GetNWString("Model")
 	
@@ -212,6 +161,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 	local totalKills = LocalPlayer():GetNWInt("Kills")
 	
 	local getLevel = LocalPlayer():GetNWInt("Level")
+	local getPrestige = LocalPlayer():GetNWInt("Prestige")
 	local getXP = LocalPlayer():GetNWInt("XP")
 	local getMaxXP = LocalPlayer():GetNWInt("maxXP")
 	
@@ -234,10 +184,21 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 	CRAFTING_PANEL = Color(255, 200, 0)
 	COLOUR_BLACK_PANEL = Color(0, 0, 0)
 	
-	local F4_Frame = vgui.Create("DFrame")
+	local F4_Frame = vgui.Create("HL2CR.f4Frame")
 	F4_Frame:SetSize(900, 700)
 	F4_Frame:MakePopup()
 	F4_Frame:Center()
+	
+	local f4Btns = vgui.Create("HL2CR.f4Btn", F4_Frame)
+	
+	f4Btns:AddTab("Suit")
+	f4Btns:AddTab("Shop")
+	f4Btns:AddTab("Stats")
+	f4Btns:AddTab("C.U.I")
+	f4Btns:AddTab("Event")
+
+	f4Btns:SetActiveName("Suit")
+	f4Btns:SetSize(512, 32)
 
 	local TabSheet = vgui.Create( "DPropertySheet", F4_Frame )
 	TabSheet:Dock(FILL)
@@ -248,20 +209,22 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 	pmPanel.Paint = function( self, w, h ) 
 		draw.RoundedBox( 4, 0, 0, w, h, COLOUR_MODEL_PANEL ) 
 	end
+	local pmScrollPanel = vgui.Create( "DScrollPanel", pmPanel )
+	pmScrollPanel:Dock(FILL)
 	
-	local currentModel = vgui.Create("DModelPanel", pmPanel)
+	local currentModel = vgui.Create("DModelPanel", pmScrollPanel)
 	currentModel:SetSize(700, 600)
-	currentModel:Center()
+	currentModel:SetPos(-150, 50)
 	currentModel.Think = function()
 		currentModel:SetModel(getModel)
 	end
 	function currentModel:LayoutEntity( Entity ) return end
 	
-	local selectPMScrollPanel = vgui.Create("DHorizontalScroller", pmPanel)
+	local selectPMScrollPanel = vgui.Create("DHorizontalScroller", pmScrollPanel)
 	selectPMScrollPanel:SetSize(325, 65)
 	selectPMScrollPanel:SetPos(475, 475)
 
-	local selectPMLabel = vgui.Create("DLabel", pmPanel)
+	local selectPMLabel = vgui.Create("DLabel", pmScrollPanel)
 	selectPMLabel:SetText("Select Model")
 	selectPMLabel:SetFont("F4_font")
 	selectPMLabel:SetPos(565, 450)
@@ -455,7 +418,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 		end
 	end
 	
-	local helmetPanelReceiver = vgui.Create("DPanel", pmPanel)
+	local helmetPanelReceiver = vgui.Create("DPanel", pmScrollPanel)
 	helmetPanelReceiver:SetPos(225, 25)
 	helmetPanelReceiver:SetSize(75, 75)
 	helmetPanelReceiver:SetToolTip("Armour for your head")
@@ -490,7 +453,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 		helmetImage:SetImage("hlmv/gray")
 	end
 	
-	local suitPanelReceiver = vgui.Create("DPanel", pmPanel)
+	local suitPanelReceiver = vgui.Create("DPanel", pmScrollPanel)
 	suitPanelReceiver:SetPos(25, 175)
 	suitPanelReceiver:SetSize(75, 75)
 	suitPanelReceiver:SetToolTip("Armour for your body")
@@ -518,6 +481,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 					net.SendToServer()
 					suitImage:SetImage("hlmv/gray")
 					itemButton:Remove()
+					suitPanelReceiver:Remove()
 				end
 			end
 		end
@@ -525,7 +489,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 		suitImage:SetImage("hlmv/gray")
 	end
 	
-	local armPanelReceiver = vgui.Create("DPanel", pmPanel)
+	local armPanelReceiver = vgui.Create("DPanel", pmScrollPanel)
 	armPanelReceiver:SetPos(300, 175)
 	armPanelReceiver:SetSize(75, 75)
 	armPanelReceiver:SetToolTip("Armour for your arms")
@@ -563,7 +527,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 		armImage:SetImage("hlmv/gray")
 	end
 	
-	local handPanelReceiver = vgui.Create("DPanel", pmPanel)
+	local handPanelReceiver = vgui.Create("DPanel", pmScrollPanel)
 	handPanelReceiver:SetPos(275, 350)
 	handPanelReceiver:SetSize(75, 75)
 	handPanelReceiver:SetToolTip("Armour for your hands")
@@ -598,7 +562,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 		handImage:SetImage("hlmv/gray")
 	end
 	
-	local weaponPanelReceiver = vgui.Create("DPanel", pmPanel)
+	local weaponPanelReceiver = vgui.Create("DPanel", pmScrollPanel)
 	weaponPanelReceiver:SetPos(275, 450)
 	weaponPanelReceiver:SetSize(75, 75)
 	weaponPanelReceiver:SetToolTip("Starting Weapons")
@@ -632,7 +596,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 		wepImage:SetImage("hlmv/gray")
 	end
 	
-	local bootPanelReceiver = vgui.Create("DPanel", pmPanel)
+	local bootPanelReceiver = vgui.Create("DPanel", pmScrollPanel)
 	bootPanelReceiver:SetPos(25, 450)
 	bootPanelReceiver:SetSize(75, 75)
 	bootPanelReceiver:SetToolTip("Armour for your feet")
@@ -671,160 +635,267 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 	--vgui/cursors/no
 	--vgui/hud/icon_check
 	
-	local armourLabel = vgui.Create("DLabel", pmPanel)
+	local armourLabel = vgui.Create("DLabel", pmScrollPanel)
 	armourLabel:SetPos(400, 50)
 	armourLabel:SetFont("F4_Stats_font")
 	armourLabel:SetText("Armour: " .. curArmour)
 	armourLabel:SizeToContents()
 	
-	local inventoryPanel = vgui.Create("DPanel", pmPanel)
+	local inventoryPanel = vgui.Create("DPanel", pmScrollPanel)
 	inventoryPanel:SetSize(400, 350)
 	inventoryPanel:SetPos(400, 95)
 	inventoryPanel.Paint = function( self, w, h ) 
 		draw.RoundedBox( 4, 0, 0, w, h, INVENTORY_MENU ) 
 	end 
 	
-	local inventoryLayout = vgui.Create("DIconLayout", pmPanel)
-	inventoryLayout:SetPos(400, 100)
-	inventoryLayout:SetSize(400, 150)
+	local inventoryLayout = vgui.Create("DIconLayout", inventoryPanel)
+	inventoryLayout:Dock(FILL)
 	inventoryLayout:Receiver("Inventory", DoDrop)
-	inventoryLayout:SetSpaceX(5)
-	inventoryLayout:SetSpaceY(5)	
+	inventoryLayout:SetSpaceX(6)
+	inventoryLayout:SetSpaceY(6)	
 	
 	--Gets max inventory space
 	local maxSpace = tonumber(LocalPlayer():GetNWInt("MaxInvSpace"))
-	
-	for k, itemName in pairs(inventoryItems) do
+	--inventoryLayout.Think = function()
 		
-		local itemImg = vgui.Create("DImage")
-		itemImg:SetSize(75, 75)
+		for k, itemName in pairs(inventoryItems) do
 		
-		--Weapons
-		if itemName == "Medkit" then
-			itemImg:SetImage("hl2cr/armour_parts/health")
-			itemImg:Droppable("Wep")
+			local itemPnl = vgui.Create("DPanel")
+			itemPnl:SetSize(75, 75)
 		
-		--Upg Items
-		elseif itemName == "Health_Module_MK1" then
-			itemImg:SetImage("hl2cr/armour_parts/health")
-			itemImg:Droppable("Arm")
+			local itemImg = itemPnl:Add("DImage")
+			itemImg:SetSize(75, 75)
 			
-		elseif itemName == "Health_Module_MK2" then
-			itemImg:SetImage("hl2cr/armour_parts/healthmk2")
-			itemImg:Droppable("Arm")	
+			local itemAmt = itemImg:Add("DLabel")
+			itemAmt:SetFont("F4_font")
+			itemAmt:SizeToContents()
+			itemAmt:SetPos(0, 0)
 			
-		elseif itemName == "Health_Module_MK3" then
-			itemImg:SetImage("hl2cr/armour_parts/healthmk3")
-			itemImg:Droppable("Arm")
-			
-		elseif itemName == "Suit_Battery_Pack_MK1" then
-			itemImg:SetImage("hl2cr/armour_parts/battery")
-			itemImg:Droppable("Arm")
-			
-		elseif itemName == "Suit_Battery_Pack_MK2" then
-			itemImg:SetImage("hl2cr/armour_parts/batterymk2")
-			itemImg:Droppable("Arm")
-			
-		elseif itemName == "Suit_Battery_Pack_MK3" then
-			itemImg:SetImage("hl2cr/armour_parts/batterymk3")
-			itemImg:Droppable("Arm")
+			itemPnl:SetToolTip(inventoryItems[k])
+			--Weapons
+			if itemName == "Medkit" then
+				itemImg:SetImage("hl2cr/armour_parts/health")
+				itemImg:Droppable("Wep")
+				itemAmt:SetText("")
+			--Upg Items
+			elseif itemName == "Health_Module_MK1" then
+				itemImg:SetImage("hl2cr/armour_parts/health")
+				itemPnl:Droppable("Arm")
+				itemAmt:SetText("")
+				
+			elseif itemName == "Health_Module_MK2" then
+				itemImg:SetImage("hl2cr/armour_parts/healthmk2")
+				itemPnl:Droppable("Arm")
+				itemAmt:SetText("")				
+				
+			elseif itemName == "Health_Module_MK3" then
+				itemImg:SetImage("hl2cr/armour_parts/healthmk3")
+				itemPnl:Droppable("Arm")
+				itemAmt:SetText("")
+				
+			elseif itemName == "Suit_Battery_Pack_MK1" then
+				itemImg:SetImage("hl2cr/armour_parts/battery")
+				itemPnl:Droppable("Arm")
+				itemAmt:SetText("")
+				
+			elseif itemName == "Suit_Battery_Pack_MK2" then
+				itemImg:SetImage("hl2cr/armour_parts/batterymk2")
+				itemPnl:Droppable("Arm")
+				itemAmt:SetText("")
+				
+			elseif itemName == "Suit_Battery_Pack_MK3" then
+				itemImg:SetImage("hl2cr/armour_parts/batterymk3")
+				itemPnl:Droppable("Arm")
+				itemAmt:SetText("")
 
-		--Arm Items, is also shoulder
-		elseif itemName == "Spiked_Padding" then
-			itemImg:SetImage("hl2cr/armour_parts/spikedpadding")
-			itemImg:Droppable("Arm")
-		
-		elseif itemName == "Steel_Padding" then
-			itemImg:SetImage("hl2cr/armour_parts/steelpadding")
-			itemImg:Droppable("Arm")
+			--Arm Items, is also shoulder
+			elseif itemName == "Spiked_Padding" then
+				itemImg:SetImage("hl2cr/armour_parts/spikedpadding")
+				itemPnl:Droppable("Arm")
+				itemAmt:SetText("8")
 			
-		elseif itemName == "Shoulder_Plate" then
-			itemImg:SetImage("hl2cr/armour_parts/shoulderplate")
-			itemImg:Droppable("Arm")
-		
-		--Hand Items
-		elseif itemName == "Pair_Gloves" then
-			itemImg:SetImage("hl2cr/armour_parts/gloves")
-			itemImg:Droppable("Hand")
+			elseif itemName == "Steel_Padding" then
+				itemImg:SetImage("hl2cr/armour_parts/steelpadding")
+				itemPnl:Droppable("Arm")
+				itemAmt:SetText("10")
+				
+			elseif itemName == "Shoulder_Plate" then
+				itemImg:SetImage("hl2cr/armour_parts/shoulderplate")
+				itemPnl:Droppable("Arm")
+				itemAmt:SetText("14")
 			
-		elseif itemName == "Steel_Gloves" then
-			itemImg:SetImage("hl2cr/armour_parts/steelglove")
-			itemImg:Droppable("Hand")
+			--Hand Items
+			elseif itemName == "Pair_Gloves" then
+				itemImg:SetImage("hl2cr/armour_parts/gloves")
+				itemPnl:Droppable("Hand")
+				itemAmt:SetText("2")
+				
+			elseif itemName == "Steel_Gloves" then
+				itemImg:SetImage("hl2cr/armour_parts/steelglove")
+				itemPnl:Droppable("Hand")
+				itemAmt:SetText("5")
+				
+			elseif itemName == "Leather_Gloves" then
+				itemImg:SetImage("hl2cr/armour_parts/leathergloves")
+				itemPnl:Droppable("Hand")
+				itemAmt:SetText("4")
 			
-		elseif itemName == "Leather_Gloves" then
-			itemImg:SetImage("hl2cr/armour_parts/leathergloves")
-			itemImg:Droppable("Hand")
-		
-		--Helmet Items
-		elseif itemName == "HECU_Gasmask" then
-			itemImg:SetImage("hl2cr/armour_parts/hecu")
-			itemImg:Droppable("Helmet")
+			--Helmet Items
+			elseif itemName == "HECU_Gasmask" then
+				itemImg:SetImage("hl2cr/armour_parts/hecu")
+				itemPnl:Droppable("Helmet")
+				itemAmt:SetText("6")
 
-		elseif itemName == "Steel_Helmet" then
-			itemImg:SetImage("hl2cr/armour_parts/helmet")
-			itemImg:Droppable("Helmet")
-			
-		elseif itemName == "Soldier_Helmet" then
-			itemImg:SetImage("hl2cr/armour_parts/soldierhelm")
-			itemImg:Droppable("Helmet")
-		
-		--Suit Items
-		elseif itemName == "Mark_VII_Suit" then
-			itemImg:SetImage("hl2cr/armour_parts/suit")
-			itemImg:Droppable("Suit")
-			
-		elseif itemName == "Metal_Chestplate" then
-			itemImg:SetImage("hl2cr/armour_parts/metalchest")
-			itemImg:Droppable("Suit")
+			elseif itemName == "Steel_Helmet" then
+				itemImg:SetImage("hl2cr/armour_parts/helmet")
+				itemPnl:Droppable("Helmet")
+				itemAmt:SetText("15")
+				
+			elseif itemName == "Soldier_Helmet" then
+				itemImg:SetImage("hl2cr/armour_parts/soldierhelm")
+				itemPnl:Droppable("Helmet")
+				itemAmt:SetText("10")
+				
+			--Suit Items
+			elseif itemName == "Mark_VII_Suit" then
+				itemImg:SetImage("hl2cr/armour_parts/suit")
+				itemPnl:Droppable("Suit")
+				itemAmt:SetText("25")
+				
+			elseif itemName == "Metal_Chestplate" then
+				itemImg:SetImage("hl2cr/armour_parts/metalchest")
+				itemPnl:Droppable("Suit")
+				itemAmt:SetText("15")
 
-		elseif itemName == "Leather_Chestplate" then
-			itemImg:SetImage("hl2cr/armour_parts/leather")
-			itemImg:Droppable("Suit")
-			
-		--Boot Items
-		elseif itemName == "Steel_Boots" then
-			itemImg:SetImage("hl2cr/armour_parts/steelboot")
-			itemImg:Droppable("Boot")
-			
-		elseif itemName == "Metal_Boots" then
-			itemImg:SetImage("hl2cr/armour_parts/metalboot")
-			itemImg:Droppable("Boot")
-			
-		--Special Items
-		elseif itemName == "Witch_Hat" then
-			itemImg:SetImage("hl2cr/armour_parts/witchhat")
-			itemImg:Droppable("Helmet")
-		--If nothing, display a grey blank image
-		else
-			itemImg:SetImage("hlmv/gray")
-		end
-		
-		inventoryLayout:Add(itemImg)
-		
-		if itemName then
-			itemButton = itemImg:Add("DButton")
-			itemButton:SetPos(0, 60)
-			itemButton:SetSize(25, 25)
-			itemButton:SetText("Sell")
-			itemButton:SizeToContents()
-			
-			function itemButton:DoClick()
-				for i, armour in pairs(GAMEMODE.ArmourItem) do
-					if itemImg:GetImage() == GAMEMODE.ArmourItem[i].Icon then
-						net.Start("SellItem")
-							net.WriteString(GAMEMODE.ArmourItem[i].Name)
-							net.WriteInt(GAMEMODE.ArmourItem[i].Cost, 32)
-						net.SendToServer()
-					end
-				end
+			elseif itemName == "Leather_Chestplate" then
+				itemImg:SetImage("hl2cr/armour_parts/leather")
+				itemPnl:Droppable("Suit")
+				itemAmt:SetText("5")
+				
+			--Boot Items
+			elseif itemName == "Steel_Boots" then
+				itemImg:SetImage("hl2cr/armour_parts/steelboot")
+				itemPnl:Droppable("Boot")
+				itemAmt:SetText("7")
+				
+			elseif itemName == "Metal_Boots" then
+				itemImg:SetImage("hl2cr/armour_parts/metalboot")
+				itemPnl:Droppable("Boot")
+				itemAmt:SetText("5")
+				
+			--Special Items
+			elseif itemName == "Witch_Hat" then
+				itemImg:SetImage("hl2cr/armour_parts/witchhat")
+				itemPnl:Droppable("Helmet")
+			--If nothing, display a grey blank image
+			else
 				itemImg:SetImage("hlmv/gray")
-				itemButton:Remove()
+			end
+			
+			inventoryLayout:Add(itemPnl)
+			
+			if itemName then
+				itemButton = itemImg:Add("DButton")
+				itemButton:SetPos(0, 60)
+				itemButton:SetSize(25, 25)
+				itemButton:SetText("Sell")
+				itemButton:SizeToContents()
+				
+				function itemButton:DoClick()
+					for i, armour in pairs(GAMEMODE.ArmourItem) do
+						if itemImg:GetImage() == GAMEMODE.ArmourItem[i].Icon then
+							net.Start("SellItem")
+								net.WriteString(GAMEMODE.ArmourItem[i].Name)
+								net.WriteInt(GAMEMODE.ArmourItem[i].Cost, 32)
+							net.SendToServer()
+						end
+					end
+					itemImg:Remove()
+				end
 			end
 		end
+	--end
+	
+	local upgsPanel = vgui.Create("DPanel", pmScrollPanel)
+	upgsPanel:SetSize(400, 250)
+	upgsPanel:SetPos(400, 550)
+	upgsPanel.Paint = function( self, w, h ) 
+		draw.RoundedBox( 4, 0, 0, w, h, INVENTORY_MENU ) 
+	end 
+	
+	local upgsLayout = vgui.Create("DIconLayout", upgsPanel)
+	upgsLayout:Dock(FILL)
+	upgsLayout:SetSpaceX(6)
+	upgsLayout:SetSpaceY(6)
+	
+	for l, tempUpgName in pairs(curTempUpg) do
+		
+		local upgPanel = vgui.Create("DPanel")
+		upgPanel:SetSize(75, 75)
+		
+		local upgImg = upgPanel:Add("DImage")
+		upgImg:SetSize(75, 75)
+		
+		if tempUpgName == "Health_Boost" then
+			upgImg:SetImage("hl2cr/armour_parts/health")
+			upgPanel:SetToolTip(curTempUpg[l] .. "\nBullets mean nothing to you")
+			
+		elseif tempUpgName == "Shotgun_Blaster" then
+			upgImg:SetImage("hl2cr/misc/shells")
+			upgPanel:SetToolTip(curTempUpg[l] .. "\nYour shotgun can deal more damage")
+			
+		elseif tempUpgName == "Self_Healing" then
+			upgImg:SetImage("hl2cr/armour_parts/health")
+			upgPanel:SetToolTip(curTempUpg[l] .. "\nYour body manages to self-heal any damage\nafter a certain time")
+			
+		elseif tempUpgName == "Self_Healing_2" then
+			upgImg:SetImage("hl2cr/armour_parts/health")
+			upgPanel:SetToolTip(curTempUpg[l] .. "\nYour body manages to self-heal any damage\nafter a certain time better")
+			
+		elseif tempUpgName == "Self_Healing_3" then
+			upgImg:SetImage("hl2cr/armour_parts/health")
+			upgPanel:SetToolTip(curTempUpg[l] .. "\nYour body manages to self-heal any damage\nafter a certain time even better")
+			
+		elseif tempUpgName == "Blast_Resistance" then
+			upgImg:SetImage("hl2cr/misc/blast_resist")
+			upgPanel:SetToolTip(curTempUpg[l] .. "\nExplosions are just a scratch to you")
+		end
+		
+		local upgLabel = upgPanel:Add("DLabel")
+		upgLabel:SetText("Temp")
+		upgLabel:SetFont("F4_font")
+		upgLabel:SizeToContents()
+		upgLabel:SetPos(0, 0)
+		
+		upgsLayout:Add(upgPanel)
 	end
 	
-	TabSheet:AddSheet("Suit", pmPanel, nil)	
+	for l, permUpgName in pairs(curPermUpg) do
 		
+		local upgPanel = vgui.Create("DPanel")
+		upgPanel:SetSize(75, 75)
+		
+		local upgImg = upgPanel:Add("DImage")
+		upgImg:SetSize(75, 75)
+		
+		if permUpgName == "Vampirism" then
+			upgImg:SetImage("hl2cr/mats/vampire")
+			upgPanel:SetToolTip(curPermUpg[l] .. "\nLeech enemies health on crowbar kill by chance")
+		end
+		
+		local upgLabel = upgPanel:Add("DLabel")
+		upgLabel:SetText("Perm")
+		upgLabel:SetFont("F4_font")
+		upgLabel:SizeToContents()
+		upgLabel:SetPos(0, 0)
+		
+		upgsLayout:Add(upgPanel)
+	end
+	
+	TabSheet:AddSheet("", pmPanel, nil)	
+	
+	
+	
 	local shopPanel = vgui.Create("DPanel", F4_Frame)
 	shopPanel.Paint = function( self, w, h ) 
 		draw.RoundedBox( 4, 0, 0, w, h, COLOUR_MODEL_PANEL ) 
@@ -837,7 +908,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 	shopTitleLabel:SetText("CrowMart Shop")
 	shopTitleLabel:SetFont("F4_Shop_Title_font")
 	shopTitleLabel:SizeToContents()
-	shopTitleLabel:SetPos(300, 25)
+	shopTitleLabel:SetPos(315, 25)
 	
 	local curCoinsLabel = vgui.Create("DLabel", shopScroll)
 	curCoinsLabel:SetText("Coins: " .. curCoins)
@@ -850,6 +921,12 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 	curEssenceLabel:SetFont("F4_Shop_font")
 	curEssenceLabel:SetPos(370, 115)
 	curEssenceLabel:SizeToContents()
+	
+	local curCrystLabel = vgui.Create("DLabel", shopScroll)
+	curCrystLabel:SetText("Crystal Anomalies: " .. curCryst)
+	curCrystLabel:SetFont("F4_Shop_font")
+	curCrystLabel:SetPos(315, 155)
+	curCrystLabel:SizeToContents()
 	
 	shopPanel.Think = function()
 		curCoinsLabel:SetText("Coins: " .. curCoins)
@@ -877,6 +954,9 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 	armourLayout:SetSpaceY(5)
 	
 	for i, armour in pairs(GAMEMODE.ArmourItem) do
+		if getPrestige < GAMEMODE.ArmourItem[i].PrestigeReq then 
+			break 
+		end
 		local armourItem = armourLayout:Add("DPanel")
 		armourItem:SetSize(80, 80)
 		
@@ -919,7 +999,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 				surface.PlaySound("buttons/button9.wav")
 			end
 		end
-		
+	end
 	local shopWeaponsLabel = vgui.Create("DLabel", shopScroll)
 	shopWeaponsLabel:SetText("Weapons")
 	shopWeaponsLabel:SetFont("F4_Shop_font")
@@ -951,7 +1031,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 		
 		local weaponButton = weaponItem:Add("DButton")
 		weaponButton:SetSize(80, 80)
-		weaponButton:SetToolTip(GAMEMODE.WeaponItem[i].Name .. "\n" .. GAMEMODE.WeaponItem[i].Desc .. "\n" .. display)
+		weaponButton:SetToolTip(GAMEMODE.WeaponItem[i].Name .. "\n" .. GAMEMODE.WeaponItem[i].Desc)
 		weaponButton:SetText("")
 		weaponButton:SetDrawBackground(false)
 		weaponButton.DoClick = function()
@@ -972,55 +1052,119 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 		end
 	end
 	
-		local shopTempUpgLabel = vgui.Create("DLabel", shopScroll)
-		shopTempUpgLabel:SetText("Temporary Upgrades")
-		shopTempUpgLabel:SetFont("F4_Shop_font")
-		shopTempUpgLabel:SizeToContents()
-		shopTempUpgLabel:SetPos(525, 200)
+	local shopTempUpgLabel = vgui.Create("DLabel", shopScroll)
+	shopTempUpgLabel:SetText("Temporary Upgrades")
+	shopTempUpgLabel:SetFont("F4_Shop_font")
+	shopTempUpgLabel:SizeToContents()
+	shopTempUpgLabel:SetPos(525, 200)
+	
+	local tempUpgScroll = vgui.Create("DScrollPanel", shopScroll)
+	tempUpgScroll:SetPos(475, 250)
+	tempUpgScroll:SetSize(350, 150)
+	
+	local tempUpgLayout = vgui.Create("DIconLayout", tempUpgScroll)
+	tempUpgLayout:Dock(FILL)
+	tempUpgLayout:SetSpaceX(5)
+	tempUpgLayout:SetSpaceY(5)
+	
+	for i, tempUpg in pairs(GAMEMODE.TempUpgItem) do
+		if not table.HasValue(curTempUpg, GAMEMODE.TempUpgItem[i].Name) then 
+			local tempUpgItem = tempUpgLayout:Add("DPanel")
+			tempUpgItem:SetSize(80, 80)
 		
-		local tempUpgScroll = vgui.Create("DScrollPanel", shopScroll)
-		tempUpgScroll:SetPos(475, 250)
-		tempUpgScroll:SetSize(350, 150)
-		
-		local tempUpgLayout = vgui.Create("DIconLayout", tempUpgScroll)
-		tempUpgLayout:Dock(FILL)
-		tempUpgLayout:SetSpaceX(5)
-		tempUpgLayout:SetSpaceY(5)
-		
-		for i, tempUpg in pairs(GAMEMODE.TempUpgItem) do
-			if not table.HasValue(curTempUpg, GAMEMODE.TempUpgItem[i].Name) then
-				local tempUpgItem = tempUpgLayout:Add("DPanel")
-				tempUpgItem:SetSize(80, 80)
+			local tempUpgIcon = tempUpgItem:Add("DImage")
+			tempUpgIcon:SetSize(80, 80)
+			tempUpgIcon:SetImage(GAMEMODE.TempUpgItem[i].Icon)
+						
+			local tempUpgButton = tempUpgItem:Add("DButton")
+			tempUpgButton:SetSize(80, 80)
 			
-				local tempUpgIcon = tempUpgItem:Add("DImage")
-				tempUpgIcon:SetSize(80, 80)
-				tempUpgIcon:SetImage(GAMEMODE.TempUpgItem[i].Icon)
-							
-				local tempUpgButton = tempUpgItem:Add("DButton")
-				tempUpgButton:SetSize(80, 80)
-				tempUpgButton:SetToolTip(GAMEMODE.TempUpgItem[i].Name .. "\n" .. GAMEMODE.TempUpgItem[i].Desc)
-				tempUpgButton:SetText("Essence: " .. GAMEMODE.TempUpgItem[i].EssenceCost)
-				tempUpgButton:SetColor(Color(255, 225, 165))
-				tempUpgButton:SetDrawBackground(false)
-				tempUpgButton.DoClick = function()
-					if curEssence < GAMEMODE.TempUpgItem[i].EssenceCost then
-						surface.PlaySound("buttons/button10.wav")
-						LocalPlayer():ChatPrint("Insufficient Essence")
-					else
-						tempUpgItem:Remove()
-						net.Start("Upgrade")
-							net.WriteString(GAMEMODE.TempUpgItem[i].Name)
-							net.WriteInt(GAMEMODE.TempUpgItem[i].EssenceCost, 16)
-						net.SendToServer()
-						curEssence = curEssence - GAMEMODE.TempUpgItem[i].EssenceCost
-						surface.PlaySound("buttons/button9.wav")
-					end
+			tempUpgButton:SetToolTip(GAMEMODE.TempUpgItem[i].Name .. "\n" .. GAMEMODE.TempUpgItem[i].Desc)
+			tempUpgButton:SetText("Cost: λ" .. GAMEMODE.TempUpgItem[i].Cost .. "\nEssence: " .. GAMEMODE.TempUpgItem[i].EssenceCost)
+			tempUpgButton:SetColor(Color(255, 225, 165))
+			tempUpgButton:SetFont("F4_Shop_Cost_Upgs")
+			tempUpgButton:SetDrawBackground(false)
+			tempUpgButton.DoClick = function()
+				if curEssence < GAMEMODE.TempUpgItem[i].EssenceCost or curCoins < GAMEMODE.TempUpgItem[i].Cost then
+					surface.PlaySound("buttons/button10.wav")
+					LocalPlayer():ChatPrint("Insufficient Coins/Materials")
+				else
+					tempUpgItem:Remove()
+					net.Start("Upgrade")
+						net.WriteString(GAMEMODE.TempUpgItem[i].Name)
+						net.WriteInt(GAMEMODE.TempUpgItem[i].Cost, 16)
+						net.WriteInt(GAMEMODE.TempUpgItem[i].EssenceCost, 16)
+						net.WriteInt(0, 16)
+						net.WriteString("hl2cr_tempupg")
+					net.SendToServer()
+					curCoins = curCoins - GAMEMODE.TempUpgItem[i].Cost
+					curEssence = curEssence - GAMEMODE.TempUpgItem[i].EssenceCost
+					surface.PlaySound("buttons/button9.wav")
 				end
 			end
 		end
 	end
+		
+	local shopPermUpgLabel = vgui.Create("DLabel", shopScroll)
+	shopPermUpgLabel:SetText("Permanent Upgrades")
+	shopPermUpgLabel:SetFont("F4_Shop_font")
+	shopPermUpgLabel:SizeToContents()
+	shopPermUpgLabel:SetPos(525, 500)
 	
-	TabSheet:AddSheet("Shop", shopPanel, nil)
+	local permUpgScroll = vgui.Create("DScrollPanel", shopScroll)
+	permUpgScroll:SetPos(475, 550)
+	permUpgScroll:SetSize(350, 150)
+	
+	local permUpgLayout = vgui.Create("DIconLayout", permUpgScroll)
+	permUpgLayout:Dock(FILL)
+	permUpgLayout:SetSpaceX(5)
+	permUpgLayout:SetSpaceY(5)
+	
+	for k, permUpg in pairs(GAMEMODE.PermUpgItem) do
+		if not table.HasValue(curPermUpg, GAMEMODE.PermUpgItem[k].Name) then 
+			local permUpgItem = permUpgLayout:Add("DPanel")
+			permUpgItem:SetSize(80, 80)
+		
+			local permUpgIcon = permUpgItem:Add("DImage")
+			permUpgIcon:SetSize(80, 80)
+			permUpgIcon:SetImage(GAMEMODE.PermUpgItem[k].Icon)
+						
+			local permUpgButton = permUpgItem:Add("DButton")
+			permUpgButton:SetSize(80, 80)
+			permUpgButton:SetToolTip(GAMEMODE.PermUpgItem[k].Name .. "\n" .. GAMEMODE.PermUpgItem[k].Desc)
+			permUpgButton:SetText("Cost: λ" .. GAMEMODE.PermUpgItem[k].Cost .. "\nEssence: " .. GAMEMODE.PermUpgItem[k].EssenceCost .. "\nCrystal: " .. GAMEMODE.PermUpgItem[k].CrystalCost)
+			permUpgButton:SetColor(Color(255, 225, 165))
+			permUpgButton:SetFont("F4_Shop_Cost_Upgs")
+			permUpgButton:SetDrawBackground(false)
+			permUpgButton.DoClick = function()
+				if curEssence < GAMEMODE.PermUpgItem[k].EssenceCost or curCoins < GAMEMODE.PermUpgItem[k].Cost or curCryst < GAMEMODE.PermUpgItem[k].CrystalCost then
+					surface.PlaySound("buttons/button10.wav")
+					LocalPlayer():ChatPrint("Insufficient Coins/Materials")
+				else
+					permUpgItem:Remove()
+					net.Start("Upgrade")
+						net.WriteString(GAMEMODE.PermUpgItem[k].Name)
+						net.WriteInt(GAMEMODE.PermUpgItem[k].Cost, 16)
+						net.WriteInt(GAMEMODE.PermUpgItem[k].EssenceCost, 16)
+						net.WriteInt(GAMEMODE.PermUpgItem[k].CrystalCost, 16)
+						net.WriteString("hl2cr_permupg")
+					net.SendToServer()
+					if GAMEMODE.PermUpgItem[k].Cost then
+						curCoins = curCoins - GAMEMODE.PermUpgItem[k].Cost
+					end
+					if GAMEMODE.PermUpgItem[k].EssenceCost then
+						curEssence = curEssence - GAMEMODE.PermUpgItem[k].EssenceCost
+					end
+					
+					if GAMEMODE.PermUpgItem[k].CrystalCost then
+						curCryst = curCryst - GAMEMODE.PermUpgItem[k].CrystalCost
+					end
+					surface.PlaySound("buttons/button9.wav")
+				end
+			end
+		end
+	end
+	TabSheet:AddSheet("", shopPanel, nil)
 	
 	local statsPanel = vgui.Create("DPanel", F4_Frame)
 	statsPanel.Paint = function( self, w, h ) 
@@ -1082,82 +1226,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 	CrystLabel:SetFont("F4_Stats_font")
 	CrystLabel:SizeToContents()
 	
-	TabSheet:AddSheet("Stats", statsPanel, nil)
-
-	local traderPanel = vgui.Create("DPanel", F4_Frame)
-	traderPanel.Paint = function( self, w, h ) 
-		draw.RoundedBox( 4, 0, 0, w, h, COLOUR_BLACK_PANEL ) 
-	end
-	
-	local vortiModel = vgui.Create("DModelPanel", traderPanel)
-	vortiModel:SetSize(700, 600)
-	vortiModel:SetPos(425, 50)
-	vortiModel:SetModel("models/vortigaunt.mdl")
-	function vortiModel:LayoutEntity( Entity ) return end
-
-	local welcomeLabel = vgui.Create("DLabel", traderPanel)
-	welcomeLabel:SetText("Welcome Human,\nDo you wish to exchange some coins?")
-	welcomeLabel:SetPos(25, 25)
-	welcomeLabel:SetFont("F4_Trader_font")
-	welcomeLabel:SizeToContents()
-
-	local welcomeLabel2 = vgui.Create("DLabel", traderPanel)
-	welcomeLabel2:SetText("I'll sell essence for λ" .. randomExchange .. " each")
-	welcomeLabel2:SetPos(25, 125)
-	welcomeLabel2:SetFont("F4_Trader_font")
-	welcomeLabel2:SizeToContents()
-
-	local exchangeLabel = vgui.Create("DLabel", traderPanel)
-	exchangeLabel:SetText("Essence")
-	exchangeLabel:SetPos(115, 195)
-	exchangeLabel:SetFont("F4_Trader_font")
-	exchangeLabel:SizeToContents()
-	
-	local exchangeLabel2 = vgui.Create("DLabel", traderPanel)
-	exchangeLabel2:SetText("Lambda")
-	exchangeLabel2:SetPos(265, 195)
-	exchangeLabel2:SetFont("F4_Trader_font")
-	exchangeLabel2:SizeToContents()
-	
-	local exchangerEssence = vgui.Create("DNumberWang", traderPanel)
-	exchangerEssence:SetSize(75, 25)
-	exchangerEssence:SetPos(125, 225)
-	exchangerEssence:SetMin(1)
-	exchangerEssence:SetValue(1)
-	
-	local exchangerCoinLabel = vgui.Create("DLabel", traderPanel)
-	exchangerCoinLabel:SetText("λ" .. exchangerEssence:GetValue() * randomExchange)
-	exchangerCoinLabel:SetPos(285, 225)
-	exchangerCoinLabel:SetFont("F4_Trader_Exchange_font")
-	exchangerCoinLabel:SizeToContents()
-	
-	exchangerCoinLabel.Think = function()
-		exchangerCoinLabel:SetText("λ" .. exchangerEssence:GetValue() * randomExchange)
-		exchangerCoinLabel:SizeToContents()
-	end
-	
-	local exchangeButton = vgui.Create("DButton", traderPanel)
-	exchangeButton:SetPos(175, 275)
-	exchangeButton:SetSize(150, 50)
-	exchangeButton:SetText("Make Exchange")
-	exchangeButton:SetFont("F4_Trader_Exchange_font")
-	exchangeButton.DoClick = function()
-		if curCoins < exchangerEssence:GetValue() * randomExchange then
-			LocalPlayer():ChatPrint("You don't have enough coins")
-			surface.PlaySound("buttons/button10.wav")
-		elseif exchangerEssence:GetValue() < 0 then
-			LocalPlayer():ChatPrint("Questionable... but I won't do that")
-			surface.PlaySound("buttons/button10.wav")
-		elseif curCoins > exchangerEssence:GetValue() * randomExchange then
-			net.Start("Exchange")
-				net.WriteInt(exchangerEssence:GetValue(), 32)
-			net.SendToServer()
-			curCoins = curCoins - (exchangerEssence:GetValue() * randomExchange)
-			surface.PlaySound("buttons/button9.wav")
-		end
-	end
-	
-	TabSheet:AddSheet("Trader", traderPanel, nil)
+	TabSheet:AddSheet("", statsPanel, nil)
 	
 	--[[
 	local metalInput = CreateSound(LocalPlayer(), "physics/metal/metal_barrel_impact_hard1.wav")
@@ -1366,7 +1435,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 		net.SendToServer()
 	end
 	
-	TabSheet:AddSheet("Customizer", customPanel, nil)
+	TabSheet:AddSheet("", customPanel, nil)
 	
 	local eventPanel = vgui.Create("DPanel", F4_Frame)
 	eventPanel.Paint = function( self, w, h ) 
@@ -1413,12 +1482,28 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 		noEvent:SizeToContents()
 	end
 	
-	TabSheet:AddSheet("Event", eventPanel, nil)
+	TabSheet:AddSheet("", eventPanel, nil)
+	
+	F4_Frame.Think = function()
+		if f4Btns.active == 1 then
+			TabSheet:SetActiveTab(TabSheet:GetItems()[1].Tab)
+		elseif f4Btns.active == 2 then
+			TabSheet:SetActiveTab(TabSheet:GetItems()[2].Tab)
+		elseif f4Btns.active == 3 then
+			TabSheet:SetActiveTab(TabSheet:GetItems()[3].Tab)
+		elseif f4Btns.active == 4 then
+			TabSheet:SetActiveTab(TabSheet:GetItems()[4].Tab)
+		elseif f4Btns.active == 5 then
+			TabSheet:SetActiveTab(TabSheet:GetItems()[5].Tab)
+		elseif f4Btns.active == 6 then
+			TabSheet:SetActiveTab(TabSheet:GetItems()[6].Tab)
+		end
+	end
 	
 end
 
 net.Receive("Open_F4_Menu", function(len, ply)
-	local invItems = net.ReadTable()
+	local invItems = net.ReadTable()	
 	local randomExchange = net.ReadInt(32)
 	local hasOTF = net.ReadBool()
 	local colours = net.ReadColor()
@@ -1428,5 +1513,6 @@ net.Receive("Open_F4_Menu", function(len, ply)
 	local curEvent = net.ReadInt(8)
 	local hats = net.ReadTable()
 	local curTempUpg = net.ReadTable()
-	OpenMenu(invItems, randomExchange, hasOTF, colours, enabled, font, eventItemsCount, curEvent, hats, curTempUpg)
+	local curPermUpg = net.ReadTable()
+	OpenMenu(invItems, randomExchange, hasOTF, colours, enabled, font, eventItemsCount, curEvent, hats, curTempUpg, curPermUpg)
 end)

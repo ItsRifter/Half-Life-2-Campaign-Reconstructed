@@ -23,3 +23,7 @@ include("client/menus/pets/cl_stalker.lua")
 include("client/menus/pets/cl_metropolice_stunstuck.lua")
 include("client/menus/pets/cl_metropolice_pistol.lua")
 include("client/menus/pets/cl_metropolice_smg.lua")
+
+include("client/menus/cl_ui.lua")
+include("client/menus/cl_fonts.lua")
+include("client/menus/cl_prestige.lua")

@@ -1,62 +1,3 @@
-surface.CreateFont("Intro_Tab1_Title_Font", {
-	font = "Trebuchet24",
-	size = 56,
-})
-
-surface.CreateFont("Intro_Tab1_Font", {
-	font = "Arial",
-	size = 48,
-})
-
-surface.CreateFont("Intro_Tab2_Title_Font", {
-	font = "Trebuchet24",
-	size = 38,
-})
-
-surface.CreateFont("Intro_Tab2_Font", {
-	font = "Arial",
-	size = 28,
-})
-
-surface.CreateFont("Intro_Tab3_Title_Font", {
-	font = "Trebuchet24",
-	size = 48,
-})
-
-surface.CreateFont("Intro_Tab3_Font", {
-	font = "Arial",
-	size = 28,
-})
-
-surface.CreateFont("Intro_Tab4_Title_Font", {
-	font = "Arial",
-	size = 48,
-})
-
-surface.CreateFont("Intro_Tab4_Font", {
-	font = "Arial",
-	size = 32,
-})
-
-
-surface.CreateFont("Intro_Tab4_Title_Font", {
-	font = "Arial",
-	size = 48,
-})
-
-surface.CreateFont("Intro_Tab4_Font", {
-	font = "Arial",
-	size = 32,
-})
-
---Skipped tab 5 fonts because not eh
-
-surface.CreateFont("Intro_Tab6_Font", {
-	font = "Arial",
-	size = 34,
-})
-
-
 local exampleModels = {
 	["models/player/Group03/male_06.mdl"] = {},
 	["models/player/police.mdl"] = {},
@@ -75,32 +16,28 @@ function LobbyMenu(version)
 
 	--The Frame
 
-	local frame = vgui.Create("DFrame")
+	local frame = vgui.Create("HL2CR.f4Frame")
 	frame:SetSize(900, 1000)
 	frame:Center()
 	frame:SetVisible(true)
-	frame:SetDraggable(true)
-	if ScrW() < 1920 and ScrH() < 1080 then
-		frame:ShowCloseButton(true)
-	else
-		frame:ShowCloseButton(false)
-	end
-	frame:SetTitle("")
-	frame.Paint = function(s, w, h)
-		draw.RoundedBox(0,0,0, w, h, Color(140, 140, 140, 255))
-	end
 	frame:MakePopup()
-	frame.OnClose = function()
-		net.Start("Achievement")
-			net.WriteString("First_Time")
-			net.WriteString("Lobby_Ach_List")
-		net.SendToServer()
-	end
 	
 	--Property Sheet
 	local TabSheet = vgui.Create( "DPropertySheet", frame )
 	TabSheet:Dock( FILL ) 
 
+	local newPlayerBtns = vgui.Create("HL2CR.f4Btn", frame)
+	
+	newPlayerBtns:SetSize(850, 32)
+	
+	newPlayerBtns:AddTab("Intro")
+	newPlayerBtns:AddTab("What is this?")
+	newPlayerBtns:AddTab("Rules and commands")
+	newPlayerBtns:AddTab("Tips and tricks")
+	newPlayerBtns:AddTab("Begin Playing")
+	
+	newPlayerBtns:SetActiveName("Intro")
+	
 	--First Tab Section - Intro
 	
 	local PanelTabOne = vgui.Create( "DPanel", frame )
@@ -139,7 +76,7 @@ function LobbyMenu(version)
 	LabelVersionText:SizeToContents()
 	LabelVersionText:SetColor(Color(0, 0, 0))
 	
-	TabSheet:AddSheet("Intro", PanelTabOne, nil)
+	TabSheet:AddSheet("", PanelTabOne, nil)
 	
 	--Second Tab Section - What is this?
 	
@@ -204,7 +141,7 @@ function LobbyMenu(version)
 		PetsTabTwo:SetSize(150, 150)
 	end
 	
-	TabSheet:AddSheet("What is this?", PanelTabTwo, nil)
+	TabSheet:AddSheet("", PanelTabTwo, nil)
 	
 	--Third Tab Section - Rules and Commands
 	
@@ -223,34 +160,34 @@ function LobbyMenu(version)
 	LabelTabThreeRuleTitle:SetColor(Color(0, 0, 0))
 	
 	local LabelTabThreeRules = vgui.Create( "DLabel", PanelTabThree )
-	LabelTabThreeRules:SetPos(50, 250)
+	LabelTabThreeRules:SetPos(50, 150)
 	LabelTabThreeRules:SetFont("Intro_Tab3_Font")
 	LabelTabThreeRules:SetText("No griefing other players (prop killing, disrupting achievements)\nDo not steal pet owner's kills\nThat said, don't hog all the kills for your pet\nNo Mic/Chat spamming\nKeep it english only in voice chat\nDo not offend other players\nNo exploits/cheating\nNo offensive or racist names\nNo speedrunning the maps, let everyone have a chance to play")
 	LabelTabThreeRules:SizeToContents()
 	LabelTabThreeRules:SetColor(Color(0, 0, 0))
 	
 	local LabelTabThreeCmdTitle = vgui.Create( "DLabel", PanelTabThree )
-	LabelTabThreeCmdTitle:SetPos(350, 550)
+	LabelTabThreeCmdTitle:SetPos(350, 450)
 	LabelTabThreeCmdTitle:SetFont("Intro_Tab3_Title_Font")
 	LabelTabThreeCmdTitle:SetText("COMMANDS")
 	LabelTabThreeCmdTitle:SizeToContents()
 	LabelTabThreeCmdTitle:SetColor(Color(0, 0, 0))
 	
 	local LabelTabThreeCmdsOne = vgui.Create( "DLabel", PanelTabThree )
-	LabelTabThreeCmdsOne:SetPos(100, 650)
+	LabelTabThreeCmdsOne:SetPos(100, 550)
 	LabelTabThreeCmdsOne:SetFont("Intro_Tab3_Font")
 	LabelTabThreeCmdsOne:SetText("!Difficulty\n!pet\n!petduel\n!lobby\n!petsummon\n!petbring\n!seats\n!ach\n!petname")
 	LabelTabThreeCmdsOne:SizeToContents()
 	LabelTabThreeCmdsOne:SetColor(Color(0, 0, 0))
 	
 	local LabelTabThreeCmdsTwo = vgui.Create( "DLabel", PanelTabThree )
-	LabelTabThreeCmdsTwo:SetPos(525, 650)
+	LabelTabThreeCmdsTwo:SetPos(525, 550)
 	LabelTabThreeCmdsTwo:SetFont("Intro_Tab3_Font")
 	LabelTabThreeCmdsTwo:SetText("!petpanic\n!removepet\n!unstuck\n!vrm\nF1 - Open New player Menu \nF2 - Remove vehicle\nF3 - Spawn vehicle\nF4 - Open Menu\n!time\n!loyal")
 	LabelTabThreeCmdsTwo:SizeToContents()
 	LabelTabThreeCmdsTwo:SetColor(Color(0, 0, 0))
 	
-	TabSheet:AddSheet("Rules and Commands", PanelTabThree, nil)
+	TabSheet:AddSheet("", PanelTabThree, nil)
 	
 	--Fourth Tab Section - Tips
 	
@@ -276,7 +213,7 @@ function LobbyMenu(version)
 	LabelTips:SizeToContents()
 	
 	
-	TabSheet:AddSheet("Tips and Tricks", PanelTabFour, nil)
+	TabSheet:AddSheet("", PanelTabFour, nil)
 	
 	--Fifth Tab Section - Begin playing
 	
@@ -314,15 +251,24 @@ function LobbyMenu(version)
 	startButton:SetPos(350, 850)
 	startButton:SetText("Begin")
 	startButton.DoClick = function() 
-		net.Start("Achievement")
-			net.WriteString("First_Time")
-			net.WriteString("Lobby_Ach_List")
-			net.WriteInt(500, 32)
-		net.SendToServer()
 		frame:Close()
 	end
 	
-	TabSheet:AddSheet("Begin Playing", PanelTabFive, nil)
+	TabSheet:AddSheet("", PanelTabFive, nil)
+	
+	frame.Think = function()
+		if newPlayerBtns.active == 1 then
+			TabSheet:SetActiveTab(TabSheet:GetItems()[1].Tab)
+		elseif newPlayerBtns.active == 2 then
+			TabSheet:SetActiveTab(TabSheet:GetItems()[2].Tab)
+		elseif newPlayerBtns.active == 3 then
+			TabSheet:SetActiveTab(TabSheet:GetItems()[3].Tab)
+		elseif newPlayerBtns.active == 4 then
+			TabSheet:SetActiveTab(TabSheet:GetItems()[4].Tab)
+		elseif newPlayerBtns.active == 5 then
+			TabSheet:SetActiveTab(TabSheet:GetItems()[5].Tab)
+		end
+	end
 end
 
 net.Receive("Greetings_new_player", function()

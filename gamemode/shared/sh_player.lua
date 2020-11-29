@@ -1,7 +1,17 @@
 AddCSLuaFile() -- Add itself to files to be sent to the clients, as this file is shared
-local startingWeapons = {}
+startingWeapons = {}
 
 hook.Add("PlayerInitialSpawn", "MiscSurv", function(ply)
+	if not table.HasValue(ply.hl2cPersistent.Achievements, "First_Time") then
+		Achievement(ply, "First_Time", "Lobby_Ach_List")
+	end
+	
+	if not string.match(game.GetMap(), "d1_") and not string.match(game.GetMap(), "d2_") and not string.match(game.GetMap(), "d3_") and not
+	string.match(game.GetMap(), "ep1_") and not string.match(game.GetMap(), "ep2_") then	
+		ply.XPCap = math.ceil(ply.hl2cPersistent.MaxXP / 2.2) - 100	
+		ply.PetXPCap = math.ceil(ply.hl2cPersistent.PetMaxXP / 1.2)
+	end
+	
 	if table.HasValue(ply.hl2cPersistent.Achievements, "Crowbar_Only_HL2") and table.HasValue(ply.hl2cPersistent.Achievements, "Crowbar_Only_EP1") 
 	and table.HasValue(ply.hl2cPersistent.Achievements, "Crowbar_Only_EP2") then
 		Achievement(ply, "One_True_Freeman", "Misc_Ach_List")
@@ -30,6 +40,8 @@ hook.Add("PlayerInitialSpawn", "MiscSurv", function(ply)
 		["CrowbarOnly"] = false,
 		["Kills"] = 0,
 		["Metal"] = 0,
+		["Essence"] = 0,
+		["Crystals"] = 0,
 	}
 	
 	if game.GetMap() == "hl2cr_lobby" then
@@ -65,6 +77,14 @@ hook.Add("PlayerInitialSpawn", "MiscSurv", function(ply)
 	ply.inSquad = false
 	ply.canBecomeLoyal = false
 	ply.loyal = false
+	
+	
+	if ply.hl2cPersistent.Level >= ply.hl2cPersistent.LevelCap then
+		ply:ChatPrint("You will not earn anymore XP at this point, try !prestige")
+	end
+	
+	net.Start("UpdateConCmds")
+	net.Send(ply)
 end)
 
 hook.Add("EventPickUp", "EventItems", function(ply, amount)
@@ -116,6 +136,12 @@ hook.Add("PlayerSpawn", "SpawnDefault", function(ply)
 		ply:SetTeam(TEAM_ALIVE)
 		return 
 	end
+	
+	if game.GetMap() == "hl2cr_lobby" and file.Exists("hl2cr_data/maprecovery.txt", "DATA") then
+		ply:ChatPrint("It appears the server crashed or something went wrong")
+		ply:ChatPrint("If no admins are present, type !restore")
+	end
+	
 	--Give spawning items to player first
 	for i, w in pairs(ents.FindByName("player_spawn_items")) do
 		w:SetPos(ply:GetPos())
@@ -412,6 +438,14 @@ hook.Add("ScalePlayerDamage", "DiffScalingPly", function( ply, hitgroup, dmgInfo
 	
 end)
 
+local NO_PICKUPS = {
+	["d3_citadel_03"] = true,
+	["d3_citadel_04"] = true,
+	["d3_citadel_05"] = true,
+	["d3_breen_01"] = true,
+	["ep1_citadel_01"] = true,
+}
+
 hook.Add("PlayerCanPickupWeapon", "DisableWeaponsPickup", function(ply, weapon) 
 	if ply:Team() == TEAM_LOYAL then
 		return false
@@ -455,7 +489,7 @@ hook.Add("PlayerCanPickupWeapon", "DisableWeaponsPickup", function(ply, weapon)
 		return false
 	end
 	
-	if ply:Team() != TEAM_ALIVE or (game.GetMap() == "d3_citadel_03" or game.GetMap() == "d3_citadel_04" or game.GetMap() == "d3_citadel_05" or game.GetMap() == "d3_breen_01") and weapon:GetClass() != "weapon_physcannon" then
+	if ply:Team() != TEAM_ALIVE or NO_PICKUPS[game.GetMap()] and weapon:GetClass() != "weapon_physcannon" then
 		weapon:Remove()
 		return false
 	end
@@ -914,3 +948,11 @@ hook.Add("EntityTakeDamage", "WhackAch", function(gunship, dmg)
 		end
 	end
 end)
+
+if CLIENT then
+	net.Receive("UpdateConCmds", function(len, ply)
+		LocalPlayer():ConCommand("cl_tfa_hud_enabled 0")
+		LocalPlayer():ConCommand("cl_tfa_hud_crosshair_enable_custom 0")
+		LocalPlayer():ConCommand("hud_quickinfo 1")
+	end)
+end
