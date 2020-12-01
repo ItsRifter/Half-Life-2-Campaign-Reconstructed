@@ -486,7 +486,7 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 		if DISABLED_MAPS[game.GetMap()] then
 			ply:ChatPrint("Time is infinite on this map")
 		else
-			ply:ChatPrint(math.Round(timer, 0) .. " seconds left before returning to lobby")
+			ply:ChatPrint(math.Round(timer - CurTime(), 0) .. " seconds left before returning to lobby")
 		end
 		return ""
 	end

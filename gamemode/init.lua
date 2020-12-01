@@ -139,9 +139,10 @@ function GM:Initialize()
 end
 
 function GM:ShowHelp(ply)	
-	net.Start("Greetings_new_player")
-		net.WriteString(version)
-	net.Send(ply)
+	RunConsoleCommand("easyskins_giveskin", ply:SteamID64(), 3, "hlashotty")
+	--net.Start("Greetings_new_player")
+	--	net.WriteString(version)
+	--net.Send(ply)
 end
 
 function GM:ShowTeam(ply)
@@ -479,3 +480,15 @@ function SetUpMap()
 end
 hook.Add("InitPostEntity", "SetupLua", SetUpMap)
 hook.Add("PostCleanupMap", "SetupHL2Lua", SetUpMap)
+
+hook.Add("PrePACConfigApply", "AdminOnly", function(ply, outfit_data)
+	if not ply:IsAdmin() then
+		return false
+	end
+end)
+
+hook.Add( "PrePACEditorOpen", "RestrictToSuperadmin", function( ply )
+	if not ply:IsAdmin() then
+		return false
+	end
+end )

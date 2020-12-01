@@ -20,8 +20,8 @@ AchievementLists = {
 		Crowbar_Only_HL2 = {name = "Crowbar Only HL2", mat = "vgui/achievements/hl2_beat_game.png", reward = 45000, isRare = false},
 		Crowbar_Only_HL2_Hard = {name = "Crowbar Only HL2 Hard", mat = "vgui/achievements/hl2_beat_game.png", reward = 70000, isRare = false},
 		Vorticough = {name = "Vorticough", mat = "vgui/achievements/hl2_find_vortigauntcave.png", reward = 2500, isRare = false},
-		Defiant = {name = "Defiant", mat = "vgui/achievements/hl2_hit_cancop_withcan.png", reward = 1000, isRare = false},
-		Submissive = {name = "Submissive", mat = "vgui/achievements/hl2_put_canintrash.png", reward = 1000, isRare = false},
+		--Defiant = {name = "Defiant", mat = "vgui/achievements/hl2_hit_cancop_withcan.png", reward = 1000, isRare = false},
+		--Submissive = {name = "Submissive", mat = "vgui/achievements/hl2_put_canintrash.png", reward = 1000, isRare = false},
 	},
 
 	EP1_Ach_List = {

@@ -8,18 +8,38 @@ function SetupHL2Map()
 	MapLua = ents.Create("lua_run")
 	MapLua:SetName("triggerhook")
 	MapLua:Spawn()
-		
+	
+	local specialChance = 0
+	local NPCKind = 0
+	if GetConVar("hl2cr_specials"):GetInt() == 1 then
+		for k, npc in pairs(ents.FindByClass("npc_combine_*")) do
+			specialChance = math.random(1, 60)
+			if specialChance <= (12 * GetConVar("hl2cr_difficulty"):GetInt()) then
+				NPCKind = math.random(5, 5)
+				local newNPC = nil
+				if NPCKind == 1 then
+					newNPC = ents.Create("npc_combine_assassin")
+				elseif NPCKind == 2 then
+					newNPC = ents.Create("npc_combine_support")
+				elseif NPCKind == 3 then
+					newNPC = ents.Create("npc_combine_medic")
+				elseif NPCKind == 4 then
+					newNPC = ents.Create("npc_combine_veteran")
+				elseif NPCKind == 5 then
+					newNPC = ents.Create("npc_combine_grenadier")
+				end
+				
+				newNPC:SetPos(npc:GetPos())
+				newNPC:Spawn()
+				npc:Remove()
+			end
+		end
+	end
+	
 	--Fix the spawnpoints
 	if game.GetMap() == "d1_trainstation_02" then 
 		for k, reset1 in pairs(ents.FindByClass("info_player_start")) do
 			reset1:SetPos(Vector(-4315, -215, 0))
-		end
-		for i, obey in pairs(ents.FindByName("trashcan_trigger")) do
-			obey:Fire("AddOutput", "OnTrigger triggerhook:RunPassedCode:hook.Run( 'GiveObey' ):0:-1" )
-		end
-		
-		for l, disobey in pairs(ents.FindByName("throwcan_trigger")) do
-			disobey:Fire("AddOutput", "OnTrigger triggerhook:RunPassedCode:hook.Run( 'GiveDefiant' ):0:-1" )
 		end
 	end
 		
@@ -456,7 +476,7 @@ hook.Add("GiveWhatCat", "GrantCatAch", function()
 	end
 end)
 
-hook.Add("GiveObey", "GrantSubmissiveAch", function()
+hook.Add("GiveSubmissive", "GrantSubmissiveAch", function()
 	if noSubmissive then return end
 	noDefiant = true
 	for k, v in pairs(player.GetAll()) do
@@ -465,7 +485,7 @@ hook.Add("GiveObey", "GrantSubmissiveAch", function()
 end)
 
 hook.Add("GiveDefiant", "GrantDefiantAch", function()
-	if noSubmissive then return end
+	if noDefiant and not noSubmissive then return end
 	noSubmissive = true
 	for k, v in pairs(player.GetAll()) do
 		Achievement(v, "Defiant", "HL2_Ach_List")

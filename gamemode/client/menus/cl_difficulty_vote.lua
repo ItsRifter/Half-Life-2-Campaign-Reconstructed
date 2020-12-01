@@ -229,10 +229,10 @@ function OpenDiffMenu(diff, surv, special, doublehp)
 	varientText:SetFont("Panel_Font")
 	varientText:SetPos(75, 0)
 	varientText:SizeToContents()
-	--[[
+
 	varientButtonOne = vgui.Create("DButton", variantPanel)
 	varientButtonOne:SetSize(175, 50)
-	varientButtonOne:SetPos(5, 75)
+	varientButtonOne:SetPos(5, 50)
 	varientButtonOne:SetFont("Button_Font")
 	varientButtonOne:SetText("Special NPCs\n" .. tostring(enabledOne))
 	varientButtonOne.DoClick = function()
@@ -244,10 +244,9 @@ function OpenDiffMenu(diff, surv, special, doublehp)
 		diffFrame:Close()
 	end
 	
-	--]]
 	varientButtonTwo = vgui.Create("DButton", variantPanel)
 	varientButtonTwo:SetSize(175, 50)
-	varientButtonTwo:SetPos(5, 150)
+	varientButtonTwo:SetPos(5, 125)
 	varientButtonTwo:SetFont("Button_Font")
 	varientButtonTwo:SetText("Double NPC Health\n" .. tostring(enabledTwo))
 	varientButtonTwo.DoClick = function()

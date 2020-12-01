@@ -113,15 +113,6 @@ function ENT:StartTouch(ent)
 			end
 		end
 	end
-end
-
-local MAPS_ONEPLAYER = {
-	["d1_eli_01"] = true,
-	["d1_town_05"] = true,
-	["d3_citadel_01"] = true,
-	["d3_citadel_05"] = true
-}
-function ENT:Think()
 	playerCount = #player.GetAll()
 	local addOne = 0
 	local subOne = 0
@@ -186,6 +177,16 @@ function ENT:Think()
 	elseif team.NumPlayers(TEAM_COMPLETED_MAP) >= team.NumPlayers(TEAM_ALIVE) + addOne - subOne and string.find(game.GetMap(), "syn") then
 		EndCoop()
 	end
+end
+
+local MAPS_ONEPLAYER = {
+	["d1_eli_01"] = true,
+	["d1_town_05"] = true,
+	["d3_citadel_01"] = true,
+	["d3_citadel_05"] = true
+}
+function ENT:Think()
+	playerCount = #player.GetAll()
 end
 
 function EndHL2Game()

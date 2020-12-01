@@ -207,7 +207,7 @@ function LobbyMenu(version)
 	
 	local LabelTips = vgui.Create( "DLabel", PanelTabFour )
 	LabelTips:SetFont("Intro_Tab4_Font")
-	LabelTips:SetText("Use !cp for times where checkpoints don't teleport you.\nFor new pet owners, start having your pet kill zombies first.\nDon't duel with headcrab vs headcrab, it won't work out well.")
+	LabelTips:SetText("Use !cp for times where checkpoints don't teleport you.\nFor new pet owners, start having your pet kill zombies first.\nDon't duel with headcrab vs headcrab, it won't work out well.\nDon't play co-op maps at a low level.")
 	LabelTips:SetPos(115, 175)
 	LabelTips:SetColor(Color(0, 0, 0))
 	LabelTips:SizeToContents()

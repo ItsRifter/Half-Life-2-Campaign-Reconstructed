@@ -4,7 +4,7 @@ function SetupCoopMap()
 	MapLua:SetName("triggerhook")
 	MapLua:Spawn()
 	
-	if game.GetMap() == "syn_trials4" then
+	if game.GetMap() == "syn_trials4" or game.GetMap() == "syn_trials4b" or game.GetMap() == "syn_trials4c" then
 		for k, oldLogic in pairs(ents.FindByClass("logic_relay")) do
 			if oldLogic:GetName() == "intro_stopwaiting" then
 				oldLogic:Fire("Trigger")
@@ -21,6 +21,18 @@ function SetupCoopMap()
 		
 		for k, resetSynLogic in pairs(ents.FindByClass("info_player_coop")) do
 			resetSynLogic:Remove()
+		end
+		
+		if game.GetMap() == "syn_trials4b" then			
+			for k, removeBrush in pairs(ents.FindByClass("func_brush")) do
+				if removeBrush:GetName() == "trial_d_field" or removeBrush:GetName() == "clip_combineshieldwall1" 
+				or removeBrush:GetName() == "brush_combineshieldwall1" then
+					removeBrush:Remove()
+				end
+			end
+			for l, endlogic in pairs(ents.FindByName("finale_logic_done")) do
+				endlogic:Fire("AddOutput", "OnTrigger triggerhook:RunPassedCode:hook.Run( 'EndMap' ):15:-1" )
+			end
 		end
 	end
 	
@@ -40,7 +52,7 @@ function SetupCoopMap()
 		table.insert(startingWeapons, "weapon_shotgun")
 		for k, v in pairs(ents.FindByClass("logic_timer")) do
 			if v:GetName() == "starve_timer" then
-				v:Fire("AddOutput", "OnTimer triggerhook:RunPassedCode:hook.Run( 'FailMap' ):15:-1" )
+				v:Fire("AddOutput", "OnTimer triggerhook:RunPassedCode:hook.Run( 'FailCoopMap' ):0:-1" )
 			end
 		end
 		
@@ -88,6 +100,39 @@ function SetUpCheckpointsCoop()
 			Vector(2196, 116, -810), 	Vector(3086, -494, -696),	
 			Vector(4838, -907, -1095),	Vector(5864, 90, -821), 
 			Vector(6376, 1533, -821),	Vector(7176, 2991, -3092),
+		}
+	elseif game.GetMap() == "syn_trials4b" then
+		TRIGGER_CHANGELEVEL = {
+			Vector(0, 0, 0), 	Vector(0, 0, 0)
+		}
+		
+		TRIGGER_CHECKPOINT = {
+			Vector(525, -461, -446),	Vector(478, -228, -312),
+			Vector(13, 1217, -445),		Vector(-225, 1364, -290),
+			Vector(-1854, -33, -398),	Vector(-1763, -128, -287),
+			Vector(447, -934, -205),	Vector(321, -882, -80),
+			Vector(1552, -1410, -205),	Vector(1420, -1549, -79),
+		}
+		
+		TRIGGER_SPAWNPOINT = {
+			Vector(467, -392, -435), 	Vector(-96, 1451, -416),	
+			Vector(-1828, -193, -378),	Vector(469, -1332, -194),
+			Vector(1735, -1462, -184),
+		}
+	elseif game.GetMap() == "syn_trials4c" then
+		TRIGGER_CHANGELEVEL = {
+			Vector(0, 0, 0), 	Vector(0, 0, 0)
+		}
+		
+		TRIGGER_CHECKPOINT = {
+			Vector(6071, -1790, -126),	Vector(6126, -1616, 0),
+			Vector(-366, -1486, -575),	Vector(-490, -1341, -450),
+			Vector(2239, 2063, -318),	Vector(2112, 2222, -224),
+		}
+		
+		TRIGGER_SPAWNPOINT = {
+			Vector(1648, -2167, 370),	Vector(-225, -1419, -56),
+			Vector(2383, 2146, -307),
 		}
 	elseif game.GetMap() == "syn_oldcanals" then
 		TRIGGER_CHANGELEVEL = {

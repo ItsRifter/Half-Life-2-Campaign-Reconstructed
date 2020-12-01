@@ -5,15 +5,11 @@ local wepItem = createItemBase(BaseWeapon, "Medkit", "Become a medic with this k
 wepItem.Cost = 5000
 Register.Weapon(wepItem)
 
-local wepItem = createItemBase(BaseWeapon, "One-Handed Auto Shotgun", "Weaponry at finest", "hl2cr/misc/shells")
+local wepItem = createItemBase(BaseWeapon, "One_Handed_Auto_Shotgun", "Weaponry at finest", "hl2cr/misc/shells")
 wepItem.Cost = 17500
 Register.Weapon(wepItem)
 
-local wepItem = createItemBase(BaseWeapon, "Auto Shotgun", "Bulkier Shotgun", "hl2cr/misc/shells")
-wepItem.Cost = 45000
-Register.Weapon(wepItem)
-
-local wepItem = createItemBase(BaseWeapon, "Unbonded Pulse Rifle", "There is an AR3?", "hl2cr/armour_parts/health")
+local wepItem = createItemBase(BaseWeapon, "Unbonded_Pulse_Rifle", "There is an AR3?", "hl2cr/armour_parts/health")
 wepItem.Cost = 20000
 Register.Weapon(wepItem)
 
@@ -202,7 +198,7 @@ tempUpgItem.Cost = 5000
 tempUpgItem.PrestigeReq = 2
 Register.TempUpg(tempUpgItem)
 
-local permUpgItem = createItemBase(BaseTempUpg, "Vampirism", "Leech enemies health on crowbar kill by chance", "hl2cr/mats/vampire")
+local permUpgItem = createItemBase(BaseTempUpg, "Vampirism", "Leech enemies health on crowbar kill by chance", "hl2cr/misc/vampire")
 permUpgItem.EssenceCost = 10
 permUpgItem.Cost = 2000
 permUpgItem.CrystalCost = 2

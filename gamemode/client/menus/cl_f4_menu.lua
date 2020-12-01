@@ -675,7 +675,15 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 			--Weapons
 			if itemName == "Medkit" then
 				itemImg:SetImage("hl2cr/armour_parts/health")
-				itemImg:Droppable("Wep")
+				itemPnl:Droppable("Wep")
+				itemAmt:SetText("")
+			elseif itemName == "One_Handed_Auto_Shotgun" then
+				itemImg:SetImage("hl2cr/misc/shells")
+				itemPnl:Droppable("Wep")
+				itemAmt:SetText("")
+			elseif itemName == "Unbonded_Pulse_Rifle" then
+				itemImg:SetImage("hl2cr/armour_parts/health")
+				itemPnl:Droppable("Wep")
 				itemAmt:SetText("")
 			--Upg Items
 			elseif itemName == "Health_Module_MK1" then
@@ -879,7 +887,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 		upgImg:SetSize(75, 75)
 		
 		if permUpgName == "Vampirism" then
-			upgImg:SetImage("hl2cr/mats/vampire")
+			upgImg:SetImage("hl2cr/misc/vampire")
 			upgPanel:SetToolTip(curPermUpg[l] .. "\nLeech enemies health on crowbar kill by chance")
 		end
 		

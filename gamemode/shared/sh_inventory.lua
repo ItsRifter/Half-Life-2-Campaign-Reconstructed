@@ -126,6 +126,10 @@ net.Receive("AddWeapon", function(len, ply)
 	
 	if not ply then return end
 	
+	if ply.hl2cPersistent.InvWeapon != "" then
+		table.insert(ply.hl2cPersistent.Inventory, ply.hl2cPersistent.InvWeapon)
+	end
+	
 	ply.hl2cPersistent.InvWeapon = slotToFill
 	ply.hl2cPersistent.InvWeaponImage = slotImage
 	ply:SetNWString("WepSlot", ply.hl2cPersistent.InvWeaponImage)
@@ -275,13 +279,7 @@ net.Receive("SellItemSlot", function(len, ply)
 		ply:SetNWString("HandSlot", "")
 	end
 	
-	--Items in the weapon slot
-	if string.find(ply.hl2cPersistent.InvWeapon, readItem) then
-		ply.hl2cPersistent.InvWeapon = ""
-		ply:SetNWString("WepSlot", "")
-	end
-
-	if removePoints then
+	if removePoints != 0 then
 		ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour - removePoints
 	end
 	ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins + sellReturn

@@ -292,6 +292,16 @@ function ENT:StartTouch(ent)
 			end
 		end
 		
+		if game.GetMap() == "syn_trials4c" and point1 then
+			for k, sound in pairs(ents.FindByName("prelude_stripper_s_port")) do
+				sound:Fire("PlaySound")
+			end
+			for l, ply in pairs(player.GetAll()) do
+				ply:StripWeapons()
+			end
+			table.Empty(startingWeapons)
+		end
+		
 		self:EmitSound("hl1/ambience/port_suckin1.wav", 100, 100)
 		self:Remove()
 	end

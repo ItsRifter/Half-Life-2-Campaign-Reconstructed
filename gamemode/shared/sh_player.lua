@@ -1,6 +1,29 @@
 AddCSLuaFile() -- Add itself to files to be sent to the clients, as this file is shared
 startingWeapons = {}
 
+local RESTRICTED_WEPS = {
+	["weapon_frag"] = true,
+	["weapon_medkit"] = true,
+	["zpn_partypopper"] = true,
+	["hlashotty"] = true,
+	["tfa_psmg"] = true
+}
+
+local RESTRICTED_MAPS = {
+	["d1_trainstation_01"] = true,
+	["d1_trainstation_02"] = true,
+	["d1_trainstation_03"] = true,
+	["d1_trainstation_04"] = true,
+	["d1_trainstation_05"] = true,
+	["d3_citadel_03"] = true,
+	["d3_citadel_04"] = true,
+	["d3_citadel_05"] = true,
+	["d3_breen_01"] = true,
+	["ep1_citadel_01"] = true,
+	["ep1_citadel_02"] = true,
+	["ep1_citadel_04"] = true,
+}
+
 hook.Add("PlayerInitialSpawn", "MiscSurv", function(ply)
 	if not table.HasValue(ply.hl2cPersistent.Achievements, "First_Time") then
 		Achievement(ply, "First_Time", "Lobby_Ach_List")
@@ -9,7 +32,9 @@ hook.Add("PlayerInitialSpawn", "MiscSurv", function(ply)
 	if not string.match(game.GetMap(), "d1_") and not string.match(game.GetMap(), "d2_") and not string.match(game.GetMap(), "d3_") and not
 	string.match(game.GetMap(), "ep1_") and not string.match(game.GetMap(), "ep2_") then	
 		ply.XPCap = math.ceil(ply.hl2cPersistent.MaxXP / 2.2) - 100	
-		ply.PetXPCap = math.ceil(ply.hl2cPersistent.PetMaxXP / 1.2)
+		ply.PetXPCap = math.ceil(ply.hl2cPersistent.PetMaxXP / 1.6)
+		ply.totalXPGained = 0
+		ply.totalPetXPGained = 0
 	end
 	
 	if table.HasValue(ply.hl2cPersistent.Achievements, "Crowbar_Only_HL2") and table.HasValue(ply.hl2cPersistent.Achievements, "Crowbar_Only_EP1") 
@@ -82,9 +107,10 @@ hook.Add("PlayerInitialSpawn", "MiscSurv", function(ply)
 	if ply.hl2cPersistent.Level >= ply.hl2cPersistent.LevelCap then
 		ply:ChatPrint("You will not earn anymore XP at this point, try !prestige")
 	end
-	
-	net.Start("UpdateConCmds")
-	net.Send(ply)
+	timer.Simple(2, function()
+		net.Start("UpdateConCmds")
+		net.Send(ply)
+	end)
 end)
 
 hook.Add("EventPickUp", "EventItems", function(ply, amount)
@@ -528,10 +554,16 @@ hook.Add("PlayerLoadout", "StarterWeapons", function(ply)
 	ply:GiveAmmo(12, "Buckshot", true)
 	ply:GiveAmmo(6, "357", true)
 	
-	if ply.hl2cPersistent.InvWeapon == "Medkit" then
-		ply:Give("weapon_medkit")
+	
+	if not RESTRICTED_MAPS[game.GetMap()] then
+		if ply.hl2cPersistent.InvWeapon == "Medkit" then
+			ply:Give("weapon_medkit")
+		elseif ply.hl2cPersistent.InvWeapon == "One_Handed_Auto_Shotgun" then
+			ply:Give("hlashotty")
+		elseif ply.hl2cPersistent.InvWeapon == "Unbonded_Pulse_Rifle" then
+			ply:Give("tfa_psmg")
+		end
 	end
-
 	if ply.loyal then		
 		ply:SetTeam(TEAM_LOYAL)
 		--ply:SetCustomCollisionCheck(false)
@@ -606,6 +638,7 @@ hook.Add("PlayerLoadout", "StarterWeapons", function(ply)
 		
 		if v:GetWeapons() != nil and ply:GetWeapons() != v:GetWeapons() and game.GetMap() != "hl2cr_lobby" then
 			for k, w in pairs(v:GetWeapons()) do
+				if RESTRICTED_WEPS[w:GetClass()] then return end
 				ply:Give(w:GetClass())
 			end	
 		end
@@ -638,12 +671,6 @@ hook.Add("PlayerLoadout", "StarterWeapons", function(ply)
 		ply:Give("weapon_bugbait")
 	end
 end)
-
-local RESTRICTED_WEPS = {
-	["weapon_frag"] = true,
-	["weapon_medkit"] = true,
-	["zpn_partypopper"] = true
-}
 
 hook.Add("WeaponEquip", "WeaponPickedUp", function(weapon, ply)
 	if not RESTRICTED_WEPS[weapon:GetClass()] and ply:Team() == TEAM_ALIVE then 
