@@ -77,6 +77,9 @@ local function InitData(ply)
 	ply.hl2cPersistent.HardOTF = ply.hl2cPersistent.HardOTF or false
 	
 	--Customizable Settings
+	ply.hl2cPersistent.Options = {}
+	ply.hl2cPersistent.Options.QuickInfo = ply.hl2cPersistent.Options.QuickInfo or 0
+	
 	ply.hl2cPersistent.NPCColourEnabled = ply.hl2cPersistent.NPCColourEnabled or true
 	ply.hl2cPersistent.NPCColourSettings = ply.hl2cPersistent.NPCColourSettings or Color(255, 255, 255, 255)
 	ply.hl2cPersistent.NPCFont = ply.hl2cPersistent.NPCFont or "Default"
@@ -210,32 +213,26 @@ hook.Add("Initialize", "CreateDataFolder", function()
 	end
 end)
 
+Cheating_Players_Survival = {}
+
 --When the player disconnects, add kills and remove temporary upgrades (THIS SHOULDN'T HAPPEN ON SERVER CRASH)
 hook.Add("PlayerDisconnected", "SavePlayerDataDisconnect", function(ply) 
 	ply.hl2cPersistent.KillCount = ply.hl2cPersistent.KillCount + ply:Frags()
 	table.Empty(ply.hl2cPersistent.TempUpg)
 	SaveData(ply)
 	
-	ply:SetNWString("SquadLeader", nil)
-	ply:SetNWString("TeamName", "")
-
-	--Reset Squads
-	if ply.squads.leader != "" then
-		ply.squads.members = 0
-		ply.squads.leader = ""
+	if GetConVar("hl2cr_survivalmode"):GetInt() == 1 and deaths != 0 then
+		deaths = deaths - 1
+		PrintTable(Cheating_Players_Survival)
 	end
 	
 	if ply.pet then
 		ply.pet:Remove()
 	end
 	
-	net.Start("Squad_Disband")
-	net.Send(ply)
-	
 	if ply.hl2cPersistent.OTF then
 		ply.hl2cPersistent.OTF = false
-	end
-	
+	end	
 end)
 
 

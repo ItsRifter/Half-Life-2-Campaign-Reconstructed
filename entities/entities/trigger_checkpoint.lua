@@ -130,6 +130,7 @@ function ENT:StartTouch(ent)
 				DisableSpec(p)
 				p.isAliveSurv = true
 				deaths = deaths - deaths
+				table.Empty(Cheating_Players_Survival)
 			end
 			local MAPS_TRAINSTATION = {
 				["d1_trainstation_01"] = true,

@@ -12,7 +12,7 @@ function showMenu()
 	prestTextTitle:SetTextColor(Color(0, 0, 0))
 	
 	local prestTextLose = vgui.Create("DLabel", prestFrame)
-	prestTextLose:SetText("You will lose:\nArmour\nStarting Weapons")
+	prestTextLose:SetText("You will lose:\nArmour\nStarting Weapons\nPerm Upgs")
 	prestTextLose:SetFont("Prestige_font")
 	prestTextLose:SetPos(125, 200)
 	prestTextLose:SizeToContents()

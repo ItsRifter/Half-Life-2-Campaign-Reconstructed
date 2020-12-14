@@ -11,8 +11,6 @@ net.Receive("Purchase", function(len, ply)
 	ply:SetNWInt("InvSpace", ply.hl2cPersistent.InvSpace)
 	
 	table.insert(ply.hl2cPersistent.Inventory, itemName)
-	
-	ply:SetNWString("Inventory", table.concat(ply.hl2cPersistent.Inventory, itemName))
 end)
 
 net.Receive("Exchange", function(len, ply)
@@ -100,7 +98,7 @@ function giveRewards(ply)
 	end
 	
 	if ply.tableRewards["Kills"] != 0 then
-		randCoins = math.random(1, 10 * ply.tableRewards["Kills"])
+		randCoins = math.random(1, 10 * ply.tableRewards["Kills"] or 10)
 		AddCoins(ply, randCoins)
 		
 		randXP = math.random(1, 10 * ply.tableRewards["Kills"])
@@ -119,13 +117,11 @@ function giveRewards(ply)
 		net.Send(ply)
 	end
 end
-
 net.Receive("AddWeapon", function(len, ply)
 	local slotToFill = net.ReadString()
 	local slotImage = net.ReadString()
 	
 	if not ply then return end
-	
 	if ply.hl2cPersistent.InvWeapon != "" then
 		table.insert(ply.hl2cPersistent.Inventory, ply.hl2cPersistent.InvWeapon)
 	end
@@ -279,9 +275,17 @@ net.Receive("SellItemSlot", function(len, ply)
 		ply:SetNWString("HandSlot", "")
 	end
 	
+	--Items in the weapon slot
+	if string.find(ply.hl2cPersistent.InvWeapon, readItem) then
+		ply.hl2cPersistent.InvWeapon = ""
+		ply.hl2cPersistent.InvWeaponImage = ""
+		ply:SetNWString("WepSlot", ply.hl2cPersistent.InvWeaponImage)
+	end
+	
 	if removePoints != 0 then
 		ply.hl2cPersistent.Armour = ply.hl2cPersistent.Armour - removePoints
 	end
+	
 	ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins + sellReturn
 	ply:SetNWInt("Armour", ply.hl2cPersistent.Armour)
 	ply:SetNWInt("Coins", ply.hl2cPersistent.Coins)

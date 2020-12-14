@@ -153,7 +153,7 @@ local function DropSlot( self, panels, onDropped, Command, x, y )
 	end
 end
 
-function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font, curEventItems, curEvent, curHats, curTempUpg, curPermUpg)
+function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font, curEventItems, curEvent, curHats, curTempUpg, curPermUpg, optionsTable)
 	
 	local getModel = LocalPlayer():GetNWString("Model")
 	
@@ -276,7 +276,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 		end
 	end
 	
-	if tonumber(getLevel) >= 20 then
+	if tonumber(getLevel) >= 20 or getPrestige >= 1 then
 		for k, police in pairs(GAMEMODE.police) do
 			local policeModel = selectModelLayout:Add("SpawnIcon")
 			policeModel:SetModel(police[1])
@@ -290,7 +290,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 		end
 	end
 	
-	if tonumber(getLevel) >= 35 then
+	if tonumber(getLevel) >= 35 or getPrestige >= 2 then
 		for k, soldier in pairs(GAMEMODE.soldier) do
 			local soldierModel = selectModelLayout:Add("SpawnIcon")
 			soldierModel:SetModel(soldier[1])
@@ -304,7 +304,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 		end
 	end
 	
-	if tonumber(getLevel) >= 50 then
+	if tonumber(getLevel) >= 50 or getPrestige >= 3 then
 		for k, heavySoldier in pairs(GAMEMODE.heavySoldier) do
 			local heavyModel = selectModelLayout:Add("SpawnIcon")
 			heavyModel:SetModel(heavySoldier[1])
@@ -318,7 +318,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 		end
 	end
 	
-	if tonumber(getLevel) >= 65 then
+	if tonumber(getLevel) >= 65 or getPrestige >= 4 then
 		for k, eliteSoldier in pairs(GAMEMODE.eliteSoldier) do
 			local eliteModel = selectModelLayout:Add("SpawnIcon")
 			eliteModel:SetModel(eliteSoldier[1])
@@ -332,7 +332,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 		end
 	end
 	
-	if tonumber(getLevel) >= 80 then
+	if tonumber(getLevel) >= 80 or getPrestige >= 6 then
 		for k, capSoldier in pairs(GAMEMODE.captainSoldier) do
 			local captainModel = selectModelLayout:Add("SpawnIcon")
 			captainModel:SetModel(capSoldier[1])
@@ -346,7 +346,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 		end
 	end
 	
-	if tonumber(getLevel) >= 100 then
+	if tonumber(getLevel) >= 100 or getPrestige >= 8 then
 		for k, hev in pairs(GAMEMODE.hev) do
 			local hevModel = selectModelLayout:Add("SpawnIcon")
 			hevModel:SetModel(hev[1])
@@ -586,6 +586,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 					net.Start("SellItemSlot")
 						net.WriteString(GAMEMODE.WeaponItem[i].Name)
 						net.WriteInt(GAMEMODE.WeaponItem[i].Cost, 32)
+						net.WriteInt(0, 16)
 					net.SendToServer()
 				end
 			end
@@ -662,6 +663,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 		
 			local itemPnl = vgui.Create("DPanel")
 			itemPnl:SetSize(75, 75)
+			itemPnl.Paint = function() return end
 		
 			local itemImg = itemPnl:Add("DImage")
 			itemImg:SetSize(75, 75)
@@ -674,15 +676,27 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 			itemPnl:SetToolTip(inventoryItems[k])
 			--Weapons
 			if itemName == "Medkit" then
-				itemImg:SetImage("hl2cr/armour_parts/health")
+				itemImg:SetImage("hl2cr/weapons/medkit")
 				itemPnl:Droppable("Wep")
 				itemAmt:SetText("")
-			elseif itemName == "One_Handed_Auto_Shotgun" then
-				itemImg:SetImage("hl2cr/misc/shells")
+			elseif itemName == "One_Handed_Autogun" then
+				itemImg:SetImage("hl2cr/weapons/shotgun")
+				itemPnl:Droppable("Wep")
+				itemAmt:SetText("")
+			elseif itemName == "Rusty_DB" then
+				itemImg:SetImage("vgui/achievements/hl2_beat_toxictunnel")
+				itemPnl:Droppable("Wep")
+				itemAmt:SetText("")
+			elseif itemName == "BF_HMG" then
+				itemImg:SetImage("vgui/achievements/hl2_get_airboatgun")
 				itemPnl:Droppable("Wep")
 				itemAmt:SetText("")
 			elseif itemName == "Unbonded_Pulse_Rifle" then
-				itemImg:SetImage("hl2cr/armour_parts/health")
+				itemImg:SetImage("hl2cr/weapons/rifle")
+				itemPnl:Droppable("Wep")
+				itemAmt:SetText("")
+			elseif itemName == "Heavy_Shotgun" then
+				itemImg:SetImage("hl2cr/skills/shells")
 				itemPnl:Droppable("Wep")
 				itemAmt:SetText("")
 			--Upg Items
@@ -803,7 +817,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 			inventoryLayout:Add(itemPnl)
 			
 			if itemName then
-				itemButton = itemImg:Add("DButton")
+				itemButton = itemPnl:Add("DButton")
 				itemButton:SetPos(0, 60)
 				itemButton:SetSize(25, 25)
 				itemButton:SetText("Sell")
@@ -815,10 +829,20 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 							net.Start("SellItem")
 								net.WriteString(GAMEMODE.ArmourItem[i].Name)
 								net.WriteInt(GAMEMODE.ArmourItem[i].Cost, 32)
-							net.SendToServer()
+							net.SendToServer()							
 						end
 					end
-					itemImg:Remove()
+					
+					for i, wep in pairs(GAMEMODE.WeaponItem) do
+						if itemImg:GetImage() == GAMEMODE.WeaponItem[i].Icon then
+							net.Start("SellItem")
+								net.WriteString(GAMEMODE.WeaponItem[i].Name)
+								net.WriteInt(GAMEMODE.WeaponItem[i].Cost, 32)
+							net.SendToServer()							
+						end
+					end
+					itemButton:Remove()
+					itemPnl:Remove()
 				end
 			end
 		end
@@ -887,8 +911,18 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 		upgImg:SetSize(75, 75)
 		
 		if permUpgName == "Vampirism" then
-			upgImg:SetImage("hl2cr/misc/vampire")
+			upgImg:SetImage("hl2cr/skills/vampire")
 			upgPanel:SetToolTip(curPermUpg[l] .. "\nLeech enemies health on crowbar kill by chance")
+		elseif permUpgName == "Fire_Resist" then
+			upgImg:SetImage("hl2cr/skills/fireresist")
+			upgPanel:SetToolTip(curPermUpg[l] .. "\nResistance to Fire\nnow it feels cozy")
+		elseif permUpgName == "Suit_Power_Boost" then
+			upgImg:SetImage("hl2cr/skills/speed")
+			upgPanel:SetToolTip(curPermUpg[l] .. "\nExtra battery life for your suit")
+		elseif permUpgName == "Fire_Bullets" then
+			upgImg:SetImage("hl2cr/skills/firebullets")
+			upgPanel:SetToolTip(curPermUpg[l] .. "\nSet your enemies on fire by chance")
+		
 		end
 		
 		local upgLabel = upgPanel:Add("DLabel")
@@ -1026,7 +1060,6 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 	for i, weapon in pairs(GAMEMODE.WeaponItem) do
 		local weaponItem = weaponLayout:Add("DPanel")
 		weaponItem:SetSize(80, 80)
-		
 		local weaponIcon = weaponItem:Add("DImage")
 		weaponIcon:SetSize(80, 80)
 		weaponIcon:SetImage(GAMEMODE.WeaponItem[i].Icon)
@@ -1394,6 +1427,35 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 		net.SendToServer()
 	end
 	
+	local quickInfoLabel = vgui.Create("DLabel", customPanel)
+	quickInfoLabel:SetText("Enable/Disable Quick Info")
+	quickInfoLabel:SetPos(325, 325)
+	quickInfoLabel:SetFont("F4_font")
+	quickInfoLabel:SizeToContents()
+	
+	local enableQuickInfoCheckbox = vgui.Create("DCheckBox", customPanel)
+	enableQuickInfoCheckbox:SetSize(25, 25)
+	enableQuickInfoCheckbox:SetPos(435, 350)
+	enableQuickInfoCheckbox.OnChange = function()
+		net.Start("UpdateOptions")
+			net.WriteString("hl2cr_quickinfo")
+		if enableQuickInfoCheckbox:GetChecked() == false then
+			net.WriteInt(0, 8)
+			LocalPlayer():ConCommand("hud_quickinfo 0")
+		else
+			net.WriteInt(1, 8)
+			LocalPlayer():ConCommand("hud_quickinfo 1")
+		end		
+		net.SendToServer()
+		
+	end
+	
+	if optionsTable.QuickInfo == 1 then
+		enableQuickInfoCheckbox:SetChecked(true)
+	else
+		enableQuickInfoCheckbox:SetChecked(false)
+	end
+	
 	if enabled then
 		enableColoursCheckbox:SetChecked(true)
 	else
@@ -1522,5 +1584,6 @@ net.Receive("Open_F4_Menu", function(len, ply)
 	local hats = net.ReadTable()
 	local curTempUpg = net.ReadTable()
 	local curPermUpg = net.ReadTable()
-	OpenMenu(invItems, randomExchange, hasOTF, colours, enabled, font, eventItemsCount, curEvent, hats, curTempUpg, curPermUpg)
+	local optionsTable = net.ReadTable()
+	OpenMenu(invItems, randomExchange, hasOTF, colours, enabled, font, eventItemsCount, curEvent, hats, curTempUpg, curPermUpg, optionsTable)
 end)

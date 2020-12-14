@@ -55,8 +55,8 @@ net.Receive("IndicSpawn", function()
 	local colorCoins = Color(100, 190, 255)
 	local colorXP = Color(255, 140, 0)
 	
-	local txt1 = tostring("XP " .. xpDisplay)
-	local txt2 = tostring("λ" .. coinsDisplay)
+	local txt1 = "XP " .. xpDisplay
+	local txt2 = "λ" .. coinsDisplay
 	
 	SpawnCoins(txt1, colorCoins, position, 1)
 	SpawnXP(txt2, colorXP, position, 1)
@@ -215,14 +215,13 @@ end)
 net.Receive("SurvAllDead", function() shouldDrawRestartTimer = true end)
 
 net.Receive("FailedMap", function() shouldDrawRestartTimer = true end)
-
+local WINMAPS = {
+	["d3_breen_01"] = true,
+	["ep1_c17_06"] = true,
+	["ep2_outland_12a"] = true
+}
 hook.Add("HUDPaint", "HUDPaint_DrawTimer", function()
 
-	local WINMAPS = {
-		["d3_breen_01"] = true,
-		["ep1_c17_06"] = true,
-		["ep2_outland_12a"] = true
-	}
 
 	if shouldDrawTimer and not survivalMode and not WINMAPS[game.GetMap()] then
 		if not timer.Exists("MapTimerClient") then
@@ -345,6 +344,7 @@ local FRIENDLY_NPCS = {
 	["npc_monk"] = true,
 	["npc_alyx"] = true,
 	["npc_barney"] = true,
+	["npc_breen"] = true,
 	["npc_citizen"] = true,
 	["npc_vortigaunt"] = true,
 	["npc_mossman"] = true,

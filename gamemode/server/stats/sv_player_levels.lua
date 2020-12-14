@@ -8,19 +8,60 @@ function AddXP(ply, amt)
 		ply:SetNWInt("XP", math.Round(ply.hl2cPersistent.XP))
 	end
 	
-	while ply.hl2cPersistent.XP >= ply.hl2cPersistent.MaxXP do
-		math.ceil(ply.hl2cPersistent.MaxXP)
-		if ply.hl2cPersistent.Level < ply.hl2cPersistent.LevelCap then continue else ply.hl2cPersistent.XP = 0 end
-		ply.hl2cPersistent.Level = ply.hl2cPersistent.Level + 1
+	local levelChanged = false
+	-- ply.hl2cPersistent.MaxXP needs to be larger than 0, or this will loop infinitely
+	while ply.hl2cPersistent.XP >= ply.hl2cPersistent.MaxXP and ply.hl2cPersistent.MaxXP > 0 do
+			-- Additional stop condition: Level cap
+		if ply.hl2cPersistent.Level >= ply.hl2cPersistent.LevelCap then
+			ply.hl2cPersistent.XP = math.min(ply.hl2cPersistent.XP, ply.hl2cPersistent.MaxXP)
+			break
+		end
+		
 		ply.hl2cPersistent.XP = ply.hl2cPersistent.XP - ply.hl2cPersistent.MaxXP
 		ply.hl2cPersistent.MaxXP = ply.hl2cPersistent.MaxXP + 350
+		ply.hl2cPersistent.Level = ply.hl2cPersistent.Level + 1
+		
+		levelChanged = true
+	end
+  
+  -- Only send the level up notification once
+	if levelChanged then
 		ply:SetNWInt("Level", ply.hl2cPersistent.Level)
-		ply:SetNWInt("XP", math.Round(ply.hl2cPersistent.XP))
-		ply:SetNWInt("maxXP", math.Round(ply.hl2cPersistent.MaxXP))
+			ply:SetNWInt("XP", math.Round(ply.hl2cPersistent.XP))
+			ply:SetNWInt("maxXP", math.Round(ply.hl2cPersistent.MaxXP))
 		
 		net.Start("PlaySoundLevelUp")
 			net.WriteInt(ply.hl2cPersistent.Level, 32)
 		net.Send(ply)
+	end
+end
+
+function AddBonusXP(ply, bonusAmt)
+	
+	if ply.hl2cPersistent.Level < ply.hl2cPersistent.LevelCap then
+		ply.hl2cPersistent.XP = ply.hl2cPersistent.XP + bonusAmt 
+		ply:SetNWInt("XP", math.Round(ply.hl2cPersistent.XP))
+	elseif ply.hl2cPersistent.Level >= ply.hl2cPersistent.LevelCap then
+		ply.hl2cPersistent.XP = 0
+		ply:SetNWInt("XP", math.Round(ply.hl2cPersistent.XP))
+	end
+	
+	ply:ChatPrint("BONUS XP: " .. bonusAmt)
+	
+	local levelChanged = false
+	-- ply.hl2cPersistent.MaxXP needs to be larger than 0, or this will loop infinitely
+	while ply.hl2cPersistent.XP >= ply.hl2cPersistent.MaxXP and ply.hl2cPersistent.MaxXP > 0 do
+			-- Additional stop condition: Level cap
+		if ply.hl2cPersistent.Level >= ply.hl2cPersistent.LevelCap then
+			ply.hl2cPersistent.XP = math.min(ply.hl2cPersistent.XP, ply.hl2cPersistent.MaxXP)
+			break
+		end
+		
+		ply.hl2cPersistent.XP = ply.hl2cPersistent.XP - ply.hl2cPersistent.MaxXP
+		ply.hl2cPersistent.MaxXP = ply.hl2cPersistent.MaxXP + 350
+		ply.hl2cPersistent.Level = ply.hl2cPersistent.Level + 1
+		
+		levelChanged = true
 	end
 end
 
@@ -33,7 +74,9 @@ function prestige(ply)
 	ply.hl2cPersistent.MaxXP = 500
 	
 	table.Empty(ply.hl2cPersistent.Inventory)
+	table.Empty(ply.hl2cPersistent.PermUpg)
 	ply.hl2cPersistent.InvSpace = 0
+	ply.hl2cPersistent.Armour = 0
 	ply.hl2cPersistent.Helmet = ""
 	ply.hl2cPersistent.Suit = ""
 	ply.hl2cPersistent.Arm = ""
@@ -53,7 +96,8 @@ function prestige(ply)
 	ply:SetNWInt("XP", ply.hl2cPersistent.XP)
 	ply:SetNWInt("maxXP", ply.hl2cPersistent.MaxXP)
 	ply:SetNWInt("Prestige", ply.hl2cPersistent.Prestige)
-		
+	ply:SetNWInt("Armour", ply.hl2cPersistent.Armour)
+	ply:SetNWString("WepSlot", ply.hl2cPersistent.InvWeaponImage)
 	ply:ChatPrint("You have prestiged, Congratulations!")
 	
 	if ply.hl2cPersistent.Prestige == 1 then

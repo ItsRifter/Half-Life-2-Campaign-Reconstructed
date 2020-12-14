@@ -1,3 +1,14 @@
+NO_SPECIAL_MAPS = {
+	["d1_trainstation_01"] = true,
+	["d1_trainstation_02"] = true,
+	["d1_trainstation_03"] = true,
+	["d1_trainstation_04"] = true,
+	["d1_trainstation_05"] = true,
+	["d2_prison_06"] = true,
+	["d2_prison_07"] = true,
+	["d3_breen_01"] = true,
+}
+
 function SetupHL2Map()
 	sandAchEarnable = false
 	surpassSand = false
@@ -8,34 +19,7 @@ function SetupHL2Map()
 	MapLua = ents.Create("lua_run")
 	MapLua:SetName("triggerhook")
 	MapLua:Spawn()
-	
-	local specialChance = 0
-	local NPCKind = 0
-	if GetConVar("hl2cr_specials"):GetInt() == 1 then
-		for k, npc in pairs(ents.FindByClass("npc_combine_*")) do
-			specialChance = math.random(1, 60)
-			if specialChance <= (12 * GetConVar("hl2cr_difficulty"):GetInt()) then
-				NPCKind = math.random(5, 5)
-				local newNPC = nil
-				if NPCKind == 1 then
-					newNPC = ents.Create("npc_combine_assassin")
-				elseif NPCKind == 2 then
-					newNPC = ents.Create("npc_combine_support")
-				elseif NPCKind == 3 then
-					newNPC = ents.Create("npc_combine_medic")
-				elseif NPCKind == 4 then
-					newNPC = ents.Create("npc_combine_veteran")
-				elseif NPCKind == 5 then
-					newNPC = ents.Create("npc_combine_grenadier")
-				end
-				
-				newNPC:SetPos(npc:GetPos())
-				newNPC:Spawn()
-				npc:Remove()
-			end
-		end
-	end
-	
+		
 	--Fix the spawnpoints
 	if game.GetMap() == "d1_trainstation_02" then 
 		for k, reset1 in pairs(ents.FindByClass("info_player_start")) do
@@ -80,6 +64,10 @@ function SetupHL2Map()
 		for k, fix2 in pairs(ents.FindByClass("info_player_start")) do
 			fix2:SetPos(Vector(3330, 1471, 1600))
 			fix2:SetAngles(Angle(0, -90, 0))
+		end
+		
+		for k, fog in pairs(ents.FindByClass("env_fog_controller")) do
+			fog:Remove()
 		end
 	end
 	
@@ -349,6 +337,13 @@ function SetupHL2Map()
 		end
 	end
 	
+	for i, portal in pairs(ents.FindByClass("func_areaportal")) do
+		
+		hook.Add("Think", "KeepPortalsOpen", function()
+			if not portal then return end
+			portal:SetKeyValue("StartOpen", 1)
+		end)
+	end
 	SetCheckpointsStageHL2()
 	
 	if GetConVar("hl2cr_halloween"):GetInt() == 1 then
@@ -781,9 +776,21 @@ function SetCheckpointsStageHL2()
 		TRIGGER_CHANGELEVEL = {
 			Vector(-3375, 10248, 1798),	Vector(-3987, 10697, 1968)	
 		}
+		TRIGGER_CHECKPOINT = {
+			 Vector(6207, -4223, 385), Vector(5894, -3976, 610)
+		}
+		TRIGGER_SPAWNPOINT = {
+			Vector(6036, -4081, 409)
+		}
 	elseif game.GetMap() == "d2_coast_05" then
 		TRIGGER_CHANGELEVEL = {
 			Vector(1495, 5429, 1617),	Vector(2334, 5373, 1353)
+		}
+		TRIGGER_CHECKPOINT = {
+			 Vector(-4582, -1183, 1089), Vector(-4505, -1262, 1234)
+		}
+		TRIGGER_SPAWNPOINT = {
+			Vector(-4565, -1091, 1119)
 		}
 	elseif game.GetMap() == "d2_coast_07" and not file.Exists("hl2cr_data/d2_coast_07.txt", "DATA") then
 		TRIGGER_CHANGELEVEL = {
@@ -794,10 +801,10 @@ function SetCheckpointsStageHL2()
 			Vector(3074, 1598, 1537),	Vector(3186, 1787, 1663)
 		}
 		TRIGGER_CHECKPOINT = {
-			 Vector(3060, -6922, 1923), Vector(2972, -6988, 2034),
+			 Vector(3061, -6922, 1921), Vector(2832, -6994, 2037),
 		}
 		TRIGGER_SPAWNPOINT = {
-			Vector(2954, -7059, 1937)
+			Vector(2939, -6995, 1935)
 		}
 	elseif game.GetMap() == "d2_coast_07" and file.Exists("hl2cr_data/d2_coast_07.txt", "DATA") then
 		TRIGGER_CHANGELEVEL = {

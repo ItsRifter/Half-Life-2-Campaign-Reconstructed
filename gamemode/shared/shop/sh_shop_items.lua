@@ -1,16 +1,28 @@
 AddCSLuaFile() -- Add itself to files to be sent to the clients, as this file is shared
 
 --Weapon Items - Shop
-local wepItem = createItemBase(BaseWeapon, "Medkit", "Become a medic with this kit", "hl2cr/armour_parts/health")
+local wepItem = createItemBase(BaseWeapon, "Medkit", "Become a medic with this kit", "hl2cr/weapons/medkit")
 wepItem.Cost = 5000
 Register.Weapon(wepItem)
 
-local wepItem = createItemBase(BaseWeapon, "One_Handed_Auto_Shotgun", "Weaponry at finest", "hl2cr/misc/shells")
+local wepItem = createItemBase(BaseWeapon, "One_Handed_Autogun", "Weaponry at its finest", "hl2cr/weapons/shotgun")
 wepItem.Cost = 17500
 Register.Weapon(wepItem)
 
-local wepItem = createItemBase(BaseWeapon, "Unbonded_Pulse_Rifle", "There is an AR3?", "hl2cr/armour_parts/health")
+local wepItem = createItemBase(BaseWeapon, "Unbonded_Pulse_Rifle", "There is an AR3?", "hl2cr/weapons/rifle")
 wepItem.Cost = 20000
+Register.Weapon(wepItem)
+
+local wepItem = createItemBase(BaseWeapon, "Heavy_Shotgun", "Bulky and heavy shotgun", "hl2cr/skills/shells")
+wepItem.Cost = 45000
+Register.Weapon(wepItem)
+
+local wepItem = createItemBase(BaseWeapon, "Rusty_DB", "How does this hold more than two shells?", "vgui/achievements/hl2_beat_toxictunnel")
+wepItem.Cost = 30000
+Register.Weapon(wepItem)
+
+local wepItem = createItemBase(BaseWeapon, "BF_HMG", "Quite massive, think you can carry it?", "vgui/achievements/hl2_get_airboatgun")
+wepItem.Cost = 100000
 Register.Weapon(wepItem)
 
 -- Armour items - Shop
@@ -162,45 +174,66 @@ Register.Weapon(weaponItem)
 -]]
 
 --Temporary Upgrades (only lasts until player leaves)
-local tempUpgItem = createItemBase(BaseTempUpg, "Health_Boost", "Bullets mean nothing to you", "hl2cr/armour_parts/health")
+local tempUpgItem = createItemBase(BaseTempUpg, "Health_Boost", "Bullets mean nothing to you", "hl2cr/skills/health")
 tempUpgItem.EssenceCost = 0
 tempUpgItem.Cost = 1500
 tempUpgItem.PrestigeReq = 0
 Register.TempUpg(tempUpgItem)
 
-local tempUpgItem = createItemBase(BaseTempUpg, "Shotgun_Blaster", "Your shotgun can deal more damage", "hl2cr/misc/shells")
+local tempUpgItem = createItemBase(BaseTempUpg, "Shotgun_Blaster", "Your shotgun can deal more damage", "hl2cr/skills/shells")
 tempUpgItem.EssenceCost = 2
 tempUpgItem.Cost = 2500
 tempUpgItem.PrestigeReq = 0
 Register.TempUpg(tempUpgItem)
 
-local tempUpgItem = createItemBase(BaseTempUpg, "Self_Healing", "Your body manages to self-heal any damage\nafter a certain time", "hl2cr/armour_parts/health")
+local tempUpgItem = createItemBase(BaseTempUpg, "Self_Healing", "Your body manages to self-heal any damage\nafter a certain time", "hl2cr/skills/health")
 tempUpgItem.EssenceCost = 5
 tempUpgItem.Cost = 0
 tempUpgItem.PrestigeReq = 0
 Register.TempUpg(tempUpgItem)
 
-local tempUpgItem = createItemBase(BaseTempUpg, "Self_Healing_2", "Your body manages to self-heal any damage\nafter a certain time better", "hl2cr/armour_parts/health")
+local tempUpgItem = createItemBase(BaseTempUpg, "Self_Healing_2", "Your body manages to self-heal any damage\nafter a certain time better", "hl2cr/skills/health")
 tempUpgItem.EssenceCost = 10
 tempUpgItem.Cost = 0
 tempUpgItem.PrestigeReq = 1
 Register.TempUpg(tempUpgItem)
 
-local tempUpgItem = createItemBase(BaseTempUpg, "Self_Healing_3", "Your body manages to self-heal any damage\nafter a certain time even better", "hl2cr/armour_parts/health")
+local tempUpgItem = createItemBase(BaseTempUpg, "Self_Healing_3", "Your body manages to self-heal any damage\nafter a certain time even better", "hl2cr/skills/health")
 tempUpgItem.EssenceCost = 15
 tempUpgItem.Cost = 0
 tempUpgItem.PrestigeReq = 1
 Register.TempUpg(tempUpgItem)
 
-local tempUpgItem = createItemBase(BaseTempUpg, "Blast_Resistance", "Explosions are just a scratch to you", "hl2cr/misc/blast_resist")
+local tempUpgItem = createItemBase(BaseTempUpg, "Blast_Resistance", "Explosions are just a scratch to you", "hl2cr/skills/blast_resist")
 tempUpgItem.EssenceCost = 20
 tempUpgItem.Cost = 5000
-tempUpgItem.PrestigeReq = 2
+tempUpgItem.PrestigeReq = 1
 Register.TempUpg(tempUpgItem)
 
-local permUpgItem = createItemBase(BaseTempUpg, "Vampirism", "Leech enemies health on crowbar kill by chance", "hl2cr/misc/vampire")
+local permUpgItem = createItemBase(BaseTempUpg, "Vampirism", "Leech enemies health on crowbar kill by chance", "hl2cr/skills/vampire")
 permUpgItem.EssenceCost = 10
 permUpgItem.Cost = 2000
 permUpgItem.CrystalCost = 2
+permUpgItem.PrestigeReq = 1
+Register.PermUpg(permUpgItem)
+
+local permUpgItem = createItemBase(BaseTempUpg, "Fire_Bullets", "Set your enemies on fire by chance", "hl2cr/skills/firebullets")
+permUpgItem.EssenceCost = 15
+permUpgItem.Cost = 5000
+permUpgItem.CrystalCost = 4
 permUpgItem.PrestigeReq = 2
+Register.PermUpg(permUpgItem)
+
+local permUpgItem = createItemBase(BaseTempUpg, "Fire_Resist", "Resistance to Fire\nnow it feels cozy", "hl2cr/skills/fireresist")
+permUpgItem.EssenceCost = 5
+permUpgItem.Cost = 500
+permUpgItem.CrystalCost = 1
+permUpgItem.PrestigeReq = 0
+Register.PermUpg(permUpgItem)
+
+local permUpgItem = createItemBase(BaseTempUpg, "Suit_Power_Boost", "Extra battery life for your suit", "hl2cr/skills/speed")
+permUpgItem.EssenceCost = 0
+permUpgItem.Cost = 7500
+permUpgItem.CrystalCost = 5
+permUpgItem.PrestigeReq = 1
 Register.PermUpg(permUpgItem)

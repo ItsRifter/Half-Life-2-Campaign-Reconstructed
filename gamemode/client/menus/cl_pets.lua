@@ -65,7 +65,7 @@ function petDuelMenu(coins)
 			
 			net.Start("PetChallenge")
 				net.WriteString(target)
-				net.WriteInt(betAmt, 128)
+				net.WriteInt(betAmt, 32)
 			net.SendToServer()
 			
 		else

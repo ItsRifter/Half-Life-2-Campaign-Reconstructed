@@ -214,12 +214,16 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 	--]]
 	--spawns the players pet unless they already exist or have no access to it
 	if (string.lower(text) == "!petsummon" or string.lower(text) == "!spawnpet" ) then
-		if ply.hl2cPersistent.Level >= 10 or ply.hl2cPersistent.Prestige > 0 then
+		if ply.hl2cPersistent.Level >= 10 or ply.hl2cPersistent.Prestige > 0 and ply:Alive() and ply:Team() == TEAM_ALIVE then
 			if not ply.petAlive and petSpawntime < CurTime() then
 				spawnPet(ply)
 				petSpawntime = CurTime() + 5
+			elseif ply:Team() != TEAM_ALIVE then
+				ply:ChatPrint("You can't spawn your pet right now///")
 			elseif petSpawntime > CurTime() then
 				ply:ChatPrint("Slow down! you can't respawn your pet that fast")
+			elseif not ply:Alive() then
+				ply:ChatPrint("You can't bring your pet while dead!")
 			else
 				ply:ChatPrint("Your pet has already been summoned!")
 			end
@@ -321,6 +325,17 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 			ply:ChatPrint("Your pet doesn't exist!")
 			return ""
 		end
+		
+		if ply:Team() == TEAM_COMPLETED_MAP then
+			ply:ChatPrint("You can't bring your pet when you have finished the map")
+			return ""
+		end
+		
+		if not ply:Alive() then
+			ply:ChatPrint("You can't bring your pet while dead!")
+			return ""
+		end
+		
 		if duel then
 			ply:ChatPrint("You can't bring your pet while in a duel!")
 			return ""
@@ -402,7 +417,7 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 	end
 
 	if (string.lower(text) == "!pet") then
-			if tonumber(ply.hl2cPersistent.Level) >= 10 then
+			if ply.hl2cPersistent.Level >= 10 or ply.hl2cPersistent.Prestige > 0 then
 				if game.GetMap() == "d1_trainstation_01" or game.GetMap() == "d1_trainstation_02" or game.GetMap() == "d1_trainstation_03" or  game.GetMap() == "d1_trainstation_04" or game.GetMap() == "d1_trainstation_05" then
 					ply:ChatPrint("Pets are disabled on this map")
 				else
@@ -547,6 +562,24 @@ local function showTimerPet(ply)
 	end
 end
 
+function AddBonusCoins(ply, bonusAmt)
+	if ply.hl2cPersistent.Coins < 0 then
+		ply.hl2cPersistent.Coins = 0 + bonusAmt
+	end
+	ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins + bonusAmt
+	ply:SetNWInt("Coins", math.Round(ply.hl2cPersistent.Coins))
+	ply:ChatPrint("BONUS COINS: " .. bonusAmt)
+end
+
+function AddBonusCoins(ply, bonusAmt)
+	if ply.hl2cPersistent.Coins < 0 then
+		ply.hl2cPersistent.Coins = 0 + bonusAmt
+	end
+	ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins + bonusAmt
+	ply:SetNWInt("Coins", math.Round(ply.hl2cPersistent.Coins))
+	ply:ChatPrint("BONUS COINS: " .. bonusAmt)
+end
+
 function AddCoins(ply, amount)
 	if ply.hl2cPersistent.Coins < 0 then
 		ply.hl2cPersistent.Coins = 0 + amount
@@ -595,6 +628,45 @@ concommand.Add("hl2cr_wipeinv", function(ply, cmd, args, argStr)
 		if target then
 			table.Empty(target.hl2cPersistent.Inventory)
 			target:ChatPrint("Your inventory has been wiped by an admin")
+		end
+	else
+		ply:PrintMessage(HUD_PRINTCONSOLE, "You do not have access to this command")
+	end
+end)
+
+concommand.Add("hl2cr_getachlist", function(ply, cmd, args, argStr)
+	local list = string.sub(args[1], 0)
+	
+	if ply:IsAdmin() then
+		local AchLists = AchievementLists
+		local getList = AchLists[list]
+		for k, ach in pairs(getList) do
+			ply:PrintMessage(HUD_PRINTCONSOLE, tostring(ach.name))
+		end
+	else
+		ply:PrintMessage(HUD_PRINTCONSOLE, "You do not have access to this command")
+	end
+
+end)
+concommand.Add("hl2cr_giveach", function(ply, cmd, args, argStr)
+	local target = string.sub(args[1], 0)
+	local ach = string.sub(args[2], 0)
+	local list = string.sub(args[3], 0)
+	
+	if ply:IsAdmin() then
+		for k, v in pairs(player.GetAll()) do
+			if v != ply and target != "" then
+				if string.find(string.lower(v:Nick()), string.lower(target)) then
+					target = v
+				end
+			else
+				target = ply
+			end
+		end
+	
+		if target and ach and list then
+			Achievement(target, ach, list)
+			target:ChatPrint("You have been given the " .. ach .. " achievement by an admin")
 		end
 	else
 		ply:PrintMessage(HUD_PRINTCONSOLE, "You do not have access to this command")
@@ -665,6 +737,7 @@ concommand.Add("hl2cr_givexp", function(ply, cmd, args, argStr)
 		target = ply
 	end
 		if target and int then
+			if target.hl2cPersistent.Level >= target.hl2cPersistent.LevelCap then ply:ChatPrint("The target exceeds the level cap") return end
 			AddXP(target, int)
 			target:ChatPrint("You have been given " .. int .. "xp by an admin")
 		else
@@ -693,7 +766,7 @@ concommand.Add("hl2cr_getxp", function(ply, cmd, args)
 			target = ply
 		end
 		
-		ply:ChatPrint("XP: " .. target.hl2cPersistent.XP .. "/" .. target.hl2cPersistent.MaxXP)
+		ply:ChatPrint(target:Nick() ..  "'s XP: " .. target.hl2cPersistent.XP .. "/" .. target.hl2cPersistent.MaxXP)
 	else
 		ply:ChatPrint("You don't have access to this command")
 	end
@@ -921,13 +994,17 @@ end)
 
 concommand.Add("hl2cr_petsummon", function(ply, cmd, args)
 	local level = ply.hl2cPersistent.Level
-	if tonumber(level) >= 10 or ply.hl2cPersistent.Prestige > 0 then
-		if not ply.petAlive and petSpawntime <= CurTime() then
+	if tonumber(level) >= 10 or ply.hl2cPersistent.Prestige > 0 and ply:Alive() and ply:Team() == TEAM_ALIVE then
+		if not ply.petAlive and ply.petSpawntime <= CurTime() then
 			spawnPet(ply)
 			ply:SetNWString("PetOwnerName", ply:Nick())
-			petSpawntime = CurTime() + 5
-		elseif petSpawntime > CurTime() then
+			ply.petSpawntime = CurTime() + 5
+		elseif ply:Team() != TEAM_ALIVE then
+			ply:ChatPrint("You can't spawn your pet while you have completed the map")
+		elseif ply.petSpawntime > CurTime() then
 			ply:ChatPrint("Slow down! you can't respawn your pet that fast")
+		elseif not ply:Alive() then
+			ply:ChatPrint("You can't summon your pet while dead!")
 		else
 			ply:ChatPrint("You can only summon your pet once every life!")
 		end
@@ -954,7 +1031,7 @@ concommand.Add("hl2cr_getcoins", function(ply, cmd, args)
 			target = ply
 		end
 		
-		ply:ChatPrint("Coins: " .. target.hl2cPersistent.Coins)
+		ply:ChatPrint(target:Nick() .. "'s Coins: " .. target.hl2cPersistent.Coins)
 	else
 		ply:ChatPrint("You don't have access to this command")
 	end
@@ -978,7 +1055,7 @@ concommand.Add("hl2cr_getarmour", function(ply, cmd, args)
 			target = ply
 		end
 		
-		ply:ChatPrint("Armour: " .. target.hl2cPersistent.Armour)
+		ply:ChatPrint(target:Nick() .. "'s Armour: " .. target.hl2cPersistent.Armour)
 	else
 		ply:ChatPrint("You don't have access to this command")
 	end
@@ -1045,10 +1122,21 @@ end)
 concommand.Add("hl2cr_petbring", function(ply, cmd, args)
 	if not ply.pet:IsValid() then
 		ply:ChatPrint("Your pet doesn't exist!")
+	end
+	
+	if ply:Team() == TEAM_COMPLETED_MAP then
+		ply:ChatPrint("You can't bring your pet when you have finished the map")
 		return ""
 	end
+	
+	if not ply:Alive() then
+		ply:ChatPrint("You can't bring your pet while dead!")
+		return
+	end
+	
 	if duel then
 		ply:ChatPrint("You can't bring your pet while in a duel!")
+		return
 	end
 	
 	if ply.BringPet then
@@ -1221,6 +1309,14 @@ concommand.Add("hl2cr_fixloyal", function(ply, cmd, args)
 		else
 			ply:ChatPrint("You aren't a loyal combine")
 		end
+	else
+		ply:ChatPrint("You don't have access to this command")
+	end
+end)
+
+concommand.Add("hl2cr_rollmission", function(ply, cmd, args)
+	if ply:IsAdmin() then
+		MISSIONS:StartNextRoll()
 	else
 		ply:ChatPrint("You don't have access to this command")
 	end

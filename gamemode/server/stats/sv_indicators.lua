@@ -1,5 +1,3 @@
-AddCSLuaFile() -- Add itself to files to be sent to the clients, as this file is shared
-
 local crowAttempt = false
 local crowKills = 0
 
@@ -33,12 +31,18 @@ local RESTRICTED_MAPS = {
 }
 
 hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
-	
+	giveXP = 0
+	giveCoins = 0
+	bonusXP = 0
+	bonusCoins = 0
 	if npc:IsNPC() and attacker:IsPlayer() and inflictor:GetModel() == "models/props_wasteland/prison_toilet01.mdl" and game.GetMap() == "d2_prison_02" then
 		for k, v in pairs(player.GetAll()) do
 			Achievement(v, "Flushed", "HL2_Ach_List")
 		end
 	end
+	
+	--Prevent antlion farming
+	if npc:GetClass() == "npc_antlion" and RESTRICTED_MAPS[game.GetMap()] and (attacker:IsPlayer() or attacker:IsPet()) then return end
 
 	if npc:IsPet() and attacker:IsPet() then
 		local npcOwner = npc.owner
@@ -60,27 +64,26 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 		bonusCoins = 75
 	end
 
-	if not RESTRICTED_NPCS[npc:GetClass()] and attacker:IsPlayer() then 
-		if attacker.totalXPGained > attacker.XPCap then
-			giveXP = math.random(1 + bonusXP, (25 + bonusXP) * GetConVar("hl2cr_difficulty"):GetInt())
-			giveCoins = math.random(1 + bonusCoins, (15 + bonusCoins) * GetConVar("hl2cr_difficulty"):GetInt())
+	if not RESTRICTED_NPCS[npc:GetClass()] and attacker:IsPlayer() then
+		giveXP = math.random(1 + bonusXP, (25 + bonusXP) * GetConVar("hl2cr_difficulty"):GetInt())
+		giveCoins = math.random(1 + bonusCoins, (15 + bonusCoins) * GetConVar("hl2cr_difficulty"):GetInt())
+		if attacker.totalXPGained then
 			attacker.totalXPGained = attacker.totalXPGained + giveXP
-			
-			Spawn(giveXP, giveCoins, npc:GetPos(), npc, attacker)
-			
-			attacker.tableRewards["Kills"] = attacker.tableRewards["Kills"] + 1
-			
-			attacker.hl2cPersistent.KillCount = attacker.hl2cPersistent.KillCount + 1
-			
-			AddXP(attacker, giveXP)
-			AddCoins(attacker, giveCoins)
 		end
+		
+		Spawn(giveXP, giveCoins, npc:GetPos(), npc, attacker)
+		
+		attacker.tableRewards["Kills"] = attacker.tableRewards["Kills"] + 1
+		attacker.hl2cPersistent.KillCount = attacker.hl2cPersistent.KillCount + 1
+		
+		AddXP(attacker, giveXP)
+		AddCoins(attacker, giveCoins)
 	else
 		giveXP = 0
 		giveCoins = 0
 	end
 
-	if npc:GetClass() == "npc_crow" and inflictor:GetClass() == "prop_physics" then
+	if npc:GetClass() == "npc_crow" and inflictor:GetClass() == "prop_physics" and game.GetMap() == "ep2_outland_01" then
 		crowAttempt = true
 		crowKills = crowKills + 1
 		if npc:GetClass() == "npc_crow" and inflictor:GetClass() == "prop_physics" and crowKills >= 2 then
@@ -100,29 +103,39 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 			end
 		end
 	end
-	
-	--Prevent antlion farming
-	if npc:GetClass() == "npc_antlion" and RESTRICTED_MAPS[game.GetMap()] and (attacker:IsPlayer() or attacker:IsPet()) then return end
-	
-	if attacker:IsPet() and (attacker.owner.totalPetXPGained < attacker.owner.PetXPCap) then
-		givePetXP = math.random(1, 15 * GetConVar("hl2cr_difficulty"):GetInt())
-		addPetXP(attacker.owner, givePetXP)
-		if attacker.owner.totalPetXPGained >= attacker.owner.PetXPCap then
-			attacker:ChatPrint("You have exceeded the XP your pet can gain on this map")
+
+	if attacker:IsPet() and attacker.owner:IsPlayer() and npc != attacker then 
+		if attacker.owner.PetXPCap == nil then
+			givePetXP = math.random(1, 15 * GetConVar("hl2cr_difficulty"):GetInt())
+			addPetXP(attacker.owner, givePetXP)
+			Spawn(givePetXP, 0, npc:GetPos(), npc, attacker.owner)
+			
+		elseif attacker.owner.PetXPCap > 0 then
+			if attacker.owner.totalPetXPGained < attacker.owner.PetXPCap then 
+				givePetXP = math.random(1, 15 * GetConVar("hl2cr_difficulty"):GetInt())
+				addPetXP(attacker.owner, givePetXP)
+				attacker.owner.totalPetXPGained = attacker.owner.totalPetXPGained + givePetXP
+				if attacker.owner.totalPetXPGained >= attacker.owner.PetXPCap then
+					attacker.owner:ChatPrint("You have exceeded the XP your pet can gain on this map")
+				end
+				Spawn(givePetXP, 0, npc:GetPos(), npc, attacker.owner)
+			end
 		end
-		Spawn(givePetXP, 0, npc:GetPos(), npc, attacker.owner)
 	end
 	
 	--Crowbar bonus if the player beats the map using only the crowbar with jeep exception
-	if attacker:IsPlayer() and attacker:GetActiveWeapon():GetClass() != "weapon_crowbar" and attacker.tableRewards["CrowbarOnly"] 
-	and not inflictor:GetClass() == "prop_vehicle_jeep_old" then
+	if attacker:IsPlayer() and attacker:GetActiveWeapon():GetClass() != "weapon_crowbar" then
+		attacker.canEarnCrowbar = false
+		attacker.tableRewards["CrowbarOnly"] = false
 		if attacker.hl2cPersistent.OTF then
 			attacker.hl2cPersistent.OTF = false
 			attacker:ChatPrint("You have failed the 'One True Freeman' Challenge")
 		end
 	elseif attacker:IsPlayer() and attacker:GetActiveWeapon():GetClass() == "weapon_crowbar" then
-		attacker.hl2cPersistent.AchProgress.CrowbarKiller = attacker.hl2cPersistent.AchProgress.CrowbarKiller + 1
 		attacker.tableRewards["CrowbarOnly"] = true
+		
+		attacker.hl2cPersistent.AchProgress.CrowbarKiller = attacker.hl2cPersistent.AchProgress.CrowbarKiller + 1
+		
 		if attacker.hl2cPersistent.AchProgress.CrowbarKiller >= 250 then
 			Achievement(attacker, "Crowbar_Killer_250", "Kill_Ach_List")
 		end
@@ -148,6 +161,7 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 		end
 		pacifistAchEarnable = false
 	end
+
 end)
 
 function Spawn(xpAmt, coinAmt, pos, target, reciever)

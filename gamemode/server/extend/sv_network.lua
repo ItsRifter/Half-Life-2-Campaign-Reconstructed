@@ -88,7 +88,12 @@ util.AddNetworkString("BeginOTF")
 util.AddNetworkString("StartNPCColour")
 util.AddNetworkString("UpdateNPCColour")
 util.AddNetworkString("SendClientColours")
+util.AddNetworkString("UpdateOptions")
 
 --Cosmetics
 util.AddNetworkString("WearHat")
 util.AddNetworkString("EquipHat")
+
+--EP2 Flashlight
+util.AddNetworkString("ep2_flashlight")
+

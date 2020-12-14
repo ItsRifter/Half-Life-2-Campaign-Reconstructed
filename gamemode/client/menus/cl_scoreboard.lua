@@ -208,7 +208,7 @@ function ToggleBoard(toggle, clientTimer)
 end
 
 hook.Add( "CreateMove", "PopUpBoard", function()
-	if (input.WasMousePressed( MOUSE_RIGHT )) then  
+	if (input.WasMousePressed( MOUSE_RIGHT )) and Board then  
 		Board:MakePopup()
 		return
 	end

@@ -17,6 +17,7 @@ HL2_Ach_List = {
 	[10] = {name = "Vortex_Locator", desc = "Locate all the\nvortexes in Half-Life 2", mat = "vgui/achievements/hl2_find_alllambdas.png", isRare = true},
 	[11] = {name = "Crowbar_Only_HL2", desc = "Finish Half-Life 2 with\nonly the crowbar", mat = "vgui/achievements/hl2_beat_game.png", isRare = false},
 	[12] = {name = "Vorticough", desc = "Discover the hidden\nsinging vortigaunt cave", mat = "vgui/achievements/hl2_find_vortigauntcave.png", isRare = false},
+	[13] = {name = "Blast_from_the_Past", desc = "Find the old H.E.V Charger in the scrapyard", mat = "vgui/achievements/hl2_find_hevfaceplate.png", isRare = false},
 	
 	--[13] = {name = "Defiant", desc = "Hit the trashcan\ncop with the can", mat = "vgui/achievements/hl2_hit_cancop_withcan.png", isRare = false},
 	--[14] = {name = "Submissive", desc = "Put the can in the trash", mat = "vgui/achievements/hl2_put_canintrash.png", isRare = false},

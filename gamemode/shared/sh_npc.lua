@@ -96,10 +96,19 @@ hook.Add("EntityTakeDamage", "FriendOrFoe", function(ent, dmgInfo)
 		"d3_citadel_04",
 		"d3_citadel_05",
 		"d3_breen_01",
+		"ep2_outland_01",
+		"ep2_outland_02",
+		"ep2_outland_03",
+		"ep2_outland_04",
+		"ep2_outland_05",
+		"ep2_outland_06",
+		"ep2_outland_11",
+		"ep2_outland_11b",
 	}
 
 	local attacker = dmgInfo:GetAttacker()
 	local dmg = dmgInfo:GetDamage()
+	local inflictor = dmgInfo:GetInflictor()
 	if attacker:IsPet() and ent:IsNPC() then
 		ent:AddEntityRelationship(attacker, D_HT, 15)
 		local totalDMG = dmg + attacker:GetNWInt("PetStr")
@@ -111,7 +120,7 @@ hook.Add("EntityTakeDamage", "FriendOrFoe", function(ent, dmgInfo)
 		dmgInfo:SetDamage(0)
 	end
 
-	if INVUL_NPCS[ent:GetClass()] or (attacker:IsPlayer() and attacker:Team() == TEAM_ALIVE and ent:GetClass() == "npc_citizen" ) then
+	if INVUL_NPCS[ent:GetClass()] or (attacker:IsPlayer() and attacker:Team() == TEAM_ALIVE and ent:GetClass() == "npc_citizen") then
 		dmgInfo:SetDamage(0)
 		return
 	end
@@ -134,6 +143,14 @@ hook.Add("EntityTakeDamage", "FriendOrFoe", function(ent, dmgInfo)
 	end
 end)
 if SERVER then
+	local NO_CHANGE_SPECIAL = {
+		["npc_combine_assassin"] = false,
+		["npc_combine_support"] = false,
+		["npc_combine_medic"] = false,
+		["npc_combine_veteran"] = false,
+		["npc_combine_grenadier"] = false,
+	}
+	local nextChange = 0
 	hook.Add("Think", "NPCThinkRelation", function()
 		--Loyal Players relation with combine npc
 		for k, v in pairs(player.GetAll()) do
@@ -221,8 +238,7 @@ if SERVER then
 			end
 		end
 	end)
-
-	hook.Add("Think", "DoubleHPVar", function()
+	hook.Add("Think", "UpdateNPC", function()
 		if GetConVar("hl2cr_doublehp"):GetInt() == 1 then
 			for k, dbNPC in pairs(ents.FindByClass("npc_*")) do
 				if not dbNPC.doubled and not dbNPC:IsPet() then
@@ -232,6 +248,23 @@ if SERVER then
 			end
 		end
 	end)
+	
+	if GetConVar("hl2cr_specials"):GetInt() == 1 then
+		for k, normalNPC in pairs(ents.FindByClass("npc_*")) do
+			local specialChance = math.random(1, 75)
+			if not normalNPC:IsPet() then
+				if normalNPC:GetClass() == "npc_metropolice" then
+					if specialChance > (25 * GetConVar("hl2cr_difficulty"):GetInt()) then
+						local newPos = normalNPC:GetPos()
+						newPos.z = newPos.z + 30
+						print(specialChance)
+						print(12 * GetConVar("hl2cr_difficulty"):GetInt())
+						normalNPC:Remove()
+					end
+				end
+			end
+		end
+	end
 
 	hook.Add("ScaleNPCDamage", "DiffScalingNPC", function(ent, hitGroup, dmgInfo)
 

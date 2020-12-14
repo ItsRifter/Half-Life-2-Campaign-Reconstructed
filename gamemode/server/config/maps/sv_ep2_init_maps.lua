@@ -5,8 +5,13 @@ function SetupEP2Map()
 	MapLua:Spawn()
 	
 	for k, clip in pairs(ents.FindByName("*_clip")) do
-		if game.GetMap() == "ep2_outland_10" then return end
+		if game.GetMap() == "ep2_outland_10" then break end
 		clip:Remove()
+	end
+	
+	for k, playerBlock in pairs(ents.FindByName("func_brush")) do
+		if game.GetMap() != "ep2_outland_4" then break end
+		playerBlock:Remove()
 	end
 	
 	if game.GetMap() == "ep2_outland_01" then
@@ -26,7 +31,7 @@ function SetupEP2Map()
 	end
 	
 	if game.GetMap() == "ep2_outland_05" then
-		for k, fixScript in pairs(ents.FindByName("ss_alyx_wait_02")) do
+		for k, fixScript in pairs(ents.FindByName("ss_alyx_wait_0*")) do
 			fixScript:Remove()
 		end
 	end
@@ -54,7 +59,6 @@ function SetupEP2Map()
 		
 		for k, fixAdvisorCutscene in pairs(ents.FindByName("relay_start_player_vehicle")) do
 			fixAdvisorCutscene:Fire("AddOutput", "OnTrigger triggerhook:RunPassedCode:hook.Run( 'AdvisorTrigger' ):0:-1")
-			print(fixAdvisorCutscene)
 		end
 	end
 	
@@ -69,7 +73,6 @@ function SetupEP2Map()
 			failBase:Fire("AddOutput", "OnTrigger triggerhook:RunPassedCode:hook.Run( 'FailBaseMap' ):0:-1" )
 		end
 	end
-	
 	SetCheckpointsStageEP2()
 end
 
@@ -149,7 +152,7 @@ function SetCheckpointsStageEP2()
 		}
 		
 		TRIGGER_SPAWNPOINT = {
-			Vector(-2869, -9473, -847),	Vector(211, -9609, -696)
+			Vector(-2426, -9471, -687),	Vector(211, -9609, -696)
 		}
 	elseif game.GetMap() == "ep2_outland_03" then
 		TRIGGER_CHANGELEVEL = {
@@ -267,7 +270,7 @@ function SetCheckpointsStageEP2()
 		}
 		
 		TRIGGER_CHECKPOINT = {
-			Vector(3298, -257, -126), 		Vector(3681, -571, -20),
+			Vector(3295, -251, -124), 		Vector(3672, -419, 39),
 			Vector(568, -2429, 163), 		Vector(704, -2210, 295)
 		}
 		

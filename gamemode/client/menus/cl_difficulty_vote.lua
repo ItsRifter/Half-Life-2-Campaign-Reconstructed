@@ -188,6 +188,10 @@ function OpenDiffMenu(diff, surv, special, doublehp)
 	survivalButton:SetPos(150, 575)
 	survivalButton.DoClick = function()
 		if not LocalPlayer().hasUserVoted then
+		if not LocalPlayer():Alive() then
+			LocalPlayer():ChatPrint("You can't vote for this difficulty while dead!")
+			return
+		end
 			LocalPlayer().hasUserVoted = true
 			survVotes = survVotes + 1
 			net.Start("Diff_Vote")
@@ -220,7 +224,9 @@ function OpenDiffMenu(diff, surv, special, doublehp)
 	
 	if special == 1 then
 		enabledOne = true
-	elseif doublehp == 1 then
+	end
+	
+	if doublehp == 1 then
 		enabledTwo = true
 	end
 	

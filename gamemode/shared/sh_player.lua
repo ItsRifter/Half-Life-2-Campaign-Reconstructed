@@ -1,12 +1,15 @@
 AddCSLuaFile() -- Add itself to files to be sent to the clients, as this file is shared
-startingWeapons = {}
+startingWeapons = startingWeapons or {}
 
 local RESTRICTED_WEPS = {
 	["weapon_frag"] = true,
 	["weapon_medkit"] = true,
 	["zpn_partypopper"] = true,
 	["hlashotty"] = true,
-	["tfa_psmg"] = true
+	["tfa_psmg"] = true,
+	["the rusted bangstick"] = true,
+	["tfa_heavyshotgun"] = true,
+	["the bfhmg"] = true,
 }
 
 local RESTRICTED_MAPS = {
@@ -24,14 +27,34 @@ local RESTRICTED_MAPS = {
 	["ep1_citadel_04"] = true,
 }
 
+net.Receive("UpdateOptions", function(len, ply)
+	local optionToChange = net.ReadString()
+	
+	if optionToChange == "hl2cr_quickinfo" and ply.hl2cPersistent.Options.QuickInfo == 1 then
+		ply.hl2cPersistent.Options.QuickInfo = 0
+	elseif optionToChange == "hl2cr_quickinfo" and ply.hl2cPersistent.Options.QuickInfo == 0 then
+		ply.hl2cPersistent.Options.QuickInfo = 1
+	end
+end)
+
 hook.Add("PlayerInitialSpawn", "MiscSurv", function(ply)
+	if GetConVar("hl2cr_christmas"):GetInt() == 1 then
+		--if not SH_EASYSKINS.GetPurchasedSkin(ply, 1, "weapon_crowbar") then
+		--	RunConsoleCommand("easyskins_giveskin", ply:SteamID64(), 1, "weapon_crowbar")
+		--end
+	end
+	
+	timer.Simple(0.1, function()
+		ply:UnSpectate()
+	end)
+	
 	if not table.HasValue(ply.hl2cPersistent.Achievements, "First_Time") then
 		Achievement(ply, "First_Time", "Lobby_Ach_List")
 	end
 	
 	if not string.match(game.GetMap(), "d1_") and not string.match(game.GetMap(), "d2_") and not string.match(game.GetMap(), "d3_") and not
 	string.match(game.GetMap(), "ep1_") and not string.match(game.GetMap(), "ep2_") then	
-		ply.XPCap = math.ceil(ply.hl2cPersistent.MaxXP / 2.2) - 100	
+		ply.XPCap = math.ceil(ply.hl2cPersistent.MaxXP / ply.hl2cPersistent.MaxXP) - 100		
 		ply.PetXPCap = math.ceil(ply.hl2cPersistent.PetMaxXP / 1.6)
 		ply.totalXPGained = 0
 		ply.totalPetXPGained = 0
@@ -59,6 +82,8 @@ hook.Add("PlayerInitialSpawn", "MiscSurv", function(ply)
 			net.WriteString(ply.hl2cPersistent.NPCFont)
 		net.Send(ply)
 	end
+	
+	ply.canEarnCrowbar = false
 	
 	ply.tableRewards = {
 		["HasDied"] = false,
@@ -88,9 +113,6 @@ hook.Add("PlayerInitialSpawn", "MiscSurv", function(ply)
 		end)
 	end
 	
-	if GetConVar("hl2cr_survivalmode"):GetInt() == 1 and ply:Alive() and not ply.isAliveSurv then
-		ply.isAliveSurv = false
-	end
 	if not game.SinglePlayer() then
 		ply:SetCustomCollisionCheck(true);
 	end
@@ -104,11 +126,12 @@ hook.Add("PlayerInitialSpawn", "MiscSurv", function(ply)
 	ply.loyal = false
 	
 	
-	if ply.hl2cPersistent.Level >= ply.hl2cPersistent.LevelCap then
+	if ply.hl2cPersistent.Level >= ply.hl2cPersistent.LevelCap and ply.hl2cPersistent.Prestige < 7 then
 		ply:ChatPrint("You will not earn anymore XP at this point, try !prestige")
 	end
 	timer.Simple(2, function()
 		net.Start("UpdateConCmds")
+			net.WriteInt(ply.hl2cPersistent.Options.QuickInfo, 8)
 		net.Send(ply)
 	end)
 end)
@@ -163,6 +186,24 @@ hook.Add("PlayerSpawn", "SpawnDefault", function(ply)
 		return 
 	end
 	
+	ply:UnSpectate()
+	
+	if table.HasValue(Cheating_Players_Survival, ply:Nick())then
+		timer.Simple(0.1, function()
+			ply:SetTeam(TEAM_DEAD)
+			ply:ChatPrint("Nice try, don't rejoin while on survival")
+			ply:Kill()
+			table.remove(Cheating_Players_Survival, ply:Nick())
+		end)
+	end
+	
+	ply.waitVehicleSpawn = 0
+	ply.petSpawntime = 0
+	ply.petbringTime = 0
+	if table.HasValue(ply.hl2cPersistent.PermUpg, "Suit_Power_Boost") then
+		ply:SetSuitPower(math.Clamp(150, 1, 100))
+	end
+	
 	if game.GetMap() == "hl2cr_lobby" and file.Exists("hl2cr_data/maprecovery.txt", "DATA") then
 		ply:ChatPrint("It appears the server crashed or something went wrong")
 		ply:ChatPrint("If no admins are present, type !restore")
@@ -185,30 +226,23 @@ hook.Add("PlayerSpawn", "SpawnDefault", function(ply)
 	ply.AllowSpawn = true
 	ply.hasSeat = false
 	
-	if not isAliveSurv then
-		ply:Kill()
-		ply:ChatPrint("Nice try, don't do that next time")
-		ply:Spectate(5)
-	end
-	for i, armSet in pairs(GAMEMODE.ArmourItem) do
-		if ply.hl2cPersistent.Arm == "Health_Module_MK1" then
-			addStatsHP = 5
-			
-		elseif ply.hl2cPersistent.Arm == "Health_Module_MK2" then
-			addStatsHP = 10
-			
-		elseif ply.hl2cPersistent.Arm == "Health_Module_MK3" then
-			addStatsHP = 20
+	if ply.hl2cPersistent.Arm == "Health_Module_MK1" then
+		addStatsHP = 5
+		
+	elseif ply.hl2cPersistent.Arm == "Health_Module_MK2" then
+		addStatsHP = 10
+		
+	elseif ply.hl2cPersistent.Arm == "Health_Module_MK3" then
+		addStatsHP = 20
 
-		elseif ply.hl2cPersistent.Arm == "Suit_Battery_Pack_MK1" then
-			armourBoost = 5
-			
-		elseif ply.hl2cPersistent.Arm == "Suit_Battery_Pack_MK2" then
-			armourBoost = 10
-			
-		elseif ply.hl2cPersistent.Arm == "Suit_Battery_Pack_MK3" then
-			armourBoost = 30
-		end
+	elseif ply.hl2cPersistent.Arm == "Suit_Battery_Pack_MK1" then
+		armourBoost = 5
+		
+	elseif ply.hl2cPersistent.Arm == "Suit_Battery_Pack_MK2" then
+		armourBoost = 10
+		
+	elseif ply.hl2cPersistent.Arm == "Suit_Battery_Pack_MK3" then
+		armourBoost = 30
 	end
 	
 	
@@ -381,6 +415,7 @@ hook.Add("EntityTakeDamage", "BlastResist", function(ent, dmgInfo)
 	local dmg = dmgInfo:GetDamage()
 	local dmgType = dmgInfo:GetDamageType()
 	local expResist = 0
+	local fireResist = 0
 	
 	if ent:IsPlayer() then 
 		if table.HasValue(ent.hl2cPersistent.TempUpg, "Blast_Resistance") then
@@ -388,14 +423,26 @@ hook.Add("EntityTakeDamage", "BlastResist", function(ent, dmgInfo)
 		end
 	end
 	
-	if attacker and ent:IsPlayer() and ent:IsPet() then
-		dmgInfo:SetDamage(0)
-	elseif not ent:IsPlayer() then
-		dmgInfo:SetDamage(dmg)
+	if ent:IsPlayer() then 
+		if table.HasValue(ent.hl2cPersistent.PermUpg, "Fire_Resist") then
+			fireResist = 10
+		end
 	end
 	
 	if ent:IsPlayer() and dmgType == DMG_BLAST then
 		dmgInfo:SetDamage(dmg - expResist)
+	end
+	
+	if ent:IsPlayer() and dmgType == DMG_BURN then
+		dmgInfo:SetDamage(dmg - fireResist)
+	end
+	
+	if attacker:IsPlayer() and attacker:GetActiveWeapon():GetClass() != "weapon_crowbar" and table.HasValue(attacker.hl2cPersistent.PermUpg, "Fire_Bullets") and not ent:IsPet() and not ent:IsFriendly() then
+		local fireChance = math.random(1, 100)
+		
+		if fireChance >= 98 then
+			ent:Ignite(30)
+		end
 	end
 	
 end)
@@ -530,7 +577,7 @@ end
 hook.Add("Think", "HasWeaponThink", function()
 	for k, curWep in pairs(startingWeapons) do
 		for k, v in pairs(player.GetAll()) do
-			if v:Team() == TEAM_ALIVE then
+			if v:Team() == TEAM_ALIVE and not table.HasValue(Cheating_Players_Survival, v:Nick()) then
 				if not v:HasWeapon(curWep) then
 					v:Give(curWep)
 				end
@@ -558,10 +605,16 @@ hook.Add("PlayerLoadout", "StarterWeapons", function(ply)
 	if not RESTRICTED_MAPS[game.GetMap()] then
 		if ply.hl2cPersistent.InvWeapon == "Medkit" then
 			ply:Give("weapon_medkit")
-		elseif ply.hl2cPersistent.InvWeapon == "One_Handed_Auto_Shotgun" then
+		elseif ply.hl2cPersistent.InvWeapon == "One_Handed_Autogun" then
 			ply:Give("hlashotty")
 		elseif ply.hl2cPersistent.InvWeapon == "Unbonded_Pulse_Rifle" then
 			ply:Give("tfa_psmg")
+		elseif ply.hl2cPersistent.InvWeapon == "Heavy_Shotgun" then
+			ply:Give("tfa_heavyshotgun")
+		elseif ply.hl2cPersistent.InvWeapon == "Rusty_DB" then
+			ply:Give("the rusted bangstick")
+		elseif ply.hl2cPersistent.InvWeapon == "BF_HMG" then
+			ply:Give("the bfhmg")
 		end
 	end
 	if ply.loyal then		
@@ -627,6 +680,20 @@ hook.Add("PlayerLoadout", "StarterWeapons", function(ply)
 		ply:Give("weapon_frag")
 	end
 	
+	if game.GetMap() == "d2_prison_05" then 
+		ply:Give("weapon_crowbar")
+		ply:Give("weapon_physcannon")
+		ply:Give("weapon_pistol")
+		ply:Give("weapon_357")
+		ply:Give("weapon_smg1")
+		ply:Give("weapon_shotgun")
+		ply:Give("weapon_ar2")
+		ply:Give("weapon_crossbow")
+		ply:Give("weapon_rpg")
+		ply:Give("weapon_bugbait")
+		ply:Give("weapon_frag")
+	end
+	
 	if #startingWeapons > 0 then
 		for k, wep in pairs(startingWeapons) do
 			ply:Give(wep)
@@ -680,7 +747,7 @@ hook.Add("WeaponEquip", "WeaponPickedUp", function(weapon, ply)
 	if weapon:GetClass() == "weapon_crowbar" and game.GetMap() == "d1_trainstation_06" then
 		for k, v in pairs(player.GetAll()) do
 			Achievement(v, "Trusty_Hardware", "HL2_Ach_List")
-			if not table.HasValue(v.hl2cPersistent.Achievements "Crowbar_Only_HL2") then
+			if not table.HasValue(v.hl2cPersistent.Achievements, "Crowbar_Only_HL2") then
 				v.EnableOTF = true
 				v:ChatPrint("OTF Enabled, type !otf to attempt the challenge")
 			end
@@ -711,13 +778,10 @@ function RespawnTimerActive(ply, deaths)
 	timer.Simple(5, function()
 		if not ply:Alive() then
 			SpectateMode(ply)
-		else
-			DisableSpec(ply)
 		end
 	end)
 
-	if GetConVar("hl2cr_survivalmode"):GetInt() == 1 and game.GetMap() != "hl2cr_lobby"  then
-		ply.isAliveSurv = false
+	if GetConVar("hl2cr_survivalmode"):GetInt() == 1 and game.GetMap() != "hl2cr_lobby" then
 		local playersAlive = #player.GetAll()
 		local playerDeaths = deaths
 		
@@ -769,6 +833,7 @@ hook.Add("PlayerDeath", "RespawnTimer", function(victim, inflictor, attacker)
 	
 	if GetConVar("hl2cr_survivalmode"):GetInt() == 1 then
 		deaths = deaths + 1
+		table.insert(Cheating_Players_Survival, victim:Nick() )
 	end
 	RespawnTimerActive(victim, deaths)
 end)
@@ -778,6 +843,15 @@ function GM:IsSpawnpointSuitable( ply, spawnpointent, bMakeSuitable )
 end
 
 if SERVER then
+
+	hook.Add("Think", "SuitThink", function()
+		for k, ply in pairs(player.GetAll()) do
+			if table.HasValue(ply.hl2cPersistent.PermUpg, "Suit_Power_Boost") and ply:GetSuitPower() == 100 then
+				ply:SetSuitPower(150)
+			end
+		end
+	end)
+	
 	hook.Add("Think", "AmmoLimiter", function()
 		for k, p in pairs(player.GetAll()) do
 			
@@ -907,7 +981,7 @@ function giveVortex(map, ply)
 		end)
 	end
 	
-	if table.Count(ply.hl2cPersistent.Vortexes) == 24 then
+	if table.Count(ply.hl2cPersistent.Vortexes) == 26 then
 		Achievement(ply, "Vortex_Locator", "HL2_Ach_List")
 	end
 end
@@ -960,7 +1034,7 @@ function giveLambda(map, ply)
 	end
 	
 	if table.Count(ply.hl2cPersistent.Lambdas) == 34 then
-		Achievement(ply, "Lambda_Locator", "EP2_Ach_List")
+		Achievement(ply, "Lambda_Locator", "HL2_Ach_List")
 	end
 end
 
@@ -978,8 +1052,13 @@ end)
 
 if CLIENT then
 	net.Receive("UpdateConCmds", function(len, ply)
+		local quickinfo = net.ReadInt(8)
 		LocalPlayer():ConCommand("cl_tfa_hud_enabled 0")
 		LocalPlayer():ConCommand("cl_tfa_hud_crosshair_enable_custom 0")
-		LocalPlayer():ConCommand("hud_quickinfo 1")
+		if quickinfo == 1 then
+			LocalPlayer():ConCommand("hud_quickinfo 1")
+		else
+			LocalPlayer():ConCommand("hud_quickinfo 0")
+		end
 	end)
 end

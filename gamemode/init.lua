@@ -51,9 +51,12 @@ include("server/config/maps/sv_hl2_init_maps.lua")
 include("server/config/maps/sv_ep1_init_maps.lua")
 include("server/config/maps/sv_ep2_init_maps.lua")
 include("server/config/maps/sv_coop_init_maps.lua")
+include("server/config/maps/sv_coastline_init_maps.lua")
 
 include("server/config/maps/sv_vortex.lua")
 include("server/config/maps/sv_lambda.lua")
+
+include("server/stats/sv_indicators.lua")
 
 --HL2CR Convars
 CreateConVar("hl2cr_allowsuicide", 1, {FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_ARCHIVE}, "Disable kill command", 0, 1) 
@@ -102,7 +105,7 @@ team.SetUp(TEAM_LOYAL, "Loyal Combine", Color(0, 225, 255, 255))
 local meta = FindMetaTable( "Entity" )
 if not meta then return end
 
-version = "0.4.5"
+version = "0.4.5.3"
 
 function meta:IsPet()
 	if self:IsValid() and self:IsNPC() and self:GetNWBool("PetActive") then
@@ -113,6 +116,7 @@ function meta:IsPet()
 end
 local FRIENDLY_NPCS = {
 	["npc_kleiner"] = true,
+	["npc_dog"] = true,
 	["npc_monk"] = true,
 	["npc_alyx"] = true,
 	["npc_barney"] = true,
@@ -130,7 +134,6 @@ function meta:IsFriendly()
 end
 randomExchange = 0
 function GM:Initialize()
-	isAliveSurv = true
 	pets = false
 	airboatSpawnable = false
 	airboatGunSpawnable = false
@@ -138,11 +141,10 @@ function GM:Initialize()
 	randomExchange = math.random(100, 850)
 end
 
-function GM:ShowHelp(ply)	
-	RunConsoleCommand("easyskins_giveskin", ply:SteamID64(), 3, "hlashotty")
-	--net.Start("Greetings_new_player")
-	--	net.WriteString(version)
-	--net.Send(ply)
+function GM:ShowHelp(ply)		
+	net.Start("Greetings_new_player")
+		net.WriteString(version)
+	net.Send(ply)
 end
 
 function GM:ShowTeam(ply)
@@ -194,6 +196,14 @@ lockedSpawn = false
 
 function GM:ShowSpare1(ply)
 	if not ply:Alive() then return end
+	if ply.waitVehicleSpawn > CurTime() then
+		ply:ChatPrint("Slow down, you can't spawn a vehicle that fast!")
+		return
+	else
+		ply.waitVehicleSpawn = CurTime() + 5
+	end
+	
+	
 	
 	local jeep = {
 		Name = "Jeep",
@@ -386,6 +396,7 @@ function GM:ShowSpare2(ply)
 			net.WriteTable(ply.hl2cPersistent.HatTable)
 			net.WriteTable(ply.hl2cPersistent.TempUpg)
 			net.WriteTable(ply.hl2cPersistent.PermUpg)
+			net.WriteTable(ply.hl2cPersistent.Options)
 		net.Send(ply)
 	end
 end
@@ -440,6 +451,7 @@ hook.Add("player_connect", "playerConnectSound", function(data)
 			net.WriteString(id)
 		net.Send(v)
 	end
+	restartMap = false
 end)
 
 gameevent.Listen("player_disconnect")
@@ -473,6 +485,8 @@ function SetUpMap()
 	elseif string.match(game.GetMap(), "ep2_") then
 		file.Write("hl2cr_data/maprecovery.txt", game.GetMap())
 		SetupEP2Map()
+	elseif string.match(game.GetMap(), "leonhl2") then
+		SetupCoastlineMap()
 	else
 		file.Write("hl2cr_data/maprecovery.txt", game.GetMap())
 		SetupCoopMap()
@@ -487,8 +501,10 @@ hook.Add("PrePACConfigApply", "AdminOnly", function(ply, outfit_data)
 	end
 end)
 
-hook.Add( "PrePACEditorOpen", "RestrictToSuperadmin", function( ply )
+hook.Add("PrePACEditorOpen", "RestrictToSuperadmin", function(ply)
 	if not ply:IsAdmin() then
 		return false
 	end
-end )
+end)
+
+restartMap = false

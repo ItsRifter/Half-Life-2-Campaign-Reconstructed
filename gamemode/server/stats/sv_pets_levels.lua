@@ -74,7 +74,7 @@ duelRegistry = {}
 
 net.Receive("PetChallenge", function(len, ply)
 	local challengeeName = net.ReadString()
-	local bet = net.ReadInt(128)
+	local bet = net.ReadInt(32)
 
 	local challengee
 	for k, v in pairs(player.GetAll()) do

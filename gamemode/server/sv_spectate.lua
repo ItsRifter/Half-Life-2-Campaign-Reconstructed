@@ -16,11 +16,9 @@ function SpectateMode(ply)
 	end
 end
 
-function DisableSpec(ply)
-	ply:UnSpectate()
-end
-
 hook.Add("KeyPress", "SpecKey", function(ply, key)
+	if ply:Team() == TEAM_ALIVE then return end
+	
 	if ply:KeyPressed(IN_ATTACK) then
 		specEnt = specEnt + 1
 		if specEnt > #alive then

@@ -181,10 +181,10 @@ function Register.PermUpg(permUpgItem)
 	GM.PermUpgItem[permUpgItem.Name] = permUpgItem
 end
 
-include("shared/sh_indicators.lua")
 include("shared/sh_player.lua")
 include("shared/sh_npc.lua")
 include("shared/items/sh_items_base.lua")
 include("shared/shop/sh_shop_items.lua")
 include("shared/items/sh_items_hats.lua")
 include("shared/sh_inventory.lua")
+include("shared/sh_ep2_flashlight.lua")
