@@ -223,8 +223,9 @@ hook.Add("PlayerDisconnected", "SavePlayerDataDisconnect", function(ply)
 	
 	if GetConVar("hl2cr_survivalmode"):GetInt() == 1 and deaths != 0 then
 		deaths = deaths - 1
-		PrintTable(Cheating_Players_Survival)
 	end
+	
+	alivePlayers = alivePlayers - 1
 	
 	if ply.pet then
 		ply.pet:Remove()

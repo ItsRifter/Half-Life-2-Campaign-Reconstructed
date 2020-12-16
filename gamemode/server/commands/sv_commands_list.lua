@@ -326,6 +326,11 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 			return ""
 		end
 		
+		if GetDuelAccepted(ply) then
+			ply:ChatPrint("You can't bring your pet in a duel!")
+			return ""
+		end
+		
 		if ply:Team() == TEAM_COMPLETED_MAP then
 			ply:ChatPrint("You can't bring your pet when you have finished the map")
 			return ""
@@ -353,8 +358,10 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 		if not ply.pet or not ply.pet:IsValid() then
 			ply:ChatPrint("Your pet doesn't exist!")
 			return ""		
-		elseif duel then
-			ply:ChatPrint("You can't remove your pet in a duel!")
+		end
+		
+		if GetDuelAccepted(ply) then
+			ply:ChatPrint("You can't bring your pet in a duel!")
 			return ""
 		end
 
@@ -399,13 +406,15 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 		duelUnaccepted.challenger:ChatPrint(string.format("%s has accepted your duel", duelUnaccepted.challengee:Nick()))
 		duelUnaccepted.challengee:ChatPrint(string.format("You have accepted %s's challenge", duelUnaccepted.challenger:Nick()))
 
-		-- TODO: Check if both players have enough money to bet
 		AddCoins(duelUnaccepted.challenger, -duelUnaccepted.bet)
 		AddCoins(duelUnaccepted.challengee, -duelUnaccepted.bet)
 
 		duelUnaccepted.accepted = true
 
 		PetDuelBegin(duelUnaccepted.challenger, duelUnaccepted.challengee, bet)
+		if not ply.pet then
+			ply:ConCommand("hl2cr_petsummon")
+		end
 		return ""
 	end
 	
@@ -1122,11 +1131,17 @@ end)
 concommand.Add("hl2cr_petbring", function(ply, cmd, args)
 	if not ply.pet:IsValid() then
 		ply:ChatPrint("Your pet doesn't exist!")
+		return
+	end
+	
+	if GetDuelAccepted(ply) then
+		ply:ChatPrint("You can't bring your pet in a duel!")
+		return
 	end
 	
 	if ply:Team() == TEAM_COMPLETED_MAP then
 		ply:ChatPrint("You can't bring your pet when you have finished the map")
-		return ""
+		return
 	end
 	
 	if not ply:Alive() then
@@ -1134,10 +1149,6 @@ concommand.Add("hl2cr_petbring", function(ply, cmd, args)
 		return
 	end
 	
-	if duel then
-		ply:ChatPrint("You can't bring your pet while in a duel!")
-		return
-	end
 	
 	if ply.BringPet then
 		ply.pet:SetPos(ply:GetPos())
@@ -1151,9 +1162,13 @@ end)
 
 concommand.Add("hl2cr_petremove", function(ply, cmd, args)
 	if not ply.pet or not ply.pet:IsValid() then
-		ply:ChatPrint("Your pet doesn't exist!")		
-	elseif duel then
-		ply:ChatPrint("You can't remove your pet in a duel!")
+		ply:ChatPrint("Your pet doesn't exist!")
+		return		
+	end
+	
+	if GetDuelAccepted(ply) then
+		ply:ChatPrint("You can't bring your pet in a duel!")
+		return
 	end
 
 	if ply.pet:Health() == ply.pet:GetMaxHealth() then
@@ -1317,6 +1332,15 @@ end)
 concommand.Add("hl2cr_rollmission", function(ply, cmd, args)
 	if ply:IsAdmin() then
 		MISSIONS:StartNextRoll()
+	else
+		ply:ChatPrint("You don't have access to this command")
+	end
+end)
+
+concommand.Add("hl2cr_resetvotes", function(ply, cmd, args)
+	if ply:IsAdmin() then
+		net.Start("ResetVotes")
+		net.Broadcast()
 	else
 		ply:ChatPrint("You don't have access to this command")
 	end

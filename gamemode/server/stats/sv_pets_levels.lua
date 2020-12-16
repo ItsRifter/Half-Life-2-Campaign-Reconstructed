@@ -76,6 +76,10 @@ net.Receive("PetChallenge", function(len, ply)
 	local challengeeName = net.ReadString()
 	local bet = net.ReadInt(32)
 
+	if not ply.pet then
+		ply:ChatPrint("Spawn your pet first before challenging " .. challengeeName)
+		return
+	end
 	local challengee
 	for k, v in pairs(player.GetAll()) do
 		if v:Nick() == challengeeName then
@@ -83,16 +87,27 @@ net.Receive("PetChallenge", function(len, ply)
 			break
 		end
 	end
-
+	
 	-- Check if challengee exists
 	if not challengee:IsValid() then
 		ply:ChatPrint(string.format("%s not found, they must have left the game", challengeeName))
+		return
+	end
+	
+	if challengee.hl2cPersistent.Level < 10 or challengee.hl2cPersistent.Prestige < 0 then
+		ply:ChatPrint(string.format("%s is too low of a level or prestige to spawn their pet", challengeeName))
 		return
 	end
 
 	-- Check for negative
 	if bet < 0 then
 		ply:ChatPrint(string.format("LUL, don't do that please"))
+		return
+	end
+	
+	--Check if bet is above challengee's coins
+	if bet > challengee.hl2cPersistent.Coins then
+		ply:ChatPrint(string.format("%s doesn't have enough coins to fulfil that bet", challengeeName))
 		return
 	end
 

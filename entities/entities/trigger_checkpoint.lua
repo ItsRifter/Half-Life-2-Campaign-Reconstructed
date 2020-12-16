@@ -126,11 +126,11 @@ function ENT:StartTouch(ent)
 		for k, p in pairs(player.GetAll()) do
 			p:ChatPrint("Checkpoint Reached")
 			if p:Team() == TEAM_DEAD then
-				p:Spawn()
 				DisableSpec(p)
-				p.isAliveSurv = true
 				deaths = deaths - deaths
+				alivePlayers = alivePlayers + k
 				table.Empty(Cheating_Players_Survival)
+				p:Spawn()
 			end
 			local MAPS_TRAINSTATION = {
 				["d1_trainstation_01"] = true,

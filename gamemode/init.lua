@@ -196,6 +196,7 @@ lockedSpawn = false
 
 function GM:ShowSpare1(ply)
 	if not ply:Alive() then return end
+	if ply:Team() != TEAM_ALIVE then return end
 	if ply.waitVehicleSpawn > CurTime() then
 		ply:ChatPrint("Slow down, you can't spawn a vehicle that fast!")
 		return
@@ -363,6 +364,11 @@ function GM:CanPlayerEnterVehicle(ply)
 	return false
 end
 function GM:ShowSpare2(ply)
+	if GetDuelAccepted(ply) then
+		ply:ChatPrint("You are in a duel!, finish before pressing F4")
+		return
+	end
+	
 	local red = ply.hl2cPersistent.NPCColourSettings.r
 	local blue = ply.hl2cPersistent.NPCColourSettings.b
 	local green = ply.hl2cPersistent.NPCColourSettings.g
@@ -424,7 +430,6 @@ hook.Add("Think", "votingThink", function()
 	local HPRequired = math.ceil(#player.GetAll() / 2)
 	local specialRequired = math.ceil(#player.GetAll() / 2)
 
-	local survRequired = #player.GetAll()
 	local neededVotes = #player.GetAll()
 	local neededVoteRestores = #player.GetAll()
 	local neededVotesRestart = #player.GetAll()
@@ -432,7 +437,7 @@ hook.Add("Think", "votingThink", function()
 	VOTE_REQUIRED["EasyVotes"] = easyRequired
 	VOTE_REQUIRED["MediumVotes"] = mediumRequired
 	VOTE_REQUIRED["HardVotes"] = hardRequired
-	VOTE_REQUIRED["SurvVotes"] = survRequired
+	VOTE_REQUIRED["SurvVotes"] = #player.GetAll() - deadPlayers
 	VOTE_REQUIRED["neededVotes"] = neededVotes
 	VOTE_REQUIRED["neededVoteRestore"] = neededVoteRestores
 	VOTE_REQUIRED["neededVotesRestart"] = neededVotesRestart

@@ -36,14 +36,13 @@ net.Receive("UpdateOptions", function(len, ply)
 		ply.hl2cPersistent.Options.QuickInfo = 1
 	end
 end)
-
 hook.Add("PlayerInitialSpawn", "MiscSurv", function(ply)
 	if GetConVar("hl2cr_christmas"):GetInt() == 1 then
 		--if not SH_EASYSKINS.GetPurchasedSkin(ply, 1, "weapon_crowbar") then
 		--	RunConsoleCommand("easyskins_giveskin", ply:SteamID64(), 1, "weapon_crowbar")
 		--end
 	end
-	
+	ply.sprintPower = 0
 	timer.Simple(0.1, function()
 		ply:UnSpectate()
 	end)
@@ -151,9 +150,7 @@ net.Receive("EquipHat", function(len, ply)
 		ply.hl2cPersistent.Hat = newHat
 	end
 	
-	net.Start("WearHat")
-		net.WriteString(ply.hl2cPersistent.Hat)
-	net.Send(ply)
+	wearHat(ply, ply.hl2cPersistent.Hat)
 	
 end)
 
@@ -179,13 +176,15 @@ net.Receive("UpdateNPCColour", function(len, ply)
 	net.Send(ply)
 	
 end)
-
+deadPlayers = 0
 hook.Add("PlayerSpawn", "SpawnDefault", function(ply)
 	if ply:IsBot() then 
 		ply:SetTeam(TEAM_ALIVE)
-		return 
+		return
 	end
-	
+	if deadPlayers < 0 then
+		deadPlayers = 0
+	end
 	ply:UnSpectate()
 	
 	if table.HasValue(Cheating_Players_Survival, ply:Nick())then
@@ -200,8 +199,10 @@ hook.Add("PlayerSpawn", "SpawnDefault", function(ply)
 	ply.waitVehicleSpawn = 0
 	ply.petSpawntime = 0
 	ply.petbringTime = 0
+	ply.sprintPower = 0
 	if table.HasValue(ply.hl2cPersistent.PermUpg, "Suit_Power_Boost") then
 		ply:SetSuitPower(math.Clamp(150, 1, 100))
+		ply.sprintPower = 150
 	end
 	
 	if game.GetMap() == "hl2cr_lobby" and file.Exists("hl2cr_data/maprecovery.txt", "DATA") then
@@ -300,7 +301,7 @@ end)
 hook.Add("DoPlayerDeath", "DefaultDeaths", function(ply, attacker, dmgInfo)
 	ply:CreateRagdoll()
 	ply:SetTeam(TEAM_DEAD)
-	
+	deadPlayers = deadPlayers + 1
 	net.Start("DisplayDeathTimer")
 	net.WriteInt(GetConVar("hl2cr_difficulty"):GetInt() * GetConVar("hl2cr_respawntime"):GetInt(), 16)
 	if GetConVar("hl2cr_survivalmode"):GetInt() == 1 then
@@ -437,7 +438,7 @@ hook.Add("EntityTakeDamage", "BlastResist", function(ent, dmgInfo)
 		dmgInfo:SetDamage(dmg - fireResist)
 	end
 	
-	if attacker:IsPlayer() and attacker:GetActiveWeapon():GetClass() != "weapon_crowbar" and table.HasValue(attacker.hl2cPersistent.PermUpg, "Fire_Bullets") and not ent:IsPet() and not ent:IsFriendly() then
+	if attacker:IsPlayer() and (attacker:GetActiveWeapon():GetClass() != "weapon_crowbar" and table.HasValue(attacker.hl2cPersistent.PermUpg, "Fire_Bullets")) and not ent:IsPet() and not ent:IsFriendly() and not ent:IsPlayer() then
 		local fireChance = math.random(1, 100)
 		
 		if fireChance >= 98 then
@@ -846,8 +847,15 @@ if SERVER then
 
 	hook.Add("Think", "SuitThink", function()
 		for k, ply in pairs(player.GetAll()) do
-			if table.HasValue(ply.hl2cPersistent.PermUpg, "Suit_Power_Boost") and ply:GetSuitPower() == 100 then
-				ply:SetSuitPower(150)
+			if table.HasValue(ply.hl2cPersistent.PermUpg, "Suit_Power_Boost") then
+				if ply.sprintPower > 100 and ply:IsSprinting() then
+					ply.sprintPower = ply.sprintPower - 0.1
+					ply:SetSuitPower(99)
+				end
+				
+				if ply:GetSuitPower() == 100 and not ply:IsSprinting() then
+					ply.sprintPower = 150
+				end
 			end
 		end
 	end)
@@ -1043,6 +1051,9 @@ hook.Add("EntityTakeDamage", "WhackAch", function(gunship, dmg)
 	local player = dmg:GetAttacker()
 	
 	if game.GetMap() == "ep1_c17_02a" and gunship:GetName() == "gunship_showdown_ragdoll" and player:IsPlayer() then
+		if not player.whackHits then
+			player.whackHits = 0
+		end
 		player.whackHits = player.whackHits + 1
 		if player.whackHits >= 5 then
 			Achievement(player, "Safety_Measure", "EP1_Ach_List")

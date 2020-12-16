@@ -281,3 +281,16 @@ net.Receive("Open_Diff_Menu", function()
 	
 	OpenDiffMenu(diff, surv, special, doublehp)
 end)
+
+net.Receive("ResetVotes", function()
+	if timer.Exists("VoteTimer") then
+		timer.Remove("VoteTimer")
+		LocalPlayer():ChatPrint("An admin has reset the vote timer, you may vote again")
+		LocalPlayer().hasUserVoted = false
+	end
+	
+	easyVotes = 0
+	mediumVotes = 0
+	hardVotes = 0
+	survVotes = 0
+end)

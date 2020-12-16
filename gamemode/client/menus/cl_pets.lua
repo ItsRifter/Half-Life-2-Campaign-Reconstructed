@@ -61,6 +61,7 @@ function petDuelMenu(coins)
 			
 			if target == "" then
 				LocalPlayer():ChatPrint("You need to select a target to challenge!")
+				return
 			end
 			
 			net.Start("PetChallenge")
@@ -216,7 +217,7 @@ function PetMenu(curSkill, skillPoints, petStage)
 		petEvolButton:SetSize(100, 50)
 		petEvolButton.DoClick = function()
 		if petStage == 0 then
-			if curSkill >= 1 then
+			if curSkill >= 5 then
 				clientClosePets()
 				net.Start("Evolving")
 				net.SendToServer()

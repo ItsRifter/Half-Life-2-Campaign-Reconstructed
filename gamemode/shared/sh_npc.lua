@@ -143,14 +143,7 @@ hook.Add("EntityTakeDamage", "FriendOrFoe", function(ent, dmgInfo)
 	end
 end)
 if SERVER then
-	local NO_CHANGE_SPECIAL = {
-		["npc_combine_assassin"] = false,
-		["npc_combine_support"] = false,
-		["npc_combine_medic"] = false,
-		["npc_combine_veteran"] = false,
-		["npc_combine_grenadier"] = false,
-	}
-	local nextChange = 0
+
 	hook.Add("Think", "NPCThinkRelation", function()
 		--Loyal Players relation with combine npc
 		for k, v in pairs(player.GetAll()) do
@@ -249,22 +242,47 @@ if SERVER then
 		end
 	end)
 	
-	if GetConVar("hl2cr_specials"):GetInt() == 1 then
-		for k, normalNPC in pairs(ents.FindByClass("npc_*")) do
-			local specialChance = math.random(1, 75)
-			if not normalNPC:IsPet() then
-				if normalNPC:GetClass() == "npc_metropolice" then
-					if specialChance > (25 * GetConVar("hl2cr_difficulty"):GetInt()) then
-						local newPos = normalNPC:GetPos()
-						newPos.z = newPos.z + 30
-						print(specialChance)
-						print(12 * GetConVar("hl2cr_difficulty"):GetInt())
-						normalNPC:Remove()
+	hook.Add("OnEntityCreated", "SpecialChanger", function(ent)
+		if GetConVar("hl2cr_specials"):GetInt() == 1 then
+			if ent:IsNPC() then
+				if ent:GetName() != "" or ent.Changed == true then return end
+				if ent:GetClass() == "npc_combine_s" or ent:GetClass() == "npc_metropolice" then
+					local specialChance = math.random(1, 100)
+					if specialChance <= (12 * GetConVar("hl2cr_difficulty"):GetInt()) then
+						local newNPC = nil
+						local NPCKind = math.random(1, 5)
+							
+						if NPCKind == 1 then
+							newNPC = ents.Create("npc_combine_assassin")
+						elseif NPCKind == 2 then
+							newNPC = ents.Create("npc_combine_support")
+						elseif NPCKind == 3 then
+							newNPC = ents.Create("npc_combine_medic")
+						elseif NPCKind == 4 then
+							newNPC = ents.Create("npc_combine_veteran")
+						elseif NPCKind == 5 then
+							newNPC = ents.Create("npc_combine_grenadier")
+						end
+						
+						
+						timer.Simple(1, function()
+							if ent:IsValid() then
+								ent:Remove()
+								newNPC:SetPos(ent:GetPos() + Vector(0, 0, 30))
+								newNPC:Spawn()
+								ent.Changed = true
+							end
+						end)
+						
+			
+					elseif specialChance > (12 * GetConVar("hl2cr_difficulty"):GetInt()) then 
+						ent.Changed = true
 					end
 				end
 			end
 		end
-	end
+	end)
+	
 
 	hook.Add("ScaleNPCDamage", "DiffScalingNPC", function(ent, hitGroup, dmgInfo)
 

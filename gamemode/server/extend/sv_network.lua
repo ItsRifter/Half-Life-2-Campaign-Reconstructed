@@ -17,6 +17,7 @@ util.AddNetworkString("Update_Model")
 
 util.AddNetworkString("SetSuicide")
 util.AddNetworkString("Open_Diff_Menu")
+util.AddNetworkString("ResetVotes")
 util.AddNetworkString("VarientVote")
 util.AddNetworkString("Diff_Vote")
 util.AddNetworkString("Diff_Change")
