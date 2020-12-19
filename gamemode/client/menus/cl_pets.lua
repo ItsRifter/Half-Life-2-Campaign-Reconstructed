@@ -57,7 +57,7 @@ function petDuelMenu(coins)
 				timer.Remove("CooldownDuel")
 			end)
 			
-			local betAmt = playerCoinAmountSlider:GetValue()
+			local betAmt = math.Round(playerCoinAmountSlider:GetValue())
 			
 			if target == "" then
 				LocalPlayer():ChatPrint("You need to select a target to challenge!")

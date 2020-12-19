@@ -126,9 +126,9 @@ function ENT:StartTouch(ent)
 		for k, p in pairs(player.GetAll()) do
 			p:ChatPrint("Checkpoint Reached")
 			if p:Team() == TEAM_DEAD then
-				DisableSpec(p)
+				p:UnSpectate()
 				deaths = deaths - deaths
-				alivePlayers = alivePlayers + k
+				deadPlayers = deaths
 				table.Empty(Cheating_Players_Survival)
 				p:Spawn()
 			end

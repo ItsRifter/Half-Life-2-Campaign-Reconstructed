@@ -7,7 +7,6 @@ include("client/menus/cl_difficulty_vote.lua")
 include("client/menus/cl_scoreboard.lua")
 include("client/cl_hud.lua")
 include("client/menus/cl_new_player.lua")
-include("client/menus/cl_squads.lua")
 include("client/menus/cl_otf.lua")
 
 include("client/menus/cl_pets.lua")

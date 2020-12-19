@@ -10,18 +10,13 @@ local petbringTime = 0
 local petSpawntime = 0
 
 local DISABLED_MAPS = {
-	["hl2cr_lobby"] = true,
-	["d1_trainstation_01"] = true,
-	["d1_trainstation_02"] = true,
-	["d1_trainstation_03"] = true,
-	["d1_trainstation_04"] = true,
-	["d1_trainstation_05"] = true
+	["hl2cr_lobby_festive"] = true,
 }
 
 hook.Add("Think", "LobbyTimer", function()
 	if not DISABLED_MAPS[game.GetMap()] then
 		if timer <= CurTime() then
-			RunConsoleCommand("changelevel", "hl2cr_lobby")
+			RunConsoleCommand("changelevel", "hl2cr_lobby_festive")
 		end
 	end
 end)
@@ -92,54 +87,16 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 		return ""
 	end
 	
+	
 	--Squads
-	
-	--If the player inputs no name for the new squad
 	if string.lower(text) == "!squadcreate" or string.lower(text) == "!createsquad" then
-		ply:ChatPrint("You need a name for your squad!")
-		return ""
-	end
-	
-	--If the player decides to create a squad with a name
-	if string.find(string.lower(text), "!squadcreate ") or string.find(string.lower(text), "!createsquad ") then
-		local squadNewName = string.sub(text, 13)
-
-		if ply.squads.leader != ply:Nick() and not ply.inSquad then
-			
-			ply.squads.leader = ply:Nick()
-			ply.squads.teamname = squadNewName
-			ply:SetNWString("SquadLeader", ply.squads.leader)
-			ply:SetNWString("TeamName", ply.squads.teamname)
-			
-			ply:ChatPrint("You have created a squad with name:" .. squadNewName)
-			net.Start("Squad_Created")
-				net.WriteString(ply:Nick())
-				net.WriteString(squadNewName)
-			net.Send(ply)
-		elseif ply.squads.leader == ply:Nick() then
-			ply:ChatPrint("You already have a squad!")
-		elseif ply.inSquad then
-			ply:ChatPrint("You can't create a squad while in another")
-		end
+		HL2CR_Squad:NewSquad(ply:Nick(), ply)
+		
 		return ""
 	end
 	
 	if string.lower(text) == "!squadleave" or string.lower(text) == "!leavesquad" then
-		if ply.inSquad and ply.squads.leader != ply:Nick() then
-			ply:ChatPrint("You have left " .. ply.squads.leader .. "'s Squad")
-			ply.squads.teamname = ""
-			ply.squads.leader = ""
-			ply:SetNWString("TeamName", ply.squads.teamname)
-			ply:SetNWString("SquadLeader", ply.squads.leader)
-			ply.inSquad = false
-			net.Start("Squad_Left")
-				net.WriteString(ply:Nick())
-			net.Broadcast()
-		elseif ply.squads.leader == ply:Nick() then
-			ply:ChatPrint("You can't leave your own squad without disbanding it")
-		else
-			ply:ChatPrint("You aren't in a squad")
-		end
+		
 		return ""
 	end
 	
@@ -149,47 +106,12 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 	end
 	
 	if string.find(string.lower(text), "!squadjoin ") or string.find(string.lower(text), "!joinsquad ") then
-		local targetName = string.sub(text, 12)
-			for k, v in pairs(player.GetAll()) do
-				if v != ply then
-					if string.find(string.lower(v:Nick()), targetName) then
-						local leaderName = v:GetNWString("SquadLeader")
-						local teamName = v:GetNWString("TeamName")
-						playerFound = true
-					end
-				end
-			end
-			if not ply.inSquad and (teamName and leaderName) and not string.find(string.lower(ply.squads.leader), string.lower(ply:Nick())) then
-				ply.squads.teamname = teamName
-				ply.squads.leader = leaderName
-				ply.inSquad = true
-				net.Start("Squad_Joined")
-					net.WriteString(ply:Nick())
-					net.WriteString(ply.squads.leader)
-					net.WriteString(ply.squads.teamname)
-				net.Broadcast()
-			elseif ply.inSquad then
-				ply:ChatPrint("You are currently in a squad, leave to join another")
-			elseif string.find(string.lower(ply.squads.leader), string.lower(ply:Nick())) then
-				ply:ChatPrint("You can't join yourself")
-			end
+		
 		return ""
 	end
 	
 	if (string.lower(text) == "!squaddisband" or string.lower(text) == "!disbandsquad") then
-		if ply.squads.leader != "" then
-			net.Start("Squad_Disband")
-				net.WriteString(ply.squads.leader)
-			net.Broadcast()
-			ply.squads.leader = ""
-			ply.squads.teamname = ""
-			ply:SetNWString("SquadLeader", ply.squads.leader)
-			ply:SetNWString("TeamName", ply.squads.teamname)
-			ply:ChatPrint("You have dismissed your squad")
-			ply.inSquad = false
-		else
-			ply:ChatPrint("You have no squad!")
-		end
+		HL2CR_Squad:Disband(ply:Nick())
 		return ""
 	end
 	
@@ -443,7 +365,7 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 	end
 	
 	if (string.lower(text) == "!restore") then
-		if game.GetMap() == "hl2cr_lobby" and file.Exists("hl2cr_data/maprecovery.txt", "DATA") then
+		if game.GetMap() == "hl2cr_lobby_festive" and file.Exists("hl2cr_data/maprecovery.txt", "DATA") then
 			if not ply.hasVotedRestore then
 				restoreVotes = restoreVotes + 1
 				ply:SetNWInt("PlayerVotesRestore", restoreVotes)
@@ -475,7 +397,7 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 				if lobbyVotes == VOTE_REQUIRED["neededVotes"] then
 					game.SetGlobalState("super_phys_gun", 0)
 					file.Delete("hl2cr_data/maprecovery.txt")
-					RunConsoleCommand("changelevel", "hl2cr_lobby")
+					RunConsoleCommand("changelevel", "hl2cr_lobby_festive")
 				end
 			else
 				ply:ChatPrint("You already voted to return to the lobby!")
@@ -486,7 +408,7 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 	return ""
 	end
 	if (string.lower(text) == "!restart" or string.lower(text) == "!vrm") then
-		if game.GetMap() != "hl2cr_lobby" then
+		if game.GetMap() != "hl2cr_lobby_festive" then
 			if not ply.hasVotedRestart then
 				restartVotes = restartVotes + 1
 				ply.hasVotedRestart = true
@@ -510,7 +432,7 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 		if DISABLED_MAPS[game.GetMap()] then
 			ply:ChatPrint("Time is infinite on this map")
 		else
-			ply:ChatPrint(math.Round(timer - CurTime(), 0) .. " seconds left before returning to lobby")
+			ply:ChatPrint(string.NiceTime(timer - CurTime()) .. " left before returning to lobby")
 		end
 		return ""
 	end
@@ -627,7 +549,7 @@ concommand.Add("hl2cr_wipeinv", function(ply, cmd, args, argStr)
 	if ply:IsAdmin() then
 		for k, v in pairs(player.GetAll()) do
 			if v != ply and target != "" then
-				if string.find(string.lower(v:Nick()), string.lower(target)) then
+				if string.find(string.lower(v:Nick()), string.lower(tostring(target))) then
 					target = v
 				end
 			else
@@ -658,22 +580,26 @@ concommand.Add("hl2cr_getachlist", function(ply, cmd, args, argStr)
 
 end)
 concommand.Add("hl2cr_giveach", function(ply, cmd, args, argStr)
-	local target = string.sub(args[1], 0)
 	local ach = string.sub(args[2], 0)
 	local list = string.sub(args[3], 0)
-	
+
 	if ply:IsAdmin() then
 		for k, v in pairs(player.GetAll()) do
 			if v != ply and target != "" then
-				if string.find(string.lower(v:Nick()), string.lower(target)) then
+				if string.match(string.lower(v:Nick()), string.lower(args[1])) then
 					target = v
 				end
 			else
 				target = ply
 			end
 		end
-	
-		if target and ach and list then
+		local achievementList = AchievementLists[list]
+		if not achievementList then ply:ChatPrint("Invalid List") return end
+
+		local achievement = achievementList[ach]
+		if not achievement then ply:ChatPrint("Invalid Achievement") return end
+		
+		if target and achievement and achievementList then
 			Achievement(target, ach, list)
 			target:ChatPrint("You have been given the " .. ach .. " achievement by an admin")
 		end
@@ -706,22 +632,20 @@ concommand.Add("hl2cr_bringnpc", function(ply, cmd, args, argStr)
 end)
 --Meant for dev reasons with bots, but can be used on people for fun
 concommand.Add("hl2cr_forcesay", function(ply, cmd, args, argStr)
-
-	local stringSay = tostring(args[1])
-	local target = ""
-	if args[2] then
-		target = string.sub(args[2], 0)
+	local message = args[1]
+	local target = nil
+	if not args[2] then
+		target = ply
 	end
-	
 	if ply:IsAdmin() then
 		for k, v in pairs(player.GetAll()) do
-			if string.match(string.lower(v:Nick()), tostring(target)) then
+			if string.find(string.lower(v:Nick()), string.lower(args[2])) then
 				target = v
 			end
 		end
 		
-		if target then
-			target:Say(stringSay)
+		if args[2] then
+			target:Say(message, false)
 		end
 	else
 		ply:PrintMessage(HUD_PRINTCONSOLE, "You do not have access to this command")

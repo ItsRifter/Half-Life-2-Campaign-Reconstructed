@@ -35,6 +35,10 @@ function SetupLobbyMap()
 		file.Delete("hl2cr_data/d2_coast_07.txt")
 	end
 	
+	if GetConVar("hl2cr_christmas"):GetInt() == 1 then
+	
+	end
+	
 end
 
 hook.Add("GiveLostCause", "GrantLobbyAch", function()

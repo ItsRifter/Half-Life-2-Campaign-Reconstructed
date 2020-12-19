@@ -42,6 +42,8 @@ net.Receive("AdminJoin", function()
 		surface.PlaySound("vo/Citadel/gman_exit01.wav")
 	elseif id == "STEAM_0:0:6009886" then
 		surface.PlaySound("ambient/levels/outland/ol07_advisorblast04.wav")
+	elseif id == "STEAM_0:0:97860967" then
+		surface.PlaySound("vo/npc/barney/ba_laugh02.wav")
 	end
 end)
 
@@ -200,7 +202,7 @@ local shouldDrawRestartTimer = false
 local shouldDrawDeathTimer = false
 local deathSeconds = 0
 net.Receive("DisplayMapTimer", function() 
-	if game.GetMap() != "ep1_c17_06" or game.GetMap() != "ep2_outland_12a" then
+	if game.GetMap() != "d3_breen_01" or game.GetMap() != "ep1_c17_06" or game.GetMap() != "ep2_outland_12a" or game.GetMap() != "d2_lostcoast" then
 		chat.AddText(Color(235, 150, 50),	"Enough players have finished, changing map in 20 seconds")
 	end
 	shouldDrawTimer = true
@@ -218,7 +220,8 @@ net.Receive("FailedMap", function() shouldDrawRestartTimer = true end)
 local WINMAPS = {
 	["d3_breen_01"] = true,
 	["ep1_c17_06"] = true,
-	["ep2_outland_12a"] = true
+	["ep2_outland_12a"] = true,
+	["d2_lostcoast"] = true,
 }
 hook.Add("HUDPaint", "HUDPaint_DrawTimer", function()
 
@@ -237,7 +240,7 @@ hook.Add("HUDPaint", "HUDPaint_DrawTimer", function()
 		end
 		draw.DrawText("Time Left: " .. math.Round(timer.TimeLeft("MapTimerClient"), 0), "Map_Font", ScrW() / 2, ScrH() - 350, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	
-	elseif shouldDrawTimer and not survivalMode and WINMAPS[game.GetMap()] then
+	elseif shouldDrawTimer and WINMAPS[game.GetMap()] then
 		if not timer.Exists("MapTimer") then
 			timer.Create("MapTimer", 35, 1, function() end)
 			surface.PlaySound("hl2cr/ending_triumph.mp3")

@@ -299,12 +299,15 @@ function SetCheckpointsStageEP2()
 		}
 		
 		TRIGGER_CHECKPOINT = {
+			Vector(1044, -9370, -1409), 		Vector(932, -9506, -1531),
 			Vector(-1058, -9906, -1211), 		Vector(-1308, -9884, -1090),
 			Vector(1800, -11527, -896), 		Vector(1847, -11480, -818)
 		}
 		
 		TRIGGER_SPAWNPOINT = {
-			Vector(-1102, -9937, -1205),		Vector(1684, -11436, -1082)
+			Vector(987, -9402, -1517),			Vector(-1102, -9937, -1205),		
+			Vector(1684, -11436, -1082),
+			
 		}
 	elseif game.GetMap() == "ep2_outland_11b" then
 		TRIGGER_CHANGELEVEL = {
@@ -312,13 +315,15 @@ function SetCheckpointsStageEP2()
 		}
 		
 		TRIGGER_CHECKPOINT = {
+			Vector(432, -8830, -318), 		Vector(277, -8625, -175),
 			Vector(264, -8721, -219), 		Vector(432, -8830, -318),
 			Vector(147, -9210, -185), 		Vector(281, -8962, -317),
 			Vector(-115, -9164, -190), 		Vector(-50, -9009, -317)
 		}
 		
 		TRIGGER_SPAWNPOINT = {
-			Vector(379, -8613, -311),		Vector(234, -8994, -316),
+			Vector(360, -8705, -302),		Vector(379, -8613, -311),		
+			Vector(234, -8994, -316),		Vector(-261, -9058, -327),
 			Vector(-261, -9058, -327)
 		}
 	elseif game.GetMap() == "ep2_outland_12" then

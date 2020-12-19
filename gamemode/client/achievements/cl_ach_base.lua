@@ -18,7 +18,8 @@ HL2_Ach_List = {
 	[11] = {name = "Crowbar_Only_HL2", desc = "Finish Half-Life 2 with\nonly the crowbar", mat = "vgui/achievements/hl2_beat_game.png", isRare = false},
 	[12] = {name = "Vorticough", desc = "Discover the hidden\nsinging vortigaunt cave", mat = "vgui/achievements/hl2_find_vortigauntcave.png", isRare = false},
 	[13] = {name = "Blast_from_the_Past", desc = "Find the old H.E.V Charger in the scrapyard", mat = "vgui/achievements/hl2_find_hevfaceplate.png", isRare = false},
-	
+	[14] = {name = "Lost_Coast", desc = "Discover what has\nbeen lost in memory...", mat = "vgui/achievements/hl2_beat_game.png", isRare = true},
+	[15] = {name = "Old_Friend", desc = "Make your goodbyes\nto the lost coast", mat = "vgui/achievements/hl2_beat_game.png", isRare = true},
 	--[13] = {name = "Defiant", desc = "Hit the trashcan\ncop with the can", mat = "vgui/achievements/hl2_hit_cancop_withcan.png", isRare = false},
 	--[14] = {name = "Submissive", desc = "Put the can in the trash", mat = "vgui/achievements/hl2_put_canintrash.png", isRare = false},
 	--[12] = {name = "Crowbar_Only_HL2_Hard", desc = "Finish Half-Life 2 with\nonly the crowbar\non hard with\nsurvival enabled", mat = "vgui/achievements/hl2_beat_game.png", isRare = false},
@@ -48,7 +49,7 @@ EP2_Ach_List = {
 }
 
 Misc_Ach_List = {
-	[1] = {name = "A_Predictable_Failure", desc = "Fail a map on survival\nwith 4 or more players", mat = "vgui/achievements/hl2_find_allgmen.png", isRare = false},
+	[1] = {name = "Survival_Lost", desc = "Fail a map on survival\nwith 4 or more players", mat = "vgui/achievements/hl2_find_allgmen.png", isRare = false},
 	[2] = {name = "Blast_that_little", desc = "Complete the Zombie\nevolution tree", mat = "vgui/achievements/hl2_beat_toxictunnel.png", isRare = false},
 	[3] = {name = "Fast_Climber", desc = "Complete the Fast Zombie\nevolution tree", mat = "vgui/achievements/hl2_beat_toxictunnel.png", isRare = false},
 	[4] = {name = "One_True_Freeman", desc = "Finish all of half-life 2\n(including episodes)\nwith only the crowbar", mat = "vgui/achievements/hl2_get_crowbar.png", isRare = true},
@@ -62,7 +63,7 @@ Kill_Ach_List = {
 }
 
 Event_Ach_List = {
-	[1] = {name = "Candy Collector", mat = "vgui/achievements/hl2_find_allgmen.png", reward = 10000, isRare = false},
+	[1] = {name = "Candy_Collector", mat = "vgui/achievements/hl2_find_allgmen.png", reward = 10000, isRare = false},
 }
 
 HL2_Lambda_List = {

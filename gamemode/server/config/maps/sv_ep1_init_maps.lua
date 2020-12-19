@@ -244,7 +244,7 @@ function SetCheckpointsStageEP1()
 		}
 		TRIGGER_SPAWNPOINT = {
 			Vector(1153, 1776, -233),	Vector(1082, 1916, 143),
-			Vector(1153, 1776, -233)
+			Vector(968, 2777, 71)
 		}
 	elseif game.GetMap() == "ep1_c17_02a" then
 		TRIGGER_CHANGELEVEL = {

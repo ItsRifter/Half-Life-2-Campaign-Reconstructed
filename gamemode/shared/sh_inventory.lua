@@ -290,6 +290,21 @@ net.Receive("SellItemSlot", function(len, ply)
 	ply:SetNWInt("Armour", ply.hl2cPersistent.Armour)
 	ply:SetNWInt("Coins", ply.hl2cPersistent.Coins)
 end)
+
+net.Receive("SellEventItems", function(len, ply)
+	if not ply then return end
+	local amtTrade = net.ReadInt(16)
+	if ply.hl2cPersistent.EventItems < amtTrade then
+		ply:ChatPrint("You are trading an amount you do not have")
+		return
+	end
+	ply.hl2cPersistent.EventItems = ply.hl2cPersistent.EventItems - amtTrade
+	
+	ply.hl2cPersistent.Coins = ply.hl2cPersistent.Coins + (amtTrade * 4)
+	ply:SetNWInt("Coins", ply.hl2cPersistent.Coins)
+	ply:ChatPrint("Gained: " .. amtTrade * 4 .. " Coins")
+end)
+
 if CLIENT then
 	
 	surface.CreateFont("End_Stats_font", {

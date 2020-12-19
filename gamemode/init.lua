@@ -8,7 +8,6 @@ AddCSLuaFile("client/menus/cl_scoreboard.lua")
 AddCSLuaFile("client/cl_hud.lua")
 AddCSLuaFile("client/menus/cl_f4_menu.lua")
 AddCSLuaFile("client/menus/cl_new_player.lua")
-AddCSLuaFile("client/menus/cl_squads.lua")
 AddCSLuaFile("client/menus/cl_otf.lua")
 
 AddCSLuaFile("client/menus/cl_pets.lua")
@@ -52,6 +51,7 @@ include("server/config/maps/sv_ep1_init_maps.lua")
 include("server/config/maps/sv_ep2_init_maps.lua")
 include("server/config/maps/sv_coop_init_maps.lua")
 include("server/config/maps/sv_coastline_init_maps.lua")
+include("server/config/maps/sv_lostcoast_init_maps.lua")
 
 include("server/config/maps/sv_vortex.lua")
 include("server/config/maps/sv_lambda.lua")
@@ -105,7 +105,7 @@ team.SetUp(TEAM_LOYAL, "Loyal Combine", Color(0, 225, 255, 255))
 local meta = FindMetaTable( "Entity" )
 if not meta then return end
 
-version = "0.4.5.3"
+version = "0.4.5.7"
 
 function meta:IsPet()
 	if self:IsValid() and self:IsNPC() and self:GetNWBool("PetActive") then
@@ -378,6 +378,8 @@ function GM:ShowSpare2(ply)
 	
 	if GetConVar("hl2cr_halloween"):GetInt() == 1 then
 		eventNumber = 1
+	elseif GetConVar("hl2cr_christmas"):GetInt() == 1 then
+		eventNumber = 2
 	end
 	
 	if ply.loyal then
@@ -478,12 +480,16 @@ hook.Add( "PrePACEditorOpen", "RestrictToSuperadmin", function( ply )
 end)
 
 function SetUpMap()
-	if game.GetMap() == "hl2cr_lobby" then
+	if game.GetMap() == "hl2cr_lobby_festive" then
 		SetupLobbyMap()
 	elseif string.match(game.GetMap(), "d1_") or string.match(game.GetMap(), "d2_") 
 	or string.match(game.GetMap(), "d3_") then
+		if game.GetMap() == "d2_lostcoast" then
+			SetupLostCoast()
+		else
+			SetupHL2Map()
+		end
 		file.Write("hl2cr_data/maprecovery.txt", game.GetMap())
-		SetupHL2Map()
 	elseif string.match(game.GetMap(), "ep1_") then
 		file.Write("hl2cr_data/maprecovery.txt", game.GetMap())
 		SetupEP1Map()
@@ -492,6 +498,8 @@ function SetUpMap()
 		SetupEP2Map()
 	elseif string.match(game.GetMap(), "leonhl2") then
 		SetupCoastlineMap()
+	elseif string.match(game.GetMap(), "d2_lostcoast") then
+		SetupLostCoast()
 	else
 		file.Write("hl2cr_data/maprecovery.txt", game.GetMap())
 		SetupCoopMap()

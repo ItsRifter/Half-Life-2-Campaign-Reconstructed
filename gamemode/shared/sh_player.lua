@@ -12,6 +12,15 @@ local RESTRICTED_WEPS = {
 	["the bfhmg"] = true,
 }
 
+local GIVE_STARTER_WEAPONS = {
+	["One_Handed_Autogun"] = "hlashotty",
+	["Unbonded_Pulse_Rifle"] = "tfa_psmg",
+	["Heavy_Shotgun"] = "tfa_heavyshotgun",
+	["Rusty_DB"] = "the rusted bangstick",
+	["BF_HMG"] = "the bfhmg",
+	["Medkit"] = "weapon_medkit",
+}
+
 local RESTRICTED_MAPS = {
 	["d1_trainstation_01"] = true,
 	["d1_trainstation_02"] = true,
@@ -37,11 +46,11 @@ net.Receive("UpdateOptions", function(len, ply)
 	end
 end)
 hook.Add("PlayerInitialSpawn", "MiscSurv", function(ply)
-	if GetConVar("hl2cr_christmas"):GetInt() == 1 then
-		--if not SH_EASYSKINS.GetPurchasedSkin(ply, 1, "weapon_crowbar") then
-		--	RunConsoleCommand("easyskins_giveskin", ply:SteamID64(), 1, "weapon_crowbar")
-		--end
+
+	if game.GetMap() == "d2_lostcoast" then
+		Achievement(ply, "Lost_Coast", "HL2_Ach_List")
 	end
+
 	ply.sprintPower = 0
 	timer.Simple(0.1, function()
 		ply:UnSpectate()
@@ -93,7 +102,7 @@ hook.Add("PlayerInitialSpawn", "MiscSurv", function(ply)
 		["Crystals"] = 0,
 	}
 	
-	if game.GetMap() == "hl2cr_lobby" then
+	if game.GetMap() == "hl2cr_lobby_festive" then
 		ply.hl2cPersistent.OTF = false
 	end
 
@@ -205,7 +214,7 @@ hook.Add("PlayerSpawn", "SpawnDefault", function(ply)
 		ply.sprintPower = 150
 	end
 	
-	if game.GetMap() == "hl2cr_lobby" and file.Exists("hl2cr_data/maprecovery.txt", "DATA") then
+	if game.GetMap() == "hl2cr_lobby_festive" and file.Exists("hl2cr_data/maprecovery.txt", "DATA") then
 		ply:ChatPrint("It appears the server crashed or something went wrong")
 		ply:ChatPrint("If no admins are present, type !restore")
 	end
@@ -378,7 +387,7 @@ hook.Add("CanExitVehicle", "PodCannotExit", function(veh, ply)
 end)
 
 local NO_SUICIDE_MAPS = {
-	["hl2cr_lobby"] = true,
+	["hl2cr_lobby_festive"] = true,
 	["d1_trainstation_01"] = true,
 	["d1_trainstation_02"] = true,
 	["d1_trainstation_03"] = true,
@@ -438,11 +447,13 @@ hook.Add("EntityTakeDamage", "BlastResist", function(ent, dmgInfo)
 		dmgInfo:SetDamage(dmg - fireResist)
 	end
 	
-	if attacker:IsPlayer() and (attacker:GetActiveWeapon():GetClass() != "weapon_crowbar" and table.HasValue(attacker.hl2cPersistent.PermUpg, "Fire_Bullets")) and not ent:IsPet() and not ent:IsFriendly() and not ent:IsPlayer() then
+	if attacker:IsPlayer() and (attacker:GetActiveWeapon():GetClass() != "weapon_crowbar" and table.HasValue(attacker.hl2cPersistent.PermUpg, "Fire_Bullets"))
+	and not ent:IsPet() and not ent:IsFriendly() and not ent:IsPlayer() and ent:IsNPC() then
 		local fireChance = math.random(1, 100)
 		
 		if fireChance >= 98 then
 			ent:Ignite(30)
+			ent.fireAttacker = attacker
 		end
 	end
 	
@@ -588,7 +599,7 @@ hook.Add("Think", "HasWeaponThink", function()
 end)
 
 hook.Add("PlayerLoadout", "StarterWeapons", function(ply)
-	if (game.GetMap() == "hl2cr_lobby") then
+	if (game.GetMap() == "hl2cr_lobby_festive") then
 		ply:Give("weapon_crowbar")
 		ply:Give("weapon_physcannon")
 		if ply:IsAdmin() then
@@ -604,18 +615,8 @@ hook.Add("PlayerLoadout", "StarterWeapons", function(ply)
 	
 	
 	if not RESTRICTED_MAPS[game.GetMap()] then
-		if ply.hl2cPersistent.InvWeapon == "Medkit" then
-			ply:Give("weapon_medkit")
-		elseif ply.hl2cPersistent.InvWeapon == "One_Handed_Autogun" then
-			ply:Give("hlashotty")
-		elseif ply.hl2cPersistent.InvWeapon == "Unbonded_Pulse_Rifle" then
-			ply:Give("tfa_psmg")
-		elseif ply.hl2cPersistent.InvWeapon == "Heavy_Shotgun" then
-			ply:Give("tfa_heavyshotgun")
-		elseif ply.hl2cPersistent.InvWeapon == "Rusty_DB" then
-			ply:Give("the rusted bangstick")
-		elseif ply.hl2cPersistent.InvWeapon == "BF_HMG" then
-			ply:Give("the bfhmg")
+		if GIVE_STARTER_WEAPONS[ply.hl2cPersistent.InvWeapon] then
+			ply:Give(GIVE_STARTER_WEAPONS[ply.hl2cPersistent.InvWeapon])
 		end
 	end
 	if ply.loyal then		
@@ -704,7 +705,7 @@ hook.Add("PlayerLoadout", "StarterWeapons", function(ply)
 	for k, v in pairs(player.GetAll()) do
 		if v:Team() == TEAM_LOYAL or ply:Team() == TEAM_LOYAL then return end
 		
-		if v:GetWeapons() != nil and ply:GetWeapons() != v:GetWeapons() and game.GetMap() != "hl2cr_lobby" then
+		if v:GetWeapons() != nil and ply:GetWeapons() != v:GetWeapons() and game.GetMap() != "hl2cr_lobby_festive" then
 			for k, w in pairs(v:GetWeapons()) do
 				if RESTRICTED_WEPS[w:GetClass()] then return end
 				ply:Give(w:GetClass())
@@ -782,7 +783,7 @@ function RespawnTimerActive(ply, deaths)
 		end
 	end)
 
-	if GetConVar("hl2cr_survivalmode"):GetInt() == 1 and game.GetMap() != "hl2cr_lobby" then
+	if GetConVar("hl2cr_survivalmode"):GetInt() == 1 and game.GetMap() != "hl2cr_lobby_festive" then
 		local playersAlive = #player.GetAll()
 		local playerDeaths = deaths
 		

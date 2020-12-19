@@ -5,7 +5,11 @@ local series = nil
 
 if string.match(game.GetMap(), "d1_") or string.match(game.GetMap(), "d2_") 
 or string.match(game.GetMap(), "d3_") then
-	series = "hl2"
+	if game.GetMap() == "d2_lostcoast" then
+		series = "lostcoast"
+	else
+		series = "hl2"
+	end
 elseif string.match(game.GetMap(), "ep1_") then
 	series = "ep1"
 elseif string.match(game.GetMap(), "ep2_") then
@@ -78,6 +82,10 @@ function ENT:StartTouch(ent)
 	local bonusCoins = 0
 
 	if ent and ent:IsValid() and ent:IsPlayer() and ent:Team() == TEAM_ALIVE then
+		if game.GetMap() == "d2_lostcoast" then
+			Achievement(ent, "Old_Friend", "HL2_Ach_List")
+		end
+		
 		ent:SetTeam(TEAM_COMPLETED_MAP)
 		SpectateMode(ent)
 		ent:SetObserverMode(OBS_MODE_CHASE)
@@ -106,6 +114,9 @@ function ENT:StartTouch(ent)
 			timer.Remove("MapTimer")
 		elseif team.NumPlayers(TEAM_COMPLETED_MAP) >= 1 and game.GetMap() == "ep2_outland_12a" then
 			EndEP2Game()
+			timer.Remove("MapTimer")
+		elseif team.NumPlayers(TEAM_COMPLETED_MAP) >= team.NumPlayers(TEAM_ALIVE) and game.GetMap() == "d2_lostcoast" then
+			EndLostCoast()
 			timer.Remove("MapTimer")
 		else
 			for k, p in pairs(player.GetAll()) do
@@ -147,18 +158,17 @@ function ENT:Think()
 						p:ChatPrint("You have failed the 'One true freeman' Challenge")
 					end
 				end
-				
-				if series == "hl2" then
-					ChangeMapHL2()
-				elseif series == "ep1" then
-					ChangeMapEP1()
-				elseif series == "ep2" then
-					ChangeMapEP2()
-				else
-					RunConsoleCommand("changelevel", "hl2cr_lobby")
-				end
-				displayOnce = false
 			end)
+				
+			if series == "hl2" then
+				ChangeMapHL2()
+			elseif series == "ep1" then
+				ChangeMapEP1()
+			elseif series == "ep2" then
+				ChangeMapEP2()
+			else
+				RunConsoleCommand("changelevel", "hl2cr_lobby_festive")
+			end
 		end
 	elseif (team.NumPlayers(TEAM_COMPLETED_MAP) >= 1 and MAPS_ONEPLAYER[game.GetMap()]) then
 		if displayOnce == false then
@@ -185,6 +195,20 @@ function ENT:Think()
 		end
 	elseif team.NumPlayers(TEAM_COMPLETED_MAP) >= team.NumPlayers(TEAM_ALIVE) + addOne - subOne and string.find(game.GetMap(), "syn_") then
 		EndCoop()
+	end
+end
+
+function EndLostCoast()
+	print("Hi")
+	if not displayOnce then
+		displayOnce = true
+		net.Start("DisplayMapTimer")
+		net.Broadcast()
+		timer.Create("MapTimerEnd", 35, 0, function() 
+			file.Delete("hl2cr_data/maprecovery.txt") 
+			RunConsoleCommand("changelevel", "hl2cr_lobby_festive") 
+			timer.Remove("MapTimerEnd") print("Hello") 
+		end)
 	end
 end
 
@@ -330,7 +354,7 @@ function ChangeMapHL2()
 		"d3_citadel_04",
 		"d3_citadel_05",
 		"d3_breen_01",
-		"hl2cr_lobby"
+		"hl2cr_lobby_festive"
 	}
 	for k = 1, #HL2 do
 		if map == HL2[k] then
@@ -346,7 +370,7 @@ function ChangeMapHL2()
 				RunConsoleCommand("changelevel", HL2[k+1])
 			end
 		end
-		if HL2[k] == "hl2cr_lobby" then
+		if HL2[k] == "hl2cr_lobby_festive" then
 			file.Delete("hl2cr_data/maprecovery.txt")
 		end
 	end
@@ -372,14 +396,14 @@ function ChangeMapEP1()
 		"ep1_c17_02a",
 		--"ep1_c17_05", -Gotta fix somehow
 		"ep1_c17_06",
-		"hl2cr_lobby"
+		"hl2cr_lobby_festive"
 	}
 	
 	for k = 1, #EP1 do
 		if map == EP1[k] then
 			RunConsoleCommand("changelevel", EP1[k+1])
 		end
-		if EP1[k] == "hl2cr_lobby" then
+		if EP1[k] == "hl2cr_lobby_festive" then
 			file.Delete("hl2cr_data/maprecovery.txt")
 		end
 	end
@@ -406,14 +430,14 @@ function ChangeMapEP2()
 		"ep2_outland_11b",
 		"ep2_outland_12",
 		"ep2_outland_12a",
-		"hl2cr_lobby"
+		"hl2cr_lobby_festive"
 	}
 	
 	for k = 1, #EP2 do
 		if map == EP2[k] then
 			RunConsoleCommand("changelevel", EP2[k+1])
 		end
-		if EP2[k] == "hl2cr_lobby" then
+		if EP2[k] == "hl2cr_lobby_festive" then
 			file.Delete("hl2cr_data/maprecovery.txt")
 		end
 	end
@@ -428,7 +452,7 @@ function EndCoop()
 			net.Send(p)
 			giveRewards(p)
 			p:GodEnable()
-			timer.Create("MapTimerEnd", 20, 0, function() file.Delete("hl2cr_data/maprecovery.txt") RunConsoleCommand("changelevel", "hl2cr_lobby") timer.Remove("MapTimerEnd") end)
+			timer.Create("MapTimerEnd", 20, 0, function() file.Delete("hl2cr_data/maprecovery.txt") RunConsoleCommand("changelevel", "hl2cr_lobby_festive") timer.Remove("MapTimerEnd") end)
 		end
 	end
 end

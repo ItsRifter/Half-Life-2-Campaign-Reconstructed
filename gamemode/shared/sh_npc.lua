@@ -23,7 +23,7 @@ INVUL_NPCS = {
 
 local RESTRICTED_NPCS = {
 	["npc_antlion"] = true,
-	["zpn_pumpkin_boss"] = true
+	["zpn_boss"] = true
 }
 
 hook.Add("EntityTakeDamage", "FriendOrFoe", function(ent, dmgInfo)
@@ -245,7 +245,7 @@ if SERVER then
 	hook.Add("OnEntityCreated", "SpecialChanger", function(ent)
 		if GetConVar("hl2cr_specials"):GetInt() == 1 then
 			if ent:IsNPC() then
-				if ent:GetName() != "" or ent.Changed == true then return end
+				if ent:GetName() == "*" or ent.Changed == true then return end
 				if ent:GetClass() == "npc_combine_s" or ent:GetClass() == "npc_metropolice" then
 					local specialChance = math.random(1, 100)
 					if specialChance <= (12 * GetConVar("hl2cr_difficulty"):GetInt()) then
@@ -318,9 +318,28 @@ hook.Add("OnNPCKilled", "HalloweenEventNPC", function(npc, attacker, inflictor)
 	
 	local randCandyChance = math.random(1, 25)
 	local randCandy = math.random(1, 3)
-	
 	if attacker:IsPlayer() then
-		if randCandyChance > 15 then
+		if randCandyChance > 20 then
+			for i = 0, randCandy do
+				local randPosX = math.random(1, 90)
+				local randPosY = math.random(1, 90)
+				local candy = ents.Create("zpn_candy")
+				candy:SetCandy(1)
+				candy:SetPos(Vector(npc:GetPos().x + randPosX, npc:GetPos().y + randPosY, npc:GetPos().z + 25))
+				candy:Spawn()
+			end
+		end
+	end
+end)
+
+hook.Add("OnNPCKilled", "ChristmasEventNPC", function(npc, attacker, inflictor)
+	if GetConVar("hl2cr_christmas"):GetInt() == 0 then return end
+	if RESTRICTED_NPCS[npc:GetClass()] then return end
+	
+	local randCandyChance = math.random(1, 25)
+	local randCandy = math.random(1, 3)
+	if attacker:IsPlayer() then
+		if randCandyChance > 20 then
 			for i = 0, randCandy do
 				local randPosX = math.random(1, 90)
 				local randPosY = math.random(1, 90)

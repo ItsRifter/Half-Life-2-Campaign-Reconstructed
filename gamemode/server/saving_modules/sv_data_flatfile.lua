@@ -97,6 +97,14 @@ local function InitData(ply)
 	ply.hl2cPersistent.AchProgress.CombineKiller = ply.hl2cPersistent.AchProgress.CombineKiller or 0
 	ply.hl2cPersistent.AchProgress.ZombieKiller = ply.hl2cPersistent.AchProgress.ZombieKiller or 0
 	
+	--Squads
+	ply.hl2cPersistent.Squads = {}
+	ply.hl2cPersistent.Squads.Leader = ply.hl2cPersistent.Squads.Leader or nil
+	ply.hl2cPersistent.Squads.ID = ply.hl2cPersistent.Squads.ID or 0
+	ply.hl2cPersistent.Squads.Members = ply.hl2cPersistent.Squads.Members or {}
+	ply.hl2cPersistent.Squads.InSquad = ply.hl2cPersistent.Squads.InSquad or false
+	ply.hl2cPersistent.Squads.TotalXP = ply.hl2cPersistent.Squads.TotalXP or 0
+	
 	-- Also set/create networked variables
 	ply:SetNWInt("Level", ply.hl2cPersistent.Level)
 	ply:SetNWInt("Prestige", ply.hl2cPersistent.Prestige)
@@ -109,9 +117,6 @@ local function InitData(ply)
 	ply:SetNWInt("XP", math.Round(ply.hl2cPersistent.XP))
 	ply:SetNWInt("Scrap", ply.hl2cPersistent.ScrapMetal)
 	ply:SetNWInt("MaxXP", ply.hl2cPersistent.MaxXP)
-	
-	ply:SetNWString("Ach", table.concat(ply.hl2cPersistent.Achievements, " "))
-	ply:SetNWString("Vortex", table.concat(ply.hl2cPersistent.Vortexes, " "))
 	
 	ply:SetNWInt("InvSpace", ply.hl2cPersistent.InvSpace)
 	ply:SetNWInt("MaxInvSpace", ply.hl2cPersistent.MaxInvSpace)
@@ -175,33 +180,14 @@ local function LoadData(ply)
 	-- Init player model and other stuff
 	ply:SetModel(ply.hl2cPersistent.Model)
 	
-	--Init Squads
-	ply.squads = ply.squads or {}
-	ply.squads.members = ply.squads.members or 0
-	ply.squads.leader = ply.squads.leader or ""
-	ply.squads.membername = ply.squads.membername or {}
-
 	return true -- Return true to signal that the settings could be loaded
 end
 
 local function SaveData(ply)
 	local PlayerID = string.Replace(ply:SteamID(), ":", "!")
-
-	-- Fetch some data, that wouldn't be updated otherwise
-	ply.hl2cPersistent.Name = ply:Nick()
-	ply.hl2cPersistent.Model = ply:GetModel()
 	
 	-- Store all persistent data as JSON
 	file.Write("hl2cr_data/" .. PlayerID .. ".txt", util.TableToJSON(ply.hl2cPersistent, true))
-	
-	--Squads
-	ply.squads = ply.squads or {}
-	ply.squads.leader = ply.squads.leader or ""
-	ply.squads.teamname = ply.squads.teamname or ""
-	ply.squads.members = ply.squads.members or 0
-	ply.squads.membername = ply.squads.membername or {}
-	
-	
 	
 end
 
@@ -217,6 +203,21 @@ Cheating_Players_Survival = {}
 
 --When the player disconnects, add kills and remove temporary upgrades (THIS SHOULDN'T HAPPEN ON SERVER CRASH)
 hook.Add("PlayerDisconnected", "SavePlayerDataDisconnect", function(ply) 
+	if ply.hl2cPersistent.Squads.Leader then
+		ply.hl2cPersistent.Squads.Leader = nil
+		ply.hl2cPersistent.Squads.InSquad = false
+		for k, pl in pairs(ply.hl2cPersistent.Squads.Members) do
+			net.Start("Squad_Leave_Disband")
+			net.Send(pl)
+		end
+	else
+		ply.hl2cPersistent.Squads.InSquad = false
+		
+		net.Start("Squad_Left")
+			net.WriteEntity(ply)
+		net.Broadcast()
+	end
+	
 	ply.hl2cPersistent.KillCount = ply.hl2cPersistent.KillCount + ply:Frags()
 	table.Empty(ply.hl2cPersistent.TempUpg)
 	SaveData(ply)
@@ -225,7 +226,7 @@ hook.Add("PlayerDisconnected", "SavePlayerDataDisconnect", function(ply)
 		deaths = deaths - 1
 	end
 	
-	alivePlayers = alivePlayers - 1
+	deadPlayers = deadPlayers - 1
 	
 	if ply.pet then
 		ply.pet:Remove()

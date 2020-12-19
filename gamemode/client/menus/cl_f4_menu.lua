@@ -1544,6 +1544,70 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 		eventItemsCount:SetFont("Spooky")
 		eventItemsCount:SetText("= " .. tostring(curEventItems))
 		eventItemsCount:SizeToContents()
+	elseif curEvent == 2 then
+		local eventWelcome = vgui.Create("DLabel", eventPanel)
+		eventWelcome:SetFont("Default")
+		eventWelcome:SetText("Hello there!\n\nwelcome to my shop of\nfestive goodies")
+		eventWelcome:SetPos(250, 50)
+		eventWelcome:SizeToContents()
+		
+		local eventDealer = vgui.Create("DModelPanel", eventPanel)
+		eventDealer:SetModel("models/zerochain/props_christmas/zpn_shopnpc_snow.mdl")
+		eventDealer:SetPos(-100, -50)
+		eventDealer:SetSize(550, 750)
+		function eventDealer:LayoutEntity(Entity) return end
+		
+		local eyepos = eventDealer.Entity:GetBonePosition(eventDealer.Entity:LookupBone("ValveBiped.Bip01_Head1"))
+		eyepos:Add(Vector(45, 0, -15))
+		eventDealer:SetLookAt(eyepos)
+		eventDealer:SetCamPos(eyepos-Vector(-12, 0, 0))
+		
+		local eventScroll = vgui.Create("DScrollPanel", eventPanel)
+		eventScroll:Dock(FILL)
+		
+		local eventItems = vgui.Create("DImage", eventScroll)
+		eventItems:SetSize(125, 125)
+		eventItems:SetPos(600, 0)
+		eventItems:SetImage("materials/zerochain/zpn/ui/zpn_candy_large.png")
+		
+		local eventItemsCount = vgui.Create("DLabel", eventScroll)
+		eventItemsCount:SetPos(725, 50)
+		eventItemsCount:SetFont("Default")
+		eventItemsCount:SetText("= " .. tostring(curEventItems))
+		eventItemsCount:SizeToContents()
+		
+		local itemSliderPanel = vgui.Create("DPanel", eventScroll)
+		itemSliderPanel:SetSize(200, 50)
+		itemSliderPanel:SetPos(675, 250)
+		itemSliderPanel.Paint = function(self, w, h)
+			surface.SetDrawColor(173, 173, 173, 255)
+			surface.DrawRect(-10, 10, 160, 100)
+		end
+		local itemSlider = vgui.Create("DNumSlider", eventScroll)
+		itemSlider:SetPos(675, 250)
+		itemSlider:SetSize(175, 50)
+		itemSlider:SetText("Sell Items")
+		itemSlider:SizeToContents()
+		itemSlider:SetMin(0)
+		itemSlider:SetMax(curEventItems)
+		itemSlider:SetDecimals(0)
+		
+		local sellItemsButton = vgui.Create("DButton", eventScroll)
+		sellItemsButton:SetPos(675, 350)
+		sellItemsButton:SetSize(150, 50)
+		sellItemsButton:SetText("Sell")
+		
+		sellItemsButton.DoClick = function()
+			if itemSlider:GetValue() < 1 then return end
+			local amt = math.Round(itemSlider:GetValue())
+			
+			net.Start("SellEventItems")
+				net.WriteInt(amt, 16)
+			net.SendToServer()
+			curEventItems = curEventItems - amt
+			itemSlider:SetMax(curEventItems)
+			eventItemsCount:SetText("= " .. tostring(curEventItems))
+		end
 	else
 		local noEvent = vgui.Create("DLabel", eventPanel)
 		noEvent:SetFont("Default")

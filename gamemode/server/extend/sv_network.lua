@@ -69,6 +69,8 @@ util.AddNetworkString("AddWeapon")
 --Squads and Combine Loyals
 util.AddNetworkString("Squad_Created")
 util.AddNetworkString("Squad_Disband")
+util.AddNetworkString("Squad_Leave_Disband")
+util.AddNetworkString("Squad_NewMember")
 util.AddNetworkString("Squad_XPUpdate")
 util.AddNetworkString("Squad_Joined")
 util.AddNetworkString("Squad_Left")
@@ -97,4 +99,7 @@ util.AddNetworkString("EquipHat")
 
 --EP2 Flashlight
 util.AddNetworkString("ep2_flashlight")
+
+--Event
+util.AddNetworkString("SellEventItems")
 

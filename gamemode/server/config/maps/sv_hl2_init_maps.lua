@@ -350,6 +350,10 @@ function SetupHL2Map()
 		SetUpHalloweenMap()
 	end
 	
+	if GetConVar("hl2cr_christmas"):GetInt() == 1 then
+		SetUpChristmasMap()
+	end
+	
 end
 
 local playersAmt = 0
@@ -361,10 +365,38 @@ end)
 function SetUpHalloweenMap()
 	if playersAmt < 4 then return end
 	
-	if game.GetMap() == "d1_town_02a" then
-		local pumpkinBoss = ents.Create("zpn_pumpkin_boss")
-		pumpkinBoss:SetPos(Vector(-7565, 537, -3389))
-		pumpkinBoss:Spawn()
+	local chanceSpawn = 9 * playersAmt
+	local chanceLimit = math.random(1, 100)
+	
+	if chanceSpawn >= chanceLimit then
+		if game.GetMap() == "d1_town_02a" then
+			local pumpkinBoss = ents.Create("zpn_boss")
+			pumpkinBoss:SetPos(Vector(-7565, 537, -3389))
+			pumpkinBoss:Spawn()
+		end
+	end
+end
+
+function SetUpChristmasMap()
+	if playersAmt < 4 then return end
+	
+	local chanceSpawn = 9 * playersAmt + math.random(1, 25)
+	local chanceLimit = math.random(1, 85)
+	
+	if chanceSpawn >= chanceLimit then
+		if game.GetMap() == "d1_town_02a" then
+			local snowBoss = ents.Create("zpn_boss")
+			snowBoss:SetPos(Vector(-7565, 537, -3389))
+			snowBoss:Spawn()
+		elseif game.GetMap() == "d2_coast_03" then
+			local snowBoss = ents.Create("zpn_boss")
+			snowBoss:SetPos(Vector(-3308, -8014, 71))
+			snowBoss:Spawn()
+		elseif game.GetMap() == "d3_c17_12" then
+			local snowBoss = ents.Create("zpn_boss")
+			snowBoss:SetPos(Vector(-1363, 6255, 195))
+			snowBoss:Spawn()
+		end
 	end
 end
 
