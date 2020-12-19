@@ -46,6 +46,11 @@ if SERVER then
 		return
 	end
 
+	-- Returns true if the owner of the squad is the given player, false otherwise.
+	function HL2CR_Squad:IsOwner(ply)
+		return self.Members[1] == ply
+	end
+
 	-- Disband squad
 	function HL2CR_Squad:Disband(name)
 		if self.Members then
