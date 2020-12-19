@@ -5,17 +5,20 @@ AddCSLuaFile()
 HL2CR_Squad = HL2CR_Squad or {Squads = {}}
 
 if SERVER then
-	-- Create a new squad and add it to the squad list
+	-- Create a new squad and add it to the squad list.
+	-- This will return nothing if the player is already in a squad.
 	function HL2CR_Squad:NewSquad(name, owner)
-		-- Use name as id
 		local squad = {
 			Members = {owner}, -- The first member is the owner
 			XP = 0
 		}
 
-		-- Add to list
+		-- Check if player is already in a squad
+		if self.GetPlayerSquad(ply) then return end
+
+		-- Add to list and use name as key
 		self.Squads[name] = squad
-		
+
 		for _, member in ipairs(squad.Members) do
 			-- TODO: Add network stuff to send info to all clients that have something to do with this squad (for now that's just the owner)
 		end
@@ -23,16 +26,31 @@ if SERVER then
 		-- Add methods to all instances of HL2CR_Squads. No need to care about this, just leave it as it is
 		setmetatable(squad, self)
 		self.__index = self
-		
+
 		owner:ChatPrint("Squad Created")
 		return squad
+	end
+
+	-- Searches through all squads and returns the squad the given player is in. Or nil if ply isn't in any squad.
+	function HL2CR_Squad:GetPlayerSquad(ply)
+		for _, squad in pairs(self.Squads) do
+			for _, member in ipairs(squad.Members) do
+				if member == ply then
+					-- Found
+					return squad
+				end
+			end
+		end
+
+		-- Nothing found
+		return
 	end
 
 	-- Disband squad
 	function HL2CR_Squad:Disband(name)
 		if self.Members then
 			for _, member in ipairs(self.Members) do
-				-- TODO: Add network stuff to send info to all clients that have something to do with this squad (for now that's just the owner)
+				-- TODO: Add network stuff to send info to all clients that have something to do with this squad
 			end
 		end
 
@@ -41,49 +59,52 @@ if SERVER then
 		return
 	end
 
-	-- Add member
+	-- Add member to squad.
+	-- If the ply is already member of another squad, this will return false.
 	function HL2CR_Squad:AddMember(ply)
+		-- Check if player is already in a squad
+		if self.GetPlayerSquad(ply) then return false end
+
 		-- Send data to everyone but the new member (Update their member lists)
 		for _, member in ipairs(self.Members) do
-			-- TODO: Add network stuff to send info to all clients that have something to do with this squad (for now that's just the owner)
+			-- TODO: Add network stuff to send info to all clients that have something to do with this squad
 		end
-	  
+
 		-- TODO: Send a special network command to that single member that we just added
-	  
+
 		-- Add that member to list
 		table.insert(self.Members, ply)
-	  
-		return
+
+		return true
 	end
 
 	-- Remove member
 	function HL2CR_Squad:RemoveMember(ply)
-	-- Send data to everyone but the new member (Update their member lists)
-	for _, member in ipairs(self.Members) do
-		-- TODO: Add network stuff to send info to all clients that have something to do with this squad (for now that's just the owner)
-	end
-  
-	-- Add that member to list
-	local removedPly = table.RemoveByValue(self.Members, ply)
-	if removedPly then
-		-- TODO: Send a special network command to that single member that we just added
-		-- removedPly is the removed member
-	end
-	
-	return
-end
+		-- Add that member to list
+		local removedPly = table.RemoveByValue(self.Members, ply)
+		if removedPly then
+			-- TODO: Send a special network command to that single member that we just added
+			-- removedPly is the removed member
 
--- Add XP to squad
-function HL2CR_Squad:AddXP(xp)
-	self.XP = self.XP + xp
+			-- Send data to everyone but the removed member (Update their member lists)
+			for _, member in ipairs(self.Members) do
+				-- TODO: Add network stuff to send info to all clients that have something to do with this squad
+			end
+		end
 
-	for _, member in ipairs(self.Members) do
-		-- TODO: Add network stuff to send info to all clients that have something to do with this squad (for now that's just the owner)
+		return
 	end
 
-	return
-end
-		
+	-- Add XP to squad
+	function HL2CR_Squad:AddXP(xp)
+		self.XP = self.XP + xp
+
+		for _, member in ipairs(self.Members) do
+			-- TODO: Add network stuff to send info to all clients that have something to do with this squad
+		end
+
+		return
+	end
 end
 
 if CLIENT then
