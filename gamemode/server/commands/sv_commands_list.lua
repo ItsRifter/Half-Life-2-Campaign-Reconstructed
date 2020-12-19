@@ -3,7 +3,6 @@ local restoreVotes = 0
 local restartVotes = 0 
 oldModel = ""
 local playerFound = false
-local inSquad = false
 local diffVar = ""
 local timer = 3600 + CurTime()
 local petbringTime = 0
