@@ -14,7 +14,7 @@ if SERVER then
 		}
 
 		-- Check if player is already in a squad
-		if self.GetPlayerSquad(ply) then return end
+		if self:GetPlayerSquad(ply) then return end
 
 		-- Add to list and use name as key
 		self.Squads[name] = squad
@@ -68,7 +68,7 @@ if SERVER then
 	-- If the ply is already member of another squad, this will return false.
 	function HL2CR_Squad:AddMember(ply)
 		-- Check if player is already in a squad
-		if self.GetPlayerSquad(ply) then return false end
+		if self:GetPlayerSquad(ply) then return false end
 
 		-- Send data to everyone but the new member (Update their member lists)
 		for _, member in ipairs(self.Members) do
