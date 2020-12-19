@@ -14,7 +14,7 @@ if SERVER then
 		}
 
 		-- Check if player is already in a squad
-		if self:GetPlayerSquad(ply) then return end
+		if self:GetPlayerSquad(owner) then return end
 
 		-- Add to list and use name as key
 		self.Squads[name] = squad
