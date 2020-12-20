@@ -18,6 +18,10 @@ if SERVER then
 			XP = 0
 		}
 
+		-- Add methods to all instances of HL2CR_Squads. No need to care about this, just leave it as it is
+		setmetatable(squad, self)
+		self.__index = self
+
 		-- Check if player is already in a squad
 		if self:GetPlayerSquad(owner) then
 			owner:ChatPrint("You are already in a squad")
@@ -29,13 +33,9 @@ if SERVER then
 
 		-- This will be only the owner, duh
 		for _, member in ipairs(squad.Members) do
-			self:SendSquadStart(member)
-			self:SendSquadData(member)
+			squad:SendSquadStart(member)
+			squad:SendSquadData(member)
 		end
-
-		-- Add methods to all instances of HL2CR_Squads. No need to care about this, just leave it as it is
-		setmetatable(squad, self)
-		self.__index = self
 
 		owner:ChatPrint("Squad Created")
 		return squad
