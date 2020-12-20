@@ -67,13 +67,10 @@ util.AddNetworkString("AddArmour")
 util.AddNetworkString("AddWeapon")
 
 --Squads and Combine Loyals
-util.AddNetworkString("Squad_Created")
-util.AddNetworkString("Squad_Disband")
-util.AddNetworkString("Squad_Leave_Disband")
-util.AddNetworkString("Squad_NewMember")
-util.AddNetworkString("Squad_XPUpdate")
-util.AddNetworkString("Squad_Joined")
-util.AddNetworkString("Squad_Left")
+util.AddNetworkString("Squad_Start")
+util.AddNetworkString("Squad_Update_Data")
+util.AddNetworkString("Squad_Update_XP")
+util.AddNetworkString("Squad_End")
 
 --End map
 util.AddNetworkString("ShowEndStats")
