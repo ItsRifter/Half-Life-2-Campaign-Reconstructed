@@ -106,6 +106,16 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 		return ""
 	end
 	
+	if string.lower(text) == "!squadview" or string.lower(text) == "!viewsquad" then
+		local squad = HL2CR_Squad:GetPlayerSquad(ply)
+		if squad then
+			squad:PrintState(ply)
+		else
+			ply:ChatPrint("No squads to view")
+		end
+		return ""
+	end
+	
 	if string.lower(text) == "!squadjoin" or string.lower(text) == "!joinsquad" then
 		ply:ChatPrint("You need to specify a player name for the squad you're joining!")
 		return ""
@@ -300,7 +310,6 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 		end
 		
 		if ply.BringPet then -- This is a global variable shared between all players, i doubt it does what it is supposed to do!
-			ply.pet:GotoOwner(ply:GetPos())
 			ply.pet:SetPos(ply:GetPos())
 			ply.pet:SetAngles(ply:GetAngles())
 			beginPetBringTimer(ply)
@@ -1107,8 +1116,7 @@ concommand.Add("hl2cr_petbring", function(ply, cmd, args)
 	
 	
 	if ply.BringPet then
-		ply.pet:GotoOwner(ply:GetPos())
-		ply.pet:SetPos(ply:GetPos())
+		ply.pet:MoveToPos(ply:GetPos())
 		ply.pet:SetAngles(ply:GetAngles())
 		ply.BringPet = false
 		beginPetBringTimer(ply)

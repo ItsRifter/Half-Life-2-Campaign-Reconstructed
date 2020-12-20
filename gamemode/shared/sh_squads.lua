@@ -303,8 +303,8 @@ if CLIENT then
 		end
 	end
 
-	function HL2CR_ClientSquad:UpdateXP(xp)
-		self.SquadXPLabel:SetText(string.format("Total XP: %d", xp))
+	function HL2CR_ClientSquad:UpdateXP(XP)
+		self.SquadXPLabel:SetText(string.format("Total XP: %d", XP))
 		self.SquadXPLabel:SizeToContents()
 	end
 
@@ -338,7 +338,7 @@ if CLIENT then
 		"Squad_Update_XP",
 		function(len)
 			local newMember = net.ReadEntity()
-			HL2CR_ClientSquad:UpdateXP(xp)
+			HL2CR_ClientSquad:UpdateXP(XP)
 		end
 	)
 
