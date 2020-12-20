@@ -68,7 +68,6 @@ util.AddNetworkString("AddWeapon")
 
 --Squads and Combine Loyals
 util.AddNetworkString("Squad_Start")
-util.AddNetworkString("Squad_Update_Data")
 util.AddNetworkString("Squad_Update_XP")
 util.AddNetworkString("Squad_End")
 
