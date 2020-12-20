@@ -9,6 +9,11 @@ local MAPS_NOPETS = {
 	["ep1_citadel_01"] = true
 }
 
+local PETS = {
+	[0] = "hl2cr_pet_headcrab",
+	[1] = "hl2cr_pet_torsozombie",
+}
+
 function spawnPet(ply, pos)
 
 	if ply:IsValid() and ply:Team() == TEAM_ALIVE and not ply.petAlive then
@@ -18,9 +23,9 @@ function spawnPet(ply, pos)
 			ply:ChatPrint("Pets are disabled on this map")
 		else
 		
-			if tonumber(ply:GetNWInt("PetStage")) <= 0 then
-				ply.pet = ents.Create("npc_headcrab")
-			elseif tonumber(ply:GetNWInt("PetStage")) == 1 then
+			ply.pet = ents.Create(PETS[ply.hl2cPersistent.PetStage])
+			
+			--[[elseif tonumber(ply:GetNWInt("PetStage")) == 1 then
 				ply.pet = ents.Create("npc_zombie_torso")
 			elseif tonumber(ply:GetNWInt("PetStage")) == 2 then
 				ply.pet = ents.Create("npc_zombie")	
@@ -40,32 +45,22 @@ function spawnPet(ply, pos)
 				ply.pet = ents.Create("npc_metropolice")
 				ply.pet:Give("weapon_stunstick")
 			end
+			--]]
 		end
-		if not pos then
-			ply.pet:SetPos(ply:GetPos())
-		else
-			ply.pet:SetPos(pos)
-		end
-		ply.pet:SetNWBool("PetActive", true)
+		
+		ply.pet:SetPos(ply:GetPos())
+		
+		ply.pet:SetPetOwner(ply)
 		ply.pet:Spawn()
-		for k, v in pairs(player.GetAll()) do
-			ply.pet:AddEntityRelationship(v, D_LI, 99)
-		end
-		ply.pet:SetOwner(ply)
-		ply.pet.owner = ply.pet:GetOwner()
-		ply.pet:SetCustomCollisionCheck(false)
+		
+		ply:SetCustomCollisionCheck(true)
 		ply.petAlive = true
-		local health = ply.hl2cPersistent.PetHP
-		ply.pet:SetHealth(health)
-		ply.pet:SetMaxHealth(health)
 		ply.pet:SetNWEntity("PetEntity", ply.pet)
 		timer.Simple(1, function()
 			net.Start("OpenPetStats")
 				net.WriteEntity(ply.pet)
 			net.Send(ply)
 		end)
-		ply.pet:SetNWInt("PetStr", ply.hl2cPersistent.PetStr)
-		ply.pet:SetNWInt("PetRegen", ply.hl2cPersistent.PetRegen)
 	end
 end
 
