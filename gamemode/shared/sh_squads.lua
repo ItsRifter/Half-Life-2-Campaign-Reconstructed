@@ -75,14 +75,12 @@ if SERVER then
 				else
 					member:ChatPrint("Your squad leader has disbanded the squad")
 				end
-				self:SendSquadEnd(ply)
+				self:SendSquadEnd(member)
 			end
 		end
 
 		-- Delete from squads list
-		if not table.RemoveByValue(self.Squads, self) then
-			return false
-		end
+		self.Squads[self.Name] = nil
 
 		return true
 	end
@@ -124,21 +122,28 @@ if SERVER then
 
 	-- Remove member
 	function HL2CR_Squad:RemoveMember(ply) -- TODO: Make sure that ply that left the server are removed from any squad
-		-- Remove the member from the list
-		local removedPly = table.RemoveByValue(self.Members, ply)
-		if not removedPly then
+		-- Check if the player is member of this squad
+		if self:GetPlayerSquad(ply) ~= self then
 			return false
 		end
 
-		removedPly:ChatPrint("You have left the squad")
+		-- Remove the member from the list
+		table.RemoveByValue(self.Members, ply)
+
+		ply:ChatPrint("You have left the squad")
 
 		-- Remove any client side UI and other stuff
-		self:SendSquadEnd(removedPly)
+		self:SendSquadEnd(ply)
 
 		-- Send data to everyone but the removed member (Update their member lists)
 		for _, member in ipairs(self.Members) do
 			self:SendSquadData(member)
-			member:ChatPrint(string.format("%s has left your squad", removedPly:Nick()))
+			member:ChatPrint(string.format("%s has left your squad", ply:Nick()))
+		end
+
+		-- If there are no members left, disband the squad
+		if #self.Members == 0 then
+			self:Disband()
 		end
 
 		return true
@@ -194,7 +199,7 @@ if SERVER then
 	-- Doesn't check if ply is actually member of the suqad.
 	function HL2CR_Squad:SendSquadData(ply)
 		net.Start("Squad_Update_Data")
-		net.WriteString(self)
+		net.WriteString(self.Name)
 		net.WriteInt(self.XP, 24)
 		net.WriteUInt(#self.Members, 8)
 		for _, member in ipairs(self.Members) do
@@ -280,7 +285,7 @@ if CLIENT then
 	function HL2CR_ClientSquad:UpdateData(squad)
 		self.SquadTeamNameLabel:SetText(squad.Name)
 
-		self:UpdateXP(squad.xp)
+		self:UpdateXP(squad.XP)
 
 		-- Clean and recreate the member entries
 		self.SquadPanel:Clear()
@@ -318,7 +323,8 @@ if CLIENT then
 		"Squad_Update_Data",
 		function(len)
 			local squad = {}
-			squad.xp = net.ReadInt(24)
+			squad.Name = net.ReadString()
+			squad.XP = net.ReadInt(24)
 			local memberCount = net.ReadUInt(8)
 			squad.Members = {}
 			for i = 1, memberCount, 1 do
