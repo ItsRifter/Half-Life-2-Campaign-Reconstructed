@@ -268,6 +268,7 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 		end
 		
 		if ply.BringPet then -- This is a global variable shared between all players, i doubt it does what it is supposed to do!
+			ply.pet:GotoOwner(ply:GetPos())
 			ply.pet:SetPos(ply:GetPos())
 			ply.pet:SetAngles(ply:GetAngles())
 			beginPetBringTimer(ply)
@@ -1074,6 +1075,7 @@ concommand.Add("hl2cr_petbring", function(ply, cmd, args)
 	
 	
 	if ply.BringPet then
+		ply.pet:GotoOwner(ply:GetPos())
 		ply.pet:SetPos(ply:GetPos())
 		ply.pet:SetAngles(ply:GetAngles())
 		ply.BringPet = false
