@@ -20,6 +20,9 @@ if SERVER then
 		self.Squads[name] = squad
 
 		for _, member in ipairs(squad.Members) do
+			net.Start("Squad_Created")
+				net.WriteEntity(owner)
+			net.Send(owner)
 			-- TODO: Add network stuff to send info to all clients that have something to do with this squad (for now that's just the owner)
 		end
 
@@ -52,35 +55,72 @@ if SERVER then
 	end
 
 	-- Disband squad
-	function HL2CR_Squad:Disband(name)
+	function HL2CR_Squad:Disband(name, ply)
+		if not self:IsOwner(ply) then
+			ply:ChatPrint("You aren't leading any squads")
+			return
+		end
+		
+		net.Start("Squad_Disband")
+		net.Send(ply)
+		
 		if self.Members then
 			for _, member in ipairs(self.Members) do
-				-- TODO: Add network stuff to send info to all clients that have something to do with this squad
+				member:ChatPrint("Your squad leader has disbanded/left")
+				net.Start("Squad_Leave_Disband")
+				net.Send(member)
 			end
 		end
 
 		-- Delete from list
 		self.Squads[name] = nil
+		ply:ChatPrint("Squad Disbanded")
 		return
 	end
 
 	-- Add member to squad.
 	-- If the ply is already member of another squad, this will return false.
-	function HL2CR_Squad:AddMember(ply)
+	function HL2CR_Squad:AddMember(ply, leader)
 		-- Check if player is already in a squad
 		if self:GetPlayerSquad(ply) then return false end
-
+		table.insert(self.Members, ply)
 		-- Send data to everyone but the new member (Update their member lists)
 		for _, member in ipairs(self.Members) do
-			-- TODO: Add network stuff to send info to all clients that have something to do with this squad
+			net.Start("Squad_NewMember")
+				net.WriteEntity(ply)
+			net.Send(member)
+			
+			if ply != member then
+				member:ChatPrint(ply:Nick() .. " has joined your squad")
+			end
 		end
+		
+		net.Start("Squad_Joined")
+			net.WriteEntity(ply)
+			net.WriteEntity(leader)
+		net.Send(ply)
 
 		-- TODO: Send a special network command to that single member that we just added
 
-		-- Add that member to list
-		table.insert(self.Members, ply)
-
 		return true
+	end
+
+	-- Prints the state of the squad to the given player.
+	function HL2CR_Squad:PrintState(ply)
+		for name, squad in pairs(self.Squads) do
+			if squad == self then
+				ply:ChatPrint(string.format("Squad Leader: %s", name))
+				ply:ChatPrint(string.format("XP: %d", self.XP))
+				ply:ChatPrint("Members:")
+				for i, member in ipairs(self.Members) do
+					ply:ChatPrint(string.format("  %d: %s", i, member:Nick()))
+				end
+				return
+			end
+		end
+
+		ply:ChatPrint("Squad not found in list! It's probably disbanded, but still referenced somewhere")
+		return
 	end
 
 	-- Remove member
@@ -88,24 +128,28 @@ if SERVER then
 		-- Add that member to list
 		local removedPly = table.RemoveByValue(self.Members, ply)
 		if removedPly then
-			-- TODO: Send a special network command to that single member that we just added
-			-- removedPly is the removed member
-
+			net.Start("Squad_Left")
+			net.Send(ply)
 			-- Send data to everyone but the removed member (Update their member lists)
 			for _, member in ipairs(self.Members) do
-				-- TODO: Add network stuff to send info to all clients that have something to do with this squad
+				net.Start("Squad_Left_Member")
+					net.WriteEntity(ply)
+				net.Send(member)
+				member:ChatPrint(ply:Nick() .. " has left your squad")
 			end
 		end
-
+		ply:ChatPrint("You have left the squad")
 		return
 	end
 
 	-- Add XP to squad
-	function HL2CR_Squad:AddXP(xp)
+	function HL2CR_Squad:AddXP(xp, leader)
 		self.XP = self.XP + xp
 
 		for _, member in ipairs(self.Members) do
-			-- TODO: Add network stuff to send info to all clients that have something to do with this squad
+			net.Start("Squad_XPUpdate")
+				net.WriteInt(self.XP, 16)
+			net.Send(leader)
 		end
 
 		return
@@ -125,7 +169,7 @@ if CLIENT then
 	local XPTotal = 0
 	local memberNames = {}
 
-	function StartSquad(plyLeader, newMember)
+	function StartSquad(leader, ply)
 		
 		HL2CRSQUADS = Color(255, 166, 0, 75)
 		
@@ -145,7 +189,7 @@ if CLIENT then
 		squadPanel:Dock(FILL)
 		
 		squadTeamNameLabel = vgui.Create("DLabel", squadPanel)
-		squadTeamNameLabel:SetText(plyLeader:Nick() .. "'s Team")
+		squadTeamNameLabel:SetText(leader:Nick() .. "'s Team")
 		squadTeamNameLabel:SetPos(0, 15)
 		squadTeamNameLabel:SetFont("Squad_TeamName")
 		squadTeamNameLabel:SetTextColor(Color(255, 255, 255))
@@ -153,7 +197,7 @@ if CLIENT then
 		
 		squadTeamLeaderMember = vgui.Create("DLabel", squadPanel)
 		squadTeamLeaderMember:SetPos(0, 75)
-		squadTeamLeaderMember:SetText(plyLeader:Nick() .. ":\n" .. XPTotal .. "XP")
+		squadTeamLeaderMember:SetText(leader:Nick() .. ":\n" .. XPTotal .. "XP")
 		squadTeamLeaderMember:SetFont("Squad_TeamMembers")
 		squadTeamLeaderMember:SetTextColor(Color(255, 255, 255))
 		squadTeamLeaderMember:SizeToContents()
@@ -161,18 +205,33 @@ if CLIENT then
 		squadTeamMember = vgui.Create("DLabel", squadPanel)
 		squadTeamMember:SetText("")
 		squadTeamMember:SizeToContents()
-		squadTeamLeaderMember:SetText(plyLeader:Nick() .. ":\n" .. XPTotal .. "XP")
+		squadTeamLeaderMember:SetText(leader:Nick() .. ":\n" .. XPTotal .. "XP")
+		UpdateSquad(leader, true)
+	end
+
+	function UpdateSquad(newMember, joined)
+		if joined == true then
+			table.insert(memberNames, newMember)
+			print("Joined")
+			PrintTable(memberNames)
+		elseif joined == false then
+			table.RemoveByValue(memberNames, newMember)
+			memberText:Remove()
+			print("Left")
+			PrintTable(memberNames)
+		end
 		for k, m in pairs(memberNames) do
-			local memberText = squadPanel:Add("DLabel")
-			memberText:SetPos(25 * k, 75)
-			memberText:SetText(m:Nick())
+			memberText = vgui.Create("DLabel")
+			memberText:SetPos(85 * (k+1), 75)
+			memberText:SetText(m:Nick() .. ":\n" .. XPTotal .. "XP")
 			memberText:SetFont("Squad_TeamMembers")
+			memberText:SizeToContents()
+			squadPanel:Add(memberText)
 		end
 	end
 
 	function endSquad()
 		squadFrame:Close()
-		LocalPlayer():ChatPrint("Your squad leader has left")
 	end
 
 	net.Receive("Squad_Created", function(len, ply)
@@ -182,27 +241,26 @@ if CLIENT then
 
 	net.Receive("Squad_Joined", function()
 		local ply = net.ReadEntity()
-		local teamToJoin = net.ReadEntity()
-		table.insert(memberNames, ply)
-		StartSquad(teamToJoin, ply)
+		local leader = net.ReadEntity()
+		StartSquad(leader, ply)
 		
 	end)
 
 	net.Receive("Squad_NewMember", function()
-		local leader = net.ReadEntity()
-		local newPly = net.ReadEntity()
-		table.insert(memberNames, newPly)
-		StartSquad(leader, newPly)
+		local newMember = net.ReadEntity()
+		UpdateSquad(newMember, true)
 	end)
 
-	net.Receive("Squad_Left", function()
-		local leavingPlayer = net.ReadEntity()
-		squadFrame:Close()
-		table.RemoveByValue(memberNames, leavingPlayer)
+	net.Receive("Squad_Left_Member", function(len, ply)
+		local leaver = net.ReadEntity()
+		UpdateSquad(leaver, false)
+	end)
+	net.Receive("Squad_Left", function(len, ply)
+		endSquad()
 	end)
 
 	net.Receive("Squad_XPUpdate", function(len, ply)
-		SquadXPTotal = SquadXPTotal + net.ReadInt(32)
+		XPTotal = XPTotal + net.ReadInt(16)
 		
 	end)
 
