@@ -62,7 +62,7 @@ function spawnPet(ply, pos)
 				net.WriteEntity(ply.pet)
 			net.Send(ply)
 		end)
-		
+		ply.pet:SetNWBool("PetActive", true)
 		ply.pet:SetNWInt("PetStr", ply.hl2cPersistent.PetStr)
 		ply.pet:SetNWInt("PetRegen", ply.hl2cPersistent.PetRegen)
 	end
