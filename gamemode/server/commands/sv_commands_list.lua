@@ -89,12 +89,19 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 	
 	--Squads
 	if string.lower(text) == "!squadcreate" or string.lower(text) == "!createsquad" then
-		HL2CR_Squad:NewSquad(ply:Nick(), ply)
+		local squadName = string.format("%s's Team", ply:Nick())
+		HL2CR_Squad:NewSquad(squadName, ply)
 		
 		return ""
 	end
 	
 	if string.lower(text) == "!squadleave" or string.lower(text) == "!leavesquad" then
+		local squad = HL2CR_Squad:GetPlayerSquad(ply)
+		if squad then
+			squad:RemoveMember(ply)
+		else
+			ply:ChatPrint("You are not in any squad!")
+		end
 		
 		return ""
 	end
@@ -105,12 +112,37 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 	end
 	
 	if string.find(string.lower(text), "!squadjoin ") or string.find(string.lower(text), "!joinsquad ") then
-		
+		local targetName = string.sub(text, 12)
+		for k, v in pairs(player.GetAll()) do
+			if v ~= ply then
+				if string.find(string.lower(v:Nick()), targetName) then
+					local squad = HL2CR_Squad:GetPlayerSquad(v)
+					if squad then
+						squad:AddMember(ply)
+					else
+						ply:ChatPrint("The player is in no squad!")
+					end
+					return ""
+				end
+			end
+		end
+
+		ply:ChatPrint("Found no player with this name!")
+
 		return ""
 	end
 	
 	if (string.lower(text) == "!squaddisband" or string.lower(text) == "!disbandsquad") then
-		HL2CR_Squad:Disband(ply:Nick())
+		local squad = HL2CR_Squad:GetPlayerSquad(ply)
+		if squad then
+			if squad:IsOwner(ply) then
+				squad:Disband()
+			else
+				ply:ChatPrint("You aren't leading this squad!")
+			end
+		else
+			ply:ChatPrint("You are not in any squad!")
+		end
 		return ""
 	end
 	
