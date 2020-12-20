@@ -14,6 +14,19 @@ local PETS = {
 	[1] = "hl2cr_pet_torsozombie",
 }
 
+local OLD_PETS = {
+	[0] = "npc_headcrab",
+	[1] = "npc_zombie_torso",
+	[2] = "npc_zombie",
+	[3] = "npc_headcrab_fast",
+	[4] = "npc_fastzombie_torso",
+	[5] = "npc_fastzombie",
+	[6] = "npc_rollermine",
+	[7] = "npc_manhack",
+	[8] = "npc_stalker",
+	[9] = "npc_metropolice",
+}
+
 function spawnPet(ply, pos)
 
 	if ply:IsValid() and ply:Team() == TEAM_ALIVE and not ply.petAlive then
@@ -23,37 +36,25 @@ function spawnPet(ply, pos)
 			ply:ChatPrint("Pets are disabled on this map")
 		else
 		
-			ply.pet = ents.Create(PETS[ply.hl2cPersistent.PetStage])
-			
-			--[[elseif tonumber(ply:GetNWInt("PetStage")) == 1 then
-				ply.pet = ents.Create("npc_zombie_torso")
-			elseif tonumber(ply:GetNWInt("PetStage")) == 2 then
-				ply.pet = ents.Create("npc_zombie")	
-			elseif tonumber(ply:GetNWInt("PetStage")) == 3 then
-				ply.pet = ents.Create("npc_headcrab_fast")
-			elseif tonumber(ply:GetNWInt("PetStage")) == 4 then
-				ply.pet = ents.Create("npc_fastzombie_torso")
-			elseif tonumber(ply:GetNWInt("PetStage")) == 5 then
-				ply.pet = ents.Create("npc_fastzombie")	
-			elseif tonumber(ply:GetNWInt("PetStage")) == 6 then
-				ply.pet = ents.Create("npc_rollermine")	
-			elseif tonumber(ply:GetNWInt("PetStage")) == 7 then
-				ply.pet = ents.Create("npc_manhack")
-			elseif tonumber(ply:GetNWInt("PetStage")) == 8 then
-				ply.pet = ents.Create("npc_stalker")
-			elseif tonumber(ply:GetNWInt("PetStage")) == 9 then
-				ply.pet = ents.Create("npc_metropolice")
+			ply.pet = ents.Create(OLD_PETS[ply.hl2cPersistent.PetStage])
+			if ply.hl2cPersistent.PetStage == 9 then
 				ply.pet:Give("weapon_stunstick")
 			end
-			--]]
+		
 		end
+		for k, v in pairs(player.GetAll()) do
+			ply.pet:AddEntityRelationship(v, D_LI, 99)
+		end
+		ply.pet:SetOwner(ply)
+		ply.pet:SetCustomCollisionCheck(false)
 		
 		ply.pet:SetPos(ply:GetPos())
-		
-		ply.pet:SetPetOwner(ply)
 		ply.pet:Spawn()
-		
-		ply:SetCustomCollisionCheck(true)
+
+		local health = ply.hl2cPersistent.PetHP
+		ply.pet:SetHealth(health)
+		ply.pet:SetMaxHealth(health)
+
 		ply.petAlive = true
 		ply.pet:SetNWEntity("PetEntity", ply.pet)
 		timer.Simple(1, function()
@@ -61,6 +62,9 @@ function spawnPet(ply, pos)
 				net.WriteEntity(ply.pet)
 			net.Send(ply)
 		end)
+		
+		ply.pet:SetNWInt("PetStr", ply.hl2cPersistent.PetStr)
+		ply.pet:SetNWInt("PetRegen", ply.hl2cPersistent.PetRegen)
 	end
 end
 

@@ -41,10 +41,6 @@ function ENT:GetPetOwner()
 	return self.Owner
 end
 
-function ENT:GotoOwner(pos)
-	self:MoveToPos(pos)
-end
-
 function ENT:OnInjured( dmgInfo )
 	local dmg = dmgInfo:GetDamage()
 	local att = dmgInfo:GetAttacker()
@@ -85,18 +81,20 @@ function ENT:RunBehaviour()
 			self:StartActivity( ACT_JUMP )
 			self.loco:JumpAcrossGap(self:GetEnemy():GetPos(), self:GetEnemy():GetForward())
 			self:PlaySequenceAndWait( "jumpattack_broadcast" )
+			self:EmitSound("npc/headcrab/attack2.wav", 100, 100)
 			self:ChaseEnemy()
 			self:StartActivity(ACT_IDLE)
 		elseif self:NearOwner() then
 			self:MoveToPos(self.Owner:GetPos())
+			self.loco:FaceTowards(self.Owner:GetPos())
 		else
 			self:StartActivity( ACT_WALK )
 			self:PlaySequenceAndWait( "Run1" )
-			self:MoveToPos( self:GetPos() + Vector( math.Rand( -1, 1 ), math.Rand( -1, 1 ), 0 ) * 250 )
+			self:MoveToPos( self:GetPos() + Vector( math.Rand( -1, 1 ), math.Rand( -1, 1 ), 0 ) * 175 )
 			self:PlaySequenceAndWait( "Idle01" )
 			self:StartActivity( ACT_IDLE )
 		end
-		coroutine.wait(2)
+		coroutine.wait(4)
 		
 	end
 
@@ -142,6 +140,10 @@ function ENT:ChaseEnemy( options )
 
 	return "ok"
 
+end
+
+function ENT:HandleStuck()
+	print("OHH... SHIT")
 end
 
 function ENT:FindEnemy()

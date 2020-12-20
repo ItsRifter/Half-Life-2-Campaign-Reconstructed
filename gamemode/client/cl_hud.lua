@@ -335,7 +335,7 @@ local meta = FindMetaTable( "Entity" )
 if not meta then return end
 
 function meta:IsPet()
-	if self:IsValid() and self:IsNextBot() then
+	if self:IsValid() and self:IsNPC() then
 		return true
 	else
 		return false
@@ -368,7 +368,7 @@ hook.Add("HUDPaint", "HUDPaint_DrawPetName", function()
 			local pos = ent:GetPos()
 			pos.z = pos.z + 15 + (dist * 0.0325)
 			local ScrPos = pos:ToScreen()
-			if ent:GetPetOwner() and LocalPlayer():GetPos():Distance(ent:GetPos()) <= 1000 then
+			if ent:GetOwner() and dist <= 1000 then
 				draw.SimpleText(ent:GetOwner():Nick() .. "'s Pet", "Pet_Font_User", ScrPos.x, ScrPos.y + 35, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 				draw.SimpleText(ent:GetOwner():GetNWString("PetName"), "Pet_Font_Name", ScrPos.x, ScrPos.y, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 			end

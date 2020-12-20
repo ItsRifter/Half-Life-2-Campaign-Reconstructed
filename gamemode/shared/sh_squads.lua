@@ -75,14 +75,13 @@ if SERVER then
 				else
 					member:ChatPrint("Your squad leader has disbanded the squad")
 				end
-				self:SendSquadEnd(ply)
+				self:SendSquadEnd(member)
+
 			end
 		end
-
+		
 		-- Delete from squads list
-		if not table.RemoveByValue(self.Squads, self) then
-			return false
-		end
+		self.Squads[self.Name] = nil
 
 		return true
 	end
@@ -194,7 +193,7 @@ if SERVER then
 	-- Doesn't check if ply is actually member of the suqad.
 	function HL2CR_Squad:SendSquadData(ply)
 		net.Start("Squad_Update_Data")
-		net.WriteString(self)
+		net.WriteTable(self)
 		net.WriteInt(self.XP, 24)
 		net.WriteUInt(#self.Members, 8)
 		for _, member in ipairs(self.Members) do
@@ -280,7 +279,7 @@ if CLIENT then
 	function HL2CR_ClientSquad:UpdateData(squad)
 		self.SquadTeamNameLabel:SetText(squad.Name)
 
-		self:UpdateXP(squad.xp)
+		self:UpdateXP(squad.XP)
 
 		-- Clean and recreate the member entries
 		self.SquadPanel:Clear()
@@ -298,8 +297,8 @@ if CLIENT then
 		end
 	end
 
-	function HL2CR_ClientSquad:UpdateXP(xp)
-		self.SquadXPLabel:SetText(string.format("Total XP: %d", xp))
+	function HL2CR_ClientSquad:UpdateXP(XP)
+		self.SquadXPLabel:SetText(string.format("Total XP: %d", XP))
 		self.SquadXPLabel:SizeToContents()
 	end
 
@@ -318,7 +317,8 @@ if CLIENT then
 		"Squad_Update_Data",
 		function(len)
 			local squad = {}
-			squad.xp = net.ReadInt(24)
+			squad.Name = net.ReadString()
+			squad.XP = net.ReadInt(24)
 			local memberCount = net.ReadUInt(8)
 			squad.Members = {}
 			for i = 1, memberCount, 1 do
@@ -332,7 +332,7 @@ if CLIENT then
 		"Squad_Update_XP",
 		function(len)
 			local newMember = net.ReadEntity()
-			HL2CR_ClientSquad:UpdateXP(xp)
+			HL2CR_ClientSquad:UpdateXP(XP)
 		end
 	)
 
