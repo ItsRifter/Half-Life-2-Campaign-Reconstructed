@@ -20,7 +20,7 @@ if SERVER then
 
 		-- Check if player is already in a squad
 		if self:GetPlayerSquad(owner) then
-			member:ChatPrint("You are already in a squad")
+			owner:ChatPrint("You are already in a squad")
 			return
 		end
 
