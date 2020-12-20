@@ -91,13 +91,13 @@ if SERVER then
 
 		-- Check if player is already in this squad
 		if plySquad == self then
-			member:ChatPrint("You are already in this squad")
+			ply:ChatPrint("You are already in this squad")
 			return false
 		end
 
 		-- Check if player is already in a squad
 		if plySquad then
-			member:ChatPrint("You are already in another squad")
+			ply:ChatPrint("You are already in another squad")
 			return false
 		end
 
