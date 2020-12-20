@@ -108,7 +108,7 @@ if not meta then return end
 version = "0.4.5.7"
 
 function meta:IsPet()
-	if self:IsValid() and self:IsNPC() then
+	if self:IsValid() and self:IsNPC() and self:GetNWBool("PetActive") then
 		return true
 	else
 		return false
