@@ -34,7 +34,6 @@ if SERVER then
 		-- This will be only the owner, duh
 		for _, member in ipairs(squad.Members) do
 			squad:SendSquadStart(member)
-			squad:SendSquadData(member)
 		end
 
 		owner:ChatPrint("Squad Created")
@@ -91,7 +90,7 @@ if SERVER then
 		local plySquad = self:GetPlayerSquad(ply)
 
 		-- Check if player is already in this squad
-		if plySquad == squad then
+		if plySquad == self then
 			member:ChatPrint("You are already in this squad")
 			return false
 		end
@@ -104,13 +103,9 @@ if SERVER then
 
 		table.insert(self.Members, ply)
 
-		-- Init squad on the new members client side.
-		-- The member list will be updated for all members at once.
-		self:SendSquadStart(ply)
-
 		-- Send data to everyone but the new member (Update their member lists)
 		for _, member in ipairs(self.Members) do
-			self:SendSquadData(member)
+			self:SendSquadStart(member)
 
 			if ply ~= member then
 				member:ChatPrint(string.format("%s has joined your squad", ply:Nick()))
@@ -187,18 +182,10 @@ if SERVER then
 	--			Networking Stuff		--
 	--------------------------------------
 
-	-- Start squad handling on the client side.
-	-- This will init the UI, but not fill in any data.
+	-- This will init the UI and send member list and other stuff to a ply/client.
 	-- Doesn't check if ply is actually member of the suqad.
 	function HL2CR_Squad:SendSquadStart(ply)
 		net.Start("Squad_Start")
-		net.Send(ply)
-	end
-
-	-- Send member list and other stuff to a ply/client.
-	-- Doesn't check if ply is actually member of the suqad.
-	function HL2CR_Squad:SendSquadData(ply)
-		net.Start("Squad_Update_Data")
 		net.WriteString(self.Name)
 		net.WriteInt(self.XP, 24)
 		net.WriteUInt(#self.Members, 8)
@@ -249,7 +236,12 @@ if CLIENT then
 		}
 
 	-- Setup the UI for the squad and other stuff.
-	function HL2CR_ClientSquad:Start()
+	-- This will open and or redo the window content.
+	function HL2CR_ClientSquad:StartOrUpdate(squad)
+		-- Delete anything that was here before
+		self:End()
+
+		-- Frame
 		self.SquadFrame = vgui.Create("DFrame")
 		self.SquadFrame:SetVisible(true)
 		self.SquadFrame:ShowCloseButton(false)
@@ -261,33 +253,28 @@ if CLIENT then
 			draw.RoundedBox(8, 0, 0, 0, 0, Color(0, 0, 0, 150))
 		end
 
+		-- Panel
 		self.SquadPanel = vgui.Create("DPanel", self.SquadFrame)
 		self.SquadPanel:SetBackgroundColor(self.BackgroundColor)
 		self.SquadPanel:Dock(FILL)
 
+		-- Squad name
 		self.SquadTeamNameLabel = vgui.Create("DLabel", self.SquadPanel)
-		self.SquadTeamNameLabel:SetText("")
+		self.SquadTeamNameLabel:SetText(squad.Name)
 		self.SquadTeamNameLabel:SetPos(0, 15)
 		self.SquadTeamNameLabel:SetFont("Squad_TeamName")
 		self.SquadTeamNameLabel:SetTextColor(Color(255, 255, 255))
 		self.SquadTeamNameLabel:SizeToContents()
 
+		-- XP text
 		self.SquadXPLabel = vgui.Create("DLabel", self.SquadPanel)
-		self.SquadXPLabel:SetText("")
 		self.SquadXPLabel:SetPos(0, 50)
 		self.SquadXPLabel:SetFont("Squad_TeamMembers")
 		self.SquadXPLabel:SetTextColor(Color(255, 255, 255))
 		self.SquadXPLabel:SizeToContents()
-	end
-
-	-- Update the UI with general squad info and the member list.
-	-- This will recreate the member list UI completely.
-	function HL2CR_ClientSquad:UpdateData(squad)
-		self.SquadTeamNameLabel:SetText(squad.Name)
-
 		self:UpdateXP(squad.XP)
 
-		-- Clean and recreate the member entries
+		-- Member entries
 		self.SquadPanel:Clear()
 		for i, member in ipairs(squad.Members) do
 			local memberText = vgui.Create("DLabel")
@@ -309,18 +296,13 @@ if CLIENT then
 	end
 
 	function HL2CR_ClientSquad:End()
-		self.SquadFrame:Close()
+		if self.SquadFrame then
+			self.SquadFrame:Close()
+		end
 	end
 
 	net.Receive(
 		"Squad_Start",
-		function(len)
-			HL2CR_ClientSquad:Start()
-		end
-	)
-
-	net.Receive(
-		"Squad_Update_Data",
 		function(len)
 			local squad = {}
 			squad.Name = net.ReadString()
@@ -330,7 +312,7 @@ if CLIENT then
 			for i = 1, memberCount, 1 do
 				squad.Members[i] = net.ReadEntity()
 			end
-			HL2CR_ClientSquad:UpdateData(squad)
+			HL2CR_ClientSquad:StartOrUpdate(squad)
 		end
 	)
 
