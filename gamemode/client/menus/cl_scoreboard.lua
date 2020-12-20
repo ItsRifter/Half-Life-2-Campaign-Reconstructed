@@ -147,7 +147,7 @@ function ToggleBoard(toggle, clientTimer)
 				end
 			end
 			
-			if v != LocalPlayer() and not v:IsBot() then
+			if v ~= LocalPlayer() and not v:IsBot() then
 				local playerRankButton = vgui.Create("DImageButton", Board)
 				playerRankButton:SetImage("icon16/user.png")
 				playerRankButton:SetPos(0, yPos)
@@ -161,7 +161,7 @@ function ToggleBoard(toggle, clientTimer)
 				end
 			end
 			
-			if v != LocalPlayer() and not v:IsBot() then
+			if v ~= LocalPlayer() and not v:IsBot() then
 				local playerMuteButton = vgui.Create("DImageButton", Board)
 				if (ScrW() == 3840 and ScrH() == 2160) then
 					playerMuteButton:SetPos(1150, yPos)

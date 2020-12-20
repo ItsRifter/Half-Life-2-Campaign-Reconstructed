@@ -137,7 +137,7 @@ hook.Add("EntityTakeDamage", "FriendOrFoe", function(ent, dmgInfo)
 		ent:SetHealth(ent:Health() - dmg)
 	end
 
-	if attacker:IsPet() and attacker.owner and attacker:GetClass() != "npc_headcrab" then
+	if attacker:IsPet() and attacker.owner and attacker:GetClass() ~= "npc_headcrab" then
 		local totalPetDMG = math.Round((attacker.owner.hl2cPersistent.PetStr * dmg) / GetConVar("hl2cr_difficulty"):GetInt())
 		dmgInfo:SetDamage(totalPetDMG)
 	end

@@ -578,7 +578,7 @@ function addPetXP(ply, amt)
 	if ply.hl2cPersistent.PetXP >= ply.hl2cPersistent.PetMaxXP then
 		ply.hl2cPersistent.PetXP = 0
 		
-		if ply.hl2cPersistent.PetLevel != ply.hl2cPersistent.PetIntendedLvl then
+		if ply.hl2cPersistent.PetLevel ~= ply.hl2cPersistent.PetIntendedLvl then
 			ply.hl2cPersistent.PetMaxXP = ply.hl2cPersistent.PetMaxXP + 25
 		end
 		

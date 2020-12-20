@@ -109,7 +109,7 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 		end
 	end
 
-	if attacker:IsPet() and attacker.owner:IsPlayer() and npc != attacker then 
+	if attacker:IsPet() and attacker.owner:IsPlayer() and npc ~= attacker then 
 		if attacker.owner.PetXPCap == nil then
 			givePetXP = math.random(1, 15 * GetConVar("hl2cr_difficulty"):GetInt())
 			addPetXP(attacker.owner, givePetXP)
@@ -129,7 +129,7 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 	end
 	
 	--Crowbar bonus if the player beats the map using only the crowbar with jeep exception
-	if attacker:IsPlayer() and attacker:GetActiveWeapon():GetClass() != "weapon_crowbar" then
+	if attacker:IsPlayer() and attacker:GetActiveWeapon():GetClass() ~= "weapon_crowbar" then
 		attacker.canEarnCrowbar = false
 		attacker.tableRewards["CrowbarOnly"] = false
 		if attacker.hl2cPersistent.OTF then

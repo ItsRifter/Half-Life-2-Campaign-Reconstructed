@@ -90,7 +90,7 @@ if SERVER then
 				net.WriteEntity(ply)
 			net.Send(member)
 			
-			if ply != member then
+			if ply ~= member then
 				member:ChatPrint(ply:Nick() .. " has joined your squad")
 			end
 		end

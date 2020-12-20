@@ -17,7 +17,7 @@ function beginLoyal()
 	
 	--Assign the chance table to each player
 	for k, v in pairs(player.GetAll()) do
-		if loyalPlayers != 0 then
+		if loyalPlayers ~= 0 then
 			local chosen = math.random(playerCount)
 			chance[k] = v
 		end

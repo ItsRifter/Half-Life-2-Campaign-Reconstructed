@@ -74,7 +74,7 @@ function OpenDiffMenu(diff, surv, special, doublehp)
 	easyButton:SetSize(125, 50)
 	easyButton:SetPos(150, 120)
 	easyButton.DoClick = function()
-		if not LocalPlayer().hasUserVoted and diff != 1 then
+		if not LocalPlayer().hasUserVoted and diff ~= 1 then
 			LocalPlayer().hasUserVoted = true
 			easyVotes = easyVotes + 1	
 			net.Start("Diff_Vote")
@@ -105,7 +105,7 @@ function OpenDiffMenu(diff, surv, special, doublehp)
 	mediumButton:SetSize(125, 50)
 	mediumButton:SetPos(150, 170)
 	mediumButton.DoClick = function()
-		if not LocalPlayer().hasUserVoted and diff != 2 then
+		if not LocalPlayer().hasUserVoted and diff ~= 2 then
 			LocalPlayer().hasUserVoted = true
 			mediumVotes = mediumVotes + 1	
 			net.Start("Diff_Vote")
@@ -135,7 +135,7 @@ function OpenDiffMenu(diff, surv, special, doublehp)
 	HardButton:SetSize(125, 50)
 	HardButton:SetPos(150, 220)
 	HardButton.DoClick = function()
-		if not LocalPlayer().hasUserVoted and diff != 3 then
+		if not LocalPlayer().hasUserVoted and diff ~= 3 then
 			LocalPlayer().hasUserVoted = true
 			hardVotes = hardVotes + 1
 			net.Start("Diff_Vote")

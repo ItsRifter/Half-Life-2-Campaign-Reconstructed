@@ -10,7 +10,7 @@ function SetupEP2Map()
 	end
 	
 	for k, playerBlock in pairs(ents.FindByName("func_brush")) do
-		if game.GetMap() != "ep2_outland_4" then break end
+		if game.GetMap() ~= "ep2_outland_4" then break end
 		playerBlock:Remove()
 	end
 	

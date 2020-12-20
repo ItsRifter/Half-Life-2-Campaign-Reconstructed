@@ -171,7 +171,7 @@ net.Receive("UpdateNPCColour", function(len, ply)
 	if not ply then return end
 	
 	ply.hl2cPersistent.NPCColourSettings = Color(colours.r, colours.b, colours.g, colours.a)
-	if enabled != nil then
+	if enabled ~= nil then
 		ply.hl2cPersistent.NPCColourEnabled = enabled
 	end
 	
@@ -262,7 +262,7 @@ hook.Add("PlayerSpawn", "SpawnDefault", function(ply)
 	ply:SetHealth(maxHP)
 	ply:SetArmor(armourBoost)
 
-	if not ply.loyal and ply:Team() != TEAM_COMPLETED_MAP then
+	if not ply.loyal and ply:Team() ~= TEAM_COMPLETED_MAP then
 		ply:SetTeam(TEAM_ALIVE)
 		--ply:SetCustomCollisionCheck(true)
 		ply:SetupHands()
@@ -447,7 +447,7 @@ hook.Add("EntityTakeDamage", "BlastResist", function(ent, dmgInfo)
 		dmgInfo:SetDamage(dmg - fireResist)
 	end
 	
-	if attacker:IsPlayer() and (attacker:GetActiveWeapon():GetClass() != "weapon_crowbar" and table.HasValue(attacker.hl2cPersistent.PermUpg, "Fire_Bullets"))
+	if attacker:IsPlayer() and (attacker:GetActiveWeapon():GetClass() ~= "weapon_crowbar" and table.HasValue(attacker.hl2cPersistent.PermUpg, "Fire_Bullets"))
 	and not ent:IsPet() and not ent:IsFriendly() and not ent:IsPlayer() and ent:IsNPC() then
 		local fireChance = math.random(1, 100)
 		
@@ -511,10 +511,10 @@ hook.Add("ScalePlayerDamage", "DiffScalingPly", function( ply, hitgroup, dmgInfo
 		end
 	elseif not attacker:IsPlayer() then
 		local armour = ply.hl2cPersistent.Armour / 36
-		if hitgroup == HITGROUP_HEAD and GetConVar("hl2cr_difficulty"):GetInt() != 1 then
+		if hitgroup == HITGROUP_HEAD and GetConVar("hl2cr_difficulty"):GetInt() ~= 1 then
 			dmgInfo:ScaleDamage((1.25 * GetConVar("hl2cr_difficulty"):GetInt()) - armour)
 			return
-		elseif hitgroup == HITGROUP_CHEST and GetConVar("hl2cr_difficulty"):GetInt() != 1 then
+		elseif hitgroup == HITGROUP_CHEST and GetConVar("hl2cr_difficulty"):GetInt() ~= 1 then
 			dmgInfo:ScaleDamage((1 * GetConVar("hl2cr_difficulty"):GetInt()) - armour)
 			return
 		end
@@ -569,12 +569,12 @@ hook.Add("PlayerCanPickupWeapon", "DisableWeaponsPickup", function(ply, weapon)
 	end
 	
 	
-	if ply:Team() != TEAM_ALIVE or weapon:GetClass() == "weapon_stunstick" or (weapon:GetClass() == "weapon_physgun" and not ply:IsAdmin()) then
+	if ply:Team() ~= TEAM_ALIVE or weapon:GetClass() == "weapon_stunstick" or (weapon:GetClass() == "weapon_physgun" and not ply:IsAdmin()) then
 		weapon:Remove()
 		return false
 	end
 	
-	if ply:Team() != TEAM_ALIVE or NO_PICKUPS[game.GetMap()] and weapon:GetClass() != "weapon_physcannon" then
+	if ply:Team() ~= TEAM_ALIVE or NO_PICKUPS[game.GetMap()] and weapon:GetClass() ~= "weapon_physcannon" then
 		weapon:Remove()
 		return false
 	end
@@ -705,7 +705,7 @@ hook.Add("PlayerLoadout", "StarterWeapons", function(ply)
 	for k, v in pairs(player.GetAll()) do
 		if v:Team() == TEAM_LOYAL or ply:Team() == TEAM_LOYAL then return end
 		
-		if v:GetWeapons() != nil and ply:GetWeapons() != v:GetWeapons() and game.GetMap() != "hl2cr_lobby_festive" then
+		if v:GetWeapons() ~= nil and ply:GetWeapons() ~= v:GetWeapons() and game.GetMap() ~= "hl2cr_lobby_festive" then
 			for k, w in pairs(v:GetWeapons()) do
 				if RESTRICTED_WEPS[w:GetClass()] then return end
 				ply:Give(w:GetClass())
@@ -783,7 +783,7 @@ function RespawnTimerActive(ply, deaths)
 		end
 	end)
 
-	if GetConVar("hl2cr_survivalmode"):GetInt() == 1 and game.GetMap() != "hl2cr_lobby_festive" then
+	if GetConVar("hl2cr_survivalmode"):GetInt() == 1 and game.GetMap() ~= "hl2cr_lobby_festive" then
 		local playersAlive = #player.GetAll()
 		local playerDeaths = deaths
 		
@@ -805,8 +805,8 @@ function RespawnTimerActive(ply, deaths)
 		return
 	end
 
-	if GetConVarNumber("hl2cr_respawntime") != 0 then
-		if ply:Team() != TEAM_ALIVE then
+	if GetConVarNumber("hl2cr_respawntime") ~= 0 then
+		if ply:Team() ~= TEAM_ALIVE then
 			ply.respawnTimer = (GetConVarNumber("hl2cr_respawntime") * GetConVarNumber("hl2cr_difficulty")) + CurTime()
 		end
 	end

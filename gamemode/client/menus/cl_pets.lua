@@ -483,7 +483,7 @@ function petStats(entPet)
 			
 			petStatXPStatusLabel:SetText(LocalPlayer():GetNWInt("PetXP") .. "/" .. LocalPlayer():GetNWInt("PetMaxXP"))
 			petStatXPStatusLabel:SizeToContents()
-			if entPet:GetClass() != "npc_rollermine" then
+			if entPet:GetClass() ~= "npc_rollermine" then
 				petStatHPStatusLabel:SetText(entPet:Health() .. "/" .. entPet:GetMaxHealth())
 				petStatHPStatusLabel:SizeToContents()
 				

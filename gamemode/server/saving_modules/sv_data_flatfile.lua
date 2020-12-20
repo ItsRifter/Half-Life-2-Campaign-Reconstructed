@@ -222,7 +222,7 @@ hook.Add("PlayerDisconnected", "SavePlayerDataDisconnect", function(ply)
 	table.Empty(ply.hl2cPersistent.TempUpg)
 	SaveData(ply)
 	
-	if GetConVar("hl2cr_survivalmode"):GetInt() == 1 and deaths != 0 then
+	if GetConVar("hl2cr_survivalmode"):GetInt() == 1 and deaths ~= 0 then
 		deaths = deaths - 1
 	end
 	

@@ -202,7 +202,7 @@ local shouldDrawRestartTimer = false
 local shouldDrawDeathTimer = false
 local deathSeconds = 0
 net.Receive("DisplayMapTimer", function() 
-	if game.GetMap() != "d3_breen_01" or game.GetMap() != "ep1_c17_06" or game.GetMap() != "ep2_outland_12a" or game.GetMap() != "d2_lostcoast" then
+	if game.GetMap() ~= "d3_breen_01" or game.GetMap() ~= "ep1_c17_06" or game.GetMap() ~= "ep2_outland_12a" or game.GetMap() ~= "d2_lostcoast" then
 		chat.AddText(Color(235, 150, 50),	"Enough players have finished, changing map in 20 seconds")
 	end
 	shouldDrawTimer = true

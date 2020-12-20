@@ -178,7 +178,7 @@ local VEHICLES = {
 hook.Add( "ShouldCollide", "hl2crShouldCollide", function( ent1, ent2 )
 
 	if ent1:IsPlayer( ) and ent2:IsPlayer( ) and ent1:Team( ) == ent2:Team( ) then return false end
-	if ent1:IsPlayer( ) and ent2:IsPlayer( ) and ent2:Team( ) != ent1:Team( ) then return true end
+	if ent1:IsPlayer( ) and ent2:IsPlayer( ) and ent2:Team( ) ~= ent1:Team( ) then return true end
 	
 	-- Set Up Pets Collision with Players
 	if ent1:IsPet( ) and ent2:IsPlayer( ) then return false end
@@ -196,7 +196,7 @@ lockedSpawn = false
 
 function GM:ShowSpare1(ply)
 	if not ply:Alive() then return end
-	if ply:Team() != TEAM_ALIVE then return end
+	if ply:Team() ~= TEAM_ALIVE then return end
 	if ply.waitVehicleSpawn > CurTime() then
 		ply:ChatPrint("Slow down, you can't spawn a vehicle that fast!")
 		return

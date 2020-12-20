@@ -2,7 +2,7 @@
 local function DropSuit( self, panels, onDropped, Command, x, y )
 	if (onDropped) then
 		for k, v in pairs(panels) do
-			if suitImage:GetImage() != v:GetChild(0):GetImage() then
+			if suitImage:GetImage() ~= v:GetChild(0):GetImage() then
 				suitImage:SetImage(v:GetChild(0):GetImage())
 				surface.PlaySound("hl1/fvox/bell.wav")
 				
@@ -26,7 +26,7 @@ end
 local function DropHelmet( self, panels, onDropped, Command, x, y )
 	if (onDropped) then
 		for k, v in pairs(panels) do
-			if helmetImage:GetImage() != v:GetChild(0):GetImage() then
+			if helmetImage:GetImage() ~= v:GetChild(0):GetImage() then
 				helmetImage:SetImage(v:GetChild(0):GetImage())
 				surface.PlaySound("hl1/fvox/bell.wav")
 				
@@ -50,7 +50,7 @@ end
 local function DropArm( self, panels, onDropped, Command, x, y )
 	if (onDropped) then
 		for k, v in pairs(panels) do
-			if armImage:GetImage() != v:GetChild(0):GetImage() then
+			if armImage:GetImage() ~= v:GetChild(0):GetImage() then
 				armImage:SetImage(v:GetChild(0):GetImage())
 				surface.PlaySound("hl1/fvox/bell.wav")
 				
@@ -74,7 +74,7 @@ end
 local function DropHands( self, panels, onDropped, Command, x, y )
 	if (onDropped) then
 		for k, v in pairs(panels) do
-			if handImage:GetImage() != v:GetChild(0):GetImage() then
+			if handImage:GetImage() ~= v:GetChild(0):GetImage() then
 				handImage:SetImage(v:GetChild(0):GetImage())
 				surface.PlaySound("hl1/fvox/bell.wav")
 				
@@ -98,7 +98,7 @@ end
 local function DropBoot( self, panels, onDropped, Command, x, y )
 	if (onDropped) then
 		for k, v in pairs(panels) do
-			if bootImage:GetImage() != v:GetChild(0):GetImage() then
+			if bootImage:GetImage() ~= v:GetChild(0):GetImage() then
 				bootImage:SetImage(v:GetChild(0):GetImage())
 				surface.PlaySound("hl1/fvox/bell.wav")
 				
@@ -122,7 +122,7 @@ end
 local function DropWeapon( self, panels, onDropped, Command, x, y )
 	if (onDropped) then
 		for k, v in pairs(panels) do
-			if wepImage:GetImage() != v:GetChild(0):GetImage() then
+			if wepImage:GetImage() ~= v:GetChild(0):GetImage() then
 				wepImage:SetImage(v:GetChild(0):GetImage())
 				surface.PlaySound("hl1/fvox/bell.wav")
 				
@@ -145,7 +145,7 @@ end
 local function DropSlot( self, panels, onDropped, Command, x, y )
 	if (onDropped) then
 		for k, v in pairs(panels) do
-			if ciyImageOne:GetImage() != v:GetImage() then
+			if ciyImageOne:GetImage() ~= v:GetImage() then
 				ciyImageOne:SetImage(v:GetImage())
 				surface.PlaySound("hl1/fvox/bell.wav")
 			end
@@ -427,7 +427,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 	helmetImage = vgui.Create("DImage", helmetPanelReceiver)
 	helmetImage:SetSize(75, 75)
 	
-	if helmetSlot != "" then
+	if helmetSlot ~= "" then
 		helmetImage:SetImage(helmetSlot)
 		
 		local itemButton = helmetPanelReceiver:Add("DButton")
@@ -462,7 +462,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 	suitImage = vgui.Create("DImage", suitPanelReceiver)
 	suitImage:SetSize(75, 75)
 	
-	if suitSlot != "" then
+	if suitSlot ~= "" then
 		suitImage:SetImage(suitSlot)
 		
 		local itemButton = suitPanelReceiver:Add("DButton")
@@ -498,7 +498,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 	armImage = vgui.Create("DImage", armPanelReceiver)
 	armImage:SetSize(75, 75)
 	
-	if armSlot != "" then
+	if armSlot ~= "" then
 		for i, a in pairs(GAMEMODE.ArmourItem) do
 			if armSlot == GAMEMODE.ArmourItem[i].Icon then
 				armImage:SetImage(GAMEMODE.ArmourItem[i].Icon)
@@ -536,7 +536,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 	handImage = vgui.Create("DImage", handPanelReceiver)
 	handImage:SetSize(75, 75)
 	
-	if handSlot != "" then
+	if handSlot ~= "" then
 		handImage:SetImage(handSlot)
 		
 		local itemButton = handPanelReceiver:Add("DButton")
@@ -571,7 +571,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 	wepImage = vgui.Create("DImage", weaponPanelReceiver)
 	wepImage:SetSize(75, 75)
 	
-	if wepSlot != "" then
+	if wepSlot ~= "" then
 		wepImage:SetImage(wepSlot)
 		
 		local itemButton = weaponPanelReceiver:Add("DButton")
@@ -606,7 +606,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 	bootImage = vgui.Create("DImage", bootPanelReceiver)
 	bootImage:SetSize(75, 75)
 	
-	if bootSlot != "" then
+	if bootSlot ~= "" then
 		bootImage:SetImage(bootSlot)
 		
 		local itemButton = bootPanelReceiver:Add("DButton")
@@ -1291,7 +1291,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 	
 	ciyImageOne = vgui.Create("DImage", ciyPanelSlotOne)
 	ciyImageOne:SetSize(120, 120)
-	if ciySlot1 != "" then
+	if ciySlot1 ~= "" then
 		ciyImageOne:SetImage(ciySlot1)
 	end
 	
@@ -1306,7 +1306,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 	
 	ciyImageTwo = vgui.Create("DImage", ciyPanelSlotTwo)
 	ciyImageTwo:SetSize(120, 120)
-	if ciySlot2 != "" then
+	if ciySlot2 ~= "" then
 		ciyImageTwo:SetImage(ciySlot2)
 	end
 	
@@ -1320,7 +1320,7 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 
 	ciyImageThree = vgui.Create("DImage", ciyPanelSlotTwo)
 	ciyImageTwo:SetSize(120, 120)
-	if ciySlot3 != "" then
+	if ciySlot3 ~= "" then
 		ciyImageThree:SetImage(ciySlot3)
 	end
 

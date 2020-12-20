@@ -139,7 +139,7 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 			if not ply.petAlive and petSpawntime < CurTime() then
 				spawnPet(ply)
 				petSpawntime = CurTime() + 5
-			elseif ply:Team() != TEAM_ALIVE then
+			elseif ply:Team() ~= TEAM_ALIVE then
 				ply:ChatPrint("You can't spawn your pet right now///")
 			elseif petSpawntime > CurTime() then
 				ply:ChatPrint("Slow down! you can't respawn your pet that fast")
@@ -407,7 +407,7 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 	return ""
 	end
 	if (string.lower(text) == "!restart" or string.lower(text) == "!vrm") then
-		if game.GetMap() != "hl2cr_lobby_festive" then
+		if game.GetMap() ~= "hl2cr_lobby_festive" then
 			if not ply.hasVotedRestart then
 				restartVotes = restartVotes + 1
 				ply.hasVotedRestart = true
@@ -454,7 +454,7 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 			ply.hasSeat = true
 		elseif ply.hasSeat then
 			ply:ChatPrint("You already have a passenger seat!")
-		elseif ply:InVehicle() and ply:GetVehicle():GetClass() != "prop_vehicle_jeep" then
+		elseif ply:InVehicle() and ply:GetVehicle():GetClass() ~= "prop_vehicle_jeep" then
 			ply:ChatPrint("You can only use this command on a jeep")
 		else
 			ply:ChatPrint("You can't use this command while not in a vehicle!")
@@ -547,7 +547,7 @@ concommand.Add("hl2cr_wipeinv", function(ply, cmd, args, argStr)
 	local target = string.sub(args[1], 0)
 	if ply:IsAdmin() then
 		for k, v in pairs(player.GetAll()) do
-			if v != ply and target != "" then
+			if v ~= ply and target ~= "" then
 				if string.find(string.lower(v:Nick()), string.lower(tostring(target))) then
 					target = v
 				end
@@ -584,7 +584,7 @@ concommand.Add("hl2cr_giveach", function(ply, cmd, args, argStr)
 
 	if ply:IsAdmin() then
 		for k, v in pairs(player.GetAll()) do
-			if v != ply and target != "" then
+			if v ~= ply and target ~= "" then
 				if string.match(string.lower(v:Nick()), string.lower(args[1])) then
 					target = v
 				end
@@ -797,10 +797,10 @@ concommand.Add("hl2cr_setprestige", function(ply, cmd, args, argStr)
 			target = ply
 		end
 	
-		if prestige != nil then
+		if prestige ~= nil then
 			target.hl2cPersistent.Prestige = prestige
 			target:SetNWInt("Prestige", target.hl2cPersistent.Prestige)
-			if prestige != 0 then
+			if prestige ~= 0 then
 				target.hl2cPersistent.LevelCap = (prestige + 2) * 10
 			else
 				target.hl2cPersistent.LevelCap = 20
@@ -931,7 +931,7 @@ concommand.Add("hl2cr_petsummon", function(ply, cmd, args)
 			spawnPet(ply)
 			ply:SetNWString("PetOwnerName", ply:Nick())
 			ply.petSpawntime = CurTime() + 5
-		elseif ply:Team() != TEAM_ALIVE then
+		elseif ply:Team() ~= TEAM_ALIVE then
 			ply:ChatPrint("You can't spawn your pet while you have completed the map")
 		elseif ply.petSpawntime > CurTime() then
 			ply:ChatPrint("Slow down! you can't respawn your pet that fast")

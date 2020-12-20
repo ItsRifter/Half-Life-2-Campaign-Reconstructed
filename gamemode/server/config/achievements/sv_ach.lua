@@ -198,7 +198,7 @@ function Achievement(ply, name, list, clientTriggered)
 	end
 
 	-- XP stuff
-	if rewards != 0 then
+	if rewards ~= 0 then
 		AddXP(ply, rewards)
 		ply:ChatPrint(string.format("You got %s XP", rewards))
 	end
@@ -218,7 +218,7 @@ function Special(ply, name, list, amt)
 		net.WriteString(special.mat)
 	net.Send(ply)
 	
-	if amt != 0 then
+	if amt ~= 0 then
 		AddXP(ply, amt)
 		ply:ChatPrint(string.format("You got %s XP", amt))
 	end
