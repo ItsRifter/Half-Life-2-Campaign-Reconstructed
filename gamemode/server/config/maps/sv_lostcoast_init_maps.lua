@@ -22,11 +22,12 @@ function SetupLostCoastCheckpoints()
 	}
 
 	TRIGGER_CHECKPOINT = {
-		Vector(1218, 3882, 2690), Vector(1724, 3586, 2908)
+		Vector(1218, 3882, 2690), Vector(1724, 3586, 2908),
+		Vector(2094, 3072, 2766), Vector(2002, 3164, 2909),
 	}
 	
 	TRIGGER_SPAWNPOINT = {
-		Vector(1439, 3759, 2695)
+		Vector(1439, 3759, 2695),	Vector(1897, 2959, 2702)
 	}
 	
 	if TRIGGER_CHANGELEVEL then
@@ -56,6 +57,24 @@ function SetupLostCoastCheckpoints()
 			lambdaModel1:Spawn()
 			lambdaModel1:SetName("lambdaCheckpoint")
 			lambdaModel1:ResetSequence("idle")
+		end
+		
+		if TRIGGER_CHECKPOINT[3] and TRIGGER_CHECKPOINT[4] then
+			Checkpoint2 = ents.Create("trigger_checkpoint")
+			Checkpoint2.Min = Vector(TRIGGER_CHECKPOINT[3])
+			Checkpoint2.Max = Vector(TRIGGER_CHECKPOINT[4])
+			Checkpoint2.Pos = Vector(TRIGGER_CHECKPOINT[4]) - ( ( Vector(TRIGGER_CHECKPOINT[4]) - Vector(TRIGGER_CHECKPOINT[3])) / 2 )
+			Checkpoint2.Point2 = Vector(TRIGGER_SPAWNPOINT[2])
+			Checkpoint2:SetPos(Checkpoint2.Pos)
+			Checkpoint2:Spawn()
+			
+			lambdaModel2 = ents.Create("prop_dynamic")
+			lambdaModel2:SetModel("models/hl2cr_lambda.mdl")
+			lambdaModel2:SetMaterial("editor/orange")
+			lambdaModel2:SetPos(Checkpoint2.Pos)
+			lambdaModel2:Spawn()
+			lambdaModel2:SetName("lambdaCheckpoint")
+			lambdaModel2:ResetSequence("idle")
 		end
 	end
 end

@@ -40,7 +40,6 @@ function endLoyal()
 	for k, v in pairs(player.GetAll()) do
 		if v:Team() == TEAM_LOYAL then
 			v:SetTeam(TEAM_ALIVE)
-			v:SetModel(v.oldModel)
 			v.loyal = false
 			v:Spawn()
 			if v.totalXPLoyal then

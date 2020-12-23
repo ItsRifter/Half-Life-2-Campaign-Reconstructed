@@ -36,10 +36,19 @@ if SERVER then
 			squad:SendSquadStart(member)
 		end
 
+		owner.hl2cPersistent.SquadLeader = owner
 		owner:ChatPrint("Squad Created")
 		return squad
 	end
 
+	--Resume Squad
+	function HL2CR_Squad:ResumeSquad(name, owner)
+		for _, member in ipairs(self.Members) do
+			self:SendSquadStart(member)
+		end
+		
+		return
+	end
 	-- Searches through all squads and returns the squad the given player is in. Or nil if ply isn't in any squad.
 	function HL2CR_Squad:GetPlayerSquad(ply)
 		for _, squad in pairs(self.Squads) do
@@ -71,6 +80,7 @@ if SERVER then
 			for _, member in ipairs(self.Members) do
 				if self:IsOwner(member) then
 					member:ChatPrint("Squad Disbanded")
+					member.hl2cPersistent.SquadLeader = nil
 				else
 					member:ChatPrint("Your squad leader has disbanded the squad")
 				end
@@ -102,7 +112,7 @@ if SERVER then
 		end
 
 		table.insert(self.Members, ply)
-
+		table.Inherit(ply.hl2cPersistent.SquadMembers, self.Members)
 		-- Send data to everyone but the new member (Update their member lists)
 		for _, member in ipairs(self.Members) do
 			self:SendSquadStart(member)
@@ -124,7 +134,7 @@ if SERVER then
 
 		-- Remove the member from the list
 		table.RemoveByValue(self.Members, ply)
-
+		table.RemoveByValue(ply.hl2cPersistent.SquadMembers, ply)
 		ply:ChatPrint("You have left the squad")
 
 		-- Remove any client side UI and other stuff
@@ -132,7 +142,7 @@ if SERVER then
 
 		-- Send data to everyone but the removed member (Update their member lists)
 		for _, member in ipairs(self.Members) do
-			self:SendSquadData(member)
+			self:SendSquadStart(member)
 			member:ChatPrint(string.format("%s has left your squad", ply:Nick()))
 		end
 
@@ -153,6 +163,20 @@ if SERVER then
 		end
 
 		return
+	end
+	
+	-- Start Squad timer 
+	function HL2CR_Squad:StartTimer()
+		if not timer.Exists("Squad_XPTimer") then
+			timer.Create("Squad_XPTimer", 45, 1, function() end)
+			timer.Stop("Squad_XPTimer")
+		end
+		
+		timer.Adjust("Squad_XPTimer", 45, 1, function()
+			
+		end)
+		
+		
 	end
 
 	-- Prints the state of the squad to the given player.
@@ -196,7 +220,7 @@ if SERVER then
 	end
 
 	-- This will send the squad's XP to a client.
-	-- Doesn't check if ply is actually member of the suqad.
+	-- Doesn't check if ply is actually member of the squad.
 	function HL2CR_Squad:SendSquadXP(ply)
 		net.Start("Squad_Update_XP")
 		net.WriteInt(self.XP, 24)
@@ -238,6 +262,7 @@ if CLIENT then
 	-- Setup the UI for the squad and other stuff.
 	-- This will open and or redo the window content.
 	function HL2CR_ClientSquad:StartOrUpdate(squad)
+		
 		-- Delete anything that was here before
 		self:End()
 
@@ -258,6 +283,10 @@ if CLIENT then
 		self.SquadPanel:SetBackgroundColor(self.BackgroundColor)
 		self.SquadPanel:Dock(FILL)
 
+		self.squadGrid = vgui.Create("DGrid", self.SquadPanel)
+		self.squadGrid:SetColWide(160)
+		self.squadGrid:SetRowHeight(self.SquadPanel:GetTall())
+		self.squadGrid:SetPos(0, 75)
 		-- Squad name
 		self.SquadTeamNameLabel = vgui.Create("DLabel", self.SquadPanel)
 		self.SquadTeamNameLabel:SetText(squad.Name)
@@ -275,10 +304,9 @@ if CLIENT then
 		self:UpdateXP(squad.XP)
 
 		-- Member entries
-		self.SquadPanel:Clear()
 		for i, member in ipairs(squad.Members) do
 			local memberText = vgui.Create("DLabel")
-			memberText:SetPos(i * 85, 75) -- TODO: Use the layouter instead of hardcoding UI positions
+			memberText:SetPos((i-1) * 85, 75) -- TODO: Use the layouter instead of hardcoding UI positions
 			memberText:SetText(member:Nick() .. "\n" .. "more stuff here")
 			memberText:SetFont("Squad_TeamMembers")
 			memberText:SizeToContents()
@@ -287,6 +315,7 @@ if CLIENT then
 				memberText:SetTextColor(Color(255, 255, 255))
 			end
 			self.SquadPanel:Add(memberText)
+			self.squadGrid:AddItem(memberText)
 		end
 	end
 
@@ -296,7 +325,7 @@ if CLIENT then
 	end
 
 	function HL2CR_ClientSquad:End()
-		if self.SquadFrame then
+		if self.SquadFrame and IsValid(self.SquadFrame) then
 			self.SquadFrame:Close()
 		end
 	end
@@ -319,7 +348,7 @@ if CLIENT then
 	net.Receive(
 		"Squad_Update_XP",
 		function(len)
-			local newMember = net.ReadEntity()
+			local XP = net.ReadInt(24)
 			HL2CR_ClientSquad:UpdateXP(XP)
 		end
 	)

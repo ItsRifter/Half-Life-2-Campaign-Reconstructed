@@ -368,7 +368,7 @@ hook.Add("HUDPaint", "HUDPaint_DrawPetName", function()
 			local pos = ent:GetPos()
 			pos.z = pos.z + 15 + (dist * 0.0325)
 			local ScrPos = pos:ToScreen()
-			if ent:GetOwner() and dist <= 1000 then
+			if ent:GetOwner():IsValid() and dist <= 1000 then
 				draw.SimpleText(ent:GetOwner():Nick() .. "'s Pet", "Pet_Font_User", ScrPos.x, ScrPos.y + 35, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 				draw.SimpleText(ent:GetOwner():GetNWString("PetName"), "Pet_Font_Name", ScrPos.x, ScrPos.y, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 			end

@@ -47,6 +47,16 @@ net.Receive("UpdateOptions", function(len, ply)
 end)
 hook.Add("PlayerInitialSpawn", "MiscSurv", function(ply)
 
+	ply.Tank = {
+		name = ply,
+		tankSharedXP = 0,
+		tankDmg = 0,
+	}
+
+	if ply.hl2cPersistent.SquadLeader != nil then
+		HL2CR_Squad:ResumeSquad(ply:Nick(), ply)
+	end
+
 	if game.GetMap() == "d2_lostcoast" then
 		Achievement(ply, "Lost_Coast", "HL2_Ach_List")
 	end
@@ -187,10 +197,18 @@ net.Receive("UpdateNPCColour", function(len, ply)
 end)
 deadPlayers = 0
 hook.Add("PlayerSpawn", "SpawnDefault", function(ply)
+	
 	if ply:IsBot() then 
 		ply:SetTeam(TEAM_ALIVE)
 		return
-	end
+	end	
+	
+	ply.Tank = {
+		name = ply,
+		tankSharedXP = 0,
+		tankDmg = 0,
+	}
+	
 	if deadPlayers < 0 then
 		deadPlayers = 0
 	end
@@ -304,6 +322,11 @@ hook.Add("PlayerSpawn", "SpawnDefault", function(ply)
 	
 	if game.GetMap() == "d3_citadel_03" then
 		ply:Give("weapon_physcannon")
+	end
+	
+	print(ply.hl2cPersistent.SquadLeader)
+	if ply.hl2cPersistent.SquadLeader != nil then
+		HL2CR_Squad:ResumeSquad(ply:Nick(), ply)
 	end
 end)
 
@@ -619,58 +642,6 @@ hook.Add("PlayerLoadout", "StarterWeapons", function(ply)
 			ply:Give(GIVE_STARTER_WEAPONS[ply.hl2cPersistent.InvWeapon])
 		end
 	end
-	if ply.loyal then		
-		ply:SetTeam(TEAM_LOYAL)
-		--ply:SetCustomCollisionCheck(false)
-		ply:SetupHands()
-		
-		ply:SetModel("models/player/combine_soldier.mdl")
-		ply:Give("weapon_stunstick")
-		
-		local weaponsRand = math.random(1, 3)
-		local statsRand = math.random(1, 3)
-		
-		if weaponsRand == 1 then
-			ply:Give("weapon_smg1")
-			ply:GiveAmmo(225, "SMG1", true)
-			ply:GiveAmmo(3, "weapon_frag", true)
-		elseif weaponsRand == 2 then
-			ply:Give("weapon_ar2")
-			ply:GiveAmmo(60, "AR2", true)
-			ply:GiveAmmo(3, "weapon_frag", true)
-		elseif weaponsRand == 3 then
-			ply:Give("weapon_shotgun")
-			ply:GiveAmmo(30, "Buckshot", true)
-			ply:GiveAmmo(3, "weapon_frag", true)
-		end
-		
-		if statsRand == 1 then
-			ply:SetMaxHealth(125)
-			ply:SetHealth(125)
-			ply:SetArmor(35)
-		elseif statsRand == 2 then
-			ply:SetMaxHealth(150)
-			ply:SetHealth(150)
-			ply:SetArmor(65)
-		elseif statsRand == 3 then
-			ply:SetMaxHealth(200)
-			ply:SetHealth(200)
-			ply:SetArmor(100)
-		end
-		
-		if game.GetMap() == "d2_coast_10" then
-			local randSpot = math.random(1, 3)
-			if randSpot == 1 then
-				ply:SetPos(Vector(6111, 208, 941))
-			elseif randSpot == 2 then
-				ply:SetPos(Vector(8226, 1486, 1235))
-			elseif randSpot == 3 then
-				ply:SetPos(Vector(5362, 1026, 1078))
-			end
-		end
-	else
-		ply:SetModel(ply.hl2cPersistent.Model)
-	end
 		
 	if game.GetMap() == "d1_town_02" and file.Exists("hl2cr_data/d1_town_02.txt", "DATA") then 
 		ply:Give("weapon_crowbar")
@@ -767,10 +738,6 @@ end)
 
 hook.Add("PlayerDeathThink", "SpecThink", function(ply)		
 	return false
-end)
-
-net.Receive("Squad_Disband", function(len, ply)
-	ply.inSquad = false
 end)
 
 function RespawnTimerActive(ply, deaths)

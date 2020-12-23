@@ -36,6 +36,13 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 	bonusXP = 0
 	bonusCoins = 0
 	dmgInfo = DamageInfo()
+	
+	if npc:GetClass() == "npc_strider" and attacker:IsPlayer() then
+		giveCoins = math.random(10 + bonusCoins, (45 + bonusCoins) * GetConVar("hl2cr_difficulty"):GetInt())
+		AddCoins(attacker, giveCoins)
+		return
+	end
+	
 	if npc:IsNPC() and attacker:IsPlayer() and inflictor:GetModel() == "models/props_wasteland/prison_toilet01.mdl" and game.GetMap() == "d2_prison_02" then
 		for k, v in pairs(player.GetAll()) do
 			Achievement(v, "Flushed", "HL2_Ach_List")
@@ -72,16 +79,23 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 	if not RESTRICTED_NPCS[npc:GetClass()] and attacker:IsPlayer() then
 		giveXP = math.random(1 + bonusXP, (25 + bonusXP) * GetConVar("hl2cr_difficulty"):GetInt())
 		giveCoins = math.random(10 + bonusCoins, (45 + bonusCoins) * GetConVar("hl2cr_difficulty"):GetInt())
+		
 		if attacker.totalXPGained then
 			attacker.totalXPGained = attacker.totalXPGained + giveXP
 		end
+		
 		
 		Spawn(giveXP, giveCoins, npc:GetPos(), npc, attacker)
 		
 		attacker.tableRewards["Kills"] = attacker.tableRewards["Kills"] + 1
 		attacker.hl2cPersistent.KillCount = attacker.hl2cPersistent.KillCount + 1
-		
-		AddXP(attacker, giveXP)
+		local squad = HL2CR_Squad:GetPlayerSquad(attacker)
+		if squad then
+			squad:AddXP(giveXP)
+			squad:SendSquadXP(attacker)
+		else
+			AddXP(attacker, giveXP)
+		end
 		AddCoins(attacker, giveCoins)
 	else
 		giveXP = 0

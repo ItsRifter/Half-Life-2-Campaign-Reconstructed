@@ -30,23 +30,18 @@ net.Receive("Diff_Vote", function(len, ply)
 	
 	if votes >= VOTE_REQUIRED["EasyVotes"] and diffMode == 1 then
 		diffVoted(1)
-		VOTE_REQUIRED["EasyVotes"] = 0
 		votes = 0
 	elseif votes >= VOTE_REQUIRED["MediumVotes"] and diffMode == 2 then
 		diffVoted(2)
-		VOTE_REQUIRED["MediumVotes"] = 0
 		votes = 0
 	elseif votes >= VOTE_REQUIRED["HardVotes"] and diffMode == 3 then
 		diffVoted(3)
-		VOTE_REQUIRED["HardVotes"] = 0
 		votes = 0
 	elseif votes >= VOTE_REQUIRED["SurvVotes"] and diffMode == 4 and GetConVar("hl2cr_survivalmode"):GetInt() == 0 then
 		survivalVoted(1)
-		VOTE_REQUIRED["SurvVotes"] = 0
 		votes = 0
 	elseif votes >= VOTE_REQUIRED["SurvVotes"] and diffMode == 4 and GetConVar("hl2cr_survivalmode"):GetInt() == 1 then
 		survivalVoted(0)
-		VOTE_REQUIRED["SurvVotes"] = 0
 		votes = 0
 	end
 end)

@@ -14,6 +14,8 @@ elseif string.match(game.GetMap(), "ep1_") then
 	series = "ep1"
 elseif string.match(game.GetMap(), "ep2_") then
 	series = "ep2"
+elseif string.match(game.GetMap(), "leon") then
+	series = "cta"
 end
 
 function ENT:Initialize()
@@ -107,7 +109,6 @@ function ENT:StartTouch(ent)
 		if ent:GetVehicle() and ent:GetVehicle():IsValid() then
 			ent:GetVehicle():Remove()
 		end
-		playerCount = team.NumPlayers(TEAM_ALIVE) + team.NumPlayers(TEAM_COMPLETED_MAP)
 		ent:SetAvoidPlayers(false)
 		if team.NumPlayers(TEAM_COMPLETED_MAP) >= 1 and game.GetMap() == "ep1_c17_06" then
 			EndEP1Game()
@@ -157,18 +158,19 @@ function ENT:Think()
 						p.hl2cPersistent.OTF = false
 						p:ChatPrint("You have failed the 'One true freeman' Challenge")
 					end
+					if series == "hl2" then
+						ChangeMapHL2()
+					elseif series == "ep1" then
+						ChangeMapEP1()
+					elseif series == "ep2" then
+						ChangeMapEP2()
+					elseif series == "cta" then
+						ChangeMapCTA()
+					else
+						RunConsoleCommand("changelevel", "hl2cr_lobby_festive")
+					end
 				end
 			end)
-				
-			if series == "hl2" then
-				ChangeMapHL2()
-			elseif series == "ep1" then
-				ChangeMapEP1()
-			elseif series == "ep2" then
-				ChangeMapEP2()
-			else
-				RunConsoleCommand("changelevel", "hl2cr_lobby_festive")
-			end
 		end
 	elseif (team.NumPlayers(TEAM_COMPLETED_MAP) >= 1 and MAPS_ONEPLAYER[game.GetMap()]) then
 		if displayOnce == false then
@@ -182,15 +184,15 @@ function ENT:Think()
 						p.hl2cPersistent.OTF = false
 						p:ChatPrint("You have failed the 'One true freeman' Challenge")
 					end
+					if series == "hl2" then
+						ChangeMapHL2()
+					elseif series == "ep1" then
+						ChangeMapEP1()
+					elseif series == "ep2" then
+						ChangeMapEP2()
+					end
+					displayOnce = false
 				end
-				if series == "hl2" then
-					ChangeMapHL2()
-				elseif series == "ep1" then
-					ChangeMapEP1()
-				elseif series == "ep2" then
-					ChangeMapEP2()
-				end
-				displayOnce = false
 			end)
 		end
 	elseif team.NumPlayers(TEAM_COMPLETED_MAP) >= team.NumPlayers(TEAM_ALIVE) + addOne - subOne and string.find(game.GetMap(), "syn_") then
@@ -199,7 +201,6 @@ function ENT:Think()
 end
 
 function EndLostCoast()
-	print("Hi")
 	if not displayOnce then
 		displayOnce = true
 		net.Start("DisplayMapTimer")
@@ -443,13 +444,30 @@ function ChangeMapEP2()
 	end
 end
 
+function ChangeMapCTA()
+	local map = game.GetMap()
+	
+	local CTA = {
+		"hl2cr_lobby_festive"
+	}
+	
+	for k = 1, #CTA do
+		if map == CTA[k] then
+			RunConsoleCommand("changelevel", CTA[k+1])
+		end
+		if CTA[k] == "hl2cr_lobby_festive" then
+			file.Delete("hl2cr_data/maprecovery.txt")
+		end
+	end
+end
+
 function EndCoop()
 	for k, p in pairs(player.GetAll()) do
 		if not displayOnce then
 			p:ChatPrint("Co-Op map finished, returning to lobby in 20 seconds")
 			displayOnce = true
 			net.Start("DisplayMapTimer")
-			net.Send(p)
+			net.Broadcast()
 			giveRewards(p)
 			p:GodEnable()
 			timer.Create("MapTimerEnd", 20, 0, function() file.Delete("hl2cr_data/maprecovery.txt") RunConsoleCommand("changelevel", "hl2cr_lobby_festive") timer.Remove("MapTimerEnd") end)

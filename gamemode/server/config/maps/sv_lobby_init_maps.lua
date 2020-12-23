@@ -20,6 +20,7 @@ function SetupLobbyMap()
 	game.SetGlobalState("antlion_allied", 0)
 	game.SetGlobalState("ep2_alyx_injured", 0)
 	game.SetGlobalState("friendly_encounter", 0)
+	game.SetGlobalState("gordon_invulnerable", 0)
 	
 	GetConVar("hl2cr_doublehp"):SetInt(0)
 	GetConVar("hl2cr_specials"):SetInt(0)

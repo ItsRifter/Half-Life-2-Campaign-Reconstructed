@@ -69,6 +69,17 @@ function SetupHL2Map()
 		for k, fog in pairs(ents.FindByClass("env_fog_controller")) do
 			fog:Remove()
 		end
+		
+		table.insert(startingWeapons, "weapon_crowbar")
+		table.insert(startingWeapons, "weapon_physcannon")
+		table.insert(startingWeapons, "weapon_pistol")
+		table.insert(startingWeapons, "weapon_357")
+		table.insert(startingWeapons, "weapon_smg1")
+		table.insert(startingWeapons, "weapon_ar2")
+		table.insert(startingWeapons, "weapon_shotgun")
+		table.insert(startingWeapons, "weapon_crossbow")
+		table.insert(startingWeapons, "weapon_rpg")
+		table.insert(startingWeapons, "weapon_frag")
 	end
 	
 	if game.GetMap() == "d2_coast_07" and file.Exists("hl2cr_data/d2_coast_07.txt", "DATA") then 

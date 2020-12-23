@@ -17,17 +17,12 @@ INVUL_NPCS = {
 	["npc_mossman"] = true
 }
 
---[[VORTI_FRIENDLY = {
-	"npc_vortigaunt",
-}--]]
-
 local RESTRICTED_NPCS = {
 	["npc_antlion"] = true,
 	["zpn_boss"] = true
 }
 
-hook.Add("EntityTakeDamage", "FriendOrFoe", function(ent, dmgInfo)
-	friendlyMaps = {
+FRIENDLY_MAPS = {
 		"d1_trainstation_01",
 		"d1_trainstation_02",
 		"d1_trainstation_03",
@@ -104,7 +99,16 @@ hook.Add("EntityTakeDamage", "FriendOrFoe", function(ent, dmgInfo)
 		"ep2_outland_06",
 		"ep2_outland_11",
 		"ep2_outland_11b",
+		
+		--COOP-
+		"syn_silent_house",
+		
+		--Lobby
+		"hl2cr_lobby",
+		"hl2cr_lobby_festive",
 	}
+local giveRewardsTank = false
+hook.Add("EntityTakeDamage", "FriendOrFoe", function(ent, dmgInfo)
 
 	local attacker = dmgInfo:GetAttacker()
 	local dmg = dmgInfo:GetDamage()
@@ -120,17 +124,18 @@ hook.Add("EntityTakeDamage", "FriendOrFoe", function(ent, dmgInfo)
 		dmgInfo:SetDamage(0)
 	end
 
+	if ent:IsPlayer() and attacker:GetClass() == "prop_vehicle_jeep" then
+		dmgInfo:SetDamage(0)
+		return
+	end
+
 	if INVUL_NPCS[ent:GetClass()] or (attacker:IsPlayer() and attacker:Team() == TEAM_ALIVE and ent:GetClass() == "npc_citizen") then
 		dmgInfo:SetDamage(0)
 		return
 	end
-	if ent:GetClass() == "npc_vortigaunt" then
-		for k, m in pairs(friendlyMaps) do
-			if game.GetMap() == m then
-				dmgInfo:SetDamage(0)
-				return
-			end
-		end
+	if ent:GetClass() == "npc_vortigaunt" and FRIENDLY_MAPS[game.GetMap()] then
+		dmgInfo:SetDamage(0)
+		return
 	end
 
 	if ent:IsPet() and ent.owner:IsValid() and attacker:IsNPC() then
@@ -141,11 +146,56 @@ hook.Add("EntityTakeDamage", "FriendOrFoe", function(ent, dmgInfo)
 		local totalPetDMG = math.Round((attacker.owner.hl2cPersistent.PetStr * dmg) / GetConVar("hl2cr_difficulty"):GetInt())
 		dmgInfo:SetDamage(totalPetDMG)
 	end
+	
+	if attacker:IsPlayer() and (ent:GetClass() == "npc_combinegunship" or ent:GetClass() == "npc_strider" 
+	or ent:GetClass() == "npc_antlionguard") then
+		attacker.Tank.tankSharedXP = attacker.Tank.tankSharedXP + math.Clamp(dmg, 0, ent:Health())
+		--attacker.tankDmg = attacker.tankDmg + dmg
+		if not ent.attackers then ent.attackers = {} end
+		if not table.HasValue(ent.attackers, attacker) then
+			table.insert(ent.attackers, attacker.Tank)
+		end
+	end
+
 end)
 if SERVER then
-
+	local dmgInfo = DamageInfo()
 	hook.Add("Think", "NPCThinkRelation", function()
 		--Loyal Players relation with combine npc
+		for k, v in pairs(ents.FindByClass("npc_combinegunship")) do
+			if v:Health() <= 0 and not giveRewardsTank then
+				for l, p in pairs(v.attackers) do
+					local giveTankCoins = math.random(10, 45 * GetConVar("hl2cr_difficulty"):GetInt())
+					AddXP(p.name, math.Round(p.tankSharedXP / 5), 0)
+					p.name:ChatPrint("XP Gained: " .. math.Round(p.tankSharedXP / 5), 0)
+				end
+				giveRewardsTank = true
+				timer.Simple(5, function() giveRewardsTank = false end)
+			end
+		end
+		
+		for k, v in pairs(ents.FindByClass("npc_strider")) do
+			if v:Health() <= 0 and not giveRewardsTank then
+				for l, p in pairs(v.attackers) do
+					AddXP(p.name, math.Round(p.tankSharedXP / 5), 0)
+					p.name:ChatPrint("XP Gained: " .. math.Round(p.tankSharedXP / 5), 0)
+				end
+				giveRewardsTank = true
+				timer.Simple(5, function() giveRewardsTank = false end)
+			end
+		end
+		
+		for k, v in pairs(ents.FindByClass("npc_antlionguard")) do
+			if v:Health() <= 0 and not giveRewardsTank then
+				for l, p in pairs(v.attackers) do
+					AddXP(p.name, math.Round(p.tankSharedXP / 5), 0)
+					p.name:ChatPrint("XP Gained: " .. math.Round(p.tankSharedXP / 5), 0)
+				end
+				giveRewardsTank = true
+				timer.Simple(5, function() giveRewardsTank = false end)
+			end
+		end
+		
 		for k, v in pairs(player.GetAll()) do
 			if v:Team() == TEAM_LOYAL then
 				for i, cits in pairs(ents.FindByClass("npc_citizen")) do
@@ -243,6 +293,7 @@ if SERVER then
 	end)
 	
 	hook.Add("OnEntityCreated", "SpecialChanger", function(ent)
+		if NO_SPECIAL_MAPS[game.GetMap()] then return end
 		if GetConVar("hl2cr_specials"):GetInt() == 1 then
 			if ent:IsNPC() then
 				if ent:GetName() == "*" or ent.Changed == true then return end

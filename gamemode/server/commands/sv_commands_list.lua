@@ -7,6 +7,7 @@ local diffVar = ""
 local timer = 3600 + CurTime()
 local petbringTime = 0
 local petSpawntime = 0
+local waitVoteTime = 60 + CurTime()
 
 local DISABLED_MAPS = {
 	["hl2cr_lobby_festive"] = true,
@@ -271,6 +272,11 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 
 	--access the difficulty menu
 	if (string.lower(text) == "!diff" or string.lower(text) == "!difficulty" ) then
+		if waitVoteTime > CurTime() then
+			ply:ChatPrint("Please Wait ".. string.NiceTime(waitVoteTime - CurTime()) .. " before doing a vote")
+			return ""
+		end
+		
 		net.Start("Open_Diff_Menu")
 			net.WriteInt(GetConVar("hl2cr_difficulty"):GetInt(), 8)
 			net.WriteInt(GetConVar("hl2cr_survivalmode"):GetInt(), 8)
@@ -328,7 +334,7 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 			return ""
 		end
 
-		if ply.pet:Health() == ply.pet:GetMaxHealth() then
+		if ply.pet:Health() == ply.pet:GetMaxHealth() and not ply.pet:GetClass() == "npc_rollermine" then
 			net.Start("ClosePets")
 			net.Send(ply)
 			ply.petAlive = false
@@ -427,6 +433,10 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 		return ""
 	end
 	if (string.lower(text) == "!lobby") then
+		if waitVoteTime > CurTime() then
+			ply:ChatPrint("Please Wait ".. string.NiceTime(waitVoteTime - CurTime()) .. " before doing a vote")
+			return ""
+		end
 		if not DISABLED_MAPS[game.GetMap()] then
 			if not ply.hasVotedLobby then
 				lobbyVotes = lobbyVotes + 1
@@ -1116,7 +1126,7 @@ concommand.Add("hl2cr_petbring", function(ply, cmd, args)
 	
 	
 	if ply.BringPet then
-		ply.pet:MoveToPos(ply:GetPos())
+		ply.pet:SetPos(ply:GetPos())
 		ply.pet:SetAngles(ply:GetAngles())
 		ply.BringPet = false
 		beginPetBringTimer(ply)
@@ -1136,7 +1146,7 @@ concommand.Add("hl2cr_petremove", function(ply, cmd, args)
 		return
 	end
 
-	if ply.pet:Health() == ply.pet:GetMaxHealth() then
+	if ply.pet:Health() == ply.pet:GetMaxHealth() and not ply.pet:GetClass() == "npc_rollermine" then
 		ply.pet:Remove()
 		net.Start("ClosePets")
 		net.Send(ply)

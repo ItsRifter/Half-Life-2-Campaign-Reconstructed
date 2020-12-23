@@ -141,7 +141,7 @@ function GM:Initialize()
 	randomExchange = math.random(100, 850)
 end
 
-function GM:ShowHelp(ply)		
+function GM:ShowHelp(ply)	
 	net.Start("Greetings_new_player")
 		net.WriteString(version)
 	net.Send(ply)

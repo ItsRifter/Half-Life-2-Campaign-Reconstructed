@@ -55,6 +55,15 @@ function SetupEP1Map()
 		end
 	end
 	
+	if game.GetMap() == "ep1_c17_02b" then
+		for k, removeDoor in pairs(ents.FindByName("barney_door_2")) do
+			removeDoor:Remove()
+		end
+		for k, removeButtonDoor in pairs(ents.FindByName("barney_doorbutton_1")) do
+			removeButtonDoor:Remove()
+		end
+	end	
+	
 	SetCheckpointsStageEP1()
 end
 

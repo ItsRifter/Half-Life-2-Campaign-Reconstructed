@@ -22,7 +22,7 @@ function SetUpCheckpointsCoastline()
 	
 	if game.GetMap() == "leonhl2-2" then
 		TRIGGER_CHANGELEVEL = {
-			Vector(0, 0, 0), 	Vector(0, 0, 0)
+			Vector(-3159, -5643, 534), 	Vector(-3296, -5774, 284)
 		}
 		
 		TRIGGER_CHECKPOINT = {

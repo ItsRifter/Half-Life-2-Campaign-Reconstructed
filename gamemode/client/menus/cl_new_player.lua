@@ -14,6 +14,10 @@ local examplePets = {
 
 function LobbyMenu(version)
 
+	if ScrW() < 1920 and ScrH() < 1080 then
+		return
+	end
+
 	--The Frame
 
 	local frame = vgui.Create("HL2CR.f4Frame")
