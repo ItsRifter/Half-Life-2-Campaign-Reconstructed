@@ -172,10 +172,11 @@ hook.Add("OnNPCKilled", "NPCDeathIndicator", function(npc, attacker, inflictor)
 		Achievement(attacker, "Think_Fast", "EP1_Ach_List")
 	end
 	
-	if game.GetMap() == "ep1_citadel_03" and attacker:IsPlayer() and npc:GetClass() == "npc_stalker" then
+	if game.GetMap() == "ep1_citadel_03" and (attacker:IsPlayer() or attacker.owner()) and npc:GetClass() == "npc_stalker" then
+		local failer = attacker or attacker.owner
 		if pacifistAchEarnable and not surpassPacifist then 
 			for k, v in pairs(player.GetAll()) do
-				v:ChatPrint("Pacifist Failed Caused by: " .. attacker:Nick())
+				v:ChatPrint("Pacifist Failed Caused by: " .. failer:Nick())
 			end
 		end
 		pacifistAchEarnable = false

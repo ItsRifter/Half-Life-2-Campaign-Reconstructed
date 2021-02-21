@@ -86,10 +86,6 @@ local function InitData(ply)
 	
 	--Events
 	ply.hl2cPersistent.EventItems = ply.hl2cPersistent.EventItems or 0
-	
-	--Cosmetics
-	ply.hl2cPersistent.Hat = ply.hl2cPersistent.Hat or "no_hat"
-	ply.hl2cPersistent.HatTable = ply.hl2cPersistent.HatTable or {}
  	
 	--Ach Progress
 	ply.hl2cPersistent.AchProgress = ply.hl2cPersistent.AchProgress or {}
@@ -98,9 +94,7 @@ local function InitData(ply)
 	ply.hl2cPersistent.AchProgress.ZombieKiller = ply.hl2cPersistent.AchProgress.ZombieKiller or 0
 	
 	--Squads
-	ply.hl2cPersistent.SquadLeader = ply.hl2cPersistent.SquadLeader
-	ply.hl2cPersistent.SquadMembers = ply.hl2cPersistent.SquadsMembers or {}
-	ply.hl2cPersistent.SquadTotalXP = ply.hl2cPersistent.SquadTotalXP or 0
+	ply.hl2cPersistent.SquadLeader = ply.hl2cPersistent.SquadLeader or false
 	
 	-- Also set/create networked variables
 	ply:SetNWInt("Level", ply.hl2cPersistent.Level)

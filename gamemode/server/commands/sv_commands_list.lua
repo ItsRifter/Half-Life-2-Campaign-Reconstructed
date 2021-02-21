@@ -10,13 +10,13 @@ local petSpawntime = 0
 local waitVoteTime = 60 + CurTime()
 
 local DISABLED_MAPS = {
-	["hl2cr_lobby_festive"] = true,
+	["hl2cr_lobby"] = true,
 }
 
-hook.Add("Think", "LobbyTimer", function()
+hook.Add("Tick", "LobbyTimer", function()
 	if not DISABLED_MAPS[game.GetMap()] then
 		if timer <= CurTime() then
-			RunConsoleCommand("changelevel", "hl2cr_lobby_festive")
+			RunConsoleCommand("changelevel", "hl2cr_lobby")
 		end
 	end
 end)
@@ -334,7 +334,7 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 			return ""
 		end
 
-		if ply.pet:Health() == ply.pet:GetMaxHealth() and not ply.pet:GetClass() == "npc_rollermine" then
+		if ply.pet:Health() < ply.pet:GetMaxHealth() and not ply.pet:GetClass() == "npc_rollermine" then
 			net.Start("ClosePets")
 			net.Send(ply)
 			ply.petAlive = false
@@ -412,7 +412,7 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 	end
 	
 	if (string.lower(text) == "!restore") then
-		if game.GetMap() == "hl2cr_lobby_festive" and file.Exists("hl2cr_data/maprecovery.txt", "DATA") then
+		if game.GetMap() == "hl2cr_lobby" and file.Exists("hl2cr_data/maprecovery.txt", "DATA") then
 			if not ply.hasVotedRestore then
 				restoreVotes = restoreVotes + 1
 				ply:SetNWInt("PlayerVotesRestore", restoreVotes)
@@ -448,7 +448,7 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 				if lobbyVotes == VOTE_REQUIRED["neededVotes"] then
 					game.SetGlobalState("super_phys_gun", 0)
 					file.Delete("hl2cr_data/maprecovery.txt")
-					RunConsoleCommand("changelevel", "hl2cr_lobby_festive")
+					RunConsoleCommand("changelevel", "hl2cr_lobby")
 				end
 			else
 				ply:ChatPrint("You already voted to return to the lobby!")
@@ -459,7 +459,7 @@ hook.Add("PlayerSay", "Commands", function(ply, text)
 	return ""
 	end
 	if (string.lower(text) == "!restart" or string.lower(text) == "!vrm") then
-		if game.GetMap() ~= "hl2cr_lobby_festive" then
+		if game.GetMap() ~= "hl2cr_lobby" then
 			if not ply.hasVotedRestart then
 				restartVotes = restartVotes + 1
 				ply.hasVotedRestart = true
@@ -529,7 +529,7 @@ end)
 function beginPetBringTimer(ply)
 	ply.petbringTime = 7 + CurTime()
 	if not ply then return end
-	hook.Add("Think", "petTimer", function()
+	hook.Add("Tick", "petTimer", function()
 		if not ply or not ply.petbringTime then return end
 		if ply.petbringTime <= CurTime() and ply:IsValid() then
 			ply.BringPet = true
@@ -1146,7 +1146,7 @@ concommand.Add("hl2cr_petremove", function(ply, cmd, args)
 		return
 	end
 
-	if ply.pet:Health() == ply.pet:GetMaxHealth() and not ply.pet:GetClass() == "npc_rollermine" then
+	if ply.pet:Health() < ply.pet:GetMaxHealth() and not ply.pet:GetClass() == "npc_rollermine" then
 		ply.pet:Remove()
 		net.Start("ClosePets")
 		net.Send(ply)

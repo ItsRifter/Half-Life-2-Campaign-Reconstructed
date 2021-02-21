@@ -1,6 +1,6 @@
 local alive = team.GetPlayers(TEAM_ALIVE)
 
-hook.Add("Think", "AliveThink", function()
+hook.Add("Tick", "AliveTick", function()
 	alive = team.GetPlayers(TEAM_ALIVE)
 end)
 

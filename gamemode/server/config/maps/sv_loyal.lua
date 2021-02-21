@@ -2,9 +2,9 @@ local playerCount = 0
 local loyalPlayers = 0
 local chance = {}
 
-hook.Add("Think", "loyalThink", function()
-	playerCount = #player.GetAll()
-end)
+--hook.Add("Tick", "loyalTick", function()
+--	playerCount = #player.GetAll()
+--end)
 
 function beginLoyal()
 

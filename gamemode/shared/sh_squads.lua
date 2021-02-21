@@ -4,7 +4,6 @@ AddCSLuaFile()
 if SERVER then
 	-- Squad class that contains a list of squads
 	HL2CR_Squad = HL2CR_Squad or {Squads = {}}
-
 	--------------------------------------
 	--			Static methods			--
 	--------------------------------------
@@ -36,17 +35,14 @@ if SERVER then
 			squad:SendSquadStart(member)
 		end
 
-		owner.hl2cPersistent.SquadLeader = owner
+		owner.hl2cPersistent.SquadLeader = true
 		owner:ChatPrint("Squad Created")
 		return squad
 	end
 
 	--Resume Squad
 	function HL2CR_Squad:ResumeSquad(name, owner)
-		for _, member in ipairs(self.Members) do
-			self:SendSquadStart(member)
-		end
-		
+		self:NewSquad(name, owner)
 		return
 	end
 	-- Searches through all squads and returns the squad the given player is in. Or nil if ply isn't in any squad.
@@ -80,7 +76,7 @@ if SERVER then
 			for _, member in ipairs(self.Members) do
 				if self:IsOwner(member) then
 					member:ChatPrint("Squad Disbanded")
-					member.hl2cPersistent.SquadLeader = nil
+					member.hl2cPersistent.SquadLeader = false
 				else
 					member:ChatPrint("Your squad leader has disbanded the squad")
 				end
@@ -157,24 +153,35 @@ if SERVER then
 	-- Add XP to squad
 	function HL2CR_Squad:AddXP(addXP)
 		self.XP = self.XP + addXP
-
+		
 		for _, member in ipairs(self.Members) do
 			self:SendSquadXP(member)
 		end
-
+		self:StartTimer()
+		return
+	end
+	
+	function HL2CR_Squad:GiveXP()
+		self.XP = math.Round(self.XP / table.Count(self.Members))
+		for _, member in ipairs(self.Members) do
+			AddXP(member, self.XP)
+			member:ChatPrint("You gained " .. self.XP .. "XP as a share")
+			self.XP = 0	
+			self:SendSquadXP(member)
+		end
+		
 		return
 	end
 	
 	-- Start Squad timer 
 	function HL2CR_Squad:StartTimer()
 		if not timer.Exists("Squad_XPTimer") then
-			timer.Create("Squad_XPTimer", 45, 1, function() end)
-			timer.Stop("Squad_XPTimer")
-		end
-		
-		timer.Adjust("Squad_XPTimer", 45, 1, function()
+			timer.Create("Squad_XPTimer", 60, 1, function() 
+				self:GiveXP()
+			end)
 			
-		end)
+		end
+	
 		
 		
 	end

@@ -350,7 +350,7 @@ function SetupHL2Map()
 	
 	for i, portal in pairs(ents.FindByClass("func_areaportal")) do
 		
-		hook.Add("Think", "KeepPortalsOpen", function()
+		hook.Add("Tick", "KeepPortalsOpen", function()
 			if not portal then return end
 			portal:SetKeyValue("StartOpen", 1)
 		end)
@@ -369,7 +369,7 @@ end
 
 local playersAmt = 0
 
-hook.Add("Think", "eventThink", function()
+hook.Add("Tick", "eventTick", function()
 	playersAmt = #player.GetAll()
 end)
 

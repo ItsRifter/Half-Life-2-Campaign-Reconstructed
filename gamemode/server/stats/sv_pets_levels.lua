@@ -229,7 +229,7 @@ hook.Add("EntityTakeDamage", "PetHurtAndDamage", function(pet, dmgInfo)
 end)
 
 function runHealTime(ply, pet)
-	hook.Add("Think", "petHealingThink", function()
+	hook.Add("Tick", "petHealingTick", function()
 		if healingTime <= CurTime() then
 			if not pet:IsValid() then return end
 			pet:SetHealth(pet:Health() + (GetConVar("hl2cr_petrecovery"):GetInt() + ply:GetNWInt("PetRegen")))

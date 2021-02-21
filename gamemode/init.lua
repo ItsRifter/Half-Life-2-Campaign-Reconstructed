@@ -105,7 +105,7 @@ team.SetUp(TEAM_LOYAL, "Loyal Combine", Color(0, 225, 255, 255))
 local meta = FindMetaTable( "Entity" )
 if not meta then return end
 
-version = "0.4.5.7"
+version = "0.4.8"
 
 function meta:IsPet()
 	if self:IsValid() and self:IsNPC() and self:GetNWBool("PetActive") then
@@ -401,7 +401,6 @@ function GM:ShowSpare2(ply)
 			net.WriteString(ply.hl2cPersistent.NPCFont)
 			net.WriteInt(ply.hl2cPersistent.EventItems, 32)
 			net.WriteInt(eventNumber, 8)
-			net.WriteTable(ply.hl2cPersistent.HatTable)
 			net.WriteTable(ply.hl2cPersistent.TempUpg)
 			net.WriteTable(ply.hl2cPersistent.PermUpg)
 			net.WriteTable(ply.hl2cPersistent.Options)
@@ -480,7 +479,7 @@ hook.Add( "PrePACEditorOpen", "RestrictToSuperadmin", function( ply )
 end)
 
 function SetUpMap()
-	if game.GetMap() == "hl2cr_lobby_festive" then
+	if game.GetMap() == "hl2cr_lobby" then
 		SetupLobbyMap()
 	elseif string.match(game.GetMap(), "d1_") or string.match(game.GetMap(), "d2_") 
 	or string.match(game.GetMap(), "d3_") then

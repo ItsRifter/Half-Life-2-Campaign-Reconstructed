@@ -153,7 +153,7 @@ local function DropSlot( self, panels, onDropped, Command, x, y )
 	end
 end
 
-function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font, curEventItems, curEvent, curHats, curTempUpg, curPermUpg, optionsTable)
+function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font, curEventItems, curEvent, curTempUpg, curPermUpg, optionsTable)
 	
 	local getModel = LocalPlayer():GetNWString("Model")
 	
@@ -1383,25 +1383,6 @@ function OpenMenu(inventoryItems, randomExchange, HasOTF, colours, enabled, font
 		draw.RoundedBox( 4, 0, 0, w, h, COLOUR_MODEL_PANEL ) 
 	end
 	
-	local customHatLabel = vgui.Create("DLabel", customPanel)
-	customHatLabel:SetPos(625, 100)
-	customHatLabel:SetText("Select Hat")
-	customHatLabel:SetFont("Default")
-	customHatLabel:SizeToContents()
-	
-	local customHatCombo = vgui.Create("DComboBox", customPanel)
-	customHatCombo:SetPos(650, 150)
-	customHatCombo:SetSize(100, 50)
-	customHatCombo:AddChoice("no_hat")
-	for i, k in pairs(curHats) do
-		customHatCombo:AddChoice(k)
-	end
-	
-	customHatCombo.OnSelect = function(index, value, data)
-		net.Start("EquipHat")
-			net.WriteString(customHatCombo:GetSelected())
-		net.SendToServer()
-	end
 	local customTextExample = vgui.Create("DLabel", customPanel)
 	customTextExample:SetPos(650, 325)
 	customTextExample:SetText("npc_text")
@@ -1645,9 +1626,8 @@ net.Receive("Open_F4_Menu", function(len, ply)
 	local font = net.ReadString()
 	local eventItemsCount = net.ReadInt(32)
 	local curEvent = net.ReadInt(8)
-	local hats = net.ReadTable()
 	local curTempUpg = net.ReadTable()
 	local curPermUpg = net.ReadTable()
 	local optionsTable = net.ReadTable()
-	OpenMenu(invItems, randomExchange, hasOTF, colours, enabled, font, eventItemsCount, curEvent, hats, curTempUpg, curPermUpg, optionsTable)
+	OpenMenu(invItems, randomExchange, hasOTF, colours, enabled, font, eventItemsCount, curEvent, curTempUpg, curPermUpg, optionsTable)
 end)

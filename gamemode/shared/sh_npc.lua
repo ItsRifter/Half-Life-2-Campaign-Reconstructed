@@ -105,7 +105,7 @@ FRIENDLY_MAPS = {
 		
 		--Lobby
 		"hl2cr_lobby",
-		"hl2cr_lobby_festive",
+		"hl2cr_lobby",
 	}
 local giveRewardsTank = false
 hook.Add("EntityTakeDamage", "FriendOrFoe", function(ent, dmgInfo)
@@ -160,7 +160,7 @@ hook.Add("EntityTakeDamage", "FriendOrFoe", function(ent, dmgInfo)
 end)
 if SERVER then
 	local dmgInfo = DamageInfo()
-	hook.Add("Think", "NPCThinkRelation", function()
+	hook.Add("Tick", "NPCTick", function()
 		--Loyal Players relation with combine npc
 		for k, v in pairs(ents.FindByClass("npc_combinegunship")) do
 			if v:Health() <= 0 and not giveRewardsTank then
@@ -170,7 +170,7 @@ if SERVER then
 					p.name:ChatPrint("XP Gained: " .. math.Round(p.tankSharedXP / 5), 0)
 				end
 				giveRewardsTank = true
-				timer.Simple(5, function() giveRewardsTank = false end)
+				timer.Simple(8, function() giveRewardsTank = false end)
 			end
 		end
 		
@@ -281,7 +281,7 @@ if SERVER then
 			end
 		end
 	end)
-	hook.Add("Think", "UpdateNPC", function()
+	hook.Add("Tick", "UpdateNPC", function()
 		if GetConVar("hl2cr_doublehp"):GetInt() == 1 then
 			for k, dbNPC in pairs(ents.FindByClass("npc_*")) do
 				if not dbNPC.doubled and not dbNPC:IsPet() then

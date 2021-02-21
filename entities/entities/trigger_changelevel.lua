@@ -167,7 +167,7 @@ function ENT:Think()
 					elseif series == "cta" then
 						ChangeMapCTA()
 					else
-						RunConsoleCommand("changelevel", "hl2cr_lobby_festive")
+						RunConsoleCommand("changelevel", "hl2cr_lobby")
 					end
 				end
 			end)
@@ -207,7 +207,7 @@ function EndLostCoast()
 		net.Broadcast()
 		timer.Create("MapTimerEnd", 35, 0, function() 
 			file.Delete("hl2cr_data/maprecovery.txt") 
-			RunConsoleCommand("changelevel", "hl2cr_lobby_festive") 
+			RunConsoleCommand("changelevel", "hl2cr_lobby") 
 			timer.Remove("MapTimerEnd") print("Hello") 
 		end)
 	end
@@ -355,7 +355,7 @@ function ChangeMapHL2()
 		"d3_citadel_04",
 		"d3_citadel_05",
 		"d3_breen_01",
-		"hl2cr_lobby_festive"
+		"hl2cr_lobby"
 	}
 	for k = 1, #HL2 do
 		if map == HL2[k] then
@@ -371,7 +371,7 @@ function ChangeMapHL2()
 				RunConsoleCommand("changelevel", HL2[k+1])
 			end
 		end
-		if HL2[k] == "hl2cr_lobby_festive" then
+		if HL2[k] == "hl2cr_lobby" then
 			file.Delete("hl2cr_data/maprecovery.txt")
 		end
 	end
@@ -397,14 +397,14 @@ function ChangeMapEP1()
 		"ep1_c17_02a",
 		--"ep1_c17_05", -Gotta fix somehow
 		"ep1_c17_06",
-		"hl2cr_lobby_festive"
+		"hl2cr_lobby"
 	}
 	
 	for k = 1, #EP1 do
 		if map == EP1[k] then
 			RunConsoleCommand("changelevel", EP1[k+1])
 		end
-		if EP1[k] == "hl2cr_lobby_festive" then
+		if EP1[k] == "hl2cr_lobby" then
 			file.Delete("hl2cr_data/maprecovery.txt")
 		end
 	end
@@ -431,14 +431,14 @@ function ChangeMapEP2()
 		"ep2_outland_11b",
 		"ep2_outland_12",
 		"ep2_outland_12a",
-		"hl2cr_lobby_festive"
+		"hl2cr_lobby"
 	}
 	
 	for k = 1, #EP2 do
 		if map == EP2[k] then
 			RunConsoleCommand("changelevel", EP2[k+1])
 		end
-		if EP2[k] == "hl2cr_lobby_festive" then
+		if EP2[k] == "hl2cr_lobby" then
 			file.Delete("hl2cr_data/maprecovery.txt")
 		end
 	end
@@ -448,14 +448,14 @@ function ChangeMapCTA()
 	local map = game.GetMap()
 	
 	local CTA = {
-		"hl2cr_lobby_festive"
+		"hl2cr_lobby"
 	}
 	
 	for k = 1, #CTA do
 		if map == CTA[k] then
 			RunConsoleCommand("changelevel", CTA[k+1])
 		end
-		if CTA[k] == "hl2cr_lobby_festive" then
+		if CTA[k] == "hl2cr_lobby" then
 			file.Delete("hl2cr_data/maprecovery.txt")
 		end
 	end
@@ -470,7 +470,7 @@ function EndCoop()
 			net.Broadcast()
 			giveRewards(p)
 			p:GodEnable()
-			timer.Create("MapTimerEnd", 20, 0, function() file.Delete("hl2cr_data/maprecovery.txt") RunConsoleCommand("changelevel", "hl2cr_lobby_festive") timer.Remove("MapTimerEnd") end)
+			timer.Create("MapTimerEnd", 20, 0, function() file.Delete("hl2cr_data/maprecovery.txt") RunConsoleCommand("changelevel", "hl2cr_lobby") timer.Remove("MapTimerEnd") end)
 		end
 	end
 end

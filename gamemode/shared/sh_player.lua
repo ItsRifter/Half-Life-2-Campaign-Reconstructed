@@ -53,8 +53,16 @@ hook.Add("PlayerInitialSpawn", "MiscSurv", function(ply)
 		tankDmg = 0,
 	}
 
-	if ply.hl2cPersistent.SquadLeader != nil then
-		HL2CR_Squad:ResumeSquad(ply:Nick(), ply)
+	if ply.hl2cPersistent.SquadLeader != false then
+		timer.Simple(1, function()
+			HL2CR_Squad:ResumeSquad(ply:Nick(), ply)
+		end)
+	end
+	
+	for k, pet in pairs(ents.GetAll()) do
+		if pet:IsPet() then
+			pet:AddEntityRelationship(ply, D_LI, 99)
+		end
 	end
 
 	if game.GetMap() == "d2_lostcoast" then
@@ -83,11 +91,6 @@ hook.Add("PlayerInitialSpawn", "MiscSurv", function(ply)
 		Achievement(ply, "One_True_Freeman", "Misc_Ach_List")
 	end
 
-	if table.HasValue(ply.hl2cPersistent.Achievements, "A_Red_Letter_Baby") and not table.HasValue(ply.hl2cPersistent.HatTable, "baby_head") then
-		table.insert(ply.hl2cPersistent.HatTable, "baby_head")
-		ply:ChatPrint("You earned a 'baby head' hat")
-	end
-
 	local red = ply.hl2cPersistent.NPCColourSettings.r
 	local blue = ply.hl2cPersistent.NPCColourSettings.b
 	local green = ply.hl2cPersistent.NPCColourSettings.g
@@ -112,7 +115,7 @@ hook.Add("PlayerInitialSpawn", "MiscSurv", function(ply)
 		["Crystals"] = 0,
 	}
 	
-	if game.GetMap() == "hl2cr_lobby_festive" then
+	if game.GetMap() == "hl2cr_lobby" then
 		ply.hl2cPersistent.OTF = false
 	end
 
@@ -131,9 +134,6 @@ hook.Add("PlayerInitialSpawn", "MiscSurv", function(ply)
 		end)
 	end
 	
-	if not game.SinglePlayer() then
-		ply:SetCustomCollisionCheck(true);
-	end
 	ply.respawnTimer = 0
 	ply.hasDiedOnce = false
 	
@@ -157,20 +157,6 @@ end)
 hook.Add("EventPickUp", "EventItems", function(ply, amount)
 	if not ply then return end
 	ply.hl2cPersistent.EventItems = ply.hl2cPersistent.EventItems + amount
-end)
-
-net.Receive("EquipHat", function(len, ply)
-	local newHat = net.ReadString()
-	
-	if not ply then return end
-	if newHat == "no_hat" then
-		ply.hl2cPersistent.Hat = "no_hat"
-	else
-		ply.hl2cPersistent.Hat = newHat
-	end
-	
-	wearHat(ply, ply.hl2cPersistent.Hat)
-	
 end)
 
 net.Receive("UpdateNPCColour", function(len, ply)
@@ -202,6 +188,8 @@ hook.Add("PlayerSpawn", "SpawnDefault", function(ply)
 		ply:SetTeam(TEAM_ALIVE)
 		return
 	end	
+	ply:SetCustomCollisionCheck(true)
+	ply:SetNoCollideWithTeammates(true)
 	
 	ply.Tank = {
 		name = ply,
@@ -232,7 +220,7 @@ hook.Add("PlayerSpawn", "SpawnDefault", function(ply)
 		ply.sprintPower = 150
 	end
 	
-	if game.GetMap() == "hl2cr_lobby_festive" and file.Exists("hl2cr_data/maprecovery.txt", "DATA") then
+	if game.GetMap() == "hl2cr_lobby" and file.Exists("hl2cr_data/maprecovery.txt", "DATA") then
 		ply:ChatPrint("It appears the server crashed or something went wrong")
 		ply:ChatPrint("If no admins are present, type !restore")
 	end
@@ -289,25 +277,21 @@ hook.Add("PlayerSpawn", "SpawnDefault", function(ply)
 	if game.GetMap() == "d1_trainstation_01" or game.GetMap() == "d1_trainstation_02" or game.GetMap() == "d1_trainstation_03" or
 	game.GetMap() == "d1_trainstation_04" then
 		ply:AllowFlashlight(false)
-		RunConsoleCommand("gmod_suit", 0)
 		ply:SetRunSpeed( 160 )
 		ply:SetWalkSpeed( 120 )
 	elseif game.GetMap() == "d1_trainstation_05" then
 		for p, hevFlash in pairs(ents.FindByClass("item_suit")) do
 			if hevFlash:IsValid() then
 				ply:AllowFlashlight(false)
-				RunConsoleCommand("gmod_suit", 0)
 			elseif not hevFlash:IsValid() then 
 				for k, v in pairs(player.GetAll()) do
 					v:AllowFlashlight(true)
 					v:SetRunSpeed( 240 )
 					v:SetWalkSpeed( 180 )
 				end
-				RunConsoleCommand("gmod_suit", 1)
 			end
 		end
 	else
-		RunConsoleCommand("gmod_suit", 1)
 		ply:AllowFlashlight(true)
 	end
 	
@@ -322,11 +306,6 @@ hook.Add("PlayerSpawn", "SpawnDefault", function(ply)
 	
 	if game.GetMap() == "d3_citadel_03" then
 		ply:Give("weapon_physcannon")
-	end
-	
-	print(ply.hl2cPersistent.SquadLeader)
-	if ply.hl2cPersistent.SquadLeader != nil then
-		HL2CR_Squad:ResumeSquad(ply:Nick(), ply)
 	end
 end)
 
@@ -349,7 +328,7 @@ local tempUpgHealTime = 0
 hook.Add("EntityTakeDamage", "EP1Fix", function(ply, dmgInfo)
 	local attacker = dmgInfo:GetAttacker()
 	local dmg = dmgInfo:GetDamage()
-	if attacker:GetClass() == "func_movelinear" then
+	if attacker:GetClass() == "func_door" then
 		dmgInfo:SetDamage(0)
 	end
 end)
@@ -388,7 +367,7 @@ function beginHealingTimer(ply)
 	end
 	
 	if healthBoost <= 0 then return end
-	hook.Add("Think", "healingThink", function()
+	hook.Add("Tick", "healingTick", function()
 		if tempUpgHealTime <= CurTime() then
 			if ply:IsValid() and ply:Health() <= ply:GetMaxHealth() and not ply:IsBot() then
 				ply:SetHealth(ply:Health() + healthBoost)
@@ -410,7 +389,7 @@ hook.Add("CanExitVehicle", "PodCannotExit", function(veh, ply)
 end)
 
 local NO_SUICIDE_MAPS = {
-	["hl2cr_lobby_festive"] = true,
+	["hl2cr_lobby"] = true,
 	["d1_trainstation_01"] = true,
 	["d1_trainstation_02"] = true,
 	["d1_trainstation_03"] = true,
@@ -609,7 +588,7 @@ function GM:GetFallDamage( ply, speed )
 	return (speed / 16)
 end
 
-hook.Add("Think", "HasWeaponThink", function()
+hook.Add("Tick", "HasWeaponTick", function()
 	for k, curWep in pairs(startingWeapons) do
 		for k, v in pairs(player.GetAll()) do
 			if v:Team() == TEAM_ALIVE and not table.HasValue(Cheating_Players_Survival, v:Nick()) then
@@ -622,7 +601,7 @@ hook.Add("Think", "HasWeaponThink", function()
 end)
 
 hook.Add("PlayerLoadout", "StarterWeapons", function(ply)
-	if (game.GetMap() == "hl2cr_lobby_festive") then
+	if (game.GetMap() == "hl2cr_lobby") then
 		ply:Give("weapon_crowbar")
 		ply:Give("weapon_physcannon")
 		if ply:IsAdmin() then
@@ -676,7 +655,7 @@ hook.Add("PlayerLoadout", "StarterWeapons", function(ply)
 	for k, v in pairs(player.GetAll()) do
 		if v:Team() == TEAM_LOYAL or ply:Team() == TEAM_LOYAL then return end
 		
-		if v:GetWeapons() ~= nil and ply:GetWeapons() ~= v:GetWeapons() and game.GetMap() ~= "hl2cr_lobby_festive" then
+		if v:GetWeapons() ~= nil and ply:GetWeapons() ~= v:GetWeapons() and game.GetMap() ~= "hl2cr_lobby" then
 			for k, w in pairs(v:GetWeapons()) do
 				if RESTRICTED_WEPS[w:GetClass()] then return end
 				ply:Give(w:GetClass())
@@ -736,7 +715,7 @@ net.Receive("BeginOTF", function(len, ply)
 	ply:ChatPrint("You have started 'One True Freeman', good luck")
 end)
 
-hook.Add("PlayerDeathThink", "SpecThink", function(ply)		
+hook.Add("PlayerDeathTick", "SpecTick", function(ply)		
 	return false
 end)
 
@@ -750,7 +729,7 @@ function RespawnTimerActive(ply, deaths)
 		end
 	end)
 
-	if GetConVar("hl2cr_survivalmode"):GetInt() == 1 and game.GetMap() ~= "hl2cr_lobby_festive" then
+	if GetConVar("hl2cr_survivalmode"):GetInt() == 1 and game.GetMap() ~= "hl2cr_lobby" then
 		local playersAlive = #player.GetAll()
 		local playerDeaths = deaths
 		
@@ -779,7 +758,7 @@ function RespawnTimerActive(ply, deaths)
 	end
 end
 
-hook.Add("Think", "RespawnPlayersTimer", function()
+hook.Add("Tick", "RespawnPlayersTimer", function()
 	for k, p in pairs (player.GetAll()) do
 		if not p.respawnTimer then return end
 		if GetConVar("hl2cr_survivalmode"):GetInt() == 1 then return end
@@ -794,6 +773,12 @@ end)
 deaths = 0
 totalXPLoyal = 0
 hook.Add("PlayerDeath", "RespawnTimer", function(victim, inflictor, attacker)
+	
+	victim:Lock()
+	
+	timer.Simple(5, function()
+		victim:UnLock()
+	end)
 	
 	if attacker:IsPlayer() and attacker:Team() == TEAM_LOYAL then
 		local giveLoyalXP = math.random(15, 150)
@@ -813,7 +798,7 @@ end
 
 if SERVER then
 
-	hook.Add("Think", "SuitThink", function()
+	hook.Add("Tick", "SuitTick", function()
 		for k, ply in pairs(player.GetAll()) do
 			if table.HasValue(ply.hl2cPersistent.PermUpg, "Suit_Power_Boost") then
 				if ply.sprintPower > 100 and ply:IsSprinting() then
@@ -828,7 +813,7 @@ if SERVER then
 		end
 	end)
 	
-	hook.Add("Think", "AmmoLimiter", function()
+	hook.Add("Tick", "AmmoLimiter", function()
 		for k, p in pairs(player.GetAll()) do
 			
 			if p:GetAmmoCount("357") > GetConVar("max_357"):GetInt() then		
